@@ -219,7 +219,7 @@
 							onkeydown={(e) => e.key === 'Enter' && handleNextQuestion()}
 						/>
 						
-						<div class="flex justify-between">
+						<div class="flex items-center justify-end gap-2">
 							<Button 
 								onclick={handlePreviousQuestion}
 								disabled={currentQuestionIndex === 0}
