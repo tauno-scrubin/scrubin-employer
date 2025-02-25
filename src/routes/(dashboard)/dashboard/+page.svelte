@@ -7,6 +7,8 @@
 	import { Loader2, RotateCcw } from 'lucide-svelte';
 	import { onMount } from 'svelte';
 	import Button from "$lib/components/ui/button/button.svelte";
+	import AnalyzingOverlay from "@/components/dashboard/analyzingOverlay.svelte";
+	import SearchHistory from "@/components/dashboard/searchHistory.svelte";
 
 	let searchViewComponent: SearchView;
 	let isLoading = $state(false);
@@ -60,8 +62,10 @@
 	image="/images/workers-search.jpg"
 	type="website"
 	canonicalUrl="https://yourwebsite.com/worker-search" />
+
+<AnalyzingOverlay/>
   
-<div class="space-y-2">
+<div class="space-y-2 max-w-screen-xl mx-auto w-full">
 
 	<!-- Search View -->
 	<SearchView 
@@ -72,41 +76,7 @@
 
 
 	{#if !isSearchActive}
-		<!-- Search History -->
-		<Card.Root>
-			<Card.Header>
-				<Card.Title>Search History</Card.Title>
-			</Card.Header>
-			<Card.Content>
-				{#if isLoading}
-					<div class="flex justify-center p-4">
-						<Loader2 class="h-6 w-6 animate-spin" />
-					</div>
-				{:else if searchHistory.length === 0}
-					<p class="text-center text-muted-foreground">No search history found</p>
-				{:else}
-					<div class="space-y-4">
-						{#each searchHistory as lookup}
-							<div class="flex items-center justify-between rounded-lg border p-4">
-								<div class="space-y-1">
-									<p class="font-medium">{lookup.userInput}</p>
-									<p class="text-sm text-muted-foreground">
-										{formatDate(lookup.createdAt)}
-									</p>
-								</div>
-								<Button
-									size="sm"
-									onclick={() => handleRerunSearch(lookup.userInput)}
-								>
-									<RotateCcw class="w-4 h-4" />
-									Rerun Search
-								</Button>
-							</div>
-						{/each}
-					</div>
-				{/if}
-			</Card.Content>
-		</Card.Root>
+		<SearchHistory onSearchWorkers={handleRerunSearch}/>
 	{/if}
 
 	

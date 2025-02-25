@@ -1,12 +1,17 @@
 <script lang="ts">
-	import { scrubinClient } from "@/scrubinClient/client";
+	import { currentUser, scrubinClient } from "@/scrubinClient/client";
 	import type { Candidate, AnalyzeResponse, Requirements } from "@/scrubinClient";
 	import * as Card from "$lib/components/ui/card/index.js";
-	import { Loader2 } from "lucide-svelte";
+	import { ChevronRight, Loader2, Sparkle, Star, Users } from "lucide-svelte";
 	import Button from "@/components/ui/button/button.svelte";
 	import WorkersResults from "@/components/dashboard/workersResults.svelte";
 	import Input from "@/components/ui/input/input.svelte";
 	import ChatWindow from "./chatWindow.svelte";
+	import Textarea from "../ui/textarea/textarea.svelte";
+	import { visible } from "./overlay";
+	import { toast } from "svelte-sonner";
+	import { slide } from "svelte/transition";
+	import ShimmerButton from "../shimmerButton.svelte";
   
 
     let {
@@ -23,17 +28,19 @@
 	let isLoading: boolean = $state(false);
 	let workerLookupId: number | null = $state(null);
 	let requirements: Requirements | null = $state(null);
+	let inputFocused: boolean = $state(false);
 
 	let healthcareWorkers: Candidate[] = $state([]);
 	let totalItems: number = $state(0);
 	let showResults: boolean = $state(false);
+	let userName: string = $state("User");
 
     
   
 	export async function searchWorkers(inputText?: string) {
 	  const textToSearch = inputText || searchText;
 	  if (!textToSearch.trim()) return;
-	  
+	  visible.set(true);
 	  isLoading = true;
 	  showResults = false;
 	  try {
@@ -50,6 +57,7 @@
 	  } catch (error) {
 		console.error("Error searching workers:", error);
 	  } finally {
+		visible.set(false);
 		isLoading = false;
 	  }
 	}
@@ -61,33 +69,107 @@
 	  searchText = "";
 	  onNewSearch();
 	}
+
+	let isLoadingNextStep: boolean = $state(false);
+
+	async function nextStep() {
+        if (workerLookupId) {
+            try {
+                visible.set(true);
+                isLoadingNextStep = true;
+                const result = await scrubinClient.hunt.createJobRequirements(workerLookupId);
+                requirements = result;
+                console.log(result);
+            } catch (error) {
+                toast.error("Error analyzing requirements: " + error);
+                console.error("Error analyzing requirements:", error);
+            } finally {
+                visible.set(false);
+                isLoadingNextStep = false;
+            }
+        }
+    }
   
   </script>
   
   <div class="space-y-6">
 	<!-- Search Input Card -->
 	 {#if !requirements}
-	<Card.Root>
-	  <Card.Header>
-		<Card.Title>Worker Search</Card.Title>
-	  </Card.Header>
-	  <Card.Content>
-		<form on:submit|preventDefault={() => searchWorkers()} class="flex space-x-4">
-			<Input
-				type="text" 
-				bind:value={searchText} 
-				placeholder="Enter job description or keywords..."
-				class="flex-1 rounded border border-gray-300 p-2" />
-			<Button type="submit" variant="default" class="whitespace-nowrap">
-			{#if isLoading}
-			  <Loader2 class="w-4 h-4 animate-spin" />
-			{:else}
-			  Search Workers
-			{/if}
-		  </Button>
+	<div class="mb-8 bg-blue-50 p-8 rounded-md group/search">
+	  <div class="flex flex-col items-start gap-4 mb-2">
+		<div class="text-blue-600">
+		  <Sparkle fill="currentColor" class="w-6 h-6 rotate-45 group-hover/search:rotate-90 transition-all duration-200" />
+		</div>
+		<h1 class="text-3xl font-medium">Welcome back, {$currentUser?.firstName}!</h1>
+	  </div>
+	  
+	  <div class="bg-white rounded-lg shadow-sm border p-4">
+		<form on:submit|preventDefault={() => searchWorkers()} class="flex items-center flex-col relative group">
+		  <Textarea
+			bind:value={searchText} 
+			maxlength={200}
+			onfocus={() => inputFocused = true}
+			onblur={() => !searchText && (inputFocused = false)}
+			placeholder="I'm looking family medicine nurses to work in australia"
+			class="flex-1 p-0 shadow-none border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 px-0 resize-none" />
+			
+			{#if inputFocused}
+		  <div transition:slide={{ delay: 100, duration: 200 }} class="flex items-end justify-between gap-2 w-full">
+			<span class="text-xs text-gray-400">{searchText.length}/200</span>
+			<div class="flex items-center gap-2">
+			<Button type="submit" variant="default" class="transition-all duration-200 rounded-full w-10 h-10 p-0 bg-blue-600 hover:bg-blue-700">
+			  {#if isLoading}
+				<Loader2 class="w-5 h-5 animate-spin" />
+			  {:else}
+				<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+				  <path d="M22 2L11 13"></path>
+				  <path d="M22 2l-7 20-4-9-9-4 20-7z"></path>
+				</svg>
+			  {/if}
+			</Button>
+			</div>
+		  </div>
+		  {/if}
 		</form>
-	  </Card.Content>
-	</Card.Root>
+	  </div>
+
+	  {#if healthcareWorkers.length > 0 && !isLoading}
+	  <div class="w-full  bg-white rounded-lg shadow-sm border overflow-hidden  mt-4">
+		<div class="flex flex-col sm:flex-row items-center justify-between w-full">
+		  <div class="flex-1 p-5 flex items-center gap-4 border-b sm:border-b-0 sm:border-r w-full sm:w-auto">
+			<div class="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center">
+			  <Users class="w-5 h-5 text-primary" />
+			</div>
+			<div class="flex flex-col">
+			  <div class="flex items-baseline gap-2">
+				<span class="text-2xl font-bold text-primary">{totalItems}</span>
+				<span class="text-sm font-medium text-gray-600">Results found</span>
+			  </div>
+			  <span class="text-xs text-gray-500">Total matching candidates</span>
+			</div>
+		  </div>
+		  
+		  {#if healthcareWorkers.length > 0}
+		  <div class="p-5 w-full sm:w-auto">
+			<Button
+			onclick={nextStep} 
+			disabled={isLoadingNextStep}
+			>
+			{#if isLoadingNextStep}
+			<Loader2 class="w-4 h-4 mr-2 animate-spin" />
+			Processing...
+		  {:else}
+			Next step
+			<ChevronRight class="w-4 h-4 ml-2" />
+		  {/if}
+			</Button>
+		  </div>
+		  {/if}
+		</div>
+	  </div>
+	  {/if}
+
+	</div>
   
 	<!-- Results Card (shown when a search has been performed) -->
 	{#if healthcareWorkers}
