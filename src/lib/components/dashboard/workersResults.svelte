@@ -179,7 +179,7 @@
                   {#if worker.top3Terms && worker.top3Terms.length > 0}
                     <div class="flex flex-wrap gap-1.5  w-full items-center">
                       {#each worker.top3Terms as term}
-                        <span class="px-2 py-0.5 text-xs bg-blue-50 text-primary rounded-full">{term}</span>
+                        <span class="px-2 py-0.5 text-xs bg-blue-50 text-blue-800 rounded-full">{term}</span>
                       {/each}
                     </div>
                   {/if}
@@ -192,7 +192,7 @@
                       </div>
                     {/if}
                     {#if worker.recentlyActive}
-                      <div class="flex items-center text-xs bg-blue-50 text-primary px-2 py-1 rounded-full">
+                      <div class="flex items-center text-xs bg-blue-50 text-blue-800 px-2 py-1 rounded-full">
                         <Clock class="w-3 h-3 mr-1" />
                         <span>{recentlyActiveText}</span>
                       </div>
