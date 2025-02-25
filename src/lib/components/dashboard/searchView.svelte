@@ -10,9 +10,13 @@
   
 
     let {
-        onSearchWorkers = undefined
+        onSearchWorkers = undefined,
+        onSearchComplete = () => {},
+        onNewSearch = () => {}
     }: {
-        onSearchWorkers?: (searchText: string) => void
+        onSearchWorkers?: (searchText: string) => void,
+        onSearchComplete?: () => void,
+        onNewSearch?: () => void
     } = $props();
 
 	let searchText: string = $state("");
@@ -42,11 +46,20 @@
 		workerLookupId = result.workerLookupId;
 		totalItems = result.totalCandidates;
 		showResults = true;
+		onSearchComplete();
 	  } catch (error) {
 		console.error("Error searching workers:", error);
 	  } finally {
 		isLoading = false;
 	  }
+	}
+
+	function handleNewSearch() {
+	  healthcareWorkers = [];
+	  showResults = false;
+	  requirements = null;
+	  searchText = "";
+	  onNewSearch();
 	}
   
   </script>

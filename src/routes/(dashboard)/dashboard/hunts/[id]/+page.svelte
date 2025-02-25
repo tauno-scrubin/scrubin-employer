@@ -188,7 +188,4 @@
                 </Card.Root>
             </div>
         
-    <div class="flex justify-end gap-2">
-        <Button variant="outline">Edit Hunt</Button>
-    </div>
 </div>
