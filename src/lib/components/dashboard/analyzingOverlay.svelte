@@ -51,7 +51,7 @@
     <!-- Content container -->
     <div class="relative z-10 flex flex-col items-center justify-center space-y-6 text-center w-full">
       <!-- Sparkles icon with subtle animation -->
-      <div class="animate-pulse">
+      <div class="">
         <Sparkles fill="currentColor" size={48} class="text-blue-500" strokeWidth={1.5} />
       </div>
       
