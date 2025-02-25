@@ -1,11 +1,12 @@
 <script lang="ts">
 	import { scrubinClient } from "@/scrubinClient/client";
-	import type { Candidate, AnalyzeResponse } from "@/scrubinClient";
+	import type { Candidate, AnalyzeResponse, Requirements } from "@/scrubinClient";
 	import * as Card from "$lib/components/ui/card/index.js";
 	import { Loader2 } from "lucide-svelte";
 	import Button from "@/components/ui/button/button.svelte";
 	import WorkersResults from "@/components/dashboard/workersResults.svelte";
 	import Input from "@/components/ui/input/input.svelte";
+	import ChatWindow from "./chatWindow.svelte";
   
 
     let {
@@ -17,6 +18,7 @@
 	let searchText: string = $state("");
 	let isLoading: boolean = $state(false);
 	let workerLookupId: number | null = $state(null);
+	let requirements: Requirements | null = $state(null);
 
 	let healthcareWorkers: Candidate[] = $state([]);
 	let totalItems: number = $state(0);
@@ -51,25 +53,26 @@
   
   <div class="space-y-6">
 	<!-- Search Input Card -->
+	 {#if !requirements}
 	<Card.Root>
 	  <Card.Header>
 		<Card.Title>Worker Search</Card.Title>
 	  </Card.Header>
 	  <Card.Content>
-		<div class="flex space-x-4">
+		<form on:submit|preventDefault={() => searchWorkers()} class="flex space-x-4">
 			<Input
 				type="text" 
 				bind:value={searchText} 
 				placeholder="Enter job description or keywords..."
 				class="flex-1 rounded border border-gray-300 p-2" />
-			<Button onclick={() => searchWorkers()} variant="default" class="whitespace-nowrap">
+			<Button type="submit" variant="default" class="whitespace-nowrap">
 			{#if isLoading}
 			  <Loader2 class="w-4 h-4 animate-spin" />
 			{:else}
 			  Search Workers
 			{/if}
 		  </Button>
-		</div>
+		</form>
 	  </Card.Content>
 	</Card.Root>
   
@@ -82,7 +85,12 @@
 		bind:isSearching={isLoading}
 		bind:showResults={showResults}
 		bind:searchString={searchText}
+		bind:requirements={requirements}
 	  />
+	{/if}
+	<!-- Requirements exist -->
+	{:else}
+		<ChatWindow bind:requirements={requirements} />
 	{/if}
   </div>
   

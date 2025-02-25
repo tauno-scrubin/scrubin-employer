@@ -98,6 +98,14 @@ export interface AnalyzeResponse {
   examplesCandidates: Candidate[];
 }
 
+export interface ActivateHuntResponse {
+  huntId: number;
+  dateActivated: string;
+  dateCompleted: string | null;
+  status: 'ACTIVE' | 'COMPLETED' | 'CANCELLED';
+  requirements: Requirements['requirements'];
+}
+
 export interface Requirements {
   requirements: {
     id: number;
@@ -111,28 +119,29 @@ export interface Requirements {
     country: string;
     address: {
       address: string;
-      stateProvinceRegion: string[];
+      stateProvinceRegion: string | string[];
       city: string;
-      cityBorough: string[];
+      cityBorough: string | string[];
     };
     workTimeType: string[];
     salary: {
-      amountStart: number;
-      amountEnd: number;
-      currency: string;
+      amountStart: number | null;
+      amountEnd: number | null;
+      currency: string | null;
       type: 'HOURLY';
       amountText: string;
       salaryExtra: string;
     };
     extras: {
-      accommodationCompensationType: string;
+      accommodationCompensationType: string | null;
       drivingLicenceRequired: boolean;
       personalCarRequired: boolean;
-      transportCompensationType: string;
+      transportCompensationType: string | null;
     };
     canBeActivated: boolean;
   };
-  chatHistory: Array<{
+  followUpQuestions?: string[];
+  chatHistory?: Array<{
     role: string;
     content: string;
     dateTime: string;
@@ -427,20 +436,20 @@ class HuntResource extends BaseResource {
   }
 
   // PUT /api/v1/hunt/requirements/{id}/analyze
-  async updateRequirements(id: number, workerLookupId: number, description: string): Promise<Requirements> {
+  async updateRequirements(id: number, description: string): Promise<Requirements> {
     const url = new URL(`${this.path}/requirements/${id}/analyze`, this.client.baseUrl);
-    return this.request<Requirements>('PUT', url.toString(), { workerLookupId, description }) as Promise<Requirements>;
+    return this.request<Requirements>('PUT', url.toString(), { jobRequirementId: id, textInput: description }) as Promise<Requirements>;
   }
 
   // PUT /api/v1/hunt/requirements/{id}/activate
-  async activateRequirements(id: number): Promise<Requirements> {
-    const url = new URL(`${this.path}/requirements/${id}/activate`, this.client.baseUrl);
-    return this.request<Requirements>('POST', url.toString()) as Promise<Requirements>;
+  async activateRequirements(id: number): Promise<ActivateHuntResponse> {
+    const url = new URL(`${this.path}/requirements/${id}/activate-hunt`, this.client.baseUrl);
+    return this.request<ActivateHuntResponse>('POST', url.toString()) as Promise<ActivateHuntResponse>;
   }
 
-  async getRequirements(id: number): Promise<Requirements> {
+  async getRequirements(id: number): Promise<Requirements['requirements']> {
     const url = new URL(`${this.path}/requirements/${id}`, this.client.baseUrl);
-    return this.request<Requirements>('GET', url.toString()) as Promise<Requirements>;
+    return this.request<Requirements['requirements']>('GET', url.toString()) as Promise<Requirements['requirements']>;
   }
 }
 

@@ -4,8 +4,9 @@
     import { Loader2, CalendarCheck, User, Globe, Briefcase, MapPin, Calendar1, Check, Clock, ArrowRight, ArrowLeft, ChevronRight } from 'lucide-svelte';
     import Button from '@/components/ui/button/button.svelte';
     import * as Card from '$lib/components/ui/card/index.js';
-	import type { Candidate } from '@/scrubinClient';
+	import type { Candidate, Requirements } from '@/scrubinClient';
 	import { scrubinClient } from '@/scrubinClient/client';
+	import { toast } from 'svelte-sonner';
     
     // Dummy translations (replace with your localization logic)
     const resultsFound = "Results Found";
@@ -33,7 +34,8 @@
         isSearching = $bindable(false),
         showResults = $bindable(true),
         workerLookupId = $bindable(),
-        searchString = $bindable("")
+        searchString = $bindable(""),
+        requirements = $bindable<Requirements | null>(null)
     }: {
         healthcareWorkers: Candidate[]
         totalItems: number
@@ -41,6 +43,7 @@
         showResults: boolean
         workerLookupId: number | null
         searchString: string
+        requirements: Requirements | null
     } = $props();
     
     
@@ -74,14 +77,21 @@
       }
     }
 
+    // Add loading state for next step button
+    let isLoadingNextStep = $state(false);
 
     async function nextStep() {
         if (workerLookupId) {
             try {
-                const result = await scrubinClient.hunt.createJobRequirements(parseInt(workerLookupId.toString()));
+                isLoadingNextStep = true;
+                const result = await scrubinClient.hunt.createJobRequirements(workerLookupId);
+                requirements = result;
                 console.log(result);
             } catch (error) {
+                toast.error("Error analyzing requirements: " + error);
                 console.error("Error analyzing requirements:", error);
+            } finally {
+                isLoadingNextStep = false;
             }
         }
     }
@@ -91,23 +101,38 @@
     {#if showResults}
       <div transition:slide class="w-full mt-2">
         {#if !isSearching}
-          <!-- Search Results Header -->
-          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between w-full gap-2 mb-4 p-4 border rounded-md shadow-sm">
-            <div class="inline-flex items-center gap-2">
-              <div class="w-12 h-12 rounded bg-blue-100 flex items-center justify-center">
-                <span class="text-lg font-semibold text-blue-500">{totalItems}</span>
+          <!-- Search Results Header - Improved design -->
+          <div class="w-full mb-6 bg-white rounded-lg shadow-sm border overflow-hidden">
+            <div class="flex flex-col sm:flex-row items-center justify-between w-full">
+              <div class="flex-1 p-5 flex items-center gap-4 border-b sm:border-b-0 sm:border-r w-full sm:w-auto">
+                <div class="w-14 h-14 rounded-full bg-blue-100 flex items-center justify-center">
+                  <span class="text-xl font-bold text-blue-600">{totalItems}</span>
+                </div>
+                <div class="flex flex-col">
+                  <span class="text-lg font-semibold text-gray-800">{resultsFound}</span>
+                  <span class="text-sm text-gray-500">{resultsFoundDesc}</span>
+                </div>
               </div>
-              <div class="flex flex-col">
-                <span class="text-lg font-semibold">{resultsFound}</span>
-                <span class="text-sm text-gray-500">{resultsFoundDesc}</span>
+              
+              {#if healthcareWorkers.length > 0}
+              <div class="p-5 w-full sm:w-auto">
+                <Button 
+                  onclick={nextStep} 
+                  class="w-full sm:w-auto" 
+                  variant="default"
+                  disabled={isLoadingNextStep}
+                >
+                  {#if isLoadingNextStep}
+                    <Loader2 class="w-4 h-4 mr-2 animate-spin" />
+                    Processing...
+                  {:else}
+                    {talkToSales}
+                    <ChevronRight class="w-4 h-4 ml-2" />
+                  {/if}
+                </Button>
               </div>
+              {/if}
             </div>
-            {#if healthcareWorkers.length > 0}
-            <Button onclick={nextStep} class="w-full sm:w-auto" variant="default">
-                Next Step
-                <ChevronRight class="w-4 h-4 mr-2" />
-            </Button>
-            {/if}
           </div>
   
           <!-- Carousel Container -->
