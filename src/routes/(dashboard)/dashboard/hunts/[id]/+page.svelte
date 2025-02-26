@@ -14,178 +14,225 @@
         Car, 
         Building, 
         ArrowLeft,
-        Users
+        Users,
+        FileText,
+        Sparkle
     } from "lucide-svelte";
     import { page } from "$app/stores";
     import SearchView from "$lib/components/dashboard/searchView.svelte";
+	import FunnelChart from "@/components/ui/layer-chart/funnelChart.svelte";
+	import SingleWorker from "@/components/dashboard/singleWorker.svelte";
 
     let { data } = $props();
     let hunt = $derived(data.hunt);
-    
 
+
+    let funnelData = $derived([
+        { name: 'Total Huntables', value: data.stats.totalHuntables },
+        { name: 'Contacted', value: data.stats.totalHuntablesContacted },
+        { name: 'Interested', value: data.stats.totalHuntablesInterested }
+    ]);
+    
+    // Define tabs for better organization
+    const tabs = [
+        { id: "details", label: "Job Details", icon: FileText },
+        { id: "qualifications", label: "Qualifications", icon: GraduationCap },
+        { id: "location", label: "Location", icon: MapPin }
+    ];
+    
+    let activeTab = $state("details");
 </script>
 
-<div class="container mx-auto py-6 space-y-6">
-    <div class="flex items-center gap-4">
+<div class="container mx-auto py-6 space-y-6 max-w-7xl">
+    <div class="flex items-center gap-4 mb-6">
         <a href="/dashboard/hunts">
             <Button variant="outline" size="icon" class="h-9 w-9">
                 <ArrowLeft class="h-4 w-4" />
             </Button>
         </a>
-        <h1 class="text-3xl font-bold tracking-tight">{hunt.jobTitle}</h1>
+        <div>
+            <h1 class="text-2xl font-bold tracking-tight">{hunt.requirements.jobTitle}</h1>
+            <p class="text-sm text-muted-foreground">{hunt.requirements.address.city}, {hunt.requirements.address.stateProvinceRegion}</p>
+        </div>
     </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <!-- Main Job Info -->
-                <Card.Root class="md:col-span-2">
-                    <Card.Header>
-                        <Card.Title>Job Description</Card.Title>
-                    </Card.Header>
-                    <Card.Content>
-                        <p class="text-muted-foreground whitespace-pre-line">{hunt.jobDescription}</p>
-                    </Card.Content>
-                </Card.Root>
+    <!-- Status badge at the top -->
+    <Tabs.Root bind:value={activeTab} class="w-full">
+        <Tabs.List class="grid w-fit grid-cols-2">
+          <Tabs.Trigger value="details">Details</Tabs.Trigger>
+          <Tabs.Trigger value="statistics">Statistics</Tabs.Trigger>
+        </Tabs.List>
+        <Tabs.Content value="details">
 
-                <!-- Location Info -->
-                <Card.Root>
-                    <Card.Header>
-                        <Card.Title>Location</Card.Title>
-                    </Card.Header>
-                    <Card.Content>
-                        <div class="flex items-start gap-2">
-                            <MapPin class="h-5 w-5 text-muted-foreground shrink-0 mt-0.5" />
-                            <div>
-                                <p class="font-medium">{hunt.country}</p>
-                                <p class="text-sm text-muted-foreground">
-                                    {hunt.address.city}, {hunt.address.stateProvinceRegion}
-                                    {#if hunt.address.address}
-                                        <br>{hunt.address.address}
+            <div class="flex flex-col gap-4 bg-blue-50/80 p-4 rounded-md">
+                <div class="bg-white rounded-lg  shadow-sm p-4 flex justify-between items-center">
+                    <div class="flex items-center gap-3">
+                        <div class="bg-blue-50  p-2 rounded-full">
+                            <Sparkle fill="currentColor" strokeWidth=1 class="w-4 h-4 text-blue-500 animate-[spin_4s_linear_infinite]" />
+                        </div>
+                        <div>
+                            <h2 class="font-medium">Active Hunt</h2>
+                            <p class="text-sm text-muted-foreground">Created on {new Date().toLocaleDateString()}</p>
+                        </div>
+                    </div>
+                    <Badge variant="outline" class="px-3 py-1 bg-blue-50 text-blue-700 border-transparent">
+                        Active
+                    </Badge>
+                </div>
+        
+            <div class=" bg-white rounded-md p-4 shadow-sm">
+              
+                <h2 class="text-xl font-medium mb-4">Job Requirements</h2>
+                
+        
+                    <div class="space-y-3">
+                        <div class="grid grid-cols-1 gap-4 text-sm border-b pb-3">
+                            <div class="w-full grid grid-cols-[150px_1fr] items-start">
+                                <h4 class="font-semibold">Job title</h4>
+                                <p class="{hunt.requirements.jobTitle ? 'text-gray-900' : 'text-gray-500'}">{hunt.requirements.jobTitle || 'Not specified'}</p>
+                            </div>
+        
+                            <div class="w-full grid grid-cols-[150px_1fr] items-start">
+                                <h4 class="font-semibold">Job description</h4>
+                                <p class="{hunt.requirements.jobDescription ? 'text-gray-900' : 'text-gray-500'}">{hunt.requirements.jobDescription || 'Not specified'}</p>
+                            </div>
+        
+                            <div class="w-full grid grid-cols-[150px_1fr] items-start">
+                                <h4 class="font-semibold">Professions</h4>
+                                <div class="flex flex-row gap-2 flex-wrap">
+                                    {#each hunt.requirements.professions || [] as profession}
+                                        <span class="px-2 py-0.5 bg-gray-100 text-gray-700 text-xs rounded">{profession}</span>
+                                    {/each}
+                                </div>
+                            </div>
+        
+                        </div>
+                        
+                        <div class="grid grid-cols-1 gap-4 text-sm">
+                            <div class="w-full grid grid-cols-[150px_1fr] items-start">
+                                <h4 class="font-semibold">Specialization</h4>
+                                <p class="{hunt.requirements.specialization ? 'text-gray-900' : 'text-gray-500'}">{hunt.requirements.specialization || 'Not specified'}</p>
+                            </div>
+                            
+                            <div class="w-full grid grid-cols-[150px_1fr] items-start">
+                                <h4 class="font-semibold">Work Experience</h4>
+                                <p class="{hunt.requirements.jobRequiredWorkExperience ? 'text-gray-900' : 'text-gray-500'}">{hunt.requirements.jobRequiredWorkExperience || 0} years</p>
+                            </div>
+                            
+                            <div class="w-full grid grid-cols-[150px_1fr] items-start">
+                                <h4 class="font-semibold">Location</h4>
+                                <p class="{hunt.requirements.address?.city || hunt.requirements.address?.stateProvinceRegion ? 'text-gray-900' : 'text-gray-500'}">
+                                    {hunt.requirements.country}, 
+                                    {hunt.requirements.address?.city || ''} 
+                                    {hunt.requirements.address?.stateProvinceRegion ? 
+                                        (Array.isArray(hunt.requirements.address.stateProvinceRegion) ? 
+                                            hunt.requirements.address.stateProvinceRegion.join(', ') : 
+                                            hunt.requirements.address.stateProvinceRegion) : 
+                                        ''}
+                                </p>
+                            </div>
+                            
+                            <div class="w-full grid grid-cols-[150px_1fr] items-start">
+                                <h4 class="font-semibold">Work Time</h4>
+                                <p class="{hunt.requirements.workTimeType ? 'text-gray-900' : 'text-gray-500'}">{hunt.requirements.workTimeType?.join(', ') || 'Not specified'}</p>
+                            </div>
+                            
+                            <div class="w-full grid grid-cols-[150px_1fr] items-start">
+                                <h4 class="text-gray-900 font-semibold">Languages</h4>
+                                <div class="flex flex-wrap gap-1">
+                                    {#each hunt.requirements.jobRequiredLanguages || [] as language}
+                                        <span class="px-2 py-0.5 bg-gray-100 text-gray-700 text-xs rounded">{language}</span>
+                                    {/each}
+                                </div>
+                            </div>
+                            
+                            <div class="w-full grid grid-cols-[150px_1fr] items-start">
+                                <h4 class="font-semibold">Salary</h4>
+                                <p class="{hunt.requirements.salary?.amountStart || hunt.requirements.salary?.amountEnd ? 'text-gray-900' : 'text-gray-500'}">
+                                    {#if hunt.requirements.salary?.amountStart && hunt.requirements.salary?.amountEnd}
+                                        {hunt.requirements.salary.amountStart} - {hunt.requirements.salary.amountEnd} 
+                                        {hunt.requirements.salary.currency || ''} ({hunt.requirements.salary.type || ''})
+                                    {:else}
+                                        {hunt.requirements.salary?.amountText || 'Not specified'}
                                     {/if}
                                 </p>
                             </div>
                         </div>
-                    </Card.Content>
-                </Card.Root>
-
-                <!-- Qualifications -->
-                <Card.Root>
-                    <Card.Header>
-                        <Card.Title>Qualifications</Card.Title>
-                    </Card.Header>
-                    <Card.Content class="space-y-4">
-                        <div class="flex items-start gap-2">
-                            <GraduationCap class="h-5 w-5 text-muted-foreground shrink-0 mt-0.5" />
-                            <div>
-                                <p class="font-medium">Required Qualifications</p>
-                                <p class="text-sm text-muted-foreground">{hunt.jobRequiredQualifications}</p>
-                            </div>
+                        
+                        <div class="border-t pt-3 mt-4">
+                            <h4 class="text-xl font-medium mb-4">Required Qualifications</h4>
+                            <p class="{hunt.requirements.jobRequiredQualifications ? 'text-gray-900' : 'text-gray-500'} text-sm">{hunt.requirements.jobRequiredQualifications || 'Not specified'}</p>
                         </div>
                         
-                        <div class="flex items-start gap-2">
-                            <Briefcase class="h-5 w-5 text-muted-foreground shrink-0 mt-0.5" />
-                            <div>
-                                <p class="font-medium">Experience</p>
-                                <p class="text-sm text-muted-foreground">{hunt.jobRequiredWorkExperience} years minimum</p>
-                            </div>
-                        </div>
-                        
-                        <div class="flex items-start gap-2">
-                            <Languages class="h-5 w-5 text-muted-foreground shrink-0 mt-0.5" />
-                            <div>
-                                <p class="font-medium">Languages</p>
-                                <div class="flex flex-wrap gap-1 mt-1">
-                                    {#each hunt.jobRequiredLanguages as language}
-                                        <Badge variant="secondary">{language === 'en' ? 'English' : language}</Badge>
-                                    {/each}
-                                </div>
-                            </div>
-                        </div>
-                    </Card.Content>
-                </Card.Root>
-
-                <!-- Job Details -->
-                <Card.Root>
-                    <Card.Header>
-                        <Card.Title>Job Details</Card.Title>
-                    </Card.Header>
-                    <Card.Content class="space-y-4">
-                        <div class="flex items-start gap-2">
-                            <Users class="h-5 w-5 text-muted-foreground shrink-0 mt-0.5" />
-                            <div>
-                                <p class="font-medium">Profession</p>
-                                <div class="flex flex-wrap gap-1 mt-1">
-                                    {#each hunt.professions as profession}
-                                        <Badge variant="secondary">{profession}</Badge>
-                                    {/each}
-                                </div>
-                                {#if hunt.specialization}
-                                    <p class="text-sm text-muted-foreground mt-1">Specialization: {hunt.specialization}</p>
-                                {/if}
-                            </div>
-                        </div>
-                        
-                        <div class="flex items-start gap-2">
-                            <Clock class="h-5 w-5 text-muted-foreground shrink-0 mt-0.5" />
-                            <div>
-                                <p class="font-medium">Work Time</p>
-                                <div class="flex flex-wrap gap-1 mt-1">
-                                    {#each hunt.workTimeType as timeType}
-                                        <Badge variant="secondary">{timeType}</Badge>
-                                    {/each}
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="flex items-start gap-2">
-                            <DollarSign class="h-5 w-5 text-muted-foreground shrink-0 mt-0.5" />
-                            <div>
-                                <p class="font-medium">Salary</p>
-                                <p class="text-sm text-muted-foreground">{hunt.salary.amountText}</p>
-                                {#if hunt.salary.salaryExtra}
-                                    <p class="text-sm text-muted-foreground">{hunt.salary.salaryExtra}</p>
-                                {/if}
-                            </div>
-                        </div>
-                    </Card.Content>
-                </Card.Root>
-
-                <!-- Additional Info -->
-                <Card.Root>
-                    <Card.Header>
-                        <Card.Title>Additional Information</Card.Title>
-                    </Card.Header>
-                    <Card.Content class="space-y-4">
-                        {#if hunt.extras.transportCompensationType}
-                            <div class="flex items-start gap-2">
-                                <Car class="h-5 w-5 text-muted-foreground shrink-0 mt-0.5" />
-                                <div>
-                                    <p class="font-medium">Transportation</p>
-                                    <p class="text-sm text-muted-foreground">
-                                        Transport compensation: {hunt.extras.transportCompensationType}
-                                    </p>
-                                    {#if hunt.extras.drivingLicenceRequired}
-                                        <p class="text-sm text-muted-foreground">Driving license required</p>
-                                    {/if}
-                                    {#if hunt.extras.personalCarRequired}
-                                        <p class="text-sm text-muted-foreground">Personal car required</p>
-                                    {/if}
-                                </div>
-                            </div>
-                        {/if}
-                        
-                        {#if hunt.extras.accommodationCompensationType}
-                            <div class="flex items-start gap-2">
-                                <Building class="h-5 w-5 text-muted-foreground shrink-0 mt-0.5" />
-                                <div>
-                                    <p class="font-medium">Accommodation</p>
-                                    <p class="text-sm text-muted-foreground">
-                                        Accommodation: {hunt.extras.accommodationCompensationType}
-                                    </p>
-                                </div>
-                            </div>
-                        {/if}
-                    </Card.Content>
-                </Card.Root>
-            </div>
+                        <div class="border-t pt-3">
+                            <h4 class="text-xl font-medium mb-4">Additional Requirements</h4>
+                            <div class="grid grid-cols-1 gap-2 mt-1 text-sm">
         
+        
+                                <div class="w-full grid grid-cols-[150px_1fr] items-start">
+                                    <h4 class="font-semibold">Driving License</h4>
+                                    <p class="{hunt.requirements.extras?.drivingLicenceRequired ? 'text-gray-900' : 'text-gray-500'}">{hunt.requirements.extras?.drivingLicenceRequired ? 'Required' : 'Not required'}</p>
+                                </div>
+        
+        
+                                <div class="w-full grid grid-cols-[150px_1fr] items-start">
+                                    <h4 class="font-semibold">Personal Car</h4>
+                                    <p class="{hunt.requirements.extras?.personalCarRequired ? 'text-gray-900' : 'text-gray-500'}">{hunt.requirements.extras?.personalCarRequired ? 'Required' : 'Not required'}</p>
+                                </div>
+                                
+                                {#if hunt.requirements.extras?.accommodationCompensationType}
+                                <div class="w-full grid grid-cols-[150px_1fr] items-start">
+                                    <h4 class="font-semibold">Accommodation</h4>
+                                    <p class="{hunt.requirements.extras?.accommodationCompensationType ? 'text-gray-900' : 'text-gray-500'}">{hunt.requirements.extras?.accommodationCompensationType}</p>
+                                </div>
+                                {/if}
+        
+                                {#if hunt.requirements.extras?.transportCompensationType}
+                                <div class="w-full grid grid-cols-[150px_1fr] items-start">
+                                    <h4 class="font-semibold">Transport</h4>
+                                    <p class="{hunt.requirements.extras?.transportCompensationType ? 'text-gray-900' : 'text-gray-500'}">{hunt.requirements.extras?.transportCompensationType}</p>
+                                </div>
+                                {/if}
+        
+                            
+                            </div>
+                        </div>
+                    </div>
+                
+            </div>
+        </div>
+         
+        </Tabs.Content>
+        <Tabs.Content value="statistics">
+            <div class="bg-blue-50/80 rounded-md p-4">
+                <div class="flex flex-col bg-white rounded-md p-4 gap-4">
+            <h4 class="text-gray-900 text-xl font-semibold">Hunt Conversion Funnel</h4>
+            <div class="grid grid-cols-3 gap-4">
+         {#each funnelData as item}       
+            <div class="border rounded-md p-4 gap-2 flex flex-col">
+                <h5 class="text-gray-500 text-sm font-medium">{item.name}</h5>
+                <p class="text-gray-900 font-semibold text-3xl">{item.value}</p>
+            </div>
+         {/each}
+            </div>
+            <!-- <FunnelChart 
+            data={funnelData} 
+            title="Hunt Conversion Funnel" 
+            colors={['#38bdf8', '#818cf8', '#8b5cf6']} 
+            height="400px"
+        /> -->
+
+        <h4 class="text-gray-900 text-xl font-semibold">Candidates</h4>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {#each data.candidates.items as candidate}
+              <SingleWorker worker={candidate.huntable} status={candidate.status} score={candidate.score} />
+            {/each}
+          </div>
+    </div>
+        </div>
+        </Tabs.Content>
+      </Tabs.Root>
+
+    
 </div>

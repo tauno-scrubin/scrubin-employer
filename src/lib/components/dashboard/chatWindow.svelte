@@ -3,7 +3,7 @@
 	import { Button } from "$lib/components/ui/button";
 	import { Input } from "$lib/components/ui/input";
 	import { scrubinClient } from "@/scrubinClient/client";
-	import { onMount } from "svelte";
+	import { onMount, tick } from "svelte";
 	import { toast } from "svelte-sonner";
 	import { 
 		Loader2, 
@@ -25,7 +25,10 @@
 		FileText,
 		Plus,
 
-		Sparkle
+		Sparkle,
+
+		ChevronLeft
+
 
 	} from "lucide-svelte";
 	import { goto } from "$app/navigation";
@@ -45,6 +48,7 @@
 	let isAnalyzing = $state(false);
 	let isActivating = $state(false);
 	let isEditingPrevious = $state(false);
+	let customInstructions = $state("");
 
 	// Collapsible questions state
 	let expandedQuestions = $state(new Set([0])); // Example: first 3 expanded by default
@@ -54,30 +58,31 @@
 		if (requirements) {
 			answers = {};
 			currentQuestionIndex = 0;
-			isComplete = false;
+			isComplete = true;
 			isAnalyzing = false;
 			isEditingPrevious = false;
+			customInstructions = "";
 		}
 	});
 	function handleNextQuestion() {
-		if (!requirements.followUpQuestions) {
+		if (!requirements.followUpQuestionsV2) {
 			toast.error("No follow-up questions available.");
 			return;
 		}
 		if (currentAnswer.trim()) {
 			// Save the current answer
-			const currentQuestion = requirements.followUpQuestions[currentQuestionIndex];
-			answers[currentQuestion] = currentAnswer;
+			const currentQuestion = requirements.followUpQuestionsV2[currentQuestionIndex];
+			answers[currentQuestion.title] = currentAnswer;
 			currentAnswer = "";
 
 			// Move to next question or complete
-			if (currentQuestionIndex < requirements.followUpQuestions.length - 1) {
+			if (currentQuestionIndex < requirements.followUpQuestionsV2.length - 1) {
 				currentQuestionIndex++;
 				// Pre-fill with existing answer if available
-				const nextQuestion = requirements.followUpQuestions[currentQuestionIndex];
-				currentAnswer = answers[nextQuestion] || "";
+				const nextQuestion = requirements.followUpQuestionsV2[currentQuestionIndex];
+				currentAnswer = answers[nextQuestion.title] || "";
 				// Open the next question in the accordion
-                toggleQuestion(currentQuestionIndex-1);
+				toggleQuestion(currentQuestionIndex-1);
 				toggleQuestion(currentQuestionIndex);
 			} else {
 				submitAnswers();
@@ -89,66 +94,81 @@
 		if (currentQuestionIndex > 0) {
 			// Save current answer before moving back
 			if (currentAnswer.trim()) {
-				const currentQuestion = requirements.followUpQuestions[currentQuestionIndex];
-				answers[currentQuestion] = currentAnswer;
+				const currentQuestion = requirements.followUpQuestionsV2[currentQuestionIndex];
+				answers[currentQuestion.title] = currentAnswer;
 			}
 			
 			// Move to previous question
 			currentQuestionIndex--;
 			
 			// Load the previous answer
-			const prevQuestion = requirements.followUpQuestions[currentQuestionIndex];
-			currentAnswer = answers[prevQuestion] || "";
+			const prevQuestion = requirements.followUpQuestionsV2[currentQuestionIndex];
+			currentAnswer = answers[prevQuestion.title] || "";
 			isEditingPrevious = true;
 		}
 	}
 
 	function goToQuestion(index: number) {
-		if (index >= 0 && index < requirements.followUpQuestions.length) {
+		if (!requirements.followUpQuestionsV2) return;
+		
+		if (index >= 0 && index < requirements.followUpQuestionsV2.length) {
 			// Save current answer before moving
 			if (currentAnswer.trim()) {
-				const currentQuestion = requirements.followUpQuestions[currentQuestionIndex];
-				answers[currentQuestion] = currentAnswer;
+				const currentQuestion = requirements.followUpQuestionsV2[currentQuestionIndex];
+				answers[currentQuestion.title] = currentAnswer;
 			}
 			
 			// Move to selected question
 			currentQuestionIndex = index;
 			
 			// Load the answer for that question
-			const question = requirements.followUpQuestions[index];
-			currentAnswer = answers[question] || "";
+			const question = requirements.followUpQuestionsV2[index];
+			currentAnswer = answers[question.title] || "";
 			isEditingPrevious = true;
 		}
 	}
 
 	async function submitAnswers() {
 		isSubmitting = true;
-        visible.set(true);
-		if (!requirements.followUpQuestions) {
-			toast.error("No follow-up questions available.");
+		visible.set(true);
+		
+		if (!requirements.followUpQuestionsV2 && !customInstructions.trim()) {
+			toast.error("No follow-up questions or custom instructions available.");
 			return;
 		}
 		
 		try {
 			// Format answers as required
-			const formattedAnswers = requirements.followUpQuestions
-				.map(question => `${question}\nanswer: ${answers[question] || ""}`)
-				.join("\n");
+			let formattedAnswers = "";
+			
+			if (requirements.followUpQuestionsV2) {
+				formattedAnswers = requirements.followUpQuestionsV2
+					.map(question => `${question.title}\nanswer: ${answers[question.title] || ""}`)
+					.join("\n");
+			}
+			
+			// Add custom instructions if provided
+			if (customInstructions.trim()) {
+				formattedAnswers += formattedAnswers ? "\n\n" : "";
+				formattedAnswers += `Additional Instructions:\n${customInstructions.trim()}`;
+			}
 			
 			// Submit to API
 			isAnalyzing = true;
 			const response = await scrubinClient.hunt.updateRequirements(requirements.requirements.id, formattedAnswers);
-			
 			// Update requirements with the response
 			requirements = response;
-			isComplete = true;
+            await tick()
+            isComplete = true;
+			
 		} catch (error) {
 			console.error("Failed to submit answers:", error);
 			toast.error("Failed to submit answers. Please try again.");
 		} finally {
 			isSubmitting = false;
 			isAnalyzing = false;
-            visible.set(false);
+			visible.set(false);
+            
 		}
 	}
 	
@@ -189,8 +209,11 @@
 <div class="flex flex-col md:flex-row w-full bg-blue-50/80 rounded p-4 gap-4">
 	<!-- Left side: Follow-up Questions -->
 	<div class="md:w-1/3 p-4 bg-white rounded-md shadow-sm">
-		<h2 class="text-lg font-medium mb-4 text-primary">Follow-up Questions</h2>
-		
+		<h2 class="text-lg font-medium mb-4 text-primary flex items-center gap-2">
+            <Button variant="outline" size="icon" onclick={() => requirements = null}>
+                <ChevronLeft class="w-4 h-4" />
+            </Button>
+            Follow-up Questions</h2>
 		{#if isAnalyzing}
 			<div class="p-4 bg-blue-50/70 rounded-lg flex items-center justify-center">
 				<div class="flex flex-col items-center gap-2">
@@ -198,8 +221,8 @@
 					<p class="text-sm font-medium text-primary/80">Analyzing your answers...</p>
 				</div>
 			</div>
-		{:else if requirements.requirements?.canBeActivated}
-			<div class="p-4 rounded-lg mb-4 bg-gradient-to-r from-blue-50 to-indigo-50 border border-primary/10">
+		{:else if requirements?.canBeActivated}
+			<div class="p-4 rounded-lg mb-4 bg-gradient-to-r from-blue-50 to-indigo-50 ">
 				<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
 					<p class="font-medium text-sm text-primary/90">
 						{isComplete ? '✨ Ready to activate' : 'Complete questions for better results'}
@@ -223,24 +246,24 @@
 			</div>
 		{/if}
 		
-		{#if !isAnalyzing && requirements.followUpQuestions && requirements.followUpQuestions.length > 0}
+		{#if !isAnalyzing && requirements.followUpQuestionsV2 && requirements.followUpQuestionsV2.length > 0}
 			<div class="space-y-3 w-full">
-				{#each requirements.followUpQuestions as question, i}
+				{#each requirements.followUpQuestionsV2 as question, i}
 					<div class="overflow-hidden rounded-lg transition-all duration-200  border {expandedQuestions.has(i) ? 'shadow-sm' : 'border-gray-100'}">
 						<!-- Collapsible question header -->
 						<div 
 							class="flex justify-between items-center p-3 
 								cursor-pointer hover:bg-gray-50 transition-colors duration-200"
-							on:click={() => toggleQuestion(i)}
+							onclick={() => toggleQuestion(i)}
 						>
 							<div class="flex items-center gap-3">
 								<span class={`w-6 h-6 flex items-center justify-center rounded-full text-xs font-medium
-									${answers[question] ? 'bg-primary text-white' : 'bg-blue-50 text-gray-500'} 
+									${answers[question.title] ? 'bg-primary text-white' : 'bg-blue-50 text-gray-500'} 
 									transition-all duration-300`}>
-									{answers[question] ? '✓' : i + 1}
+									{answers[question.title] ? '✓' : i + 1}
 								</span>
 								<span class="text-sm font-medium text-gray-700 truncate">
-									{question.length > 50 ? question.substring(0, 50) + '...' : question}
+									{question.title.length > 50 ? question.title.substring(0, 50) + '...' : question.title}
 								</span>
 							</div>
 							<span class="text-gray-400 transition-transform duration-200">
@@ -251,15 +274,15 @@
 						<!-- Collapsible content -->
 						{#if expandedQuestions.has(i)}
 							<div class="p-3 border-t bg-white">
-								<p class="mb-3 text-sm text-gray-600">{question}</p>
+								<p class="mb-3 text-sm text-gray-500">{question.description}</p>
 								<div class="flex flex-col gap-3">
 									<Input
 										type="text"
 										placeholder="Type your answer here..."
-										value={answers[question] || ""}
+										value={answers[question.title] || ""}
 										class="focus:ring-primary/30 transition-all duration-200"
 										onchange={(e) => {
-											answers[question] = e.currentTarget.value;
+											answers[question.title] = e.currentTarget.value;
 											if (i === currentQuestionIndex) {
 												currentAnswer = e.currentTarget.value;
 											}
@@ -271,12 +294,12 @@
 										<div class="flex justify-end gap-2 mt-1">
 											<Button 
 												onclick={handleNextQuestion}
-												disabled={!(answers[question] || currentAnswer).trim() || isSubmitting}
+												disabled={!(answers[question.title] || currentAnswer).trim() || isSubmitting}
 												variant="default"
 												size="sm"
 												class="transition-all duration-200 hover:scale-105"
 											>
-												{#if currentQuestionIndex < requirements.followUpQuestions.length - 1}
+												{#if currentQuestionIndex < requirements.followUpQuestionsV2.length - 1}
 													Next <ArrowRight class="h-3.5 w-3.5" />
 												{:else}
 													Submit <Check class="h-3.5 w-3.5" />
@@ -290,38 +313,78 @@
 					</div>
 				{/each}
 				
+				<!-- Custom Instructions Textarea -->
+				<div class="overflow-hidden rounded-lg transition-all duration-200 border shadow-sm mt-6">
+					<div class="p-3 bg-white">
+						<p class="mb-3 text-sm font-medium text-gray-700">Additional Instructions</p>
+						<p class="mb-3 text-sm text-gray-500">Add any custom requirements or clarifications that weren't covered by the questions above.</p>
+						<div class="flex flex-col gap-3">
+							<textarea
+								placeholder="Type any additional instructions here..."
+								value={customInstructions}
+								class="w-full p-3 border rounded-md focus:ring-primary/30 focus:border-primary/50 text-sm transition-all duration-200 min-h-[100px]"
+								onchange={(e) => {
+									customInstructions = e.currentTarget.value;
+								}}
+							></textarea>
+						</div>
+					</div>
+				</div>
+				
 				<!-- Submit button at the bottom -->
 				{#if !isComplete}
 					<div class="flex justify-end mt-4">
 						<Button 
 							onclick={submitAnswers}
-							disabled={isSubmitting || Object.keys(answers).length < requirements.followUpQuestions.length}
+							disabled={isSubmitting || (Object.keys(answers).length < requirements.followUpQuestionsV2.length && !customInstructions.trim())}
 							variant="default"
 							size="sm"
 							class="transition-all duration-300 hover:scale-105 bg-gradient-to-r from-primary to-primary/90"
 						>
 							{#if isSubmitting}
-								<Loader2 class=" h-3.5 w-3.5 animate-spin" />
+								<Loader2 class="h-3.5 w-3.5 animate-spin" />
 								Submitting...
 							{:else}
-								<Check class=" h-3.5 w-3.5" />
+								<Check class="h-3.5 w-3.5" />
 								Submit All
 							{/if}
 						</Button>
 					</div>
 				{/if}
 			</div>
-		{:else if isComplete}
-			<div class="p-4 rounded-lg bg-gradient-to-r from-green-50 to-emerald-50 border border-green-100">
-				<p class="flex items-center gap-2 text-sm font-medium text-green-700">
-					<Check class="h-5 w-5 text-green-500" />
-					All questions answered successfully!
-				</p>
-			</div>
-		{:else if !requirements.followUpQuestions || requirements.followUpQuestions.length === 0}
-			<div class="p-4 rounded-lg bg-gray-50 flex items-center justify-center">
-				<p class="text-sm text-gray-500">No follow-up questions available.</p>
-			</div>
+      
+		{:else if !requirements?.followUpQuestionsV2?.length && !requirements?.followUpQuestions?.length}
+
+        <div class="overflow-hidden rounded-lg transition-all duration-200 border shadow-sm mt-6">
+            <div class="p-3 bg-white">
+                <p class="mb-3 text-sm font-medium text-gray-700">Additional Instructions</p>
+                <p class="mb-3 text-sm text-gray-500">Add any custom requirements or clarifications that weren't covered by the questions above.</p>
+                <div class="flex flex-col gap-3">
+                    <textarea
+                        placeholder="Type any additional instructions here..."
+                        bind:value={customInstructions}
+                        class="w-full p-3 border rounded-md focus:ring-primary/30 text-sm focus:border-primary/50 transition-all duration-200 min-h-[100px]"
+                    ></textarea>
+                </div>
+                <div class="flex justify-end mt-2">
+                    <Button 
+                        onclick={submitAnswers}
+                        disabled={isSubmitting || !customInstructions.trim()}
+                        variant="default"
+                        size="sm"
+                        class="transition-all duration-300 hover:scale-105"
+                    >
+                        {#if isSubmitting}
+                            <Loader2 class="h-3.5 w-3.5 animate-spin" />
+                            Submitting...
+                        {:else}
+                            <Check class="h-3.5 w-3.5" />
+                            Submit
+                        {/if}
+                    </Button>
+                </div>
+            </div>
+        </div>
 		{/if}
 	</div>
 	
@@ -408,11 +471,6 @@
 				<div class="border-t pt-3 mt-4">
 					<h4 class="text-xl font-medium mb-4">Required Qualifications</h4>
 					<p class="{requirements.requirements.jobRequiredQualifications ? 'text-gray-900' : 'text-gray-500'} text-sm">{requirements.requirements.jobRequiredQualifications || 'Not specified'}</p>
-				</div>
-				
-				<div class="border-t pt-3">
-					<h4 class="text-xl font-medium mb-4">Job Description</h4>
-					<p class="{requirements.requirements.jobDescription ? 'text-gray-900' : 'text-gray-500'} text-sm">{requirements.requirements.jobDescription || 'Not specified'}</p>
 				</div>
 				
 				<div class="border-t pt-3">

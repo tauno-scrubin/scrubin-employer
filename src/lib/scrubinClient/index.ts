@@ -138,14 +138,65 @@ export interface Requirements {
       personalCarRequired: boolean;
       transportCompensationType: string | null;
     };
-    canBeActivated: boolean;
   };
+  canBeActivated: boolean;
   followUpQuestions?: string[];
+  followUpQuestionsV2?: Array<{
+    description: string;
+    title: string;
+  }>;
   chatHistory?: Array<{
     role: string;
     content: string;
     dateTime: string;
   }>;
+}
+
+// New interfaces for the hunts endpoints
+export interface Hunt {
+  huntId: number;
+  title: string;
+  dateActivated: string;
+  dateCompleted: string | null;
+  status: string;
+}
+
+export interface HuntsResponse {
+  items: Hunt[];
+  total: number;
+  page: number;
+  size: number;
+  totalPages: number;
+}
+
+export interface HuntDetail {
+  huntId: number;
+  requirements: Requirements['requirements'];
+  dateActivated: string;
+  dateCompleted: string | null;
+  status: string;
+  totalScoredHuntables: number;
+}
+
+export interface HuntStats {
+  huntId: number;
+  totalHuntables: number;
+  totalHuntablesContacted: number;
+  totalHuntablesInterested: number;
+}
+
+export interface HuntCandidate {
+  status: string;
+  huntable: Candidate;
+  score: number;
+}
+
+export interface HuntCandidatesResponse {
+  items: HuntCandidate[];
+  total: number;
+  page: number;
+  size: number;
+  totalPages: number;
 }
 
 // ─── AUTH STORE ───────────────────────────────────────────────────────────────
@@ -450,6 +501,32 @@ class HuntResource extends BaseResource {
   async getRequirements(id: number): Promise<Requirements['requirements']> {
     const url = new URL(`${this.path}/requirements/${id}`, this.client.baseUrl);
     return this.request<Requirements['requirements']>('GET', url.toString()) as Promise<Requirements['requirements']>;
+  }
+
+  // GET /api/v1/hunts
+  async getHunts(page: number = 0, size: number = 20): Promise<HuntsResponse> {
+    const url = new URL('/api/v1/hunts', this.client.baseUrl);
+    url.search = new URLSearchParams({ page: page.toString(), size: size.toString() }).toString();
+    return this.request<HuntsResponse>('GET', url.toString()) as Promise<HuntsResponse>;
+  }
+
+  // GET /api/v1/hunts/{id}
+  async getHuntById(id: number): Promise<HuntDetail> {
+    const url = new URL(`/api/v1/hunts/${id}`, this.client.baseUrl);
+    return this.request<HuntDetail>('GET', url.toString()) as Promise<HuntDetail>;
+  }
+
+  // GET /api/v1/hunts/{id}/stats
+  async getHuntStats(id: number): Promise<HuntStats> {
+    const url = new URL(`/api/v1/hunts/${id}/stats`, this.client.baseUrl);
+    return this.request<HuntStats>('GET', url.toString()) as Promise<HuntStats>;
+  }
+
+  // GET /api/v1/hunts/{id}/candidates
+  async getHuntCandidates(id: number, page: number = 0, size: number = 20): Promise<HuntCandidatesResponse> {
+    const url = new URL(`/api/v1/hunts/${id}/candidates`, this.client.baseUrl);
+    url.search = new URLSearchParams({ page: page.toString(), size: size.toString() }).toString();
+    return this.request<HuntCandidatesResponse>('GET', url.toString()) as Promise<HuntCandidatesResponse>;
   }
 }
 

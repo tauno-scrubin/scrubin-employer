@@ -9,6 +9,8 @@
 	import Button from "$lib/components/ui/button/button.svelte";
 	import AnalyzingOverlay from "@/components/dashboard/analyzingOverlay.svelte";
 	import SearchHistory from "@/components/dashboard/searchHistory.svelte";
+	import * as Tabs from "$lib/components/ui/tabs/index.js";
+	import HuntsList from "@/components/dashboard/huntsList.svelte";
 
 	let searchViewComponent: SearchView;
 	let isLoading = $state(false);
@@ -53,6 +55,8 @@
 	onMount(() => {
 		loadSearchHistory();
 	});
+
+	let selectedTab = $state('hunts');
 </script>
   
 <SEO 
@@ -76,7 +80,19 @@
 
 
 	{#if !isSearchActive}
-		<SearchHistory onSearchWorkers={handleRerunSearch}/>
+	<Tabs.Root value={selectedTab} class="w-full">
+		<Tabs.List class="grid w-fit grid-cols-2 ">
+		  <Tabs.Trigger value="hunts">Hunts</Tabs.Trigger>
+		  <Tabs.Trigger value="history">History</Tabs.Trigger>
+		</Tabs.List>
+		<Tabs.Content value="hunts">
+		  <HuntsList/>
+		</Tabs.Content>
+		<Tabs.Content value="history">
+			<SearchHistory onSearchWorkers={handleRerunSearch}/>
+		</Tabs.Content>
+	  </Tabs.Root>
+		
 	{/if}
 
 	

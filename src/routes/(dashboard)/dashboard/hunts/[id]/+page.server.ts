@@ -11,11 +11,17 @@ export const load: PageServerLoad = async ({ params, locals }) => {
         const huntId = parseInt(params.id);
         
         // Get hunt details
-        const hunt = await locals.scrubinClient.hunt.getRequirements(huntId);
+        const [hunt, stats, candidates] = await Promise.all([
+            locals.scrubinClient.hunt.getHuntById(huntId),
+            locals.scrubinClient.hunt.getHuntStats(huntId),
+            locals.scrubinClient.hunt.getHuntCandidates(huntId)
+        ]);
 
         
         return {
-            hunt
+            hunt,
+            stats,
+            candidates
         };
     } catch (err) {
         console.error('Error loading hunt data:', err);

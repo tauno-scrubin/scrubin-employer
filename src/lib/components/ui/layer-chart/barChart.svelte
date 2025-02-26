@@ -17,8 +17,10 @@
 
     let options = $derived(getOptions());
     function getOptions() {
+        if (!byDay || byDay.length === 0) return {};
+        
         // Find min and max dates from the data
-        const dates = byDay.map(item => new Date(item.date));
+        const dates = byDay.map(item => new Date(item.date).getTime());
         const minDate = new Date(Math.min(...dates));
         const maxDate = new Date(Math.max(...dates));
         
@@ -50,7 +52,7 @@
                 containLabel: true
             },
             xAxis: {
-                type: 'category',
+                type: 'category' as const,
                 data: timelineDates,
                 axisLabel: {
                     formatter: (value: string) => {
