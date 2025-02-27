@@ -262,7 +262,7 @@ class AuthStore {
   }
 
   async refresh(baseUrl: string): Promise<boolean> {
-    if (!this.refreshToken) {
+    if (!this.rToken) {
       throw new Error('No refresh token available');
     }
     console.log("refreshing token");
@@ -280,8 +280,8 @@ class AuthStore {
     }
 
     const data: AuthResponse = await response.json();
-    this.refreshToken = data.refresh_token;
-    this.accessToken = data.access_token;
+    this.setRefreshToken(data.refresh_token);
+    this.setAccessToken(data.access_token);
     return true;
   }
 
@@ -546,9 +546,34 @@ export class ScrubinClient {
   }
 
   public async ensureAuth(): Promise<boolean> {
-    if (!this.authStore.isValid) {
-      await this.authStore.refresh(this.baseUrl);
+    // Add a buffer time (e.g., 60 seconds) to refresh before actual expiration
+    const shouldRefresh = () => {
+      if (!this.authStore.token) return false;
+      try {
+        const payload = this.authStore.model;
+        if (!payload) return false;
+        
+        // Refresh if token expires in less than 60 seconds
+        const expiresAt = new Date(payload.exp * 1000);
+        const now = new Date();
+        const bufferTime = 60 * 1000; // 60 seconds in milliseconds
+        
+        return expiresAt.getTime() - now.getTime() < bufferTime;
+      } catch {
+        return false;
+      }
+    };
+
+    // If token is invalid or about to expire, refresh it
+    if (!this.authStore.isValid || shouldRefresh()) {
+      try {
+        await this.authStore.refresh(this.baseUrl);
+      } catch (error) {
+        console.error("Token refresh failed:", error);
+        return false;
+      }
     }
+    
     return !!this.authStore.token;
   }
 
