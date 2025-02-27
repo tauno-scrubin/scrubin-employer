@@ -12,13 +12,17 @@
 	import { toast } from "svelte-sonner";
 	import { slide } from "svelte/transition";
 	import ShimmerButton from "../shimmerButton.svelte";
+	import { onMount } from "svelte";
+	import { goto } from "$app/navigation";
   
 
     let {
+		redirect = false,
         onSearchWorkers = undefined,
         onSearchComplete = () => {},
         onNewSearch = () => {}
     }: {
+		redirect?: boolean,
         onSearchWorkers?: (searchText: string) => void,
         onSearchComplete?: () => void,
         onNewSearch?: () => void
@@ -38,6 +42,10 @@
     
   
 	export async function searchWorkers(inputText?: string) {
+		if (redirect) {
+			goto("/dashboard/search?search=" + searchText);
+			return
+		}
 	  const textToSearch = inputText || searchText;
 	  if (!textToSearch.trim()) return;
 	  visible.set(true);

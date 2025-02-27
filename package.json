@@ -50,6 +50,7 @@
 		"zod": "^3.24.1"
 	},
 	"dependencies": {
+		"@stripe/stripe-js": "^5.7.0",
 		"lottie-web": "^5.12.2"
 	}
 }

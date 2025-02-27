@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { Separator } from "$lib/components/ui/separator";
 	import AppSidebar from "@/components/app-sidebar.svelte";
+	import AnalyzingOverlay from "@/components/dashboard/analyzingOverlay.svelte";
 	import * as Breadcrumb from "@/components/ui/breadcrumb";
 	import * as Sidebar from "@/components/ui/sidebar";
 	import { Toaster } from "@/components/ui/sonner";
@@ -17,7 +18,7 @@
 </script>
 <ModeWatcher />
 <Toaster />
-
+<AnalyzingOverlay/>
 <Sidebar.Provider>
 	<AppSidebar user={data.user} />
 	<Sidebar.Inset>

@@ -10,6 +10,8 @@
 	import { User, Phone, Mail, Asterisk, Building2, MapPin } from "lucide-svelte";
 	import { toast } from "svelte-sonner";
 	import { PUBLIC_ORIGIN } from "$env/static/public";
+	import * as Select from "$lib/components/ui/select/index.js";
+
 
 	let user: PortalUser | null = $state(null);
 	let companyProfile: Company | null = $state(null);
@@ -22,15 +24,18 @@
 	let isSavingPassword = $state(false);
 	let isLoadingAdvertiser = $state(true);
 	let isSavingCompany = $state(false);
+	let countries = $state<string[]>([]);
 
 	onMount(async () => {
 		try {
-			const [userResult, advertiserResult] = await Promise.all([
+			const [userResult, advertiserResult, countriesResult] = await Promise.all([
 				Promise.resolve($currentUser),
-				scrubinClient.company.getCompany()
+				scrubinClient.company.getCompany(),
+				scrubinClient.company.getCountries()
 			]);
 			user = userResult;
 			companyProfile = advertiserResult;
+			countries = countriesResult;
 		} catch (error) {
 			console.error('Error fetching data:', error);
 			toast.error('Failed to load details');
@@ -300,12 +305,21 @@
 							<Label for="country">Country</Label>
 							<div class="relative">
 								<MapPin class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-								<Input
-									id="country"
-									bind:value={companyProfile.address.country}
-									class="pl-9"
-									placeholder="Enter country"
-								/>
+								<Select.Root type="single"
+									value={companyProfile.country} 
+									onValueChange={(value) => companyProfile.country = value}
+								>
+									<Select.Trigger class="w-full pl-9">
+									{companyProfile.country ? companyProfile.country : 'Select a country'}
+									</Select.Trigger>
+									<Select.Content>
+										<Select.Group>
+											{#each countries as country}
+												<Select.Item value={country}>{country}</Select.Item>
+											{/each}
+										</Select.Group>
+									</Select.Content>
+								</Select.Root>
 							</div>
 						</div>
 
@@ -354,7 +368,7 @@
 							{#if isSavingCompany}
 								<span class="loading loading-spinner loading-sm mr-2"></span>
 							{/if}
-							Save Advertiser Details
+							Save
 						</Button>
 					</div>
 				</form>

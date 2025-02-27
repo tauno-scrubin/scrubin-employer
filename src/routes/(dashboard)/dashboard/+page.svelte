@@ -56,7 +56,6 @@
 		loadSearchHistory();
 	});
 
-	let selectedTab = $state('hunts');
 </script>
   
 <SEO 
@@ -67,12 +66,13 @@
 	type="website"
 	canonicalUrl="https://yourwebsite.com/worker-search" />
 
-<AnalyzingOverlay/>
+
   
 <div class="space-y-2 max-w-screen-xl mx-auto w-full">
 
 	<!-- Search View -->
 	<SearchView 
+		redirect={true}
 		bind:this={searchViewComponent} 
 		onSearchComplete={handleSearchComplete}
 		onNewSearch={handleNewSearch}
@@ -80,19 +80,14 @@
 
 
 	{#if !isSearchActive}
-	<Tabs.Root value={selectedTab} class="w-full">
-		<Tabs.List class="grid w-fit grid-cols-2 ">
-		  <Tabs.Trigger value="hunts">Hunts</Tabs.Trigger>
-		  <Tabs.Trigger value="history">History</Tabs.Trigger>
-		</Tabs.List>
-		<Tabs.Content value="hunts">
-		  <HuntsList/>
-		</Tabs.Content>
-		<Tabs.Content value="history">
-			<SearchHistory onSearchWorkers={handleRerunSearch}/>
-		</Tabs.Content>
-	  </Tabs.Root>
-		
+	<div class="grid grid-cols-6 gap-4">
+		<div class="col-span-4">
+			<HuntsList/>
+		</div>
+		<div class="col-span-2">
+			<SearchHistory/>
+		</div>
+	</div>
 	{/if}
 
 	

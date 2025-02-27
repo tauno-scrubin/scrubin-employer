@@ -115,6 +115,7 @@ export interface Requirements {
     jobRequiredQualifications: string;
     jobRequiredWorkExperience: number;
     jobRequiredLanguages: string[];
+    numberOfCandidates: number;
     jobDescription: string;
     country: string;
     address: {
@@ -197,6 +198,27 @@ export interface HuntCandidatesResponse {
   page: number;
   size: number;
   totalPages: number;
+}
+
+// Add new interfaces for billing and payment
+export interface CompanyBilling {
+  stripeCustomerId: string;
+  stripePaymentMethodId: string;
+}
+
+export interface CompanyBillingRequest {
+  stripeCustomerId?: string;
+  stripePaymentMethodId?: string;
+}
+
+export interface PaymentIntent {
+  clientSecret: string;
+  paymentIntentId: string;
+}
+
+export interface HuntPaymentResponse extends PaymentIntent {
+  hunt?: Hunt;
+  paymentStatus?: string;
 }
 
 // ─── AUTH STORE ───────────────────────────────────────────────────────────────
@@ -460,6 +482,21 @@ class CompanyResource extends BaseResource {
     const url = new URL(this.path, this.client.baseUrl);
     return this.request<Company>('PUT', url.toString(), data) as Promise<Company>;
   }
+
+  async getCountries(): Promise<string[]> {
+    const url = new URL(`/api/v1/data/countries`, this.client.baseUrl);
+    return this.request<string[]>('GET', url.toString()) as Promise<string[]>;
+  }
+
+  async getBilling(): Promise<CompanyBilling> {
+    const url = new URL(`${this.path}/billing`, this.client.baseUrl);
+    return this.request<CompanyBilling>('GET', url.toString()) as Promise<CompanyBilling>;
+  }
+
+  async updateBillingStripe(data: CompanyBillingRequest): Promise<CompanyBilling> {
+    const url = new URL(`${this.path}/billing/stripe`, this.client.baseUrl);
+    return this.request<CompanyBilling>('PATCH', url.toString(), data) as Promise<CompanyBilling>;
+  }
 }
 
 // Hunt endpoints
@@ -527,6 +564,27 @@ class HuntResource extends BaseResource {
     const url = new URL(`/api/v1/hunts/${id}/candidates`, this.client.baseUrl);
     url.search = new URLSearchParams({ page: page.toString(), size: size.toString() }).toString();
     return this.request<HuntCandidatesResponse>('GET', url.toString()) as Promise<HuntCandidatesResponse>;
+  }
+
+  // POST /api/v1/hunt/requirements/{id}/create-hunt
+  async createHuntFromRequirements(id: number): Promise<HuntDetail> {
+    const url = new URL(`${this.path}/requirements/${id}/create-hunt`, this.client.baseUrl);
+    return this.request<HuntDetail>('POST', url.toString()) as Promise<HuntDetail>;
+  }
+
+  // POST /api/v1/hunts/{id}/payment-intent
+  async createPaymentIntent(id: number): Promise<PaymentIntent> {
+    const url = new URL(`/api/v1/hunts/${id}/payment-intent`, this.client.baseUrl);
+    return this.request<PaymentIntent>('POST', url.toString()) as Promise<PaymentIntent>;
+  }
+
+  // POST /api/v1/hunts/{id}/activate
+  async activateHunt(id: number, paymentIntentId: string, paymentMethodId: string): Promise<HuntPaymentResponse> {
+    const url = new URL(`/api/v1/hunts/${id}/activate`, this.client.baseUrl);
+    return this.request<HuntPaymentResponse>('POST', url.toString(), {
+      paymentIntentId,
+      paymentMethodId
+    }) as Promise<HuntPaymentResponse>;
   }
 }
 

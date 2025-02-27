@@ -5,12 +5,8 @@
 	import { Loader2, ArrowRight, Clock, Search, History } from 'lucide-svelte';
 	import { onMount } from 'svelte';
 	import Button from '../ui/button/button.svelte';
+	import { goto } from '$app/navigation';
 
-    let {
-        onSearchWorkers
-    }: {
-        onSearchWorkers: (searchText: string) => void
-    } = $props();
 
 	let isLoading = $state(false);
 	let searchHistory: WorkerLookup[] = $state([]);
@@ -28,7 +24,7 @@
 	}
 
 	function handleRerunSearch(searchText: string) {
-        onSearchWorkers(searchText);
+		goto("/dashboard/search?search=" + searchText);
 	}
 
 	function formatDate(dateString: string) {
