@@ -58,7 +58,16 @@
 
         <div>
             <h1 class="text-2xl font-bold tracking-tight">{hunt.requirements.jobTitle}</h1>
-            <p class="text-sm text-muted-foreground">{hunt.requirements.address.city}, {hunt.requirements.address.stateProvinceRegion}</p>
+            {#if hunt.requirements.address}
+            <p class="text-sm text-muted-foreground">
+                {#if hunt.requirements.address.city}
+                    {hunt.requirements.address.city}, 
+                {/if}
+                {#if hunt.requirements.address.stateProvinceRegion}
+                    {hunt.requirements.address.stateProvinceRegion}
+                {/if}
+            </p>
+            {/if}
         </div>
     </div>
 
