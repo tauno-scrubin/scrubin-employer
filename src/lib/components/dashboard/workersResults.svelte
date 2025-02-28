@@ -72,10 +72,12 @@
 
   </script>
 
+{#if showResults}
 <div class="fixed bottom-4 left-1/2 sm:left-[55vw] -translate-x-1/2 flex items-center px-3 py-1.5 bg-gray-100/60 backdrop-blur-sm rounded-full text-sm font-medium z-10">
   <User class="w-4 h-4 mr-1.5 text-primary" />
   <span>{selectedWorkersCount}/{MAX_SELECTED_WORKERS} selected</span>
 </div>
+{/if}
   
   <div class="flex flex-col gap-2 items-center w-full mb-2 pb-7">
     {#if showResults}

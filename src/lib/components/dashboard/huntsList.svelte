@@ -57,7 +57,7 @@
 </script>
 
 
-<h2 class="text-2xl font-medium text-gray-800 mb-4">Headhunts</h2>
+<h2 class="text-2xl font-medium text-gray-800 mb-4">Headhunting</h2>
 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
 	{#if isLoading}
 		<div class="col-span-full flex justify-center items-center h-40">
