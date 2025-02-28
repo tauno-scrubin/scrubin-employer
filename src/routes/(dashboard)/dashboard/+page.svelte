@@ -11,6 +11,7 @@
 	import SearchHistory from "@/components/dashboard/searchHistory.svelte";
 	import * as Tabs from "$lib/components/ui/tabs/index.js";
 	import HuntsList from "@/components/dashboard/huntsList.svelte";
+	import Separator from "@/components/ui/separator/separator.svelte";
 
 	let searchViewComponent: SearchView;
 	let isLoading = $state(false);
@@ -84,7 +85,9 @@
 		<div class="col-span-4">
 			<HuntsList/>
 		</div>
-		<div class="col-span-2">
+		
+		<div class="col-span-2 border-l pl-4 border-opacity-50">
+			
 			<SearchHistory/>
 		</div>
 	</div>
