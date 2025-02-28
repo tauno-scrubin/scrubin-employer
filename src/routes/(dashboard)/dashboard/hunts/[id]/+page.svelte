@@ -23,6 +23,7 @@
 	import SingleWorker from "@/components/dashboard/singleWorker.svelte";
 	import { page } from "$app/state";
 	import { formatStatus, getStatusColor } from "@/components/payment/payments.js";
+	import Separator from "@/components/ui/separator/separator.svelte";
 
     let { data } = $props();
     let hunt = $derived(data.hunt);
@@ -227,10 +228,13 @@
             height="400px"
         /> -->
 
+        <Separator class="mb-2" />
         <h4 class="text-gray-900 text-xl font-semibold">Candidates</h4>
-
-       <p class="text-gray-500 text-sm">We're on the Hunt for Great Talent!
-        No interested candidates yet, but we're reaching out to professionals who fit your needs. Check back soon! We'll let you know as soon as we have updates.</p>
+  
+    <div class="flex flex-col gap-2">
+        <p class="text-gray-900 font-semibold text-lg">We're on the Hunt for Great Talent!</p>
+        <p class="text-gray-500 text-sm">No interested candidates yet, but we're reaching out to professionals who fit your needs. Check back soon! We'll let you know as soon as we have updates.</p>
+    </div>
     </div>
         </div>
         </Tabs.Content>

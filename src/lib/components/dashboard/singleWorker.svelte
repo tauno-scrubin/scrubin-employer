@@ -2,12 +2,23 @@
   import * as Card from "$lib/components/ui/card";
 	import type { Candidate } from "@/scrubinClient";
   import { Checkbox } from "$lib/components/ui/checkbox/index.js";
-  import { User, Briefcase, MapPin, Globe, Calendar1, BadgeCheck, Clock, Check, Percent, Languages } from "lucide-svelte";
+  import { User, Briefcase, MapPin, Globe, Calendar1, BadgeCheck, Clock, Check, Percent, Languages, Heart } from "lucide-svelte";
+	import Button from "../ui/button/button.svelte";
 
   let { worker, status, allowSelection, checked = $bindable(), onSelect, disabled = $bindable() } : { worker: Candidate, status?: string, allowSelection?: boolean, checked?: boolean, onSelect?: (worker: Candidate) => void, disabled?: boolean} = $props();
+
+  function toggleSelection() {
+    if (!disabl) {
+      onSelect?.(worker);
+    }
+  }
+
+  let disabl = $derived(allowSelection && disabled && !checked)
+
 </script>
 
-<Card.Root class="overflow-hidden hover:shadow-md transition-all duration-300 border border-gray-200 h-full justify-between flex flex-col">
+
+<Card.Root onclick={toggleSelection} class="overflow-hidden {allowSelection ? 'cursor-pointer' : 'cursor-default'} {disabl ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'} hover:shadow-md transition-all duration-300 border border-gray-200 h-full justify-between flex flex-col">
     <!-- Card Header -->
     <Card.Header class="p-4 pb-3 border-b bg-white relative">
       <div class="flex items-center gap-3">
@@ -24,7 +35,9 @@
         </div>
         {#if allowSelection}
         <div class="absolute top-2 right-2">
-            <Checkbox disabled={disabled && !checked} checked={checked} onCheckedChange={() => onSelect?.(worker)}/>
+          <Button disabled={disabled && !checked} variant="ghost" size="icon" class="p-1 rounded-full disabled:cursor-not-allowed">
+            <Heart fill={checked ? 'currentColor' : 'none'} class="w-4 h-4  {checked ? 'text-red-500' : 'text-gray-400'} " />
+          </Button>
           </div>
         {/if}
       </div>
@@ -62,12 +75,18 @@
         </div>
       {/if}
       
-      {#if worker.totalWorkExperience}
+
         <div class="flex items-center">
           <Briefcase class="w-4 h-4 mr-2 text-gray-400 flex-shrink-0" />
-          <span class="text-xs">Total Work Experience: <span class="font-medium text-gray-700">{worker.totalWorkExperience} yrs</span></span>
+          <span class="text-xs">Total Work Experience: 
+            {#if worker.totalWorkExperience}
+            <span class="font-medium text-gray-700">{worker.totalWorkExperience} yrs</span>
+            {:else}
+              <span class="font-medium text-gray-700">Not specified</span>
+            {/if}
+          </span>
         </div>
-      {/if}
+
       
       {#if worker.preferredSpeciality && worker.preferredSpeciality.length > 0}
         <div class="flex items-start">

@@ -2,7 +2,7 @@
 	import { currentUser, scrubinClient } from "@/scrubinClient/client";
 	import type { Candidate, AnalyzeResponse, Requirements } from "@/scrubinClient";
 	import * as Card from "$lib/components/ui/card/index.js";
-	import { ChevronRight, Loader2, Sparkle, Star, Users } from "lucide-svelte";
+	import { ChevronRight, Loader2, Search, Sparkle, Star, Users } from "lucide-svelte";
 	import Button from "@/components/ui/button/button.svelte";
 	import WorkersResults from "@/components/dashboard/workersResults.svelte";
 	import Input from "@/components/ui/input/input.svelte";
@@ -94,7 +94,7 @@
                 const result = await scrubinClient.hunt.createJobRequirements(workerLookupId, favoriteCandidateIds);
 				//goto(`/dashboard/hunts/requirements/${result.requirements.id}`);
                 requirements = result;
-                console.log(result);
+
             } catch (error) {
                 toast.error("Error analyzing requirements: " + error);
                 console.error("Error analyzing requirements:", error);
@@ -125,7 +125,7 @@
 			maxlength={200}
 			onfocus={() => inputFocused = true}
 			onblur={() => !searchText && (inputFocused = false)}
-			placeholder="I'm looking family medicine nurses to work in australia"
+			placeholder="I am looking for 2 General Practitioners from UK, with MRCGP, who speak English. Salary for full-time position would be $300k per year."
 			class="flex-1 p-0 shadow-none border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 px-0 resize-none" />
 			
 			{#if inputFocused}
@@ -183,6 +183,7 @@
 		</div>
 	  </div>
 	  {/if}
+	  
 
 	</div>
   
@@ -199,6 +200,18 @@
 		bind:requirements={requirements}
 	  />
 	{/if}
+
+	{#if healthcareWorkers.length === 0 && !isLoading && showResults}
+		<div class="flex flex-col items-center justify-center p-8 bg-white rounded-lg border shadow-sm mt-4">
+			<div class="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center mb-4">
+				<Search class="w-6 h-6 text-gray-400" />
+			</div>
+			<h3 class="text-lg font-medium text-gray-900 mb-2">No matches found</h3>
+			<p class="text-sm text-gray-500 text-center max-w-md mb-4">
+				We couldn't find any healthcare workers matching your criteria. Try adjusting your search parameters or broadening your requirements.
+			</p>
+		</div>
+	  {/if}
 	<!-- Requirements exist -->
 	{:else}
 		<ChatWindow bind:requirements={requirements} />

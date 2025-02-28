@@ -1,7 +1,7 @@
 <script lang="ts">
     import { slide } from 'svelte/transition';
     import { onMount } from 'svelte';
-    import { Loader2, CalendarCheck, User, Globe, Briefcase, MapPin, Calendar1, Check, Clock, ArrowRight, ArrowLeft, ChevronRight, Users, BadgeCheck } from 'lucide-svelte';
+    import { Loader2, CalendarCheck, User, Globe, Briefcase, MapPin, Calendar1, Check, Clock, ArrowRight, ArrowLeft, ChevronRight, Users, BadgeCheck, CircleHelp, Info } from 'lucide-svelte';
     import Button from '@/components/ui/button/button.svelte';
     import * as Card from '$lib/components/ui/card/index.js';
 	import type { Candidate, Requirements } from '@/scrubinClient';
@@ -49,7 +49,7 @@
     });
 
     let canNotSelectMoreWorkers = $derived(Object.values(selectedWorkers).filter(Boolean).length >= MAX_SELECTED_WORKERS);
-
+    let selectedWorkersCount = $derived(Object.values(selectedWorkers).filter(Boolean).length);
     // Compute which items to display on desktop. On mobile, show all.
     let displayedWorkers = $derived(isDesktop 
       ? healthcareWorkers.slice(currentIndex, currentIndex + 3)
@@ -71,8 +71,13 @@
     
 
   </script>
+
+<div class="fixed bottom-4 left-1/2 sm:left-[55vw] -translate-x-1/2 flex items-center px-3 py-1.5 bg-gray-100/60 backdrop-blur-sm rounded-full text-sm font-medium z-10">
+  <User class="w-4 h-4 mr-1.5 text-primary" />
+  <span>{selectedWorkersCount}/{MAX_SELECTED_WORKERS} selected</span>
+</div>
   
-  <div class="flex flex-col gap-2 items-center w-full mb-2">
+  <div class="flex flex-col gap-2 items-center w-full mb-2 pb-7">
     {#if showResults}
       <div transition:slide class="w-full mt-2">
         {#if !isSearching}
@@ -81,7 +86,9 @@
           <!-- Carousel Navigation -->
           {#if healthcareWorkers.length > 3}
           <div class="flex items-center justify-between gap-2 mb-3">
-            <p class="text-sm text-gray-500 max-w-2xl">Select up to 10 favorite profiles to refine your recommendations. This helps us understand your preferences and suggest similar candidates that best match your needs!</p>
+            <p class="text-sm text-blue-500  p-2 border rounded-md bg-blue-50/50 border-blue-500 flex items-center gap-2">
+              <Info class="w-4 h-4 flex-shrink-0" />
+              Select up to 10 favorite profiles to refine your recommendations. This helps us understand your preferences and suggest similar candidates that best match your needs!</p>
             <div class="flex items-center justify-end gap-2">
               <Button 
                 variant="outline" 
