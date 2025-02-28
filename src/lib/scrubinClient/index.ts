@@ -24,6 +24,7 @@ export interface PortalUser {
   firstName: string;
   lastName: string;
   phoneNumber: string;
+  calendarLink: string;
   passwordSet: boolean;
 }
 
@@ -31,6 +32,7 @@ export interface UpdatePortalUser {
   firstName: string;
   lastName: string;
   phoneNumber: string;
+  calendarLink: string;
 }
 
 export interface UpdatePortalUserPassword {
@@ -77,7 +79,10 @@ export interface WorkerLookupsResponse {
 }
 
 export interface Candidate {
+  id: string;
   professions: string[];
+  languages: string[];
+  verifications: string[];
   professionRegistrationCountry: string;
   speciality: string[];
   recentlyActive: boolean;
@@ -146,6 +151,14 @@ export interface Requirements {
     description: string;
     title: string;
   }>;
+  hiringPlan: {
+    hiringDemand: number;
+    hiringMinimumPeriodInMonths: number;
+    hiringInitialPriceForOneCandidate?: {
+      amount: number;
+      currency: string;
+    };
+  };
   chatHistory?: Array<{
     role: string;
     content: string;
@@ -518,9 +531,9 @@ class HuntResource extends BaseResource {
   }
 
   // POST /api/v1/hunt/requirements/analyze
-  async createJobRequirements(workerLookupId: number): Promise<Requirements> {
+  async createJobRequirements(workerLookupId: number, favoriteCandidateIds: string[]): Promise<Requirements> {
     const url = new URL(`${this.path}/requirements/create`, this.client.baseUrl);
-    return this.request<Requirements>('POST', url.toString(), { workerLookupId }) as Promise<Requirements>;
+    return this.request<Requirements>('POST', url.toString(), { workerLookupId, favoriteCandidateIds }) as Promise<Requirements>;
   }
 
   // PUT /api/v1/hunt/requirements/{id}/analyze

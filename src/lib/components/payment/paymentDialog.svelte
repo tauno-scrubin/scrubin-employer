@@ -4,16 +4,23 @@
 	import StripeFields from "./stripeFields.svelte";
 	import { payWithStripe } from "./payments";
 	import { toast } from "svelte-sonner";
+    import * as Dialog from "$lib/components/ui/dialog/index.js";
+	import { onMount } from "svelte";
+
 
 
     let {
         huntId,
         amount,
-        statement
+        open = $bindable(false),
+        statement,
+        onSuccess
     } : {
         huntId: number,
         amount: number,
-        statement?: string
+        open?: boolean,
+        statement?: string,
+        onSuccess: (huntId: number) => void
     } = $props()
 
     let stripePaymentFields: StripeFields;
@@ -25,20 +32,33 @@
         errorMessage = '';
         try {
             const paymentMethod = await stripePaymentFields.createPaymentMethod();
-            await payWithStripe(huntId, paymentMethod.id);
+            const result = await payWithStripe(huntId, paymentMethod.id);
+            onSuccess(huntId);
         } catch (error) {
             errorMessage = error instanceof Error ? error.message : 'Payment processing failed';
             toast.error(errorMessage);
             console.error('Payment error:', error);
         } finally {
             paymentProcessing = false;
+            open = false;
         }
     }
+
+    // let cards = $state([]);
+
+    // onMount(async () => {
+    //     const response = await fetch('/api/stripe/get-customer-cards');
+    //     const data = await response.json();
+    //     cards = data.cards;
+
+    //     console.log(cards);
+    // });
 
 
 </script>
 
-
+<Dialog.Root bind:open>
+    <Dialog.Content>
     <div class="space-y-4 rounded-lg border border-neutral-100 bg-neutral-50 p-6 dark:border-gray-700 dark:bg-gray-800 mt-5">
         <StripeFields bind:this={stripePaymentFields} />
 		<div class="space-y-2">
@@ -71,3 +91,5 @@
 		<Loader2 class="w-4 h-4 animate-spin mr-2 {paymentProcessing ? '' : 'hidden'}" />
 		Pay
 	</Button>
+    </Dialog.Content>
+  </Dialog.Root>

@@ -37,7 +37,7 @@
 	let healthcareWorkers: Candidate[] = $state([]);
 	let totalItems: number = $state(0);
 	let showResults: boolean = $state(false);
-	let userName: string = $state("User");
+	let selectedWorkers: Record<string, boolean> = $state({});
 
     
   
@@ -83,9 +83,16 @@
 	async function nextStep() {
         if (workerLookupId) {
             try {
+				const favoriteCandidateIds = Object.keys(selectedWorkers).filter(key => selectedWorkers[key]);
+				if (favoriteCandidateIds.length === 0) {
+					toast.error("Please select at least one candidate");
+					return;
+				}
                 visible.set(true);
                 isLoadingNextStep = true;
-                const result = await scrubinClient.hunt.createJobRequirements(workerLookupId);
+				
+                const result = await scrubinClient.hunt.createJobRequirements(workerLookupId, favoriteCandidateIds);
+				//goto(`/dashboard/hunts/requirements/${result.requirements.id}`);
                 requirements = result;
                 console.log(result);
             } catch (error) {
@@ -182,6 +189,7 @@
 	<!-- Results Card (shown when a search has been performed) -->
 	{#if healthcareWorkers}
 	  <WorkersResults 
+		bind:selectedWorkers={selectedWorkers}
 		bind:healthcareWorkers={healthcareWorkers}
 		bind:workerLookupId={workerLookupId}
 		bind:totalItems={totalItems}

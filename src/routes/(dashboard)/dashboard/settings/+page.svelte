@@ -7,7 +7,7 @@
 	import { Button } from "$lib/components/ui/button";
 	import { Input } from "$lib/components/ui/input";
 	import { Label } from "$lib/components/ui/label";
-	import { User, Phone, Mail, Asterisk, Building2, MapPin } from "lucide-svelte";
+	import { User, Phone, Mail, Asterisk, Building2, MapPin, Calendar } from "lucide-svelte";
 	import { toast } from "svelte-sonner";
 	import { PUBLIC_ORIGIN } from "$env/static/public";
 	import * as Select from "$lib/components/ui/select/index.js";
@@ -52,7 +52,8 @@
 			await scrubinClient.portal.updateUser({
 				firstName: user.firstName,
 				lastName: user.lastName,
-				phoneNumber: user.phoneNumber
+				phoneNumber: user.phoneNumber,
+				calendarLink: user.calendarLink
 			});
 			currentUser.set(user);
 			toast.success('Settings updated successfully');
@@ -87,10 +88,10 @@
 		isSavingCompany = true;
 		try {
 			await scrubinClient.company.updateCompany(companyProfile);
-			toast.success('Advertiser settings updated successfully');
+			toast.success('Settings updated successfully');
 		} catch (error) {
-			console.error('Error updating advertiser:', error);
-			toast.error( error instanceof Error ? error.message : 'Failed to update advertiser settings');
+			console.error('Error updating:', error);
+			toast.error( error instanceof Error ? error.message : 'Failed to update settings');
 		} finally {
 			isSavingCompany = false;
 		}
@@ -172,6 +173,20 @@
 									bind:value={user.phoneNumber}
 									class="pl-9"
 									placeholder="Enter your phone number"
+								/>
+							</div>
+						</div>
+
+
+						<div class="space-y-2">
+							<Label for="calendarLink">Calendar Link</Label>
+							<div class="relative">
+								<Calendar class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+								<Input
+									id="calendarLink"
+									bind:value={user.calendarLink}
+									class="pl-9"
+									placeholder="Enter your calendar link (e.g. google calendar, cal.com, calendly )"
 								/>
 							</div>
 						</div>

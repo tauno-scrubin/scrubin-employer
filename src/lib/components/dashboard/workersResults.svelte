@@ -11,18 +11,7 @@
 	import SingleWorker from './singleWorker.svelte';
     
     // Dummy translations (replace with your localization logic)
-    const resultsFound = "Results Found";
-    const resultsFoundDesc = "Total matching candidates";
-    const talkToSales = "Next step";
-    const registrationCountryText = "Registration Country";
-    const totalWorkExpText = "Total Work Experience";
-    const preferredSpecialityText = "Preferred Speciality";
-    const preferredLocationsText = "Preferred Locations";
-    const lookingForWorkInText = "Looking for Work in";
-    const availabilityText = "Availability";
-    const verifiedText = "Verified";
-    const recentlyActiveText = "Recently Active";
-    const seeMoreText = "See More";
+    let MAX_SELECTED_WORKERS = 10;
     const moreResultsText = "More results available";
     
     let {
@@ -32,7 +21,8 @@
         showResults = $bindable(true),
         workerLookupId = $bindable(),
         searchString = $bindable(""),
-        requirements = $bindable<Requirements | null>(null)
+        requirements = $bindable<Requirements | null>(null),
+        selectedWorkers = $bindable<Record<string, boolean>>({})
     }: {
         healthcareWorkers: Candidate[]
         totalItems: number
@@ -41,6 +31,7 @@
         workerLookupId: number | null
         searchString: string
         requirements: Requirements | null
+        selectedWorkers: Record<string, boolean>
     } = $props();
     
     
@@ -56,7 +47,9 @@
       window.addEventListener('resize', updateWidth);
       return () => window.removeEventListener('resize', updateWidth);
     });
-    
+
+    let canNotSelectMoreWorkers = $derived(Object.values(selectedWorkers).filter(Boolean).length >= MAX_SELECTED_WORKERS);
+
     // Compute which items to display on desktop. On mobile, show all.
     let displayedWorkers = $derived(isDesktop 
       ? healthcareWorkers.slice(currentIndex, currentIndex + 3)
@@ -74,9 +67,8 @@
       }
     }
 
-    // Add loading state for next step button
-    let isLoadingNextStep = $state(false);
 
+    
 
   </script>
   
@@ -87,8 +79,10 @@
           <!-- Search Results Header - Improved design -->
           
           <!-- Carousel Navigation -->
-          {#if isDesktop && healthcareWorkers.length > 3}
-            <div class="flex items-center justify-end gap-2 mb-3">
+          {#if healthcareWorkers.length > 3}
+          <div class="flex items-center justify-between gap-2 mb-3">
+            <p class="text-sm text-gray-500 max-w-2xl">Select up to 10 favorite profiles to refine your recommendations. This helps us understand your preferences and suggest similar candidates that best match your needs!</p>
+            <div class="flex items-center justify-end gap-2">
               <Button 
                 variant="outline" 
                 size="icon" 
@@ -108,12 +102,21 @@
                 <ArrowRight class="w-4 h-4" />
               </Button>
             </div>
+          </div>
           {/if}
           
           <!-- Worker Cards Grid -->
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {#each (isDesktop ? displayedWorkers : healthcareWorkers) as worker}
-              <SingleWorker {worker} />
+            {#each (isDesktop ? displayedWorkers : healthcareWorkers) as worker, i (worker.id)}
+              <SingleWorker 
+                {worker} 
+                allowSelection={true} 
+                disabled={canNotSelectMoreWorkers}
+                checked={selectedWorkers[worker.id]}
+                onSelect={(worker) => {
+                  selectedWorkers[worker.id] = !selectedWorkers[worker.id];
+                }}
+              />
             {/each}
           </div>
           

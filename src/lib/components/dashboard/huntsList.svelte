@@ -6,6 +6,7 @@
 	import { onMount } from 'svelte';
 	import Button from '../ui/button/button.svelte';
 	import { goto } from '$app/navigation';
+	import { formatStatus, getStatusColor } from '../payment/payments';
 
     let {
         onViewHunt
@@ -48,6 +49,8 @@
 		});
 	}
 
+
+
 	onMount(() => {
 		loadHunts();
 	});
@@ -57,7 +60,7 @@
 	<Card.Header class="pb-4 pt-4 pl-3.5 border-b">
 		<div class="flex items-center justify-between">
 			<div class="flex items-center gap-2">
-				<Card.Title class="text-base font-medium">Active Hunts</Card.Title>
+				<Card.Title class="text-base font-medium">Hunts</Card.Title>
 			</div>
 		</div>
 	</Card.Header>
@@ -88,8 +91,8 @@
 										<Clock class="w-3 h-3 mr-1 inline" />
 										{formatDate(hunt.dateActivated)} at {formatTime(hunt.dateActivated)}
 									</span>
-									<span class="text-xs bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded-full">
-										{hunt.status}
+									<span class="text-xs {getStatusColor(hunt.status)} px-1.5 py-0.5 rounded-full">
+										{formatStatus(hunt.status)}
 									</span>
 								</div>
 							</div>

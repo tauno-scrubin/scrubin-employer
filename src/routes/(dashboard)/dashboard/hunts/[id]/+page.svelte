@@ -18,10 +18,11 @@
         FileText,
         Sparkle
     } from "lucide-svelte";
-    import { page } from "$app/stores";
     import SearchView from "$lib/components/dashboard/searchView.svelte";
 	import FunnelChart from "@/components/ui/layer-chart/funnelChart.svelte";
 	import SingleWorker from "@/components/dashboard/singleWorker.svelte";
+	import { page } from "$app/state";
+	import { formatStatus, getStatusColor } from "@/components/payment/payments.js";
 
     let { data } = $props();
     let hunt = $derived(data.hunt);
@@ -41,15 +42,19 @@
     ];
     
     let activeTab = $state("details");
+
+    function goToPrevPage() {
+        window.history.back();
+    }
 </script>
 
 <div class="container mx-auto py-6 space-y-6 max-w-7xl">
     <div class="flex items-center gap-4 mb-6">
-        <a href="/dashboard/hunts">
-            <Button variant="outline" size="icon" class="h-9 w-9">
+
+            <Button onclick={goToPrevPage} variant="outline" size="icon" class="h-9 w-9">
                 <ArrowLeft class="h-4 w-4" />
             </Button>
-        </a>
+
         <div>
             <h1 class="text-2xl font-bold tracking-tight">{hunt.requirements.jobTitle}</h1>
             <p class="text-sm text-muted-foreground">{hunt.requirements.address.city}, {hunt.requirements.address.stateProvinceRegion}</p>
@@ -67,16 +72,16 @@
             <div class="flex flex-col gap-4 bg-blue-50/80 p-4 rounded-md">
                 <div class="bg-white rounded-lg  shadow-sm p-4 flex justify-between items-center">
                     <div class="flex items-center gap-3">
-                        <div class="bg-blue-50  p-2 rounded-full">
-                            <Sparkle fill="currentColor" strokeWidth=1 class="w-4 h-4 text-blue-500 animate-[spin_4s_linear_infinite]" />
+                        <div class="{getStatusColor(hunt.status)}  p-2 rounded-full">
+                            <Sparkle fill="currentColor" strokeWidth=1 class="w-4 h-4 {hunt.status === 'ACTIVE' ? 'animate-[spin_4s_linear_infinite]' : ''}" />
                         </div>
                         <div>
-                            <h2 class="font-medium">Active Hunt</h2>
+                            <h2 class="font-medium">Hunt</h2>
                             <p class="text-sm text-muted-foreground">Created on {new Date().toLocaleDateString()}</p>
                         </div>
                     </div>
-                    <Badge variant="outline" class="px-3 py-1 bg-blue-50 text-blue-700 border-transparent">
-                        Active
+                    <Badge variant="outline" class="px-3 py-1 {getStatusColor(hunt.status)} border-transparent">
+                        {formatStatus(hunt.status)}
                     </Badge>
                 </div>
         
@@ -224,11 +229,8 @@
 
         <h4 class="text-gray-900 text-xl font-semibold">Candidates</h4>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {#each data.candidates.items as candidate}
-              <SingleWorker worker={candidate.huntable} status={candidate.status} score={candidate.score} />
-            {/each}
-          </div>
+       <p class="text-gray-500 text-sm">We're on the Hunt for Great Talent!
+        No interested candidates yet, but we're reaching out to professionals who fit your needs. Check back soon! We'll let you know as soon as we have updates.</p>
     </div>
         </div>
         </Tabs.Content>

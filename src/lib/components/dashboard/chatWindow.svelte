@@ -33,6 +33,7 @@
 	} from "lucide-svelte";
 	import { goto } from "$app/navigation";
 	import { visible } from "./overlay";
+	import PaymentDialog from "../payment/paymentDialog.svelte";
 
 	let {
 		requirements = $bindable<Requirements>()
@@ -171,24 +172,33 @@
             
 		}
 	}
+
+
+	let paymentDialogOpen = $state(false);
+	let payableHuntId = $state(0);
 	
 	async function activateRequirements() {
 		if (!requirements.requirements?.id) {
 			toast.error("No requirements ID available.");
 			return;
 		}
-		
 		isActivating = true;
+		paymentDialogOpen = true;
 		try {
-			const response = await scrubinClient.hunt.activateRequirements(requirements.requirements.id);
-			goto("/dashboard/hunts/" + response.huntId);
-			toast.success("Requirements activated successfully!");
+			const response = await scrubinClient.hunt.createHuntFromRequirements(requirements.requirements.id);
+			payableHuntId = response.huntId;
+
 		} catch (error) {
 			console.error("Failed to activate requirements:", error);
 			toast.error("Failed to activate requirements. Please try again.");
 		} finally {
 			isActivating = false;
 		}
+	}
+
+	function onPaymentSuccess(huntId: number) {
+		goto("/dashboard/hunts/" + huntId);
+		toast.success("Requirements activated successfully!");
 	}
 
 	function toggleQuestion(index: number) {
@@ -201,6 +211,8 @@
 		expandedQuestions = new Set(expandedQuestions);
 	}
 </script>
+
+<PaymentDialog  bind:open={paymentDialogOpen} huntId={payableHuntId} amount={requirements.hiringPlan?.hiringInitialPriceForOneCandidate?.amount || 0} onSuccess={onPaymentSuccess}/>
 
 <!-- 
   Container: use flex-row, narrower left column (md:w-1/3), 
