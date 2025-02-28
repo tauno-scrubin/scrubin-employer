@@ -2,7 +2,7 @@
 	import { scrubinClient } from '@/scrubinClient/client';
 	import type { Hunt } from '@/scrubinClient';
 	import * as Card from '$lib/components/ui/card/index.js';
-	import { Loader2, ArrowRight, Clock, Search, History, Sparkle } from 'lucide-svelte';
+	import { Loader2, ArrowRight, Clock, Search, History, Sparkle, ArrowDown } from 'lucide-svelte';
 	import { onMount } from 'svelte';
 	import Button from '../ui/button/button.svelte';
 	import { goto } from '$app/navigation';
@@ -16,6 +16,7 @@
 
 	let isLoading = $state(false);
 	let hunts: Hunt[] = $state([]);
+	let showAllHunts = $state(false);
 
 	async function loadHunts() {
 		isLoading = true;
@@ -23,11 +24,28 @@
 			const response = await scrubinClient.hunt.getHunts();
             console.log(response);
 			hunts = response.items;
+			// Sort hunts: ACTIVE first, then by date (newest first)
+			hunts.sort((a, b) => {
+				// First prioritize ACTIVE status
+				if (a.status === 'ACTIVE' && b.status !== 'ACTIVE') return -1;
+				if (a.status !== 'ACTIVE' && b.status === 'ACTIVE') return 1;
+				
+				// Then sort by date (newest first)
+				return new Date(b.dateActivated).getTime() - new Date(a.dateActivated).getTime();
+			});
 		} catch (error) {
 			console.error('Error loading hunts:', error);
 		} finally {
 			isLoading = false;
 		}
+	}
+
+	function toggleShowAllHunts() {
+		showAllHunts = !showAllHunts;
+	}
+
+	function getDisplayedHunts() {
+		return showAllHunts ? hunts : hunts.slice(0, 6);
 	}
 
 	function handleViewHunt(huntId: number) {
@@ -72,7 +90,7 @@
 			<p class="text-xs text-gray-400 mt-1 max-w-[200px]">Your hunts will appear here</p>
 		</div>
 	{:else}
-		{#each hunts as hunt}
+		{#each getDisplayedHunts() as hunt}
 			<Card.Root onclick={() => handleViewHunt(hunt.huntId)} class="bg-white cursor-pointer shadow-sm border h-fit hover:shadow-md transition-all">
 				<Card.Content class="p-4">
 					<div class="flex items-start justify-between">
@@ -91,5 +109,14 @@
 				</Card.Content>
 			</Card.Root>
 		{/each}
+		
+		{#if hunts.length > 6}
+			<div class="col-span-full flex justify-center mt-4">
+				<Button variant="ghost" onclick={toggleShowAllHunts} class="text-sm">
+					{showAllHunts ? 'Show Less' : 'View More'}
+					<ArrowDown class="ml-2 h-4 w-4 {showAllHunts ? 'rotate-180' : ''}" />
+				</Button>
+			</div>
+		{/if}
 	{/if}
 </div>

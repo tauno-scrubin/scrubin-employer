@@ -125,7 +125,7 @@
 			maxlength={200}
 			onfocus={() => inputFocused = true}
 			onblur={() => !searchText && (inputFocused = false)}
-			placeholder="I am looking for 2 General Practitioners from UK, with MRCGP, who speak English. Salary for full-time position would be $300k per year."
+			placeholder="I am looking for two General Practitioners from the UK with MRCGP qualifications who speak English. The salary for a full-time position is $300,000 per year."
 			class="flex-1 p-0 shadow-none border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 px-0 resize-none" />
 			
 			{#if inputFocused}
