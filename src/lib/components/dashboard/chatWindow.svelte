@@ -212,7 +212,11 @@
 	}
 </script>
 
-<PaymentDialog  bind:open={paymentDialogOpen} huntId={payableHuntId} amount={requirements.hiringPlan?.hiringInitialPriceForOneCandidate?.amount || 0} onSuccess={onPaymentSuccess}/>
+<PaymentDialog  bind:open={paymentDialogOpen} 
+	huntId={payableHuntId} 
+	amount={requirements.hiringPlan?.hiringInitialPriceForOneCandidate?.amount || 0} 
+	currency={requirements.hiringPlan?.hiringInitialPriceForOneCandidate?.currency || 'EUR'} 
+	onSuccess={onPaymentSuccess}/>
 
 <!-- 
   Container: use flex-row, narrower left column (md:w-1/3), 

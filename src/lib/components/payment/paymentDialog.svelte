@@ -12,12 +12,14 @@
     let {
         huntId,
         amount,
+        currency,
         open = $bindable(false),
         statement,
         onSuccess
     } : {
         huntId: number,
         amount: number,
+        currency: string,
         open?: boolean,
         statement?: string,
         onSuccess: (huntId: number) => void
@@ -44,6 +46,15 @@
         }
     }
 
+    function getCurrencySymbol(currency: string) {
+        if (currency === 'AUD') {
+            return '$';
+        } else if (currency === 'GBP') {
+            return '£';
+        } 
+            return '€';
+    }
+
     // let cards = $state([]);
 
     // onMount(async () => {
@@ -67,7 +78,7 @@
 					{statement || 'Starting fee'}
 				</dt>
 				<dd class="text-sm font-medium text-gray-900 dark:text-white">
-                    {amount} €
+                    {amount} {getCurrencySymbol(currency)}
 				</dd>
 			</dl>
 		</div>
@@ -77,7 +88,7 @@
 		>
 			<dt class="text-sm font-semibold text-gray-900 dark:text-white">Total</dt>
 			<dd class="text-sm font-bold text-gray-900 dark:text-white">
-                {amount} €
+                {amount} {getCurrencySymbol(currency)}
 			</dd>
 		</dl>
 	</div>
