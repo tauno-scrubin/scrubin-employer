@@ -2,7 +2,7 @@
 	import SEO from "$lib/components/SEO.svelte";
 	import { onMount } from "svelte";
 	import { currentUser, scrubinClient } from "@/scrubinClient/client";
-	import type { PortalUser, Company } from "@/scrubinClient";
+	import type { PortalUser, Company, CompanyBilling } from "@/scrubinClient";
 	import * as Card from "$lib/components/ui/card/index.js";
 	import { Button } from "$lib/components/ui/button";
 	import { Input } from "$lib/components/ui/input";
@@ -25,17 +25,20 @@
 	let isLoadingAdvertiser = $state(true);
 	let isSavingCompany = $state(false);
 	let countries = $state<string[]>([]);
+	let billingInfo = $state<CompanyBilling | null>(null);
 
 	onMount(async () => {
 		try {
-			const [userResult, advertiserResult, countriesResult] = await Promise.all([
+			const [userResult, advertiserResult, countriesResult, billingResult] = await Promise.all([
 				Promise.resolve($currentUser),
 				scrubinClient.company.getCompany(),
-				scrubinClient.company.getCountries()
+				scrubinClient.company.getCountries(),
+				scrubinClient.company.getBilling()
 			]);
 			user = userResult;
 			companyProfile = advertiserResult;
 			countries = countriesResult;
+			billingInfo = billingResult;
 		} catch (error) {
 			console.error('Error fetching data:', error);
 			toast.error('Failed to load details');
@@ -377,6 +380,25 @@
 							</div>
 						</div>
 					</div>
+
+					<!-- {#if billingInfo?.stripePaymentMethod && billingInfo.stripePaymentMethod.brand}
+						<div class="mt-6 border rounded-lg p-4">
+							<h3 class="text-lg font-medium mb-3">Payment Method</h3>
+							<div class="flex items-center space-x-4">
+								<div class="flex-1">
+									<p class="text-sm font-medium">
+										{billingInfo.stripePaymentMethod.brand.toUpperCase()} ending in {billingInfo.stripePaymentMethod.last4Digits}
+									</p>
+									<p class="text-sm text-muted-foreground">
+										Expires {billingInfo.stripePaymentMethod.expirationMonth}/{billingInfo.stripePaymentMethod.expirationYear}
+									</p>
+								</div>
+								<Button variant="outline" type="button" onclick={() => window.open(`${PUBLIC_ORIGIN}/billing`, '_blank')}>
+									Manage Payment
+								</Button>
+							</div>
+						</div>
+					{/if} -->
 
 					<div class="flex justify-end">
 						<Button type="submit" disabled={isSavingCompany}>

@@ -130,7 +130,7 @@
 					<div class="mt-auto">
 						<div class="flex items-center gap-1">
 							<History class="w-3 h-3 text-gray-400" />
-							<span class="text-xs text-gray-400">{formatDate(hunt.dateActivated)}</span>
+							<span class="text-xs text-gray-400">{formatDate(hunt.dateActivated || hunt.dateCreated)}</span>
 						</div>
 					</div>
 				</Card.Content>
@@ -169,7 +169,7 @@
 				<Card.Content class="p-4 flex flex-col h-full">
 					<div class="flex items-start justify-between">
 						<div>
-							<Clock class="w-4 h-4 text-amber-500 mb-2" />
+							<Clock class="w-4 h-4 text-neutral-500 mb-2" />
 							<p class="font-medium text-sm text-gray-800 line-clamp-2 mb-2">{draft.jobTitle || 'Untitled Draft'}</p>
 						</div>
 						<span class="text-xs bg-neutral-100 text-neutral-800 px-1.5 py-0.5 rounded-full whitespace-nowrap">

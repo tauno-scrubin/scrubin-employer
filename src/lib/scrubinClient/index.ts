@@ -127,6 +127,7 @@ export interface Requirements {
     specialization: string;
     createdDateTime: string;
     modifiedDateTime: string;
+    dateCreated: string;
     jobRequiredQualifications: string;
     jobRequiredWorkExperience: number;
     jobRequiredLanguages: string[];
@@ -227,6 +228,12 @@ export interface HuntCandidatesResponse {
 export interface CompanyBilling {
   stripeCustomerId: string;
   stripePaymentMethodId: string;
+  stripePaymentMethod?: {
+    brand: string;
+    last4Digits: string;
+    expirationMonth: number;
+    expirationYear: number;
+  }
 }
 
 export interface CompanyBillingRequest {
