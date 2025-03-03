@@ -9,7 +9,7 @@ export function formatStatus(status: string) {
         case 'ACTIVE':
             return 'Active';
         case 'AWAITING_PAYMENT':
-            return 'Awaiting Payment';
+            return 'Ready to Activate';
         case 'PAUSED':
             return 'Paused';
         case 'COMPLETED':

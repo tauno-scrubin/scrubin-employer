@@ -12,7 +12,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
         
         // Get hunt details
         const [requirements] = await Promise.all([
-            locals.scrubinClient.hunt.getRequirements(huntId),
+            locals.scrubinClient.hunt.getAnalyzeResult(huntId),
         ]);
 
         

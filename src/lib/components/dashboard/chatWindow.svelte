@@ -210,6 +210,10 @@
 		// Force reactivity update in Svelte 5
 		expandedQuestions = new Set(expandedQuestions);
 	}
+
+	function goBack() {
+		window.history.back();
+	}
 </script>
 
 <PaymentDialog  bind:open={paymentDialogOpen} 
@@ -226,7 +230,7 @@
 	<!-- Left side: Follow-up Questions -->
 	<div class="md:w-1/3 p-4 bg-white rounded-md shadow-sm">
 		<h2 class="text-lg font-medium mb-4 text-primary flex items-center gap-2">
-            <Button variant="outline" size="icon" onclick={() => requirements = null}>
+            <Button variant="outline" size="icon" onclick={() => goBack()}>
                 <ChevronLeft class="w-4 h-4" />
             </Button>
             Follow-up Questions</h2>
@@ -272,17 +276,17 @@
 								cursor-pointer hover:bg-gray-50 transition-colors duration-200"
 							onclick={() => toggleQuestion(i)}
 						>
-							<div class="flex items-center gap-3">
-								<span class={`w-6 h-6 flex items-center justify-center rounded-full text-xs font-medium
+							<div class="flex items-center gap-3 min-w-0 flex-1 pr-2">
+								<span class={`flex-shrink-0 w-6 h-6 flex items-center justify-center rounded-full text-xs font-medium
 									${answers[question.title] ? 'bg-primary text-white' : 'bg-blue-50 text-gray-500'} 
 									transition-all duration-300`}>
 									{answers[question.title] ? '✓' : i + 1}
 								</span>
-								<span class="text-sm font-medium text-gray-700 truncate">
-									{question.title.length > 50 ? question.title.substring(0, 50) + '...' : question.title}
+								<span class="text-sm font-medium text-gray-700 truncate overflow-hidden">
+									{question.title}
 								</span>
 							</div>
-							<span class="text-gray-400 transition-transform duration-200">
+							<span class="text-gray-400 transition-transform duration-200 flex-shrink-0">
 								<ChevronDown class="h-4 w-4 {expandedQuestions.has(i) ? 'rotate-180' : ''}" />
 							</span>
 						</div>
@@ -297,7 +301,7 @@
 										placeholder="Type your answer here..."
 										value={answers[question.title] || ""}
 										class="focus:ring-primary/30 transition-all duration-200"
-										onchange={(e) => {
+										oninput={(e) => {
 											answers[question.title] = e.currentTarget.value;
 											if (i === currentQuestionIndex) {
 												currentAnswer = e.currentTarget.value;

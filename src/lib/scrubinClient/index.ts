@@ -111,12 +111,22 @@ export interface ActivateHuntResponse {
   requirements: Requirements['requirements'];
 }
 
+export interface AllRequirementsResponse {
+  items: Requirements['requirements'][];
+  total: number;
+  page: number;
+  size: number;
+  totalPages: number;
+}
+
 export interface Requirements {
   requirements: {
     id: number;
     jobTitle: string;
     professions: string[];
     specialization: string;
+    createdDateTime: string;
+    modifiedDateTime: string;
     jobRequiredQualifications: string;
     jobRequiredWorkExperience: number;
     jobRequiredLanguages: string[];
@@ -546,6 +556,16 @@ class HuntResource extends BaseResource {
   async activateRequirements(id: number): Promise<ActivateHuntResponse> {
     const url = new URL(`${this.path}/requirements/${id}/activate-hunt`, this.client.baseUrl);
     return this.request<ActivateHuntResponse>('POST', url.toString()) as Promise<ActivateHuntResponse>;
+  }
+
+  async getAnalyzeResult(id: number): Promise<Requirements['requirements']> {
+    const url = new URL(`${this.path}/requirements/${id}/analyze-result`, this.client.baseUrl);
+    return this.request<Requirements['requirements']>('GET', url.toString()) as Promise<Requirements['requirements']>;
+  }
+
+  async getAllRequirements(): Promise<AllRequirementsResponse> {
+    const url = new URL(`${this.path}/requirements`, this.client.baseUrl);
+    return this.request<AllRequirementsResponse>('GET', url.toString()) as Promise<AllRequirementsResponse>;
   }
 
   async getRequirements(id: number): Promise<Requirements['requirements']> {
