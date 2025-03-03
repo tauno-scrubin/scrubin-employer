@@ -68,12 +68,19 @@
 		return showAllDrafts ? drafts : drafts.slice(0, 6);
 	}
 
-	function handleViewHunt(huntId: number, status: string) {
+	async function handleViewHunt(huntId: number, status: string) {
 		if (status === 'ACTIVE') {
 			goto(`/dashboard/hunts/${huntId}`);
 		} else {
-			goto(`/dashboard/hunts/requirements/${huntId}`);
+			const requirementId = await getSingleRequirementFromHunt(huntId);
+			goto(`/dashboard/hunts/requirements/${requirementId}`);
 		}
+	}
+
+
+	async function getSingleRequirementFromHunt(huntId: number) {
+		const response = await scrubinClient.hunt.getHuntById(huntId);
+		return response.requirements.id;
 	}
 
 	function formatDate(dateString: string) {
