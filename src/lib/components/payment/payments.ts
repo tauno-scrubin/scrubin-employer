@@ -1,8 +1,9 @@
 import { page } from "$app/state";
-import { PUBLIC_STRIPE_PUBLIC_KEY } from "$env/static/public";
+import { PUBLIC_STRIPE_PUBLIC_KEY, PUBLIC_STRIPE_PUBLIC_KEY_DEV } from "$env/static/public";
 import { dev } from "$app/environment";
 import { loadStripe } from "@stripe/stripe-js";
-import { scrubinClient } from "@/scrubinClient/client";
+import { currentUser, scrubinClient } from "@/scrubinClient/client";
+import { get } from "svelte/store";
 
 export function formatStatus(status: string) {
     switch (status) {
@@ -43,7 +44,8 @@ export async function payWithStripe(huntId: number, paymentMethodId: string) {
 
     const createPaymentIntent = await scrubinClient.hunt.createPaymentIntent(huntId);
 
-    const stripePublicKey = PUBLIC_STRIPE_PUBLIC_KEY;
+    const isDemoUser = get(currentUser)?.isDemoUser || false;
+    const stripePublicKey = isDemoUser ? PUBLIC_STRIPE_PUBLIC_KEY_DEV : PUBLIC_STRIPE_PUBLIC_KEY;
     const stripe = await loadStripe(stripePublicKey);
     if (!stripe) {
         throw new Error('Payment system failed to initialize');

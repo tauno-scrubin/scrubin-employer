@@ -2,9 +2,11 @@
     import { onMount } from 'svelte';
     import { loadStripe } from '@stripe/stripe-js';
     import type { Stripe, StripeElements, StripeCardNumberElement, StripeCardExpiryElement, StripeCardCvcElement } from '@stripe/stripe-js';
-    import { PUBLIC_STRIPE_PUBLIC_KEY } from '$env/static/public';
+    import { PUBLIC_STRIPE_PUBLIC_KEY, PUBLIC_STRIPE_PUBLIC_KEY_DEV } from '$env/static/public';
+    import { currentUser } from '@/scrubinClient/client';
+    import { get } from 'svelte/store';
     
-    let stripePublicKey: string = PUBLIC_STRIPE_PUBLIC_KEY
+    let stripePublicKey: string = ""
 
     let stripe: Stripe | null = $state(null);
     let elements: StripeElements | null = $state(null);
@@ -15,6 +17,8 @@
     let error: string | null = $state(null);
   
     onMount(async () => {
+      const isDemoUser = get(currentUser)?.isDemoUser || false;
+      stripePublicKey = isDemoUser ? PUBLIC_STRIPE_PUBLIC_KEY_DEV : PUBLIC_STRIPE_PUBLIC_KEY;
       stripe = await loadStripe(stripePublicKey);
    
       if (stripe) {

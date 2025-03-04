@@ -25,6 +25,7 @@ export interface PortalUser {
   lastName: string;
   phoneNumber: string;
   calendarLink: string;
+  isDemoUser: boolean;
   passwordSet: boolean;
 }
 

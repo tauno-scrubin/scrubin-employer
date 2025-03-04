@@ -381,24 +381,30 @@
 						</div>
 					</div>
 
-					<!-- {#if billingInfo?.stripePaymentMethod && billingInfo.stripePaymentMethod.brand}
-						<div class="mt-6 border rounded-lg p-4">
-							<h3 class="text-lg font-medium mb-3">Payment Method</h3>
+					{#if billingInfo?.stripePaymentMethod && billingInfo?.stripePaymentMethod?.brand}
+						<div class="mt-6 border rounded-lg p-4 bg-card shadow-sm">
+							<div class="flex items-center justify-between mb-3">
+								<h3 class="text-lg font-medium">Payment Method</h3>
+							</div>
 							<div class="flex items-center space-x-4">
+								<div class="bg-muted p-2 rounded-md flex items-center justify-center">
+									<img 
+										src="/cards/{billingInfo.stripePaymentMethod.brand.toLowerCase()}.png" 
+										alt="{billingInfo.stripePaymentMethod.brand}" 
+										class="w-auto h-6 rounded-sm" 
+									/>
+								</div>
 								<div class="flex-1">
-									<p class="text-sm font-medium">
-										{billingInfo.stripePaymentMethod.brand.toUpperCase()} ending in {billingInfo.stripePaymentMethod.last4Digits}
+									<p class="text-sm font-medium flex items-center">
+										{billingInfo.stripePaymentMethod.brand.toUpperCase()} •••• {billingInfo.stripePaymentMethod.last4Digits}
 									</p>
-									<p class="text-sm text-muted-foreground">
+									<p class="text-xs text-muted-foreground">
 										Expires {billingInfo.stripePaymentMethod.expirationMonth}/{billingInfo.stripePaymentMethod.expirationYear}
 									</p>
 								</div>
-								<Button variant="outline" type="button" onclick={() => window.open(`${PUBLIC_ORIGIN}/billing`, '_blank')}>
-									Manage Payment
-								</Button>
 							</div>
 						</div>
-					{/if} -->
+					{/if}
 
 					<div class="flex justify-end">
 						<Button type="submit" disabled={isSavingCompany}>
