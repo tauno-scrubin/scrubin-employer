@@ -225,16 +225,18 @@ export interface HuntCandidatesResponse {
   totalPages: number;
 }
 
+export interface PaymentMethod {
+  brand: string;
+  last4Digits: string;
+  expirationMonth: number;
+  expirationYear: number;
+}
+
 // Add new interfaces for billing and payment
 export interface CompanyBilling {
   stripeCustomerId: string;
   stripePaymentMethodId: string;
-  stripePaymentMethod?: {
-    brand: string;
-    last4Digits: string;
-    expirationMonth: number;
-    expirationYear: number;
-  }
+  stripePaymentMethod?: PaymentMethod;
 }
 
 export interface CompanyBillingRequest {

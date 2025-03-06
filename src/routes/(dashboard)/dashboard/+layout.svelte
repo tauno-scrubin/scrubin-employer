@@ -16,6 +16,16 @@
 	setMode("light")
 
 </script>
+<!-- {#if data.user.isDemoUser}
+<div class="fixed top-0 left-0 w-full h-full bg-black/50 z-50">
+	<div class="flex items-center justify-center h-full">
+		<div class="text-white text-2xl">
+			Demo User
+		</div>
+	</div>
+</div>
+{/if} -->
+
 <ModeWatcher />
 <Toaster />
 <AnalyzingOverlay/>

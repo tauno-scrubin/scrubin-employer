@@ -233,6 +233,9 @@
             <Button variant="outline" size="icon" onclick={() => goBack()}>
                 <ChevronLeft class="w-4 h-4" />
             </Button>
+			<Button variant="outline" size="icon" onclick={() => paymentDialogOpen = true}>
+				Ava
+			</Button>
             Follow-up Questions</h2>
 		{#if isAnalyzing}
 			<div class="p-4 bg-blue-50/70 rounded-lg flex items-center justify-center">
