@@ -48,12 +48,12 @@
 
 
 
-      {#if worker.professionRegistrationCountry}
+     
         <div class="flex items-center">
           <Globe class="w-4 h-4 mr-2 text-gray-400 flex-shrink-0" />
-          <span class="text-xs">Registration Country: <span class="font-medium text-gray-700">{worker.professionRegistrationCountry}</span></span>
+          <span class="text-xs">Registration Country: <span class="font-medium text-gray-700">{worker.professionRegistrationCountry || 'Not specified'}</span></span>
         </div>
-      {/if}
+
 
       {#if worker.languages && worker.languages.length > 0}
         <div class="flex items-center">

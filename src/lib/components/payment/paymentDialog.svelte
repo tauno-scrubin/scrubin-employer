@@ -2,7 +2,7 @@
 	import Button from "@/components/ui/button/button.svelte";
 	import { CreditCard, Loader2, ShieldCheckIcon } from "lucide-svelte";
 	import StripeFields from "./stripeFields.svelte";
-	import { payWithStripe } from "./payments";
+	import { getCurrencySymbol, payWithStripe } from "./payments";
 	import { toast } from "svelte-sonner";
     import * as Dialog from "$lib/components/ui/dialog/index.js";
 	import { onMount } from "svelte";
@@ -68,14 +68,6 @@
         }
     }
 
-    function getCurrencySymbol(currency: string) {
-        if (currency === 'AUD') {
-            return '$';
-        } else if (currency === 'GBP') {
-            return '£';
-        } 
-            return '€';
-    }
 
     // let cards = $state([]);
 

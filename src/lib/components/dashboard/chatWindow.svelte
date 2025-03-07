@@ -34,6 +34,8 @@
 	import { goto } from "$app/navigation";
 	import { visible } from "./overlay";
 	import PaymentDialog from "../payment/paymentDialog.svelte";
+	import ChatWindowPricing from "./chatWindowPricing.svelte";
+	import ChatWindowDemand from "./chatWindowDemand.svelte";
 
 	let {
 		requirements = $bindable<Requirements>()
@@ -95,17 +97,21 @@
 		if (currentQuestionIndex > 0) {
 			// Save current answer before moving back
 			if (currentAnswer.trim()) {
-				const currentQuestion = requirements.followUpQuestionsV2[currentQuestionIndex];
-				answers[currentQuestion.title] = currentAnswer;
+				const currentQuestion = requirements.followUpQuestionsV2?.[currentQuestionIndex];
+				if (currentQuestion) {
+					answers[currentQuestion.title] = currentAnswer;
+				}
 			}
 			
 			// Move to previous question
 			currentQuestionIndex--;
 			
 			// Load the previous answer
-			const prevQuestion = requirements.followUpQuestionsV2[currentQuestionIndex];
-			currentAnswer = answers[prevQuestion.title] || "";
-			isEditingPrevious = true;
+			const prevQuestion = requirements.followUpQuestionsV2?.[currentQuestionIndex];
+			if (prevQuestion) {
+				currentAnswer = answers[prevQuestion.title] || "";
+				isEditingPrevious = true;
+			}
 		}
 	}
 
@@ -126,6 +132,19 @@
 			const question = requirements.followUpQuestionsV2[index];
 			currentAnswer = answers[question.title] || "";
 			isEditingPrevious = true;
+		}
+	}
+
+	// Function to handle input changes and automatically move to next question
+	function handleAnswerInput(questionIndex: number, value: string) {
+		if (!requirements.followUpQuestionsV2) return;
+		
+		const question = requirements.followUpQuestionsV2[questionIndex];
+		answers[question.title] = value;
+		
+		// If this is the current question, update currentAnswer
+		if (questionIndex === currentQuestionIndex) {
+			currentAnswer = value;
 		}
 	}
 
@@ -235,6 +254,7 @@
             </Button>
 			
             Follow-up Questions</h2>
+			
 		{#if isAnalyzing}
 			<div class="p-4 bg-blue-50/70 rounded-lg flex items-center justify-center">
 				<div class="flex flex-col items-center gap-2">
@@ -243,10 +263,13 @@
 				</div>
 			</div>
 		{:else if requirements?.canBeActivated}
+			
+			
 			<div class="p-4 rounded-lg mb-4 bg-gradient-to-r from-blue-50 to-indigo-50 ">
 				<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-					<p class="font-medium text-sm text-primary/90">
-						{isComplete ? '✨ Ready to activate' : 'Complete questions for better results'}
+					<p class="font-medium inline-flex items-center gap-2 text-sm text-primary/90">
+						<Sparkle fill="currentColor" strokeWidth=1 class="w-4 h-4 text-blue-500 rotate-45" />
+						{isComplete ? 'Ready to activate' : 'Complete questions for better results'}
 					</p>
 					
 					<Button 
@@ -265,6 +288,8 @@
 					</Button>
 				</div>
 			</div>
+			<ChatWindowPricing hiringPlan={requirements.hiringPlan} />
+			<ChatWindowDemand hiringPlan={requirements.hiringPlan} />
 		{/if}
 		
 		{#if !isAnalyzing && requirements.followUpQuestionsV2 && requirements.followUpQuestionsV2.length > 0}
@@ -295,6 +320,7 @@
 						<!-- Collapsible content -->
 						{#if expandedQuestions.has(i)}
 							<div class="p-3 border-t bg-white">
+								<p class="mb-3 text-sm font-medium text-gray-700">{question.title}</p>
 								<p class="mb-3 text-sm text-gray-500">{question.description}</p>
 								<div class="flex flex-col gap-3">
 									<Input
@@ -303,31 +329,10 @@
 										value={answers[question.title] || ""}
 										class="focus:ring-primary/30 transition-all duration-200"
 										oninput={(e) => {
-											answers[question.title] = e.currentTarget.value;
-											if (i === currentQuestionIndex) {
-												currentAnswer = e.currentTarget.value;
-											}
+											const value = e.currentTarget.value;
+											handleAnswerInput(i, value);
 										}}
-										onkeydown={(e) => e.key === 'Enter' && i === currentQuestionIndex && handleNextQuestion()}
 									/>
-									
-									{#if i === currentQuestionIndex}
-										<div class="flex justify-end gap-2 mt-1">
-											<Button 
-												onclick={handleNextQuestion}
-												disabled={!(answers[question.title] || currentAnswer).trim() || isSubmitting}
-												variant="default"
-												size="sm"
-												class="transition-all duration-200 hover:scale-105"
-											>
-												{#if currentQuestionIndex < requirements.followUpQuestionsV2.length - 1}
-													Next <ArrowRight class="h-3.5 w-3.5" />
-												{:else}
-													Submit <Check class="h-3.5 w-3.5" />
-												{/if}
-											</Button>
-										</div>
-									{/if}
 								</div>
 							</div>
 						{/if}
@@ -352,60 +357,59 @@
 					</div>
 				</div>
 				
-				<!-- Submit button at the bottom -->
-				{#if !isComplete}
-					<div class="flex justify-end mt-4">
-						<Button 
-							onclick={submitAnswers}
-							disabled={isSubmitting || (Object.keys(answers).length < requirements.followUpQuestionsV2.length && !customInstructions.trim())}
-							variant="default"
-							size="sm"
-							class="transition-all duration-300 hover:scale-105 bg-gradient-to-r from-primary to-primary/90"
-						>
-							{#if isSubmitting}
-								<Loader2 class="h-3.5 w-3.5 animate-spin" />
-								Submitting...
-							{:else}
-								<Check class="h-3.5 w-3.5" />
-								Submit All
-							{/if}
-						</Button>
-					</div>
-				{/if}
+				<!-- Single Submit button that's always present -->
+				<div class="flex justify-end mt-6">
+					<Button 
+						onclick={submitAnswers}
+						disabled={isSubmitting || (Object.keys(answers).length === 0 && !customInstructions.trim())}
+						variant="default"
+						size="default"
+						class="transition-all duration-300 hover:scale-105 bg-gradient-to-r from-primary to-primary/90 px-4"
+					>
+						{#if isSubmitting}
+							<Loader2 class="h-4 w-4 animate-spin" />
+							Submitting...
+						{:else}
+							<Check class="h-4 w-4" />
+							Submit
+						{/if}
+					</Button>
+				</div>
 			</div>
       
 		{:else if !requirements?.followUpQuestionsV2?.length && !requirements?.followUpQuestions?.length}
-
-        <div class="overflow-hidden rounded-lg transition-all duration-200 border shadow-sm mt-6">
-            <div class="p-3 bg-white">
-                <p class="mb-3 text-sm font-medium text-gray-700">Additional Instructions</p>
-                <p class="mb-3 text-sm text-gray-500">Add any custom requirements or clarifications that weren't covered by the questions above.</p>
-                <div class="flex flex-col gap-3">
-                    <textarea
-                        placeholder="Type any additional instructions here..."
-                        bind:value={customInstructions}
-                        class="w-full p-3 border rounded-md focus:ring-primary/30 text-sm focus:border-primary/50 transition-all duration-200 min-h-[100px]"
-                    ></textarea>
-                </div>
-                <div class="flex justify-end mt-2">
-                    <Button 
-                        onclick={submitAnswers}
-                        disabled={isSubmitting || !customInstructions.trim()}
-                        variant="default"
-                        size="sm"
-                        class="transition-all duration-300 hover:scale-105"
-                    >
-                        {#if isSubmitting}
-                            <Loader2 class="h-3.5 w-3.5 animate-spin" />
-                            Submitting...
-                        {:else}
-                            <Check class="h-3.5 w-3.5" />
-                            Submit
-                        {/if}
-                    </Button>
-                </div>
-            </div>
-        </div>
+			<div class="overflow-hidden rounded-lg transition-all duration-200 border shadow-sm mt-6">
+				<div class="p-3 bg-white">
+					<p class="mb-3 text-sm font-medium text-gray-700">Additional Instructions</p>
+					<p class="mb-3 text-sm text-gray-500">Add any custom requirements or clarifications that weren't covered by the questions above.</p>
+					<div class="flex flex-col gap-3">
+						<textarea
+							placeholder="Type any additional instructions here..."
+							bind:value={customInstructions}
+							class="w-full p-3 border rounded-md focus:ring-primary/30 text-sm focus:border-primary/50 transition-all duration-200 min-h-[100px]"
+						></textarea>
+					</div>
+				</div>
+			</div>
+			
+			<!-- Single Submit button for no-questions case -->
+			<div class="flex justify-end mt-6">
+				<Button 
+					onclick={submitAnswers}
+					disabled={isSubmitting || !customInstructions.trim()}
+					variant="default"
+					size="default"
+					class="transition-all duration-300 hover:scale-105 bg-gradient-to-r from-primary to-primary/90 px-4"
+				>
+					{#if isSubmitting}
+						<Loader2 class="h-4 w-4 animate-spin" />
+						Submitting...
+					{:else}
+						<Check class="h-4 w-4" />
+						Submit
+					{/if}
+				</Button>
+			</div>
 		{/if}
 	</div>
 	

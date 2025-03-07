@@ -4,6 +4,14 @@ import { dev } from "$app/environment";
 import { loadStripe } from "@stripe/stripe-js";
 import { currentUser, scrubinClient } from "@/scrubinClient/client";
 import { get } from "svelte/store";
+export function getCurrencySymbol(currency: string) {
+    if (currency === 'AUD') {
+        return '$';
+    } else if (currency === 'GBP') {
+        return '£';
+    } 
+        return '€';
+}
 
 export function formatStatus(status: string) {
     switch (status) {

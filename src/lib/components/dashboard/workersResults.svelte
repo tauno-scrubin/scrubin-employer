@@ -90,7 +90,7 @@
           <div class="flex items-center justify-between gap-2 mb-3">
             <p class="text-sm text-blue-500  p-2 border rounded-md bg-blue-50/50 border-blue-500 flex items-center gap-2">
               <Info class="w-4 h-4 flex-shrink-0" />
-              Select up to 10 favorite profiles to refine your recommendations. This helps us understand your preferences and suggest similar candidates that best match your needs!</p>
+              Choose up to 10 favorite profiles to help refine your recommendations. Based on your selection, our AI agent will analyze, score, and find similar profiles. This ensures we make the best offers to the most suitable candidates, saving you time and effort in the hiring process!</p>
             <div class="flex items-center justify-end gap-2">
               <Button 
                 variant="outline" 
