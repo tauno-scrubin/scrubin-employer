@@ -20,6 +20,7 @@
 	import { currentUser } from "@/scrubinClient/client";
 	import scrubin from "$lib/scrubin-new.json";
 	import Scrubinsvg from "@/scrubinsvg.svelte";
+	import { Calendar } from "lucide-svelte";
 
 	let { ref = $bindable(null), user, ...restProps }: ComponentProps<typeof Sidebar.Root> & { user: PortalUser } = $props();
 
@@ -101,6 +102,22 @@
 	<Sidebar.Content>
 		<NavMain items={data.navMain} />
 		<NavSecondary items={data.navSecondary} class="mt-auto" />
+		{#if $currentUser?.status == "pending"}
+		<div class="px-4 py-3 mx-2 mb-4 rounded-lg bg-gradient-to-b from-yellow-100 via-yellow-100 shadow-inner shadow-yellow-50 to-yellow-50 border border-yellow-200">
+			<h4 class="text-sm font-medium text-yellow-800 mb-1">Account Pending Activation</h4>
+			<p class="text-xs text-yellow-600 mb-2">Schedule a quick call with our team to activate your account.</p>
+			<a
+				href="https://calendar.app.google/VN4kA74b4Xjn6tHN7"
+				target="_blank"
+				rel="noopener noreferrer"
+				class="inline-flex items-center gap-2 text-xs font-medium bg-yellow-200 px-2 py-1 rounded-md text-yellow-800 hover:bg-yellow-300 transition-colors"
+			>
+				<Calendar class="h-3 w-3" />
+				Schedule Call
+			</a>
+		</div>
+		{/if}
+
 	</Sidebar.Content>
 	<Sidebar.Footer>
 		<NavUser user={data.user} />

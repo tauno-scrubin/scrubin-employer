@@ -27,6 +27,7 @@ export interface PortalUser {
   calendarLink: string;
   isDemoUser: boolean;
   passwordSet: boolean;
+  status?: "pending" | "active"
 }
 
 export interface UpdatePortalUser {
@@ -48,6 +49,14 @@ export interface SignupPayload {
   phone: string;
   type: string;
   password: string;
+}
+
+export interface SignupCompanyPayload {
+  email: string;
+  firstName: string;
+  lastName: string;
+  phone: string;
+  companyName: string;
 }
 
 // Company interface as provided by the endpoints
@@ -756,6 +765,49 @@ export class ScrubinClient {
         throw error;
       }
       throw new Error('Signup failed');
+    }
+  }
+
+  async signupCompanyWithEmail(payload: SignupCompanyPayload): Promise<AuthResponse> {
+    const headers: Record<string, string> = {
+      'Origin': PUBLIC_ORIGIN,
+      'Content-Type': 'application/json',
+      'Accept': '*/*'
+    };
+
+    try {
+      const response = await fetch(`${this.baseUrl}/api/v1/auth/signup/email/company`, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(payload)
+      });
+
+      if (!response.ok) {
+        console.log(response);
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || 'Company signup failed');
+        } else {
+          throw new Error('Company signup failed - invalid response format');
+        }
+      }
+
+      const data: AuthResponse = await response.json();
+      this.authStore.setRefreshToken(data.refresh_token);
+      this.authStore.setAccessToken(data.access_token);
+
+      if (typeof document !== 'undefined') {
+        document.cookie = `scrubin_auth=${JSON.stringify({ jwt: data.access_token, refresh: data.refresh_token })}; path=/; SameSite=Strict`;
+      }
+
+
+      return data;
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      }
+      throw new Error('Company signup failed');
     }
   }
 

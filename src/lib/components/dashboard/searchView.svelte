@@ -14,6 +14,8 @@
 	import ShimmerButton from "../shimmerButton.svelte";
 	import { onMount } from "svelte";
 	import { goto } from "$app/navigation";
+	import * as Tooltip from "$lib/components/ui/tooltip/index.js";
+
   
 
     let {
@@ -166,9 +168,12 @@
 		  
 		  {#if healthcareWorkers.length > 0}
 		  <div class="p-5 w-full sm:w-auto">
+			<Tooltip.Provider delayDuration={100} disabled={$currentUser?.status != "pending"}>
+				<Tooltip.Root>
+				  <Tooltip.Trigger>
 			<Button
 			onclick={nextStep} 
-			disabled={isLoadingNextStep}
+			disabled={isLoadingNextStep || $currentUser?.status == "pending"}
 			>
 			{#if isLoadingNextStep}
 			<Loader2 class="w-4 h-4 mr-2 animate-spin" />
@@ -178,6 +183,12 @@
 			<ChevronRight class="w-4 h-4 ml-2" />
 		  {/if}
 			</Button>
+		</Tooltip.Trigger>
+		<Tooltip.Content>
+		  <p>Activate your account to continue</p>
+		</Tooltip.Content>
+	</Tooltip.Root>
+  </Tooltip.Provider>
 		  </div>
 		  {/if}
 		</div>

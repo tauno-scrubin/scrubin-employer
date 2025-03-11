@@ -18,7 +18,7 @@
 </script>
 
 
-<Card.Root onclick={toggleSelection} class="overflow-hidden {allowSelection ? 'cursor-pointer' : 'cursor-default'} {disabl ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'} hover:shadow-md transition-all duration-300 border border-gray-200 h-full justify-between flex flex-col">
+<Card.Root onclick={toggleSelection} class="overflow-hidden {allowSelection ? 'cursor-pointer' : 'cursor-default'} {disabl ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'} hover:shadow-md transition-all duration-300 border border-gray-200 h-full justify-start flex flex-col">
     <!-- Card Header -->
     <Card.Header class="p-4 pb-3 border-b bg-white relative">
       <div class="flex items-center gap-3">

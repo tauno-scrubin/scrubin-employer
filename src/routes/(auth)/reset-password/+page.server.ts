@@ -2,7 +2,7 @@ import type { Actions } from '@sveltejs/kit';
 import type { ResetPasswordBody } from '../auth';
 
 export const actions : Actions = {
-	async default({ locals, request }) {
+	async default({ locals, request, cookies }) {
 		const bodyRaw = Object.fromEntries(await request.formData()) as unknown;
 		const body = bodyRaw as ResetPasswordBody;
 
