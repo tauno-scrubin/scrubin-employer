@@ -25,10 +25,8 @@
 	} = $props();
 
 	const sidebar = useSidebar();
-	let openHelpDialog = $state(false);
 </script>
 
-<HelpDialog bind:open={openHelpDialog} />
 
 <Sidebar.Menu>
 	<Sidebar.MenuItem>
@@ -71,10 +69,6 @@
 					</div>
 				</DropdownMenu.Label>
 				<DropdownMenu.Separator />
-				<DropdownMenu.Item onclick={() => { openHelpDialog = true }}>
-					<HelpCircle />
-					Help
-				</DropdownMenu.Item>
 				<DropdownMenu.Item onclick={() => { goto('/logout') }}>
 					<LogOut />
 					Log out

@@ -20,7 +20,9 @@
 	import { currentUser } from "@/scrubinClient/client";
 	import scrubin from "$lib/scrubin-new.json";
 	import Scrubinsvg from "@/scrubinsvg.svelte";
-	import { Calendar } from "lucide-svelte";
+	import { Calendar, HelpCircle } from "lucide-svelte";
+	import Button from "./ui/button/button.svelte";
+	import HelpDialog from "./dashboard/helpDialog.svelte";
 
 	let { ref = $bindable(null), user, ...restProps }: ComponentProps<typeof Sidebar.Root> & { user: PortalUser } = $props();
 
@@ -77,8 +79,11 @@
 		});
 
 
-
+		let openHelpDialog = $state(false);
 </script>
+
+
+<HelpDialog bind:open={openHelpDialog} />
 
 <Sidebar.Root bind:ref variant="inset" {...restProps}>
 	<Sidebar.Header>
@@ -120,6 +125,10 @@
 
 	</Sidebar.Content>
 	<Sidebar.Footer>
+		<Button variant="ghost" size="sm" class="text-start justify-start" onclick={() => { openHelpDialog = true }}>
+			<HelpCircle />
+			Help
+		</Button>
 		<NavUser user={data.user} />
 	</Sidebar.Footer>
 </Sidebar.Root>
