@@ -16,7 +16,9 @@
         ArrowLeft,
         Users,
         FileText,
-        Sparkle
+        Sparkle,
+        Mail,
+        Phone
     } from "lucide-svelte";
     import SearchView from "$lib/components/dashboard/searchView.svelte";
 	import FunnelChart from "@/components/ui/layer-chart/funnelChart.svelte";
@@ -24,10 +26,27 @@
 	import { page } from "$app/state";
 	import { formatStatus, getStatusColor } from "@/components/payment/payments.js";
 	import Separator from "@/components/ui/separator/separator.svelte";
+    import { onMount } from "svelte";
+    import { scrubinClient } from "$lib/scrubinClient/client";
+    import type { InterestedCandidate } from "$lib/scrubinClient";
+    import * as Avatar from "$lib/components/ui/avatar";
+	import InterestedWorkerDialog from "@/components/dashboard/interestedWorkerDialog.svelte";
 
     let { data } = $props();
     let hunt = $derived(data.hunt);
+    let interestedCandidates = $state<InterestedCandidate[]>([]);
+    let isLoading = $state(true);
 
+    onMount(async () => {
+        try {
+            interestedCandidates = await scrubinClient.hunt.getInterestedCandidates(hunt.huntId);
+            console.log(interestedCandidates);
+        } catch (error) {
+            console.error("Failed to fetch interested candidates:", error);
+        } finally {
+            isLoading = false;
+        }
+    });
 
     let funnelData = $derived([
         { name: 'Total Huntables', value: data.stats.totalHuntables },
@@ -47,7 +66,20 @@
     function goToPrevPage() {
         window.history.back();
     }
+
+    function formatDate(dateString: string): string {
+        return new Date(dateString).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+        });
+    }
+
+    let showInterestedWorkerDialog = $state(false);
+    let selectedCandidateId = $state(0);
 </script>
+
+<InterestedWorkerDialog open={showInterestedWorkerDialog} huntId={hunt.huntId} candidateId={selectedCandidateId} />
 
 <div class="container mx-auto py-6 space-y-6 max-w-7xl">
     <div class="flex items-center gap-4 mb-6">
@@ -240,9 +272,58 @@
         <Separator class="mb-2" />
         <h4 class="text-gray-900 text-xl font-semibold">Candidates</h4>
   
-    <div class="flex flex-col gap-2">
-        <p class="text-gray-900 font-semibold text-lg">We're on the Hunt for Great Talent!</p>
-        <p class="text-gray-500 text-sm">No interested candidates yet, but we're reaching out to professionals who fit your needs. Check back soon! We'll let you know as soon as we have updates.</p>
+    <div class="flex flex-col gap-4">
+        {#if isLoading}
+            <div class="flex justify-center items-center py-8">
+                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+            </div>
+        {:else if interestedCandidates.length === 0}
+            <div class="flex flex-col gap-2">
+                <p class="text-gray-900 font-semibold text-lg">We're on the Hunt for Great Talent!</p>
+                <p class="text-gray-500 text-sm">No interested candidates yet, but we're reaching out to professionals who fit your needs. Check back soon! We'll let you know as soon as we have updates.</p>
+            </div>
+        {:else}
+            <div class="grid gap-4">
+                {#each interestedCandidates as candidate}
+                    <Card.Root class="overflow-hidden hover:shadow-md transition-shadow cursor-pointer" onclick={() => {
+                        showInterestedWorkerDialog = true;
+                        selectedCandidateId = candidate.candidateId;
+                    }}>
+                        <Card.Content class="p-4">
+                            <div class="flex items-start gap-4">
+                                <Avatar.Root class="h-12 w-12 bg-primary/10 text-primary">
+                                    <Avatar.Fallback>
+                                        {candidate.firstName.charAt(0)}{candidate.lastName.charAt(0)}
+                                    </Avatar.Fallback>
+                                </Avatar.Root>
+                                
+                                <div class="flex-1 space-y-1">
+                                    <div class="flex justify-between items-start">
+                                        <h3 class="font-medium text-base">{candidate.firstName} {candidate.lastName}</h3>
+                                        <Badge variant="outline" class="text-xs">
+                                            Interested on {formatDate(candidate.dateInterested)}
+                                        </Badge>
+                                    </div>
+                                    
+                                    <div class="flex gap-4 text-sm text-muted-foreground">
+                                        <div class="flex items-center gap-1">
+                                            <Mail class="h-3.5 w-3.5" />
+                                            <span>{candidate.email}</span>
+                                        </div>
+                                        {#if candidate.phone}
+                                        <div class="flex items-center gap-1">
+                                            <Phone class="h-3.5 w-3.5" />
+                                            <span>{candidate.phone}</span>
+                                        </div>
+                                        {/if}
+                                    </div>
+                                </div>
+                            </div>
+                        </Card.Content>
+                    </Card.Root>
+                {/each}
+            </div>
+        {/if}
     </div>
     </div>
         </div>

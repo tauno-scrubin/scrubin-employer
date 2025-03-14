@@ -263,6 +263,72 @@ export interface HuntPaymentResponse extends PaymentIntent {
   paymentStatus?: string;
 }
 
+// Add new interfaces for the huntable details
+export interface WorkExperience {
+  company: string;
+  desc: string;
+  start: string;
+  end: string;
+}
+
+export interface Education {
+  school: string;
+  speciality: string;
+  startYear: number;
+  endYear: number;
+}
+
+export interface Training {
+  name: string;
+  description: string;
+  date: string;
+}
+
+export interface HuntableDetails extends Candidate {
+  userDesc: string;
+  workExperiences: WorkExperience[];
+  educations: Education[];
+  trainings: Training[];
+  otherSkills?: string[];
+  softSkills?: string[];
+}
+
+export interface InterestedCandidate {
+  candidateId: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  dateInterested: string;
+}
+
+export interface Message {
+  id: number;
+  message: string;
+  date: string;
+  senderName: string;
+  sentByMe: boolean;
+  dateRead: string;
+}
+
+export interface InternalNote {
+  id: number;
+  date: string;
+  note: string;
+  creatorId: number;
+  creatorName: string;
+}
+
+export interface InterestedCandidateDetails extends HuntableDetails {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  dateInterested: string;
+  conservation: Message[]; // Note: API shows "conservation" but might be "conversation"
+  internalNotes: InternalNote[];
+}
+
 // ─── AUTH STORE ───────────────────────────────────────────────────────────────
 
 class AuthStore {
@@ -420,6 +486,7 @@ class BaseResource {
     const headers: Record<string, string> = {
       "Content-Type": "application/json",
       "Authorization": `Bearer ${this.client.authStore.token}`,
+      
       "Origin": PUBLIC_ORIGIN
     };
 
@@ -637,6 +704,24 @@ class HuntResource extends BaseResource {
       paymentIntentId,
       paymentMethodId
     }) as Promise<HuntPaymentResponse>;
+  }
+
+  // GET /api/v1/landing/worker-lookups/{lookupId}/huntable/{id}
+  async getHuntableDetails(lookupId: string, id: string): Promise<HuntableDetails> {
+    const url = new URL(`/api/v1/hunt/worker-lookups/${lookupId}/huntable/${id}`, this.client.baseUrl);
+    return this.request<HuntableDetails>('GET', url.toString()) as Promise<HuntableDetails>;
+  }
+
+  // GET /api/v1/hunts/{id}/interested-candidates
+  async getInterestedCandidates(id: number): Promise<InterestedCandidate[]> {
+    const url = new URL(`/api/v1/hunts/${id}/interested-candidates`, this.client.baseUrl);
+    return this.request<InterestedCandidate[]>('GET', url.toString()) as Promise<InterestedCandidate[]>;
+  }
+
+  // GET /api/v1/hunts/{id}/interested-candidates/{candidateId}
+  async getInterestedCandidateDetails(id: number, candidateId: number): Promise<InterestedCandidateDetails> {
+    const url = new URL(`/api/v1/hunts/${id}/interested-candidates/${candidateId}`, this.client.baseUrl);
+    return this.request<InterestedCandidateDetails>('GET', url.toString()) as Promise<InterestedCandidateDetails>;
   }
 }
 

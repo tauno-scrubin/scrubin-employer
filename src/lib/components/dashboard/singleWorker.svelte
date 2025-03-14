@@ -2,10 +2,10 @@
   import * as Card from "$lib/components/ui/card";
 	import type { Candidate } from "@/scrubinClient";
   import { Checkbox } from "$lib/components/ui/checkbox/index.js";
-  import { User, Briefcase, MapPin, Globe, Calendar1, BadgeCheck, Clock, Check, Percent, Languages, Heart } from "lucide-svelte";
+  import { User, Briefcase, MapPin, Globe, Calendar1, BadgeCheck, Clock, Check, Percent, Languages, Heart, Eye } from "lucide-svelte";
 	import Button from "../ui/button/button.svelte";
 
-  let { worker, status, allowSelection, checked = $bindable(), onSelect, disabled = $bindable() } : { worker: Candidate, status?: string, allowSelection?: boolean, checked?: boolean, onSelect?: (worker: Candidate) => void, disabled?: boolean} = $props();
+  let { worker, status, allowSelection, checked = $bindable(), onSelect, disabled = $bindable(), onView = () => {} } : { worker: Candidate, status?: string, allowSelection?: boolean, checked?: boolean, onSelect?: (worker: Candidate) => void, disabled?: boolean, onView?: (worker: Candidate) => void} = $props();
 
   function toggleSelection() {
     if (!disabl) {
@@ -18,11 +18,11 @@
 </script>
 
 
-<Card.Root onclick={toggleSelection} class="overflow-hidden {allowSelection ? 'cursor-pointer' : 'cursor-default'} {disabl ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'} hover:shadow-md transition-all duration-300 border border-gray-200 h-full justify-start flex flex-col">
+<Card.Root  class="overflow-hidden  {disabl ? 'cursor-not-allowed opacity-50' : 'cursor-default'} hover:shadow-md transition-all duration-300 border border-gray-200 h-full justify-start flex flex-col">
     <!-- Card Header -->
     <Card.Header class="p-4 pb-3 border-b bg-white relative">
       <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center">
+        <div class="w-10 h-10 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center flex-shrink-0">
           <User class="w-5 h-5" />
         </div>
         <div>
@@ -33,9 +33,13 @@
             <p class="text-xs text-gray-500">{worker.speciality.join(', ')}</p>
           {/if}
         </div>
+        
         {#if allowSelection}
-        <div class="absolute top-2 right-2">
-          <Button disabled={disabled && !checked} variant="ghost" size="icon" class="p-1 rounded-full disabled:cursor-not-allowed">
+        <div class="absolute top-2 right-2 flex items-center gap-2">
+            <Button variant="ghost" size="icon" class="p-1 rounded-full disabled:cursor-not-allowed text-gray-400 hover:text-gray-600" onclick={() => onView(worker)}>
+              <Eye class="w-4 h-4 " />
+            </Button>
+          <Button onclick={toggleSelection} disabled={disabled && !checked} variant="ghost" size="icon" class="p-1 rounded-full disabled:cursor-not-allowed">
             <Heart fill={checked ? 'currentColor' : 'none'} class="w-4 h-4  {checked ? 'text-red-500' : 'text-gray-400'} " />
           </Button>
           </div>
@@ -44,7 +48,7 @@
     </Card.Header>
     
     <!-- Card Body -->
-    <Card.Content class="p-4 flex flex-col space-y-3 text-gray-600 text-sm bg-white">
+    <Card.Content onclick={toggleSelection} class="p-4 flex flex-col space-y-3 text-gray-600 text-sm bg-white {allowSelection ? 'cursor-pointer' : 'cursor-default'}">
 
 
 
@@ -62,6 +66,8 @@
             <div class="flex flex-wrap gap-1">
               {#each worker.languages as language}
                 <span class="px-2 py-0.5 bg-gray-100 text-gray-700 text-xs rounded">{language}</span>
+                {:else}
+                  <span class="font-medium text-gray-700">Not specified</span>
               {/each}
             </div>
           </span>

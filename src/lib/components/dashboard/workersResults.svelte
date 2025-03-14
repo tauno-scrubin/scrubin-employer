@@ -9,10 +9,13 @@
 	import { toast } from 'svelte-sonner';
 	import { visible } from './overlay';
 	import SingleWorker from './singleWorker.svelte';
+	import SingleWorkerDialog from './singleWorkerDialog.svelte';
     
     // Dummy translations (replace with your localization logic)
     let MAX_SELECTED_WORKERS = 10;
     const moreResultsText = "More results available";
+    let showWorkerDialog = $state(false);
+    let huntableId = $state(0);
     
     let {
         healthcareWorkers = $bindable<Candidate[]>([]),
@@ -72,6 +75,10 @@
 
   </script>
 
+<SingleWorkerDialog bind:open={showWorkerDialog} bind:huntableSelected={selectedWorkers[huntableId]} bind:lookupId={workerLookupId} bind:huntableId={huntableId} allowSelection={true} onSelect={(huntableId) => {
+  selectedWorkers[huntableId] = !selectedWorkers[huntableId];
+}} />
+
 {#if showResults}
 <div class="fixed bottom-4 left-1/2 sm:left-[55vw] -translate-x-1/2 flex items-center px-3 py-1.5 bg-gray-100/60 backdrop-blur-sm rounded-full text-sm font-medium z-10">
   <User class="w-4 h-4 mr-1.5 text-primary" />
@@ -122,6 +129,10 @@
                 allowSelection={true} 
                 disabled={canNotSelectMoreWorkers}
                 checked={selectedWorkers[worker.id]}
+                onView={(worker) => {
+                  huntableId = worker.id;
+                  showWorkerDialog = true;
+                }}
                 onSelect={(worker) => {
                   selectedWorkers[worker.id] = !selectedWorkers[worker.id];
                 }}
