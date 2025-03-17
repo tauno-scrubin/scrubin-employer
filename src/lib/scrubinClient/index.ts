@@ -324,9 +324,29 @@ export interface InterestedCandidateDetails extends HuntableDetails {
   lastName: string;
   email: string;
   phone: string;
+  professionNumbers?: Array<{
+    countryRegistered: string;
+    number: string;
+  }>;
   dateInterested: string;
-  conservation: Message[]; // Note: API shows "conservation" but might be "conversation"
-  internalNotes: InternalNote[];
+  dateInterview?: string;
+  notes?: string;
+}
+
+export interface ChatMessage {
+  id: number;
+  message: string;
+  date: string;
+  sentByCandidate: boolean;
+  dateRead: string;
+}
+
+export interface UpdateCandidateNotesRequest {
+  notes: string;
+}
+
+export interface CreateChatMessageRequest {
+  message: string;
 }
 
 // ─── AUTH STORE ───────────────────────────────────────────────────────────────
@@ -722,6 +742,24 @@ class HuntResource extends BaseResource {
   async getInterestedCandidateDetails(id: number, candidateId: number): Promise<InterestedCandidateDetails> {
     const url = new URL(`/api/v1/hunts/${id}/interested-candidates/${candidateId}`, this.client.baseUrl);
     return this.request<InterestedCandidateDetails>('GET', url.toString()) as Promise<InterestedCandidateDetails>;
+  }
+
+  // PUT /api/v1/hunts/{id}/interested-candidates/{candidateId}/notes
+  async updateInterestedCandidateNotes(id: number, candidateId: number, notes: string): Promise<void> {
+    const url = new URL(`/api/v1/hunts/${id}/interested-candidates/${candidateId}/notes`, this.client.baseUrl);
+    return this.request<void>('PUT', url.toString(), { notes }, true) as Promise<void>;
+  }
+
+  // GET /api/v1/hunts/{id}/interested-candidates/{candidateId}/chat
+  async getInterestedCandidateChat(id: number, candidateId: number): Promise<ChatMessage[]> {
+    const url = new URL(`/api/v1/hunts/${id}/interested-candidates/${candidateId}/chat`, this.client.baseUrl);
+    return this.request<ChatMessage[]>('GET', url.toString()) as Promise<ChatMessage[]>;
+  }
+
+  // POST /api/v1/hunts/{id}/interested-candidates/{candidateId}/chat
+  async createInterestedCandidateMessage(id: number, candidateId: number, message: string): Promise<ChatMessage[]> {
+    const url = new URL(`/api/v1/hunts/${id}/interested-candidates/${candidateId}/chat`, this.client.baseUrl);
+    return this.request<ChatMessage[]>('POST', url.toString(), { message }) as Promise<ChatMessage[]>;
   }
 }
 

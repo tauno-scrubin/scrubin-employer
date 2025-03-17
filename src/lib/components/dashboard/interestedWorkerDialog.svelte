@@ -4,8 +4,10 @@
     import * as Card from "$lib/components/ui/card/index.js";
     import type { InterestedCandidateDetails } from "@/scrubinClient";
     import { scrubinClient } from "@/scrubinClient/client";
-    import { Heart, Sparkle, MessageCircle, Calendar, Phone, Mail } from "lucide-svelte";
+    import { Heart, Sparkle, MessageCircle, Calendar, Phone, Mail, Briefcase, GraduationCap, Award } from "lucide-svelte";
     import Button from "../ui/button/button.svelte";
+	import CandidateChat from "./candidateChat.svelte";
+	import CandidateNotes from "./candidateNotes.svelte";
 
     let {
         open = $bindable(false),
@@ -50,6 +52,25 @@
             return dateString || 'Not available';
         }
     }
+
+    function formatDateTime(dateString: string): string {
+        try {
+            const date = new Date(dateString);
+            const datePart = date.toLocaleDateString('en-US', { 
+                day: 'numeric', 
+                month: 'long', 
+                year: 'numeric' 
+            });
+            const timePart = date.toLocaleTimeString('en-US', {
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true
+            });
+            return `${datePart} at ${timePart}`;
+        } catch (e) {
+            return dateString || 'Not available';
+        }
+    }
 </script>
     
 <Dialog.Root bind:open>
@@ -72,7 +93,6 @@
                 Failed to load candidate data. Please try again.
             </div>
         {:else if worker}
-            <!-- ShadCN Tabs Component -->
             <Tabs.Root value="profile" class="w-full">
                 <Tabs.List class="grid w-full grid-cols-3">
                     <Tabs.Trigger value="profile">Profile</Tabs.Trigger>
@@ -83,37 +103,82 @@
                 <Tabs.Content value="profile">
                     <Card.Root>
                         <Card.Content class="pt-6">
-                            <!-- Contact Information Section -->
-                            <div class="mb-6 p-4 bg-blue-50 rounded-md">
+                            {#if worker.dateInterview}
+                            <div class="flex text-sm items-center mb-2 gap-2 col-span-full bg-green-50 p-2 rounded-md border border-green-200">
+                                <Calendar class="w-4 h-4 text-green-600" />
+                                <span class="text-green-800 font-medium">
+                                    Interview booked for {formatDateTime(worker.dateInterview)}
+                                </span>
+                            </div>
+                            {/if}
+
+                            <div class="mb-6 p-4 bg-blue-50 rounded-md shadow-sm">
                                 <h2 class="text-xl font-medium mb-4 flex items-center">
                                     <Sparkle fill="currentColor" strokeWidth={1} class="w-5 h-5 text-blue-500 mr-2" />
                                     Contact Information
                                 </h2>
                                 
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div class="flex items-center gap-2">
-                                        <span class="font-semibold">Name:</span>
-                                        <span>{worker.firstName} {worker.lastName}</span>
+                                <div class="grid grid-cols-1 gap-4">
+                                    <div class="flex items-center gap-3 mb-2">
+                                        <div class="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-semibold text-lg">
+                                            {worker.firstName?.[0]}{worker.lastName?.[0]}
+                                        </div>
+                                        <span class="text-gray-900 font-semibold text-lg">{worker.firstName} {worker.lastName}</span>
                                     </div>
                                     
-                                    <div class="flex items-center gap-2">
-                                        <Mail class="w-4 h-4 text-gray-500" />
-                                        <a href={`mailto:${worker.email}`} class="text-blue-600 hover:underline">{worker.email}</a>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2 pl-1">
+                                        <div class="flex items-center gap-3 group hover:bg-blue-50 rounded-md transition-colors">
+                                            <div class="bg-blue-50 p-2 rounded-full">
+                                                <Mail class="w-4 h-4 text-blue-600" />
+                                            </div>
+                                            <div class="flex flex-col">
+                                                <span class="text-xs text-gray-500">Email</span>
+                                                <a href={`mailto:${worker.email}`} class="text-gray-700 group-hover:text-blue-700 transition-colors text-sm">
+                                                    {worker.email}
+                                                </a>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="flex items-center gap-3 group hover:bg-blue-50 rounded-md transition-colors">
+                                            <div class="bg-blue-50 p-2 rounded-full">
+                                                <Phone class="w-4 h-4 text-blue-600" />
+                                            </div>
+                                            <div class="flex flex-col">
+                                                <span class="text-xs text-gray-500">Phone</span>
+                                                <a href={`tel:${worker.phone}`} class="text-gray-700 group-hover:text-blue-700 transition-colors text-sm">
+                                                    {worker.phone}
+                                                </a>
+                                            </div>
+                                            
+                                        </div>
+                                        
+                                        <div class="flex items-center gap-3 group rounded-md md:col-span-2">
+                                            <div class="bg-blue-50 p-2 rounded-full">
+                                                <Calendar class="w-4 h-4 text-blue-600" />
+                                            </div>
+                                            <div class="flex flex-col">
+                                                <span class="text-xs text-gray-500">Interested since</span>
+                                                <span class="text-gray-700 text-sm">{formatDate(worker.dateInterested)}</span>
+                                            </div>
+                                        </div>
                                     </div>
                                     
-                                    <div class="flex items-center gap-2">
-                                        <Phone class="w-4 h-4 text-gray-500" />
-                                        <a href={`tel:${worker.phone}`} class="text-blue-600 hover:underline">{worker.phone}</a>
-                                    </div>
-                                    
-                                    <div class="flex items-center gap-2">
-                                        <Calendar class="w-4 h-4 text-gray-500" />
-                                        <span>Interested since: {formatDate(worker.dateInterested)}</span>
-                                    </div>
+                                    {#if worker.professionNumbers && worker.professionNumbers.length > 0}
+                                        <div class="mt-3 border-t pt-3">
+                                            <h4 class="font-medium text-gray-700 mb-2 text-sm">Professional Registration:</h4>
+                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                                                {#each worker.professionNumbers as registration}
+                                                    <div class="flex items-center gap-2 rounded-md">
+                                                        <span class="text-xs font-medium text-gray-500">{registration.countryRegistered}:</span>
+                                                        <span class="text-sm text-gray-700">{registration.number}</span>
+                                                    </div>
+                                                {/each}
+                                            </div>
+                                        </div>
+                                    {/if}
                                 </div>
                             </div>
                             
-                            <!-- Worker Information Section -->
                             <div class="space-y-3">
                                 <div class="grid grid-cols-1 gap-4 text-sm border-b pb-3">
                                     <div class="w-full grid grid-cols-[150px_1fr] items-start">
@@ -197,12 +262,10 @@
                                     </div>
                                 </div>
                                 
-                                <!-- Job Preferences Section -->
                                 <div class="border-t pt-3 mt-4">
                                     <h4 class="text-xl font-medium mb-4">Job Preferences</h4>
                                     
                                     <div class="grid grid-cols-1 gap-4 text-sm">
-                                        <!-- Job preferences content from singleWorkerDialog -->
                                         <div class="w-full grid grid-cols-[150px_1fr] items-start">
                                             <h4 class="font-semibold">Countries</h4>
                                             <div class="flex flex-row gap-2 flex-wrap">
@@ -216,17 +279,168 @@
                                             </div>
                                         </div>
                                         
-                                        <!-- Additional job preferences fields -->
-                                        <!-- ... existing job preferences fields ... -->
+                                        <div class="w-full grid grid-cols-[150px_1fr] items-start">
+                                            <h4 class="font-semibold">Preferred Locations</h4>
+                                            <div class="flex flex-row gap-2 flex-wrap">
+                                                {#if worker.preferredLocations && worker.preferredLocations.length > 0}
+                                                    {#each worker.preferredLocations as location}
+                                                        <span class="px-2 py-0.5 bg-gray-100 text-gray-700 text-xs rounded">{location}</span>
+                                                    {/each}
+                                                {:else}
+                                                    <p class="text-gray-500">Not specified</p>
+                                                {/if}
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="w-full grid grid-cols-[150px_1fr] items-start">
+                                            <h4 class="font-semibold">Preferred Speciality</h4>
+                                            <div class="flex flex-row gap-2 flex-wrap">
+                                                {#if worker.preferredSpeciality && worker.preferredSpeciality.length > 0}
+                                                    {#each worker.preferredSpeciality as speciality}
+                                                        <span class="px-2 py-0.5 bg-gray-100 text-gray-700 text-xs rounded">{speciality}</span>
+                                                    {/each}
+                                                {:else}
+                                                    <p class="text-gray-500">Not specified</p>
+                                                {/if}
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="w-full grid grid-cols-[150px_1fr] items-start">
+                                            <h4 class="font-semibold">Facility Types</h4>
+                                            <div class="flex flex-row gap-2 flex-wrap">
+                                                {#if worker.preferredFacilityTypes && worker.preferredFacilityTypes.length > 0}
+                                                    {#each worker.preferredFacilityTypes as facilityType}
+                                                        <span class="px-2 py-0.5 bg-gray-100 text-gray-700 text-xs rounded">{facilityType}</span>
+                                                    {/each}
+                                                {:else}
+                                                    <p class="text-gray-500">Not specified</p>
+                                                {/if}
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="w-full grid grid-cols-[150px_1fr] items-start">
+                                            <h4 class="font-semibold">Interested Offers</h4>
+                                            <div class="flex flex-row gap-2 flex-wrap">
+                                                {#if worker.interestedOffers && worker.interestedOffers.length > 0}
+                                                    {#each worker.interestedOffers as offer}
+                                                        <span class="px-2 py-0.5 bg-gray-100 text-gray-700 text-xs rounded">{offer}</span>
+                                                    {/each}
+                                                {:else}
+                                                    <p class="text-gray-500">Not specified</p>
+                                                {/if}
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="w-full grid grid-cols-[150px_1fr] items-start">
+                                            <h4 class="font-semibold">Top 3 Terms</h4>
+                                            <div class="flex flex-row gap-2 flex-wrap">
+                                                {#if worker.top3Terms && worker.top3Terms.length > 0}
+                                                    {#each worker.top3Terms as term}
+                                                        <span class="px-2 py-0.5 bg-gray-100 text-gray-700 text-xs rounded">{term}</span>
+                                                    {/each}
+                                                {:else}
+                                                    <p class="text-gray-500">Not specified</p>
+                                                {/if}
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 
-                                <!-- Additional Information Section -->
                                 <div class="border-t pt-3">
                                     <h4 class="text-xl font-medium mb-4">Additional Information</h4>
                                     
-                                    <div class="grid grid-cols-1 gap-4 text-sm">
-                                        <!-- ... existing additional information fields ... -->
+                                    {#if worker.userDesc}
+                                        <div class="mb-4">
+                                            <h5 class="font-semibold mb-2">About</h5>
+                                            <p class="text-gray-700 text-sm">{worker.userDesc}</p>
+                                        </div>
+                                    {/if}
+                                    
+                                    {#if worker.workExperiences && worker.workExperiences.length > 0}
+                                        <div class="mb-4">
+                                            <h5 class="font-semibold mb-2 flex items-center">
+                                                <Briefcase class="w-4 h-4 mr-1" /> Work Experience
+                                            </h5>
+                                            <div class="space-y-3">
+                                                {#each worker.workExperiences as experience}
+                                                    <div class="border-l-2 border-blue-200 pl-3 py-1">
+                                                        <div class="font-medium">{experience.company}</div>
+                                                        <div class="text-sm text-gray-600">
+                                                            {formatDate(experience.start)} - {experience.end ? formatDate(experience.end) : 'Present'}
+                                                        </div>
+                                                        <div class="text-sm mt-1">{experience.desc}</div>
+                                                    </div>
+                                                {/each}
+                                            </div>
+                                        </div>
+                                    {/if}
+                                    
+                                    {#if worker.educations && worker.educations.length > 0}
+                                        <div class="mb-4">
+                                            <h5 class="font-semibold mb-2 flex items-center">
+                                                <GraduationCap class="w-4 h-4 mr-1" /> Education
+                                            </h5>
+                                            <div class="space-y-3">
+                                                {#each worker.educations as education}
+                                                    <div class="border-l-2 border-blue-200 pl-3 py-1">
+                                                        <div class="font-medium">{education.school}</div>
+                                                        <div class="text-sm text-gray-600">
+                                                            {education.speciality}
+                                                        </div>
+                                                        <div class="text-sm text-gray-600">
+                                                            {education.startYear} - {education.endYear || 'Present'}
+                                                        </div>
+                                                    </div>
+                                                {/each}
+                                            </div>
+                                        </div>
+                                    {/if}
+                                    
+                                    {#if worker.trainings && worker.trainings.length > 0}
+                                        <div class="mb-4">
+                                            <h5 class="font-semibold mb-2 flex items-center">
+                                                <Award class="w-4 h-4 mr-1" /> Trainings & Certifications
+                                            </h5>
+                                            <div class="space-y-3">
+                                                {#each worker.trainings as training}
+                                                    <div class="border-l-2 border-blue-200 pl-3 py-1">
+                                                        <div class="font-medium">{training.name}</div>
+                                                        <div class="text-sm text-gray-600">
+                                                            {formatDate(training.date)}
+                                                        </div>
+                                                        <div class="text-sm mt-1">{training.description}</div>
+                                                    </div>
+                                                {/each}
+                                            </div>
+                                        </div>
+                                    {/if}
+                                    
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div>
+                                            <h5 class="font-semibold mb-2">Other Skills</h5>
+                                            <div class="flex flex-row gap-2 flex-wrap">
+                                                {#if worker.otherSkills && worker.otherSkills.length > 0}
+                                                    {#each worker.otherSkills as skill}
+                                                        <span class="px-2 py-0.5 bg-gray-100 text-gray-700 text-xs rounded">{skill}</span>
+                                                    {/each}
+                                                {:else}
+                                                    <p class="text-gray-500">Not specified</p>
+                                                {/if}
+                                            </div>
+                                        </div>
+                                        
+                                        <div>
+                                            <h5 class="font-semibold mb-2">Soft Skills</h5>
+                                            <div class="flex flex-row gap-2 flex-wrap">
+                                                {#if worker.softSkills && worker.softSkills.length > 0}
+                                                    {#each worker.softSkills as skill}
+                                                        <span class="px-2 py-0.5 bg-gray-100 text-gray-700 text-xs rounded">{skill}</span>
+                                                    {/each}
+                                                {:else}
+                                                    <p class="text-gray-500">Not specified</p>
+                                                {/if}
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -235,61 +449,11 @@
                 </Tabs.Content>
                 
                 <Tabs.Content value="messages">
-                    <Card.Root>
-                        <Card.Header>
-                            <Card.Title class="flex items-center">
-                                <MessageCircle class="w-5 h-5 text-blue-500 mr-2" />
-                                Message History
-                            </Card.Title>
-                        </Card.Header>
-                        <Card.Content>
-                            {#if worker.conservation && worker.conservation.length > 0}
-                                <div class="space-y-4">
-                                    {#each worker.conservation as message}
-                                        <div class="p-3 rounded-lg {message.sentByMe ? 'bg-blue-50 ml-8' : 'bg-gray-50 mr-8'}">
-                                            <div class="flex justify-between items-center mb-1">
-                                                <span class="font-medium">{message.sentByMe ? 'You' : 'Candidate'}</span>
-                                                <div class="flex flex-col items-end">
-                                                    <span class="text-xs text-gray-500">{formatDate(message.date)}</span>
-                                                    {#if message.dateRead}
-                                                        <span class="text-xs text-gray-400">Read {formatDate(message.dateRead)}</span>
-                                                    {/if}
-                                                </div>
-                                            </div>
-                                            <p class="text-gray-700">{message.message}</p>
-                                        </div>
-                                    {/each}
-                                </div>
-                            {:else}
-                                <p class="text-gray-500 text-center py-8">No message history available.</p>
-                            {/if}
-                        </Card.Content>
-                    </Card.Root>
+                    <CandidateChat bind:huntId={huntId} bind:candidateId={candidateId} />
                 </Tabs.Content>
                 
                 <Tabs.Content value="notes">
-                    <Card.Root>
-                        <Card.Header>
-                            <Card.Title>Internal Notes</Card.Title>
-                        </Card.Header>
-                        <Card.Content>
-                            {#if worker.internalNotes && worker.internalNotes.length > 0}
-                                <div class="space-y-4">
-                                    {#each worker.internalNotes as note}
-                                        <div class="p-3 border rounded-lg">
-                                            <div class="flex justify-between items-center mb-2">
-                                                <span class="font-medium">{note.creatorName}</span>
-                                                <span class="text-xs text-gray-500">{formatDate(note.date)}</span>
-                                            </div>
-                                            <p class="text-gray-700">{note.note}</p>
-                                        </div>
-                                    {/each}
-                                </div>
-                            {:else}
-                                <p class="text-gray-500 text-center py-8">No internal notes available.</p>
-                            {/if}
-                        </Card.Content>
-                    </Card.Root>
+                    <CandidateNotes bind:huntId={huntId} bind:candidateId={candidateId} bind:notes={worker.notes} />
                 </Tabs.Content>
             </Tabs.Root>
         {:else}
