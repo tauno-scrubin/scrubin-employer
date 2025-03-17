@@ -79,7 +79,7 @@
     let selectedCandidateId = $state(0);
 </script>
 
-<InterestedWorkerDialog open={showInterestedWorkerDialog} huntId={hunt.huntId} candidateId={selectedCandidateId} />
+<InterestedWorkerDialog bind:open={showInterestedWorkerDialog} bind:huntId={hunt.huntId} bind:candidateId={selectedCandidateId} />
 
 <div class="container mx-auto py-6 space-y-6 max-w-7xl">
     <div class="flex items-center gap-4 mb-6">

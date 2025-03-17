@@ -1,5 +1,7 @@
 <script lang="ts">
     import * as Dialog from "$lib/components/ui/dialog/index.js";
+    import * as Tabs from "$lib/components/ui/tabs/index.js";
+    import * as Card from "$lib/components/ui/card/index.js";
     import type { InterestedCandidateDetails } from "@/scrubinClient";
     import { scrubinClient } from "@/scrubinClient/client";
     import { Heart, Sparkle, MessageCircle, Calendar, Phone, Mail } from "lucide-svelte";
@@ -70,6 +72,66 @@
                 Failed to load candidate data. Please try again.
             </div>
         {:else if worker}
+            <!-- ShadCN Tabs Component -->
+            <Tabs.Root value="profile" class="w-full">
+                <Tabs.List class="grid w-full grid-cols-3">
+                    <Tabs.Trigger value="profile">Profile</Tabs.Trigger>
+                    <Tabs.Trigger value="messages">Messages</Tabs.Trigger>
+                    <Tabs.Trigger value="notes">Notes</Tabs.Trigger>
+                </Tabs.List>
+                
+                <Tabs.Content value="profile">
+                    <Card.Root>
+                        <Card.Content class="pt-6">
+                            <!-- Contact Information Section -->
+                            <div class="mb-6 p-4 bg-blue-50 rounded-md">
+                                <h2 class="text-xl font-medium mb-4 flex items-center">
+                                    <Sparkle fill="currentColor" strokeWidth={1} class="w-5 h-5 text-blue-500 mr-2" />
+                                    Contact Information
+                                </h2>
+                                
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="flex items-center gap-2">
+                                        <span class="font-semibold">Name:</span>
+                                        <span>{worker.firstName} {worker.lastName}</span>
+                                    </div>
+                                    
+                                    <div class="flex items-center gap-2">
+                                        <Mail class="w-4 h-4 text-gray-500" />
+                                        <a href={`mailto:${worker.email}`} class="text-blue-600 hover:underline">{worker.email}</a>
+                                    </div>
+                                    
+                                    <div class="flex items-center gap-2">
+                                        <Phone class="w-4 h-4 text-gray-500" />
+                                        <a href={`tel:${worker.phone}`} class="text-blue-600 hover:underline">{worker.phone}</a>
+                                    </div>
+                                    
+                                    <div class="flex items-center gap-2">
+                                        <Calendar class="w-4 h-4 text-gray-500" />
+                                        <span>Interested since: {formatDate(worker.dateInterested)}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Worker Information Section -->
+                            <div class="space-y-3">
+                                <div class="grid grid-cols-1 gap-4 text-sm border-b pb-3">
+                                    <div class="w-full grid grid-cols-[150px_1fr] items-start">
+                                        <h4 class="font-semibold">Professions</h4>
+                                        <div class="flex flex-row gap-2 flex-wrap">
+                                            {#if worker.professions && worker.professions.length > 0}
+                                                {#each worker.professions as profession}
+                                                    <span class="px-2 py-0.5 bg-gray-100 text-gray-700 text-xs rounded">{profession}</span>
+                                                {/each}
+                                            {:else}
+                                                <p class="text-gray-500">Not specified</p>
+                                            {/if}
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="w-full grid grid-cols-[150px_1fr] items-start">
+                                        <h4 class="font-semibold">Registration Country</h4>
+                                        <p class="{worker.professionRegistrationCountry ? 'text-gray-900' : 'text-gray-500'}">
             <!-- Tab Navigation -->
             <div class="flex border-b mb-4">
                 <button 
