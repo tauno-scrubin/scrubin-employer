@@ -124,7 +124,7 @@
 		<form on:submit|preventDefault={() => searchWorkers()} class="flex items-center flex-col relative group">
 		  <Textarea
 			bind:value={searchText} 
-			maxlength={200}
+			maxlength={500}
 			onfocus={() => inputFocused = true}
 			onblur={() => !searchText && (inputFocused = false)}
 			placeholder="I am looking for two General Practitioners from the UK with MRCGP qualifications who speak English. The salary for a full-time position is $300,000 per year."
