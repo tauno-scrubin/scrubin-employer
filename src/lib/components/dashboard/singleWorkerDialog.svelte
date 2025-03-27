@@ -48,18 +48,6 @@
     
 <Dialog.Root bind:open>
     <Dialog.Content class="max-w-3xl max-h-[90vh] overflow-y-auto ">
-        <Dialog.Header>
-            <Dialog.Title class="flex items-center gap-2 justify-between">Worker Profile
-                {#if allowSelection}
-                    <Button onclick={() => onSelect(huntableId)} variant="ghost" size="icon" class="p-1 rounded-full disabled:cursor-not-allowed text-gray-400 hover:text-gray-600" >
-                        <Heart fill={huntableSelected ? 'currentColor' : 'none'} class="w-4 h-4 {huntableSelected ? 'text-red-500' : 'text-gray-400'}" />
-                    </Button>
-                {/if}
-            </Dialog.Title>
-            <Dialog.Description>
-                Worker Profile Description
-            </Dialog.Description>
-        </Dialog.Header>
         
         {#if isLoading}
             <div class="flex justify-center items-center p-8">
@@ -72,7 +60,14 @@
         {:else if worker}
             <div class="  bg-white rounded-md">
                 <Sparkle fill="currentColor" strokeWidth={1} class="w-8 h-8 text-blue-500 mb-4 rotate-45" />
-                <h2 class="text-xl font-medium mb-4">Worker Information</h2>
+                <h2 class="text-xl font-medium mb-4 flex flex-row gap-2 justify-between">Worker Information 
+
+                    {#if allowSelection}
+                    <Button onclick={() => onSelect(huntableId)} variant="ghost" size="icon" class="p-1 rounded-full disabled:cursor-not-allowed text-gray-400 hover:text-gray-600" >
+                        <Heart fill={huntableSelected ? 'currentColor' : 'none'} class="w-4 h-4 {huntableSelected ? 'text-red-500' : 'text-gray-400'}" />
+                    </Button>
+                {/if}
+                </h2>
                 
                 <div class="space-y-3">
                     <div class="grid grid-cols-1 gap-4 text-sm border-b pb-3">
@@ -273,7 +268,86 @@
                                     {/if}
                                 </div>
                             </div>
+                            
+                            <div class="w-full grid grid-cols-[150px_1fr] items-start">
+                                <h4 class="font-semibold">About</h4>
+                                <p class="{worker.userDesc ? 'text-gray-900' : 'text-gray-500'}">
+                                    {worker.userDesc || 'Not specified'}
+                                </p>
+                            </div>
                         </div>
+                    </div>
+                    
+                    <!-- Work Experience Section -->
+                    <div class="border-t pt-3">
+                        <h4 class="text-xl font-medium mb-4">Work Experience</h4>
+                        
+                        {#if worker.workExperiences && worker.workExperiences.length > 0}
+                            <div class="space-y-2">
+                                {#each worker.workExperiences as experience}
+                                    <div class="border-l-2 border-gray-200 pl-4 py-0.5">
+                                        <div class="flex justify-between items-start mb-1">
+                                            <h5 class="font-semibold text-gray-800">{experience.company}</h5>
+                                            <span class="text-xs text-gray-500 bg-gray-100 px-2 py-0.5">
+                                                {new Date(experience.start).toLocaleDateString('en-US', {year: 'numeric', month: 'short'})} – 
+                                                {experience.end ? new Date(experience.end).toLocaleDateString('en-US', {year: 'numeric', month: 'short'}) : 'Present'}
+                                            </span>
+                                        </div>
+                                        <p class="text-sm text-gray-600">{experience.desc}</p>
+                                    </div>
+                                {/each}
+                            </div>
+                        {:else}
+                            <p class="text-gray-500">No work experience listed</p>
+                        {/if}
+                    </div>
+                    
+                    <!-- Education Section -->
+                    <div class="border-t pt-3">
+                        <h4 class="text-xl font-medium mb-4">Education</h4>
+                        
+                        {#if worker.educations && worker.educations.length > 0}
+                            <div class="space-y-3">
+                                {#each worker.educations as education}
+                                    <div >
+                                        <div class="flex justify-between items-start">
+                                            <div>
+                                                <h5 class="font-semibold text-gray-800">{education.school}</h5>
+                                                <p class="text-sm text-gray-600">{education.speciality}</p>
+                                            </div>
+                                            <span class="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 whitespace-nowrap">
+                                                {education.startYear} – {education.endYear || 'Present'}
+                                            </span>
+                                        </div>
+                                    </div>
+                                {/each}
+                            </div>
+                        {:else}
+                            <p class="text-gray-500">No education listed</p>
+                        {/if}
+                    </div>
+                    
+                    <!-- Training Section -->
+                    <div class="border-t pt-3">
+                        <h4 class="text-xl font-medium mb-4">Trainings & Certifications</h4>
+                        
+                        {#if worker.trainings && worker.trainings.length > 0}
+                            <div class="space-y-3">
+                                {#each worker.trainings as training}
+                                    <div >
+                                        <div class="flex justify-between items-start mb-1">
+                                            <h5 class="font-semibold text-gray-800">{training.name}</h5>
+                                            <span class="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 whitespace-nowrap">
+                                                {new Date(training.date).toLocaleDateString('en-US', {year: 'numeric', month: 'short'})}
+                                            </span>
+                                        </div>
+                                        <p class="text-sm text-gray-600">{training.description}</p>
+                                    </div>
+                                {/each}
+                            </div>
+                        {:else}
+                            <p class="text-gray-500">No trainings or certifications listed</p>
+                        {/if}
                     </div>
                 </div>
             </div>
