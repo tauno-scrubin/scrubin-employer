@@ -261,6 +261,70 @@
                                         </div>
                                     </div>
                                 </div>
+
+                                <div class="border-t pt-3 mt-4">
+                                    <h4 class="text-xl font-medium mb-4">Experience</h4>
+
+                                {#if worker.workExperiences && worker.workExperiences.length > 0}
+                                        <div class="mb-4">
+                                            <h5 class="font-semibold mb-2 flex items-center">
+                                                <Briefcase class="w-4 h-4 mr-1" /> Work Experience
+                                            </h5>
+                                            <div class="space-y-3">
+                                                {#each worker.workExperiences as experience}
+                                                    <div class="border-l-2 border-blue-200 pl-3 py-1">
+                                                        <div class="font-medium">{experience.company}</div>
+                                                        <div class="text-sm text-gray-600">
+                                                            {formatDate(experience.start)} - {experience.end ? formatDate(experience.end) : 'Present'}
+                                                        </div>
+                                                        <div class="text-sm mt-1">{experience.desc}</div>
+                                                    </div>
+                                                {/each}
+                                            </div>
+                                        </div>
+                                    {/if}
+                                    
+                                    {#if worker.educations && worker.educations.length > 0}
+                                        <div class="mb-4">
+                                            <h5 class="font-semibold mb-2 flex items-center">
+                                                <GraduationCap class="w-4 h-4 mr-1" /> Education
+                                            </h5>
+                                            <div class="space-y-3">
+                                                {#each worker.educations as education}
+                                                    <div class="border-l-2 border-blue-200 pl-3 py-1">
+                                                        <div class="font-medium">{education.school}</div>
+                                                        <div class="text-sm text-gray-600">
+                                                            {education.speciality}
+                                                        </div>
+                                                        <div class="text-sm text-gray-600">
+                                                            {education.startYear} - {education.endYear || 'Present'}
+                                                        </div>
+                                                    </div>
+                                                {/each}
+                                            </div>
+                                        </div>
+                                    {/if}
+                                    
+                                    {#if worker.trainings && worker.trainings.length > 0}
+                                        <div class="mb-4">
+                                            <h5 class="font-semibold mb-2 flex items-center">
+                                                <Award class="w-4 h-4 mr-1" /> Trainings & Certifications
+                                            </h5>
+                                            <div class="space-y-3">
+                                                {#each worker.trainings as training}
+                                                    <div class="border-l-2 border-blue-200 pl-3 py-1">
+                                                        <div class="font-medium">{training.name}</div>
+                                                        <div class="text-sm text-gray-600">
+                                                            {formatDate(training.date)}
+                                                        </div>
+                                                        <div class="text-sm mt-1">{training.description}</div>
+                                                    </div>
+                                                {/each}
+                                            </div>
+                                        </div>
+                                    {/if}
+
+                                </div>
                                 
                                 <div class="border-t pt-3 mt-4">
                                     <h4 class="text-xl font-medium mb-4">Job Preferences</h4>
@@ -356,64 +420,6 @@
                                         </div>
                                     {/if}
                                     
-                                    {#if worker.workExperiences && worker.workExperiences.length > 0}
-                                        <div class="mb-4">
-                                            <h5 class="font-semibold mb-2 flex items-center">
-                                                <Briefcase class="w-4 h-4 mr-1" /> Work Experience
-                                            </h5>
-                                            <div class="space-y-3">
-                                                {#each worker.workExperiences as experience}
-                                                    <div class="border-l-2 border-blue-200 pl-3 py-1">
-                                                        <div class="font-medium">{experience.company}</div>
-                                                        <div class="text-sm text-gray-600">
-                                                            {formatDate(experience.start)} - {experience.end ? formatDate(experience.end) : 'Present'}
-                                                        </div>
-                                                        <div class="text-sm mt-1">{experience.desc}</div>
-                                                    </div>
-                                                {/each}
-                                            </div>
-                                        </div>
-                                    {/if}
-                                    
-                                    {#if worker.educations && worker.educations.length > 0}
-                                        <div class="mb-4">
-                                            <h5 class="font-semibold mb-2 flex items-center">
-                                                <GraduationCap class="w-4 h-4 mr-1" /> Education
-                                            </h5>
-                                            <div class="space-y-3">
-                                                {#each worker.educations as education}
-                                                    <div class="border-l-2 border-blue-200 pl-3 py-1">
-                                                        <div class="font-medium">{education.school}</div>
-                                                        <div class="text-sm text-gray-600">
-                                                            {education.speciality}
-                                                        </div>
-                                                        <div class="text-sm text-gray-600">
-                                                            {education.startYear} - {education.endYear || 'Present'}
-                                                        </div>
-                                                    </div>
-                                                {/each}
-                                            </div>
-                                        </div>
-                                    {/if}
-                                    
-                                    {#if worker.trainings && worker.trainings.length > 0}
-                                        <div class="mb-4">
-                                            <h5 class="font-semibold mb-2 flex items-center">
-                                                <Award class="w-4 h-4 mr-1" /> Trainings & Certifications
-                                            </h5>
-                                            <div class="space-y-3">
-                                                {#each worker.trainings as training}
-                                                    <div class="border-l-2 border-blue-200 pl-3 py-1">
-                                                        <div class="font-medium">{training.name}</div>
-                                                        <div class="text-sm text-gray-600">
-                                                            {formatDate(training.date)}
-                                                        </div>
-                                                        <div class="text-sm mt-1">{training.description}</div>
-                                                    </div>
-                                                {/each}
-                                            </div>
-                                        </div>
-                                    {/if}
                                     
                                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <div>

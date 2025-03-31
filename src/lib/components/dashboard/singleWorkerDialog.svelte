@@ -2,7 +2,7 @@
     import * as Dialog from "$lib/components/ui/dialog/index.js";
 	import type { HuntableDetails } from "@/scrubinClient";
 	import { scrubinClient } from "@/scrubinClient/client";
-    import { Heart, Sparkle } from "lucide-svelte";
+    import { Heart, Sparkle, Briefcase, GraduationCap, Award } from "lucide-svelte";
 	import Button from "../ui/button/button.svelte";
 
     let {
@@ -153,6 +153,80 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- Work Experience Section -->
+                    <div class="border-t pt-3 mt-4">
+                        <h4 class="text-xl font-medium mb-4">Experience</h4>
+
+                        {#if worker.workExperiences && worker.workExperiences.length > 0}
+                            <div class="mb-4">
+                                <h5 class="font-semibold mb-2 flex items-center">
+                                    <Briefcase class="w-4 h-4 mr-1" /> Work Experience
+                                </h5>
+                                <div class="space-y-3">
+                                    {#each worker.workExperiences as experience}
+                                        <div class="border-l-2 border-blue-200 pl-3 py-1">
+                                            <div class="font-medium">{experience.company}</div>
+                                            <div class="text-sm text-gray-600">
+                                                {new Date(experience.start).toLocaleDateString('en-US', {year: 'numeric', month: 'short'})} - 
+                                                {experience.end ? new Date(experience.end).toLocaleDateString('en-US', {year: 'numeric', month: 'short'}) : 'Present'}
+                                            </div>
+                                            <div class="text-sm mt-1">{experience.desc}</div>
+                                        </div>
+                                        {:else}
+                            <p class="text-gray-500">No work experience listed</p>
+                                    {/each}
+                                </div>
+                            </div>
+                        
+                        {/if}
+                        
+                        {#if worker.educations && worker.educations.length > 0}
+                            <div class="mb-4">
+                                <h5 class="font-semibold mb-2 flex items-center">
+                                    <GraduationCap class="w-4 h-4 mr-1" /> Education
+                                </h5>
+                                <div class="space-y-3">
+                                    {#each worker.educations as education}
+                                        <div class="border-l-2 border-blue-200 pl-3 py-1">
+                                            <div class="font-medium">{education.school}</div>
+                                            <div class="text-sm text-gray-600">
+                                                {education.speciality}
+                                            </div>
+                                            <div class="text-sm text-gray-600">
+                                                {education.startYear} - {education.endYear || 'Present'}
+                                            </div>
+                                        </div>
+                                        {:else}
+                                        <p class="text-gray-500">No education listed</p>
+                                    {/each}
+                                </div>
+                            </div>
+                     
+                        {/if}
+                        
+                        {#if worker.trainings && worker.trainings.length > 0}
+                            <div class="mb-4">
+                                <h5 class="font-semibold mb-2 flex items-center">
+                                    <Award class="w-4 h-4 mr-1" /> Trainings & Certifications
+                                </h5>
+                                <div class="space-y-3">
+                                    {#each worker.trainings as training}
+                                        <div class="border-l-2 border-blue-200 pl-3 py-1">
+                                            <div class="font-medium">{training.name}</div>
+                                            <div class="text-sm text-gray-600">
+                                                {new Date(training.date).toLocaleDateString('en-US', {year: 'numeric', month: 'short'})}
+                                            </div>
+                                            <div class="text-sm mt-1">{training.description}</div>
+                                        </div>
+                                        {:else}
+                            <p class="text-gray-500">No trainings or certifications listed</p>
+                                    {/each}
+                                </div>
+                            </div>
+                        
+                        {/if}
+                    </div>
                     
                     <div class="border-t pt-3 mt-4">
                         <h4 class="text-xl font-medium mb-4">Job Preferences</h4>
@@ -278,77 +352,6 @@
                         </div>
                     </div>
                     
-                    <!-- Work Experience Section -->
-                    <div class="border-t pt-3">
-                        <h4 class="text-xl font-medium mb-4">Work Experience</h4>
-                        
-                        {#if worker.workExperiences && worker.workExperiences.length > 0}
-                            <div class="space-y-2">
-                                {#each worker.workExperiences as experience}
-                                    <div class="border-l-2 border-gray-200 pl-4 py-0.5">
-                                        <div class="flex justify-between items-start mb-1">
-                                            <h5 class="font-semibold text-gray-800">{experience.company}</h5>
-                                            <span class="text-xs text-gray-500 bg-gray-100 px-2 py-0.5">
-                                                {new Date(experience.start).toLocaleDateString('en-US', {year: 'numeric', month: 'short'})} – 
-                                                {experience.end ? new Date(experience.end).toLocaleDateString('en-US', {year: 'numeric', month: 'short'}) : 'Present'}
-                                            </span>
-                                        </div>
-                                        <p class="text-sm text-gray-600">{experience.desc}</p>
-                                    </div>
-                                {/each}
-                            </div>
-                        {:else}
-                            <p class="text-gray-500">No work experience listed</p>
-                        {/if}
-                    </div>
-                    
-                    <!-- Education Section -->
-                    <div class="border-t pt-3">
-                        <h4 class="text-xl font-medium mb-4">Education</h4>
-                        
-                        {#if worker.educations && worker.educations.length > 0}
-                            <div class="space-y-3">
-                                {#each worker.educations as education}
-                                    <div >
-                                        <div class="flex justify-between items-start">
-                                            <div>
-                                                <h5 class="font-semibold text-gray-800">{education.school}</h5>
-                                                <p class="text-sm text-gray-600">{education.speciality}</p>
-                                            </div>
-                                            <span class="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 whitespace-nowrap">
-                                                {education.startYear} – {education.endYear || 'Present'}
-                                            </span>
-                                        </div>
-                                    </div>
-                                {/each}
-                            </div>
-                        {:else}
-                            <p class="text-gray-500">No education listed</p>
-                        {/if}
-                    </div>
-                    
-                    <!-- Training Section -->
-                    <div class="border-t pt-3">
-                        <h4 class="text-xl font-medium mb-4">Trainings & Certifications</h4>
-                        
-                        {#if worker.trainings && worker.trainings.length > 0}
-                            <div class="space-y-3">
-                                {#each worker.trainings as training}
-                                    <div >
-                                        <div class="flex justify-between items-start mb-1">
-                                            <h5 class="font-semibold text-gray-800">{training.name}</h5>
-                                            <span class="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 whitespace-nowrap">
-                                                {new Date(training.date).toLocaleDateString('en-US', {year: 'numeric', month: 'short'})}
-                                            </span>
-                                        </div>
-                                        <p class="text-sm text-gray-600">{training.description}</p>
-                                    </div>
-                                {/each}
-                            </div>
-                        {:else}
-                            <p class="text-gray-500">No trainings or certifications listed</p>
-                        {/if}
-                    </div>
                 </div>
             </div>
         {:else}
