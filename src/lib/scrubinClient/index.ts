@@ -349,6 +349,14 @@ export interface CreateChatMessageRequest {
   message: string;
 }
 
+// Add this interface with the other interfaces
+export interface ContextQuestion {
+  answer: string;
+  id: number;
+  question: string;
+  date: string;
+}
+
 // ─── AUTH STORE ───────────────────────────────────────────────────────────────
 
 class AuthStore {
@@ -760,6 +768,18 @@ class HuntResource extends BaseResource {
   async createInterestedCandidateMessage(id: number, candidateId: number, message: string): Promise<ChatMessage[]> {
     const url = new URL(`/api/v1/hunts/${id}/interested-candidates/${candidateId}/chat`, this.client.baseUrl);
     return this.request<ChatMessage[]>('POST', url.toString(), { message }) as Promise<ChatMessage[]>;
+  }
+
+  // GET /api/v1/hunts/{id}/context-questions
+  async getHuntContextQuestions(id: number): Promise<ContextQuestion[]> {
+    const url = new URL(`/api/v1/hunts/${id}/context-questions`, this.client.baseUrl);
+    return this.request<ContextQuestion[]>('GET', url.toString()) as Promise<ContextQuestion[]>;
+  }
+
+  // POST /api/v1/hunts/{id}/context-questions/{questionId}
+  async answerHuntContextQuestion(id: number, questionId: number, answer: string): Promise<ContextQuestion> {
+    const url = new URL(`/api/v1/hunts/${id}/context-questions/${questionId}`, this.client.baseUrl);
+    return this.request<ContextQuestion>('POST', url.toString(), { answer }) as Promise<ContextQuestion>;
   }
 }
 

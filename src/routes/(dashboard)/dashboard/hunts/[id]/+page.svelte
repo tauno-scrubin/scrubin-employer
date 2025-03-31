@@ -31,6 +31,7 @@
     import type { InterestedCandidate } from "$lib/scrubinClient";
     import * as Avatar from "$lib/components/ui/avatar";
 	import InterestedWorkerDialog from "@/components/dashboard/interestedWorkerDialog.svelte";
+	import QuestionsInHunt from "@/components/dashboard/questionsInHunt.svelte";
 
     let { data } = $props();
     let hunt = $derived(data.hunt);
@@ -105,9 +106,10 @@
 
     <!-- Status badge at the top -->
     <Tabs.Root bind:value={activeTab} class="w-full">
-        <Tabs.List class="grid w-fit grid-cols-2">
+        <Tabs.List class="grid w-fit grid-cols-3">
           <Tabs.Trigger value="details">Details</Tabs.Trigger>
           <Tabs.Trigger value="statistics">Statistics</Tabs.Trigger>
+          <Tabs.Trigger value="questions">Questions</Tabs.Trigger>
         </Tabs.List>
         <Tabs.Content value="details">
 
@@ -327,6 +329,17 @@
     </div>
     </div>
         </div>
+        </Tabs.Content>
+        <Tabs.Content value="questions">
+            <div class="bg-blue-50/80 rounded-md p-4">
+                <div class="bg-white rounded-md p-4 shadow-sm">
+                    <h4 class="text-gray-900 text-xl font-semibold">Context Questions</h4>
+                    <p class="text-sm text-muted-foreground mb-6">
+                        Questions from candidates are collected here. Once answered, they become part of the context for AI-powered responses in future interactions.
+                    </p>
+                    <QuestionsInHunt huntId={hunt.huntId} />
+                </div>
+            </div>
         </Tabs.Content>
       </Tabs.Root>
 

@@ -132,7 +132,7 @@
 			
 			{#if inputFocused}
 		  <div transition:slide={{ delay: 100, duration: 200 }} class="flex items-end justify-between gap-2 w-full">
-			<span class="text-xs text-gray-400">{searchText.length}/200</span>
+			<span class="text-xs text-gray-400">{searchText.length}/500</span>
 			<div class="flex items-center gap-2">
 			<Button type="submit" variant="default" class="transition-all duration-200 rounded-full w-10 h-10 p-0 bg-blue-600 hover:bg-blue-700">
 			  {#if isLoading}
