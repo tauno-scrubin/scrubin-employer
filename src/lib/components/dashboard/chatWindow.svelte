@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Requirements } from "@/scrubinClient";
+	import type { Requirements, RequirementsWithInstructions } from "@/scrubinClient";
 	import { Button } from "$lib/components/ui/button";
 	import { Input } from "$lib/components/ui/input";
 	import { scrubinClient } from "@/scrubinClient/client";
@@ -38,9 +38,9 @@
 	import ChatWindowDemand from "./chatWindowDemand.svelte";
 
 	let {
-		requirements = $bindable<Requirements>()
+		requirements = $bindable<RequirementsWithInstructions>()
 	}: {
-		requirements: Requirements;
+		requirements: RequirementsWithInstructions;
 	} = $props();
 
 	let currentQuestionIndex = $state(0);
@@ -528,7 +528,30 @@
                         </div>
                         {/if}
 
-					
+                        {#if requirements.huntInstructions?.onlyCountriesToSearch?.length || requirements.huntInstructions?.preferredCountriesToSearch?.length}
+                        <div class="w-full grid grid-cols-[150px_1fr] items-start">
+                            <h4 class="font-semibold">Search Scope</h4>
+                            <div class="flex flex-col gap-1">
+                                {#if requirements.huntInstructions?.onlyCountriesToSearch?.length}
+                                    <div class="flex flex-wrap gap-1">
+                                        {#each requirements.huntInstructions.onlyCountriesToSearch as country}
+                                            <span class="px-2 py-0.5 bg-blue-50 text-blue-700 text-xs rounded">{country}</span>
+                                        {/each}
+                                    </div>
+                                {:else if requirements.huntInstructions?.preferredCountriesToSearch?.length}
+                                    <div>
+                                        <div class="flex flex-wrap gap-1 mb-1">
+                                            {#each requirements.huntInstructions.preferredCountriesToSearch as country}
+                                                <span class="px-2 py-0.5 bg-green-50 text-green-700 text-xs rounded">{country}</span>
+                                            {/each}
+                                        </div>
+                                        <span class="text-xs text-gray-500">Global search with preference for listed countries</span>
+                                    </div>
+                                {/if}
+                            </div>
+                        </div>
+                        {/if}
+
 					</div>
 				</div>
 			</div>

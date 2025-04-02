@@ -62,6 +62,8 @@ export interface SignupCompanyPayload {
 // Company interface as provided by the endpoints
 export interface Company {
   companyLegalName: string;
+  brandName: string;
+  description: string;
   country: string;
   registrationCode: string;
   vatNumber: string;
@@ -185,6 +187,18 @@ export interface Requirements {
     content: string;
     dateTime: string;
   }>;
+}
+
+// Add new interface for hunt instructions
+export interface HuntInstructions {
+  preferredCountriesToSearch: string[];
+  onlyCountriesToSearch: string[];
+  companyContext: string;
+}
+
+// Extend the existing Requirements interface
+export interface RequirementsWithInstructions extends Requirements {
+  huntInstructions?: HuntInstructions;
 }
 
 // New interfaces for the hunts endpoints
@@ -661,9 +675,9 @@ class HuntResource extends BaseResource {
   }
 
   // PUT /api/v1/hunt/requirements/{id}/analyze
-  async updateRequirements(id: number, description: string): Promise<Requirements> {
+  async updateRequirements(id: number, textInput: string): Promise<RequirementsWithInstructions> {
     const url = new URL(`${this.path}/requirements/${id}/analyze`, this.client.baseUrl);
-    return this.request<Requirements>('PUT', url.toString(), { jobRequirementId: id, textInput: description }) as Promise<Requirements>;
+    return this.request<RequirementsWithInstructions>('PUT', url.toString(), { textInput }) as Promise<RequirementsWithInstructions>;
   }
 
   // PUT /api/v1/hunt/requirements/{id}/activate

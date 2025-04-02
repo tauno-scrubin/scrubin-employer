@@ -125,85 +125,87 @@
 					<span class="loading loading-spinner loading-lg"></span>
 				</div>
 			{:else}
-				<form on:submit|preventDefault={handleSubmit} class="space-y-6">
-					<div class="grid gap-6 md:grid-cols-2">
-						<div class="space-y-2">
-							<Label for="firstName">First Name</Label>
-							<div class="relative">
-								<User class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-								<Input
-									id="firstName"
-									bind:value={user.firstName}
-									class="pl-9"
-									placeholder="Enter your first name"
-								/>
+				{#if user}
+					<form on:submit|preventDefault={handleSubmit} class="space-y-6">
+						<div class="grid gap-6 md:grid-cols-2">
+							<div class="space-y-2">
+								<Label for="firstName">First Name</Label>
+								<div class="relative">
+									<User class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+									<Input
+										id="firstName"
+										bind:value={user.firstName}
+										class="pl-9"
+										placeholder="Enter your first name"
+									/>
+								</div>
+							</div>
+
+							<div class="space-y-2">
+								<Label for="lastName">Last Name</Label>
+								<div class="relative">
+									<User class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+									<Input
+										id="lastName"
+										bind:value={user.lastName}
+										class="pl-9"
+										placeholder="Enter your last name"
+									/>
+								</div>
+							</div>
+
+							<div class="space-y-2">
+								<Label for="email">Email</Label>
+								<div class="relative">
+									<Mail class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+									<Input
+										id="email"
+										value={user.email}
+										class="pl-9"
+										disabled
+										readonly
+									/>
+								</div>
+							</div>
+
+							<div class="space-y-2">
+								<Label for="phoneNumber">Phone Number</Label>
+								<div class="relative">
+									<Phone class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+									<Input
+										id="phoneNumber"
+										bind:value={user.phoneNumber}
+										class="pl-9"
+										placeholder="Enter your phone number"
+									/>
+								</div>
+							</div>
+
+
+							<div class="space-y-2">
+								<Label for="calendarLink">Calendar Link</Label>
+								<div class="relative">
+									<Calendar class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+									<Input
+										id="calendarLink"
+										bind:value={user.calendarLink}
+										class="pl-9"
+										placeholder="Enter your calendar link (e.g. google calendar, cal.com, calendly )"
+									/>
+								</div>
 							</div>
 						</div>
 
-						<div class="space-y-2">
-							<Label for="lastName">Last Name</Label>
-							<div class="relative">
-								<User class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-								<Input
-									id="lastName"
-									bind:value={user.lastName}
-									class="pl-9"
-									placeholder="Enter your last name"
-								/>
-							</div>
+						<div class="flex justify-end">
+							<Button type="submit" disabled={isSaving}>
+								{#if isSaving}
+									<span class="loading loading-spinner loading-sm mr-2"></span>
+								{/if}
+								Save Changes
+							</Button>
 						</div>
-
-						<div class="space-y-2">
-							<Label for="email">Email</Label>
-							<div class="relative">
-								<Mail class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-								<Input
-									id="email"
-									value={user.email}
-									class="pl-9"
-									disabled
-									readonly
-								/>
-							</div>
-						</div>
-
-						<div class="space-y-2">
-							<Label for="phoneNumber">Phone Number</Label>
-							<div class="relative">
-								<Phone class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-								<Input
-									id="phoneNumber"
-									bind:value={user.phoneNumber}
-									class="pl-9"
-									placeholder="Enter your phone number"
-								/>
-							</div>
-						</div>
-
-
-						<div class="space-y-2">
-							<Label for="calendarLink">Calendar Link</Label>
-							<div class="relative">
-								<Calendar class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-								<Input
-									id="calendarLink"
-									bind:value={user.calendarLink}
-									class="pl-9"
-									placeholder="Enter your calendar link (e.g. google calendar, cal.com, calendly )"
-								/>
-							</div>
-						</div>
-					</div>
-
-					<div class="flex justify-end">
-						<Button type="submit" disabled={isSaving}>
-							{#if isSaving}
-								<span class="loading loading-spinner loading-sm mr-2"></span>
-							{/if}
-							Save Changes
-						</Button>
-					</div>
-				</form>
+					</form>
+				{/if}
 			{/if}
 		</Card.Content>
 	</Card.Root>
@@ -281,6 +283,32 @@
 				<form on:submit|preventDefault={handleSubmitAdvertiser} class="space-y-6">
 					<div class="grid gap-6 md:grid-cols-2">
 						<div class="space-y-2">
+							<Label for="brandName">Brand Name</Label>
+							<div class="relative">
+								<Building2 class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+								<Input
+									id="brandName"
+									bind:value={companyProfile.brandName}
+									class="pl-9"
+									placeholder="Enter brand name"
+								/>
+							</div>
+						</div>
+
+						<div class="space-y-2 md:col-span-2">
+							<Label for="description">Description</Label>
+							<div class="relative">
+								<Building2 class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+								<Input
+									id="description"
+									bind:value={companyProfile.description}
+									class="pl-9"
+									placeholder="Enter company description"
+								/>
+							</div>
+						</div>
+
+						<div class="space-y-2">
 							<Label for="companyLegalName">Company Name</Label>
 							<div class="relative">
 								<Building2 class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -324,11 +352,15 @@
 							<div class="relative">
 								<MapPin class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
 								<Select.Root type="single"
-									value={companyProfile.country} 
-									onValueChange={(value) => companyProfile.country = value}
+									value={companyProfile?.country} 
+									onValueChange={(value) => {
+										if (companyProfile) {
+											companyProfile.country = value;
+										}
+									}}
 								>
 									<Select.Trigger class="w-full pl-9">
-									{companyProfile.country ? companyProfile.country : 'Select a country'}
+										{companyProfile?.country ?? 'Select a country'}
 									</Select.Trigger>
 									<Select.Content>
 										<Select.Group>
