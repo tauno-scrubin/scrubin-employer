@@ -884,6 +884,48 @@ export class ScrubinClient {
     }
   }
 
+  async authWithToken(token: string): Promise<AuthResponse> {
+    const headers: Record<string, string> = {
+      'Origin': PUBLIC_ORIGIN,
+      'Content-Type': 'application/json',
+      'Accept': '*/*',
+      'Authorization': `Bearer ${token}`
+    };
+
+    try {
+      const response = await fetch(`${this.baseUrl}/api/v1/auth/token`, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({ token })
+      });
+
+      if (!response.ok) {
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || 'Token authentication failed');
+        } else {
+          throw new Error('Token authentication failed - invalid response format');
+        }
+      }
+      
+      const data: AuthResponse = await response.json();
+      this.authStore.setRefreshToken(data.refresh_token);
+      this.authStore.setAccessToken(data.access_token);
+
+      if (typeof document !== 'undefined') {
+        document.cookie = `scrubin_auth=${JSON.stringify({ jwt: data.access_token, refresh: data.refresh_token })}; path=/; SameSite=Strict`;
+      }
+
+      return data;
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      }
+      throw new Error('Token authentication failed');
+    }
+  }
+
   async signupWithPassword(payload: SignupPayload): Promise<AuthResponse> {
     const headers: Record<string, string> = {
       'Origin': PUBLIC_ORIGIN,

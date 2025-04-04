@@ -2,7 +2,7 @@ import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { scrubinClient } from '$lib/scrubinClient/client';
 
-export const load: PageServerLoad = async ({ params, locals }) => {
+export const load: PageServerLoad = async ({ params, locals, url }) => {
     if (!locals.scrubinClient.authStore.isValid) {
         throw error(401, 'Unauthorized');
     }

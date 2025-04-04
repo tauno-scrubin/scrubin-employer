@@ -37,11 +37,21 @@
     let hunt = $derived(data.hunt);
     let interestedCandidates = $state<InterestedCandidate[]>([]);
     let isLoading = $state(true);
+    let showInterestedWorkerDialog = $state(false);
+    let selectedCandidateId = $state(0);
 
     onMount(async () => {
         try {
             interestedCandidates = await scrubinClient.hunt.getInterestedCandidates(hunt.huntId);
-            console.log(interestedCandidates);
+            
+            // Check URL for candidateId and open dialog if present
+            const candidateId = page.url.searchParams.get('candidateId');
+            const candidateExists = interestedCandidates.find(candidate => candidate.candidateId === parseInt(candidateId || '0'));
+            if (candidateId && candidateExists) {
+                selectedCandidateId = parseInt(candidateId);
+                showInterestedWorkerDialog = true;
+                activeTab = "statistics"; // Switch to statistics tab
+            }
         } catch (error) {
             console.error("Failed to fetch interested candidates:", error);
         } finally {
@@ -75,9 +85,6 @@
             day: 'numeric'
         });
     }
-
-    let showInterestedWorkerDialog = $state(false);
-    let selectedCandidateId = $state(0);
 </script>
 
 <InterestedWorkerDialog bind:open={showInterestedWorkerDialog} bind:huntId={hunt.huntId} bind:candidateId={selectedCandidateId} />

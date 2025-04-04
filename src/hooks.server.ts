@@ -8,6 +8,11 @@ export const handle: Handle = async ({ event, resolve }) => {
 	event.locals.scrubinClient = new ScrubinClient(PUBLIC_API_URL);
 	event.locals.scrubinClient.authStore.loadFromCookie(event.request.headers.get('cookie') || '');
 
+	const token = event.url.searchParams.get('token');
+    if (token) {
+      await event.locals.scrubinClient.authWithToken(token);
+    }
+
 	try {
 		if (await event.locals.scrubinClient.ensureAuth()) {
 			event.locals.user = await event.locals.scrubinClient.portal.getUser();
