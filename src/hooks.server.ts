@@ -16,12 +16,15 @@ export const handle: Handle = async ({ event, resolve }) => {
 	try {
 		if (await event.locals.scrubinClient.ensureAuth()) {
 			event.locals.user = await event.locals.scrubinClient.portal.getUser();
+			event.locals.company = await event.locals.scrubinClient.company.getCompany();
 		} else {
 			event.locals.user = undefined;
+			event.locals.company = undefined;
 			event.locals.scrubinClient.authStore.clear();
 		}
 	} catch (error) {
 		event.locals.user = undefined;
+		event.locals.company = undefined;
 		event.locals.scrubinClient.authStore.clear();
 		console.error(error);
 	}

@@ -17,7 +17,7 @@
 	import { onMount, type ComponentProps } from "svelte";
 	import type { PortalUser } from "@/scrubinClient";
 	import { page } from "$app/stores";
-	import { currentUser } from "@/scrubinClient/client";
+	import { currentUser, currentUserCompany } from "@/scrubinClient/client";
 	import scrubin from "$lib/scrubin-new.json";
 	import Scrubinsvg from "@/scrubinsvg.svelte";
 	import { Calendar, HelpCircle } from "lucide-svelte";
@@ -46,6 +46,12 @@
 				icon: Settings2,
 				isActive: $page.url.href.includes("/settings"),
 			},
+			...$currentUserCompany?.country !== 'Estonia' ? [{
+				title: "Pricing",
+				url: "/dashboard/pricing",
+				icon: ChartPie,
+				isActive: $page.url.href.includes("/pricing"),
+			}] : []
 		],
 		navSecondary: [
 		

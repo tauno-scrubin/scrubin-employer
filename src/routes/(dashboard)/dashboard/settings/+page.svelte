@@ -351,7 +351,7 @@
 							<Label for="country">Country</Label>
 							<div class="relative">
 								<MapPin class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-								<Select.Root type="single"
+								<Select.Root disabled type="single"
 									value={companyProfile?.country} 
 									onValueChange={(value) => {
 										if (companyProfile) {

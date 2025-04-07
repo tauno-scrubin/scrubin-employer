@@ -5,14 +5,14 @@
 	import * as Breadcrumb from "@/components/ui/breadcrumb";
 	import * as Sidebar from "@/components/ui/sidebar";
 	import { Toaster } from "@/components/ui/sonner";
-	import { currentUser } from "@/scrubinClient/client.js";
+	import { currentUser, currentUserCompany } from "@/scrubinClient/client.js";
 	import { ModeWatcher, setMode, setTheme } from "mode-watcher";
 
 
     let { data } = $props();
 
     currentUser.set(data.user);
-
+	currentUserCompany.set(data.company);
 	setMode("light")
 
 </script>
