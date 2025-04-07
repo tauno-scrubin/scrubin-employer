@@ -15,7 +15,7 @@
 
 	<div class="mb-8">
 		<h2 class="text-xl font-bold">Success Fee Structure</h2>
-		<p class="text-muted-foreground mt-1">Our success fee is structured as monthly payments following a successful hire</p>
+		<p class="text-muted-foreground mt-1">Our success fee is charged as monthly payments starting from employment contract confirmation</p>
 	</div>
 
     <div class="p-6 rounded-lg mb-10 border border-border">
@@ -53,7 +53,8 @@
     <Separator class="my-4" />
 	<div class="">
 		<p class="text-sm text-muted-foreground">
-			Success fee payable in monthly installments, commencing upon successful hire. No upfront costs.
+			Success fee payable in monthly installments, commencing upon employment contract confirmation. No upfront costs.
 		</p>
 	</div>
 </div>
+
