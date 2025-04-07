@@ -5,8 +5,8 @@
 	import Separator from "@/components/ui/separator/separator.svelte";
 	
 	const pricingOptions = [
-		{ role: "Doctors", price: 500, icon: Stethoscope },
-		{ role: "Nurses & Specialists", price: 250, icon: Users }
+		{ role: "Doctors", price: 500, duration: 12, icon: Stethoscope },
+		{ role: "Nurses & Specialists", price: 250, duration: 12, icon: Users }
 	];
 </script>
 
@@ -14,8 +14,8 @@
 
 
 	<div class="mb-8">
-		<h2 class="text-xl font-bold">Pricing per successful hire</h2>
-		<p class="text-muted-foreground mt-1">One-time fee based on candidate role</p>
+		<h2 class="text-xl font-bold">Success Fee Structure</h2>
+		<p class="text-muted-foreground mt-1">Our success fee is structured as monthly payments following a successful hire</p>
 	</div>
 
     <div class="p-6 rounded-lg mb-10 border border-border">
@@ -44,7 +44,7 @@
 				
 				<div class="text-right">
 					<span class="text-xl font-bold">{option.price} {getCurrencySymbol('EUR')}</span>
-					<p class="text-xs text-muted-foreground">per hire</p>
+					<p class="text-xs text-muted-foreground">per month for {option.duration} months</p>
 				</div>
 			</div>
 		{/each}
@@ -53,7 +53,7 @@
     <Separator class="my-4" />
 	<div class="">
 		<p class="text-sm text-muted-foreground">
-			Fee is only charged when a candidate is successfully hired. No monthly subscription or upfront costs.
+			Success fee payable in monthly installments, commencing upon successful hire. No upfront costs.
 		</p>
 	</div>
 </div>
