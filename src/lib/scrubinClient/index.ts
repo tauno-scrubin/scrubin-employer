@@ -65,6 +65,7 @@ export interface Company {
   brandName: string;
   description: string;
   country: string;
+  countryIso: string;
   registrationCode: string;
   vatNumber: string;
   address: {
