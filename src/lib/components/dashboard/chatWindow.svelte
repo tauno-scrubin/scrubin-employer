@@ -355,11 +355,6 @@
 							
 										</Button>
 									{/each}
-
-									<Button variant={selectedPlanType == "ad_subscription" ? 'default' : 'outline'} onclick={() => selectPlan("ad_subscription")} class="w-full capitalize relative">
-										Ad Subscription (TEST!!)
-						
-									</Button>
 								</div>
 							</div>
 							
