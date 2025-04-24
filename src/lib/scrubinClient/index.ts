@@ -57,6 +57,7 @@ export interface SignupCompanyPayload {
   lastName: string;
   phone: string;
   companyName: string;
+  country: string;
 }
 
 // Company interface as provided by the endpoints
@@ -132,9 +133,13 @@ export interface AllRequirementsResponse {
   totalPages: number;
 }
 
+export type PlanType = 'success_fee' | 'custom' | 'ad_subscription' | "general_subscription"
+
 export interface Requirements {
+  allowedPlanOptions: PlanType[];
   requirements: {
     id: number;
+
     jobTitle: string;
     professions: string[];
     specialization: string;
@@ -226,6 +231,15 @@ export interface HuntDetail {
   dateCompleted: string | null;
   status: string;
   totalScoredHuntables: number;
+  planType: PlanType;
+  startFee: {
+    amount: number; // kui >0, sii stuleks payment-intent teha
+    currency: string;
+  };
+  successFee: {
+    amount: number; // kuvamiseks mis raha võtame siis kui leiame
+    currency: string;
+  } // teistel puhkudel on juba plan aktiveeritid ja midagi rohkem maksma ei pea
 }
 
 export interface HuntStats {
@@ -370,6 +384,57 @@ export interface ContextQuestion {
   id: number;
   question: string;
   date: string;
+}
+
+export interface Feedback {
+  content: string;
+}
+
+// Add these interfaces right after the existing Company and CompanyBilling interfaces
+
+export interface CompanyPlanPrice {
+  amount: number;
+  currency: string;
+}
+
+export interface CompanyPlanPricingSuccess {
+  doctor: {
+    startFee: CompanyPlanPrice;
+    successFee: CompanyPlanPrice;
+  };
+  other: {
+    startFee: CompanyPlanPrice;
+    successFee: CompanyPlanPrice;
+  };
+}
+
+export interface AvailablePlan {
+  planType: string;
+  pricingGeneral: CompanyPlanPrice;
+  pricingSuccess: CompanyPlanPricingSuccess;
+}
+
+export interface AvailablePlansResponse {
+  paymentMethods: string[];
+  plans: AvailablePlan[];
+}
+
+export interface CompanyPlanSummary {
+  id: number;
+  planType: string;
+  planActive: boolean;
+  dateStarted: string;
+  dateEnded: string | null;
+}
+
+export interface CompanyPlanDetails extends CompanyPlanSummary {
+  planPaymentMethod: string;
+  pricingGeneral: CompanyPlanPrice;
+  pricingSuccess: CompanyPlanPricingSuccess;
+}
+
+export interface StartPlanRequest {
+  planType: string;
 }
 
 // ─── AUTH STORE ───────────────────────────────────────────────────────────────
@@ -612,6 +677,11 @@ class PortalResource extends BaseResource {
     const url = new URL(`${this.path}/password`, this.client.baseUrl);
     return this.request<UpdatePortalUserPassword>('PUT', url.toString(), data, true) as Promise<UpdatePortalUserPassword>;
   }
+
+  async submitFeedback(data: Feedback): Promise<Feedback> {
+    const url = new URL('/api/v1/feedback', this.client.baseUrl);
+    return this.request<Feedback>('POST', url.toString(), data) as Promise<Feedback>;
+  }
 }
 
 // Company endpoints
@@ -648,6 +718,31 @@ class CompanyResource extends BaseResource {
   async updateBillingStripe(data: CompanyBillingRequest): Promise<CompanyBilling> {
     const url = new URL(`${this.path}/billing/stripe`, this.client.baseUrl);
     return this.request<CompanyBilling>('PATCH', url.toString(), data) as Promise<CompanyBilling>;
+  }
+
+  async getAvailablePlans(): Promise<AvailablePlansResponse> {
+    const url = new URL(`${this.path}/available-plans`, this.client.baseUrl);
+    return this.request<AvailablePlansResponse>('GET', url.toString()) as Promise<AvailablePlansResponse>;
+  }
+
+  async getActivePlans(): Promise<CompanyPlanSummary[]> {
+    const url = new URL(`${this.path}/active-plans`, this.client.baseUrl);
+    return this.request<CompanyPlanSummary[]>('GET', url.toString()) as Promise<CompanyPlanSummary[]>;
+  }
+
+  async getPlanDetails(id: number): Promise<CompanyPlanDetails> {
+    const url = new URL(`${this.path}/plans/${id}/details`, this.client.baseUrl);
+    return this.request<CompanyPlanDetails>('GET', url.toString()) as Promise<CompanyPlanDetails>;
+  }
+
+  async startPlan(planType: string): Promise<CompanyPlanSummary> {
+    const url = new URL(`${this.path}/plans/start`, this.client.baseUrl);
+    return this.request<CompanyPlanSummary>('POST', url.toString(), { planType }) as Promise<CompanyPlanSummary>;
+  }
+
+  async endPlan(id: number): Promise<CompanyPlanSummary> {
+    const url = new URL(`${this.path}/plans/${id}/end`, this.client.baseUrl);
+    return this.request<CompanyPlanSummary>('POST', url.toString()) as Promise<CompanyPlanSummary>;
   }
 }
 
@@ -729,9 +824,9 @@ class HuntResource extends BaseResource {
   }
 
   // POST /api/v1/hunt/requirements/{id}/create-hunt
-  async createHuntFromRequirements(id: number): Promise<HuntDetail> {
+  async createHuntFromRequirements(id: number, planType: PlanType): Promise<HuntDetail> {
     const url = new URL(`${this.path}/requirements/${id}/create-hunt`, this.client.baseUrl);
-    return this.request<HuntDetail>('POST', url.toString()) as Promise<HuntDetail>;
+    return this.request<HuntDetail>('POST', url.toString(), { planType }) as Promise<HuntDetail>;
   }
 
   // POST /api/v1/hunts/{id}/payment-intent
@@ -795,6 +890,24 @@ class HuntResource extends BaseResource {
   async answerHuntContextQuestion(id: number, questionId: number, answer: string): Promise<ContextQuestion> {
     const url = new URL(`/api/v1/hunts/${id}/context-questions/${questionId}`, this.client.baseUrl);
     return this.request<ContextQuestion>('POST', url.toString(), { answer }) as Promise<ContextQuestion>;
+  }
+
+  // POST /api/v2/hunts/{id}/activate
+  async activateHuntV2(id: number): Promise<Hunt> {
+    const url = new URL(`/api/v2/hunts/${id}/activate`, this.client.baseUrl);
+    return this.request<Hunt>('POST', url.toString()) as Promise<Hunt>;
+  }
+
+  // POST /api/v1/hunts/{id}/complete
+  async completeHunt(id: number): Promise<Hunt> {
+    const url = new URL(`/api/v1/hunts/${id}/complete`, this.client.baseUrl);
+    return this.request<Hunt>('POST', url.toString()) as Promise<Hunt>;
+  }
+
+  // POST /api/v1/hunts/{id}/cancel
+  async cancelHunt(id: number): Promise<Hunt> {
+    const url = new URL(`/api/v1/hunts/${id}/cancel`, this.client.baseUrl);
+    return this.request<Hunt>('POST', url.toString()) as Promise<Hunt>;
   }
 }
 

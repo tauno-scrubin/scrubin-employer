@@ -12,6 +12,11 @@
 	import { PUBLIC_ORIGIN } from "$env/static/public";
 	import * as Select from "$lib/components/ui/select/index.js";
 
+	interface Address {
+		city: string;
+		address: string;
+		zipCode: string;
+	}
 
 	let user: PortalUser | null = $state(null);
 	let companyProfile: Company | null = $state(null);
@@ -36,7 +41,16 @@
 				scrubinClient.company.getBilling()
 			]);
 			user = userResult;
-			companyProfile = advertiserResult;
+			companyProfile = {
+				...advertiserResult,
+				address: advertiserResult.address || {
+					city: '',
+					address: '',
+					zipCode: ''
+				},
+				brandName: advertiserResult.brandName || '',
+				description: advertiserResult.description || ''
+			};
 			countries = countriesResult;
 			billingInfo = billingResult;
 		} catch (error) {

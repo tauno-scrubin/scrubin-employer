@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Requirements, RequirementsWithInstructions } from "@/scrubinClient";
+	import type { CompanyPlanSummary, PlanType, Requirements, RequirementsWithInstructions } from "@/scrubinClient";
 	import { Button } from "$lib/components/ui/button";
 	import { Input } from "$lib/components/ui/input";
 	import { scrubinClient } from "@/scrubinClient/client";
@@ -27,7 +27,8 @@
 
 		Sparkle,
 
-		ChevronLeft
+		ChevronLeft,
+		Badge
 
 
 	} from "lucide-svelte";
@@ -36,12 +37,21 @@
 	import PaymentDialog from "../payment/paymentDialog.svelte";
 	import ChatWindowPricing from "./chatWindowPricing.svelte";
 	import ChatWindowDemand from "./chatWindowDemand.svelte";
+	import * as Tabs from "$lib/components/ui/tabs/index.js";
+	import { AlertCircle } from "lucide-svelte";
 
 	let {
 		requirements = $bindable<RequirementsWithInstructions>()
 	}: {
 		requirements: RequirementsWithInstructions;
 	} = $props();
+
+	let companyActivePlans = $state<CompanyPlanSummary[]>([])
+	onMount(async () => {
+		companyActivePlans = await scrubinClient.company.getActivePlans()
+		console.log(companyActivePlans)
+		console.log(requirements)
+	})
 
 	let currentQuestionIndex = $state(0);
 	let answers: Record<string, string> = $state({});
@@ -52,6 +62,8 @@
 	let isActivating = $state(false);
 	let isEditingPrevious = $state(false);
 	let customInstructions = $state("");
+	let selectedPlanType = $state<PlanType | null>(null);
+	let showPlanActivationMessage = $state(false);
 
 	// Collapsible questions state
 	let expandedQuestions = $state(new Set([0])); // Example: first 3 expanded by default
@@ -195,17 +207,75 @@
 
 	let paymentDialogOpen = $state(false);
 	let payableHuntId = $state(0);
+	let chargeableAmount = $state({
+		amount: 0,
+		currency: 'EUR'
+	});
 	
+	function selectPlan(planType: PlanType) {
+		selectedPlanType = planType;
+		
+		// Check if plan is active
+		if (companyActivePlans && !companyActivePlans.some((plan: CompanyPlanSummary) => plan.planType === planType && plan.planActive)) {
+			showPlanActivationMessage = true;
+		} else {
+			showPlanActivationMessage = false;
+		}
+	}
+
+	function canBeActivated(activePlans: CompanyPlanSummary[], selectedPlan: PlanType | null, isActivatingNow: boolean): boolean {
+		// Don't allow activation during ongoing process or without selection
+		if (isActivatingNow || !selectedPlan) {
+			return false;
+		}
+		
+		// Check if this plan type is actually activated in company account
+		if (!activePlans.some((plan: CompanyPlanSummary) => plan.planType === selectedPlan && plan.planActive)) {
+			return false;
+		}
+		
+		return true;
+	}
+
 	async function activateRequirements() {
 		if (!requirements.requirements?.id) {
 			toast.error("No requirements ID available.");
 			return;
 		}
+		if (!selectedPlanType) {
+			toast.error("No plan type selected.");
+			return;
+		}
+		
+		// Don't allow activation if plan isn't activated yet
+		if (companyActivePlans && !companyActivePlans.some((plan: CompanyPlanSummary) => plan.planType === selectedPlanType && plan.planActive)) {
+			toast.error("Please activate this plan type first in Pricing section.");
+			return;
+		}
+		
 		isActivating = true;
-		paymentDialogOpen = true;
+		
 		try {
-			const response = await scrubinClient.hunt.createHuntFromRequirements(requirements.requirements.id);
+			const response = await scrubinClient.hunt.createHuntFromRequirements(
+				requirements.requirements.id, 
+				selectedPlanType
+			);
 			payableHuntId = response.huntId;
+
+			console.log(response)
+			
+			// Check if payment needed
+			if (response.planType === 'success_fee' && response.startFee.amount > 0) {
+				// Show payment dialog
+				chargeableAmount.amount = response.startFee.amount;
+				chargeableAmount.currency = response.startFee.currency;
+				paymentDialogOpen = true;
+			} else {
+				//chargeableAmount.amount = response.successFee.amount;
+				//chargeableAmount.currency = response.successFee.currency;
+				// No payment needed, go directly to hunt
+				onPaymentSuccess(response.huntId);
+			}
 
 		} catch (error) {
 			console.error("Failed to activate requirements:", error);
@@ -237,9 +307,9 @@
 
 <PaymentDialog  bind:open={paymentDialogOpen} 
 	huntId={payableHuntId} 
-	amount={requirements.hiringPlan?.hiringInitialPriceForOneCandidate?.amount || 0} 
-	currency={requirements.hiringPlan?.hiringInitialPriceForOneCandidate?.currency || 'EUR'} 
-	onSuccess={onPaymentSuccess}/>
+	amount={chargeableAmount.amount} 
+	currency={chargeableAmount.currency} 
+	onSuccess={onPaymentSuccess}></PaymentDialog>
 
 <!-- 
   Container: use flex-row, narrower left column (md:w-1/3), 
@@ -265,30 +335,60 @@
 		{:else if requirements?.canBeActivated}
 			
 			
-			<div class="p-4 rounded-lg mb-4 bg-gradient-to-r from-blue-50 to-indigo-50 ">
-				<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+			<div class="p-4 rounded-lg mb-4 bg-gradient-to-r from-blue-50 to-indigo-50">
+				<div class="flex flex-col gap-3">
 					<p class="font-medium inline-flex items-center gap-2 text-sm text-primary/90">
 						<Sparkle fill="currentColor" strokeWidth=1 class="w-4 h-4 text-blue-500 rotate-45" />
 						{isComplete ? 'Ready to activate' : 'Complete questions for better results'}
 					</p>
 					
+					{#if requirements.allowedPlanOptions && requirements.allowedPlanOptions.length > 0}
+						<div class="mt-2">
+							<h3 class="text-sm font-medium mb-2">Select search type:</h3>
+							<div 
+								class="w-full" 
+							>
+								<div class="w-full space-y-2">
+									{#each requirements.allowedPlanOptions as planType}
+										<Button variant={selectedPlanType == planType ? 'default' : 'outline'} onclick={() => selectPlan(planType)} class="w-full capitalize relative">
+											{planType.replace('_', ' ')}
+							
+										</Button>
+									{/each}
+
+									<Button variant={selectedPlanType == "ad_subscription" ? 'default' : 'outline'} onclick={() => selectPlan("ad_subscription")} class="w-full capitalize relative">
+										Ad Subscription (TEST!!)
+						
+									</Button>
+								</div>
+							</div>
+							
+							{#if showPlanActivationMessage && !canBeActivated(companyActivePlans || [], selectedPlanType, isActivating)}
+								<div class="mt-2 flex items-center gap-2 text-xs text-amber-600 bg-amber-50 p-2 rounded">
+									<AlertCircle class="h-4 w-4" />
+									<p>This plan type needs to be activated first in your account settings.</p>
+								</div>
+							{/if}
+						</div>
+					{/if}
+					
 					<Button 
-						onclick={activateRequirements}
-						disabled={isActivating}
-						variant={!isComplete ? "outline" : "default"}
+					onclick={activateRequirements}
+					disabled={!canBeActivated(companyActivePlans || [], selectedPlanType, isActivating)}
+					variant={!isComplete ? "outline" : "default"}
 						size="sm"
-						class="whitespace-nowrap transition-all duration-300 hover:scale-105"
+						class="whitespace-nowrap transition-all duration-300 hover:scale-105 mt-2"
 					>
 						{#if isActivating}
 							<Loader2 class="mr-2 h-3 w-3 animate-spin" />
-							Activating...
+							Confirming...
 						{:else}
-							Activate
+							Confirm
 						{/if}
 					</Button>
 				</div>
 			</div>
-			<ChatWindowPricing hiringPlan={requirements.hiringPlan} />
+			<!-- <ChatWindowPricing hiringPlan={requirements.hiringPlan} /> -->
 			<ChatWindowDemand hiringPlan={requirements.hiringPlan} />
 		{/if}
 		

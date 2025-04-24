@@ -8,6 +8,8 @@ export const actions : Actions = {
 	const bodyRaw = Object.fromEntries(await request.formData()) as unknown;
 	const body = bodyRaw as SignupCompanyPayload;
 
+	console.log(body);
+
 	try {
 		// Create a proper SignupCompanyPayload object
 		const signupPayload = {
@@ -15,7 +17,8 @@ export const actions : Actions = {
 			firstName: body.firstName || '',
 			lastName: body.lastName || '',
 			phone: body.phone || '',
-			companyName: body.companyName || ''
+			companyName: body.companyName || '',
+			country: body.country || ''
 		};
 		
 		const result = await locals.scrubinClient.signupCompanyWithEmail(signupPayload);

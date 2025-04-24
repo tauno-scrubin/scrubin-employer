@@ -69,7 +69,7 @@
 	}
 
 	async function handleViewHunt(huntId: number, status: string) {
-		if (status === 'ACTIVE') {
+		if (status === 'ACTIVE' || status === 'PENDING' || status === 'AWAITING_PAYMENT') {
 			goto(`/dashboard/hunts/${huntId}`);
 		} else {
 			const requirementId = await getSingleRequirementFromHunt(huntId);

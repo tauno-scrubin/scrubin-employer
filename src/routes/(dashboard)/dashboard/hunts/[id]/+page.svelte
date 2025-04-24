@@ -32,6 +32,8 @@
     import * as Avatar from "$lib/components/ui/avatar";
 	import InterestedWorkerDialog from "@/components/dashboard/interestedWorkerDialog.svelte";
 	import QuestionsInHunt from "@/components/dashboard/questionsInHunt.svelte";
+    import PaymentDialog from "$lib/components/payment/paymentDialog.svelte";
+	import { toast } from "svelte-sonner";
 
     let { data } = $props();
     let hunt = $derived(data.hunt);
@@ -39,6 +41,11 @@
     let isLoading = $state(true);
     let showInterestedWorkerDialog = $state(false);
     let selectedCandidateId = $state(0);
+    let paymentDialogOpen = $state(false);
+    let chargeableAmount = $state({
+        amount: 0,
+        currency: 'EUR'
+    });
 
     onMount(async () => {
         try {
@@ -85,9 +92,53 @@
             day: 'numeric'
         });
     }
+
+    function handleActivateOrPay() {
+        console.log(hunt);
+        if (hunt.status === 'PENDING') {
+            activateHunt();
+        } else if (hunt.status === 'AWAITING_PAYMENT') {
+            if (hunt.planType === 'success_fee' && hunt.startFee?.amount > 0) {
+                chargeableAmount.amount = hunt.startFee.amount;
+                chargeableAmount.currency = hunt.startFee.currency;
+                paymentDialogOpen = true;
+            } else if (hunt.planType === 'success_fee' && hunt.startFee?.amount == 0) {
+                toast.error('There is an issue with this Hunt pricing, please contact support.');
+            }
+        }
+    }
+
+    async function activateHunt() {
+        try {
+            const response = await scrubinClient.hunt.activateHuntV2(hunt.huntId);
+            if (hunt.planType === 'success_fee' && hunt.startFee?.amount > 0) {
+                chargeableAmount.amount = hunt.startFee.amount;
+                chargeableAmount.currency = hunt.startFee.currency;
+                paymentDialogOpen = true;
+            } else {
+                window.location.reload();
+            }
+        } catch (error) {
+            console.error("Failed to activate hunt:", error);
+            toast.error("Failed to activate hunt. Please try again.");
+        }
+    }
+
+    function onPaymentSuccess() {
+        window.location.reload();
+        toast.success("Payment successful! Hunt is now active.");
+    }
 </script>
 
 <InterestedWorkerDialog bind:open={showInterestedWorkerDialog} bind:huntId={hunt.huntId} bind:candidateId={selectedCandidateId} />
+
+<PaymentDialog 
+    bind:open={paymentDialogOpen}
+    huntId={hunt.huntId}
+    amount={chargeableAmount.amount}
+    currency={chargeableAmount.currency}
+    onSuccess={onPaymentSuccess}
+/>
 
 <div class="container mx-auto py-6 space-y-6 max-w-7xl">
     <div class="flex items-center gap-4 mb-6">
@@ -131,9 +182,24 @@
                             <p class="text-sm text-muted-foreground">Created on {new Date().toLocaleDateString()}</p>
                         </div>
                     </div>
-                    <Badge variant="outline" class="px-3 py-1 {getStatusColor(hunt.status)} border-transparent">
-                        {formatStatus(hunt.status)}
-                    </Badge>
+                    {#if hunt.status === 'PENDING' || hunt.status === 'AWAITING_PAYMENT'}
+                        <div class="flex items-center gap-2">
+                            <Badge variant="outline" class="px-3 py-1 {getStatusColor(hunt.status)} border-transparent">
+                                {formatStatus(hunt.status)}
+                            </Badge>
+                            <Button 
+                                variant="default" 
+                                onclick={handleActivateOrPay}
+                                class="ml-2"
+                            >
+                                {hunt.status === 'PENDING' ? 'Activate Hunt' : 'Complete Payment'}
+                            </Button>
+                        </div>
+                    {:else}
+                        <Badge variant="outline" class="px-3 py-1 {getStatusColor(hunt.status)} border-transparent">
+                            {formatStatus(hunt.status)}
+                        </Badge>
+                    {/if}
                 </div>
         
             <div class=" bg-white rounded-md p-4 shadow-sm">
@@ -352,3 +418,16 @@
 
     
 </div>
+
+<!-- If it's a success fee hunt, show the fee information -->
+{#if hunt.planType === 'success_fee'}
+    <div class="mt-4 p-4 bg-gray-50 rounded-lg">
+        <h3 class="text-sm font-medium mb-2">Fee Information</h3>
+        {#if hunt.startFee?.amount > 0}
+            <p class="text-sm text-gray-600">Start Fee: {hunt.startFee.amount} {hunt.startFee.currency}</p>
+        {/if}
+        {#if hunt.successFee?.amount > 0}
+            <p class="text-sm text-gray-600">Success Fee: {hunt.successFee.amount} {hunt.successFee.currency}</p>
+        {/if}
+    </div>
+{/if}

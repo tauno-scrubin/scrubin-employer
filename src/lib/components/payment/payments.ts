@@ -6,7 +6,7 @@ import { currentUser, scrubinClient } from "@/scrubinClient/client";
 import { get } from "svelte/store";
 export function getCurrencySymbol(currency: string) {
     if (currency === 'AUD') {
-        return '$';
+        return '$A';
     } else if (currency === 'GBP') {
         return '£';
     } 
@@ -19,6 +19,8 @@ export function formatStatus(status: string) {
             return 'Active';
         case 'AWAITING_PAYMENT':
             return 'Ready to Activate';
+        case 'PENDING':
+            return 'Pending';
         case 'PAUSED':
             return 'Paused';
         case 'COMPLETED':
@@ -34,6 +36,8 @@ export function getStatusColor(status: string) {
         case 'ACTIVE':
             return 'bg-green-100 text-green-800';
         case 'AWAITING_PAYMENT':
+            return 'bg-yellow-100 text-yellow-800';
+        case 'PENDING':
             return 'bg-yellow-100 text-yellow-800';
         case 'PAUSED':
             return 'bg-red-100 text-red-800';

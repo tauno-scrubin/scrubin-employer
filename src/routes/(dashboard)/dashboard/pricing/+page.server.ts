@@ -6,15 +6,12 @@ export const load: PageServerLoad = async ({ request, locals }) => {
   // Get user from locals or fetch from API if needed
   const userId = locals.user?.id || null;
   const userCountry = locals.company?.countryIso || null;
-  console.log(locals.company);
   let startingFee = 0;
   
   // Special case for specific user
   if (userId === 100003) {
     startingFee = 750;
   }
-  
-  // Get country from request headers or user data
   
   let pricingOptions = [
     { role: "Doctors", price: 500, currency: "EUR", duration: 12 },
@@ -29,8 +26,8 @@ export const load: PageServerLoad = async ({ request, locals }) => {
     ];
   } else if (userCountry === 'AUS') {
     pricingOptions = [
-      { role: "Doctors", price: 800, currency: "AUD", duration: 12 },
-      { role: "Nurses & Specialists", price: 400, currency: "AUD", duration: 12 }
+      { role: "Doctors", price: 1000, currency: "AUD", duration: 12 },
+      { role: "Nurses & Specialists", price: 500, currency: "AUD", duration: 12 }
     ];
   }
   

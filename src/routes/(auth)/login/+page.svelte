@@ -6,17 +6,15 @@
 	import { Input } from "$lib/components/ui/input";
 	import { Label } from "$lib/components/ui/label";
 	import { Separator } from "$lib/components/ui/separator";
+	import ScrubinLogo from '@/components/scrubinLogo.svelte';
 
 	export let form;
 </script>
 
 <div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
 	<div class="sm:mx-auto sm:w-full sm:max-w-sm mb-8 text-center">
-		<!-- Add your logo here -->
-		<div class="size-12 rounded-lg bg-primary/10 flex items-center justify-center mx-auto mb-4">
-			<span class="text-2xl">🔐</span>
-		</div>
-		<h2 class="text-2xl font-semibold tracking-tight">Welcome back</h2>
+		<!-- Scrubin Logo -->
+		<ScrubinLogo class="h-8 mx-auto mb-8" />
 		<p class="text-muted-foreground mt-2">Enter your credentials to access your account</p>
 	</div>
 
@@ -59,7 +57,13 @@
 					Sign in
 				</Button>
 			</CardContent>
-		</form>
 
+			<CardFooter class="flex justify-center border-t p-4">
+				<p class="text-sm text-muted-foreground">
+					Don't have an account?
+					<a href="/sign-up" class="text-primary hover:text-primary/90">Sign up</a>
+				</p>
+			</CardFooter>
+		</form>
 	</Card>
 </div>
