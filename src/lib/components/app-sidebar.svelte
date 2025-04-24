@@ -46,12 +46,12 @@
 				icon: Settings2,
 				isActive: $page.url.href.includes("/settings"),
 			},
-			...$currentUserCompany?.country !== 'Estonia' ? [{
+		{
 				title: "Pricing",
 				url: "/dashboard/pricing",
 				icon: ChartPie,
 				isActive: $page.url.href.includes("/pricing"),
-			}] : []
+			}
 		],
 		navSecondary: [
 		

@@ -28,7 +28,7 @@
 	import Separator from "@/components/ui/separator/separator.svelte";
     import { onMount } from "svelte";
     import { scrubinClient } from "$lib/scrubinClient/client";
-    import type { InterestedCandidate } from "$lib/scrubinClient";
+    import type { HuntStats, InterestedCandidate } from "$lib/scrubinClient";
     import * as Avatar from "$lib/components/ui/avatar";
 	import InterestedWorkerDialog from "@/components/dashboard/interestedWorkerDialog.svelte";
 	import QuestionsInHunt from "@/components/dashboard/questionsInHunt.svelte";
@@ -47,30 +47,54 @@
         currency: 'EUR'
     });
 
+    let funnelStats = $state<HuntStats>({
+        huntId: 0,
+        totalHuntables: 0,
+        totalHuntablesContacted: 0,
+        totalHuntablesInterested: 0,
+        totalInterestedReadyForCompany: 0
+    });
+
     onMount(async () => {
         try {
+            // Fetch interested candidates
             interestedCandidates = await scrubinClient.hunt.getInterestedCandidates(hunt.huntId);
             
+            // Fetch latest stats
+            const stats = await scrubinClient.hunt.getHuntStats(hunt.huntId);
+            funnelStats = {
+                huntId: stats.huntId,
+                totalHuntables: stats.totalHuntables || 0,
+                totalHuntablesContacted: stats.totalHuntablesContacted || 0,
+                totalHuntablesInterested: stats.totalHuntablesInterested || 0,
+                totalInterestedReadyForCompany: stats.totalInterestedReadyForCompany || 0
+            };
+
             // Check URL for candidateId and open dialog if present
             const candidateId = page.url.searchParams.get('candidateId');
             const candidateExists = interestedCandidates.find(candidate => candidate.candidateId === parseInt(candidateId || '0'));
             if (candidateId && candidateExists) {
                 selectedCandidateId = parseInt(candidateId);
                 showInterestedWorkerDialog = true;
-                activeTab = "statistics"; // Switch to statistics tab
+                activeTab = "statistics";
             }
         } catch (error) {
-            console.error("Failed to fetch interested candidates:", error);
+            console.error("Failed to fetch data:", error);
         } finally {
             isLoading = false;
         }
     });
 
-    let funnelData = $derived([
-        { name: 'Total Huntables', value: data.stats.totalHuntables },
-        { name: 'Contacted', value: data.stats.totalHuntablesContacted },
-        { name: 'Interested', value: data.stats.totalHuntablesInterested }
-    ]);
+    let funnelData = $state<{ name: string, value: number }[]>([]);
+        // Update the funnelData to use the reactive funnelStats
+      $effect(() => {
+        funnelData = [
+            { name: 'Total Huntables', value: funnelStats.totalHuntables },
+            { name: 'Contacted', value: funnelStats.totalHuntablesContacted },
+            { name: 'Interested', value: funnelStats.totalHuntablesInterested },
+            { name: 'Ready for Company', value: funnelStats.totalInterestedReadyForCompany }
+        ];
+      });
     
     // Define tabs for better organization
     const tabs = [
@@ -161,7 +185,6 @@
             {/if}
         </div>
     </div>
-
     <!-- Status badge at the top -->
     <Tabs.Root bind:value={activeTab} class="w-full">
         <Tabs.List class="grid w-fit grid-cols-3">
@@ -201,12 +224,39 @@
                         </Badge>
                     {/if}
                 </div>
+
+                {#if hunt.planType === 'success_fee'}
+                    <div class="bg-white rounded-lg shadow-sm p-4">
+                        <div class="grid grid-cols-2 gap-6">
+                            {#if hunt.startFee?.amount > 0}
+                                <div class="flex items-center space-x-4 p-4 border rounded-lg">
+                                    <div class="p-2 bg-primary/5 rounded-full">
+                                        <DollarSign class="h-5 w-5 text-primary" />
+                                    </div>
+                                    <div>
+                                        <p class="text-sm text-muted-foreground">Start Fee</p>
+                                        <p class="text-lg font-semibold">{hunt.startFee.amount} {hunt.startFee.currency}</p>
+                                    </div>
+                                </div>
+                            {/if}
+                            {#if hunt.successFee?.amount > 0}
+                                <div class="flex items-center space-x-4 p-4 border rounded-lg">
+                                    <div class="p-2 bg-green-100 rounded-full">
+                                        <Sparkle class="h-5 w-5 text-green-600" />
+                                    </div>
+                                    <div>
+                                        <p class="text-sm text-muted-foreground">Success Fee</p>
+                                        <p class="text-lg font-semibold">{hunt.successFee.amount} {hunt.successFee.currency}</p>
+                                    </div>
+                                </div>
+                            {/if}
+                        </div>
+                    </div>
+                {/if}
         
-            <div class=" bg-white rounded-md p-4 shadow-sm">
+                <div class="bg-white rounded-md p-4 shadow-sm">
               
-                <h2 class="text-xl font-medium mb-4">Job Requirements</h2>
-                
-        
+                    <h2 class="text-xl font-medium mb-4">Job Requirements</h2>
                     <div class="space-y-3">
                         <div class="grid grid-cols-1 gap-4 text-sm border-b pb-3">
                             <div class="w-full grid grid-cols-[150px_1fr] items-start">
@@ -328,80 +378,94 @@
         <Tabs.Content value="statistics">
             <div class="bg-blue-50/80 rounded-md p-4">
                 <div class="flex flex-col bg-white rounded-md p-4 gap-4">
-            <h4 class="text-gray-900 text-xl font-semibold">Hunt Conversion Funnel</h4>
-            <div class="grid grid-cols-3 gap-4">
-         {#each funnelData as item}       
-            <div class="border rounded-md p-4 gap-2 flex flex-col">
-                <h5 class="text-gray-500 text-sm font-medium">{item.name}</h5>
-                <p class="text-gray-900 font-semibold text-3xl">{item.value}</p>
-            </div>
-         {/each}
-            </div>
-            <!-- <FunnelChart 
-            data={funnelData} 
-            title="Hunt Conversion Funnel" 
-            colors={['#38bdf8', '#818cf8', '#8b5cf6']} 
-            height="400px"
-        /> -->
-
-        <Separator class="mb-2" />
-        <h4 class="text-gray-900 text-xl font-semibold">Candidates</h4>
-  
-    <div class="flex flex-col gap-4">
-        {#if isLoading}
-            <div class="flex justify-center items-center py-8">
-                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-            </div>
-        {:else if interestedCandidates.length === 0}
-            <div class="flex flex-col gap-2">
-                <p class="text-gray-900 font-semibold text-lg">We're on the Hunt for Great Talent!</p>
-                <p class="text-gray-500 text-sm">No interested candidates yet, but we're reaching out to professionals who fit your needs. Check back soon! We'll let you know as soon as we have updates.</p>
-            </div>
-        {:else}
-            <div class="grid gap-4">
-                {#each interestedCandidates as candidate}
-                    <Card.Root class="overflow-hidden hover:shadow-md transition-shadow cursor-pointer" onclick={() => {
-                        showInterestedWorkerDialog = true;
-                        selectedCandidateId = candidate.candidateId;
-                    }}>
-                        <Card.Content class="p-4">
-                            <div class="flex items-start gap-4">
-                                <Avatar.Root class="h-12 w-12 bg-primary/10 text-primary">
-                                    <Avatar.Fallback>
-                                        {candidate.firstName.charAt(0)}{candidate.lastName.charAt(0)}
-                                    </Avatar.Fallback>
-                                </Avatar.Root>
-                                
-                                <div class="flex-1 space-y-1">
-                                    <div class="flex justify-between items-start">
-                                        <h3 class="font-medium text-base">{candidate.firstName} {candidate.lastName}</h3>
-                                        <Badge variant="outline" class="text-xs">
-                                            Interested on {formatDate(candidate.dateInterested)}
-                                        </Badge>
-                                    </div>
-                                    
-                                    <div class="flex gap-4 text-sm text-muted-foreground">
-                                        <div class="flex items-center gap-1">
-                                            <Mail class="h-3.5 w-3.5" />
-                                            <span>{candidate.email}</span>
-                                        </div>
-                                        {#if candidate.phone}
-                                        <div class="flex items-center gap-1">
-                                            <Phone class="h-3.5 w-3.5" />
-                                            <span>{candidate.phone}</span>
-                                        </div>
-                                        {/if}
-                                    </div>
+                    <h4 class="text-gray-900 text-xl font-semibold">Hunt Conversion Funnel</h4>
+                    {#if isLoading}
+                        <div class="flex justify-center items-center py-8">
+                            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                        </div>
+                    {:else}
+                        <div class="grid grid-cols-3 gap-4">
+                            {#each funnelData as item}       
+                                <div class="border rounded-md p-4 gap-2 flex flex-col">
+                                    <h5 class="text-gray-500 text-sm font-medium">{item.name}</h5>
+                                    <p class="text-gray-900 font-semibold text-3xl">{item.value}</p>
                                 </div>
-                            </div>
-                        </Card.Content>
-                    </Card.Root>
-                {/each}
+                            {/each}
+                        </div>
+                        <!-- <div class="h-[400px] w-full">
+                            <FunnelChart 
+                                data={funnelData} 
+                                title="Hunt Conversion Funnel" 
+                                colors={['#38bdf8', '#818cf8', '#8b5cf6']} 
+                                height="400px"
+                            />
+                        </div> -->
+                    {/if}
+                    <!-- <FunnelChart 
+                    data={funnelData} 
+                    title="Hunt Conversion Funnel" 
+                    colors={['#38bdf8', '#818cf8', '#8b5cf6']} 
+                    height="400px"
+                /> -->
+
+                <Separator class="mb-2" />
+                <h4 class="text-gray-900 text-xl font-semibold">Candidates</h4>
+          
+            <div class="flex flex-col gap-4">
+                {#if isLoading}
+                    <div class="flex justify-center items-center py-8">
+                        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                    </div>
+                {:else if interestedCandidates.length === 0}
+                    <div class="flex flex-col gap-2">
+                        <p class="text-gray-900 font-semibold text-lg">We're on the Hunt for Great Talent!</p>
+                        <p class="text-gray-500 text-sm">No interested candidates yet, but we're reaching out to professionals who fit your needs. Check back soon! We'll let you know as soon as we have updates.</p>
+                    </div>
+                {:else}
+                    <div class="grid gap-4">
+                        {#each interestedCandidates as candidate}
+                            <Card.Root class="overflow-hidden hover:shadow-md transition-shadow cursor-pointer" onclick={() => {
+                                showInterestedWorkerDialog = true;
+                                selectedCandidateId = candidate.candidateId;
+                            }}>
+                                <Card.Content class="p-4">
+                                    <div class="flex items-start gap-4">
+                                        <Avatar.Root class="h-12 w-12 bg-primary/10 text-primary">
+                                            <Avatar.Fallback>
+                                                {candidate.firstName.charAt(0)}{candidate.lastName.charAt(0)}
+                                            </Avatar.Fallback>
+                                        </Avatar.Root>
+                                        
+                                        <div class="flex-1 space-y-1">
+                                            <div class="flex justify-between items-start">
+                                                <h3 class="font-medium text-base">{candidate.firstName} {candidate.lastName}</h3>
+                                                <Badge variant="outline" class="text-xs">
+                                                    Interested on {formatDate(candidate.dateInterested)}
+                                                </Badge>
+                                            </div>
+                                            
+                                            <div class="flex gap-4 text-sm text-muted-foreground">
+                                                <div class="flex items-center gap-1">
+                                                    <Mail class="h-3.5 w-3.5" />
+                                                    <span>{candidate.email}</span>
+                                                </div>
+                                                {#if candidate.phone}
+                                                <div class="flex items-center gap-1">
+                                                    <Phone class="h-3.5 w-3.5" />
+                                                    <span>{candidate.phone}</span>
+                                                </div>
+                                                {/if}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </Card.Content>
+                            </Card.Root>
+                        {/each}
+                    </div>
+                {/if}
             </div>
-        {/if}
-    </div>
-    </div>
-        </div>
+                </div>
+            </div>
         </Tabs.Content>
         <Tabs.Content value="questions">
             <div class="bg-blue-50/80 rounded-md p-4">
@@ -418,16 +482,3 @@
 
     
 </div>
-
-<!-- If it's a success fee hunt, show the fee information -->
-{#if hunt.planType === 'success_fee'}
-    <div class="mt-4 p-4 bg-gray-50 rounded-lg">
-        <h3 class="text-sm font-medium mb-2">Fee Information</h3>
-        {#if hunt.startFee?.amount > 0}
-            <p class="text-sm text-gray-600">Start Fee: {hunt.startFee.amount} {hunt.startFee.currency}</p>
-        {/if}
-        {#if hunt.successFee?.amount > 0}
-            <p class="text-sm text-gray-600">Success Fee: {hunt.successFee.amount} {hunt.successFee.currency}</p>
-        {/if}
-    </div>
-{/if}

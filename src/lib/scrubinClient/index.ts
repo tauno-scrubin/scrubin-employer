@@ -247,6 +247,7 @@ export interface HuntStats {
   totalHuntables: number;
   totalHuntablesContacted: number;
   totalHuntablesInterested: number;
+  totalInterestedReadyForCompany: number;
 }
 
 export interface HuntCandidate {
