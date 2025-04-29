@@ -25,6 +25,8 @@
 		try {
 			availablePlans = (await scrubinClient.company.getAvailablePlans()).plans;
 			activePlans = await scrubinClient.company.getActivePlans();
+
+			console.log(availablePlans);
 			isLoading = false;
 		} catch (err) {
 			error = err.message;
@@ -147,11 +149,29 @@
 									<div class="space-y-1 text-sm">
 										<div class="flex justify-between">
 											<span>Start fee:</span>
-											<span>{plan.pricingSuccess.doctor.startFee.amount || 0} {getCurrencySymbol(plan.pricingSuccess.doctor.startFee.currency)}</span>
+											<span>
+												{#if plan.pricingSuccess.doctor.startFee.vatAmount > 0}
+													{plan.pricingSuccess.doctor.startFee.amount + plan.pricingSuccess.doctor.startFee.vatAmount} {getCurrencySymbol(plan.pricingSuccess.doctor.startFee.currency)}
+													<span class="text-xs text-muted-foreground">
+														(incl {plan.pricingSuccess.doctor.startFee.vatPercentage}% VAT)
+													</span>
+												{:else}
+													{plan.pricingSuccess.doctor.startFee.amount} {getCurrencySymbol(plan.pricingSuccess.doctor.startFee.currency)}
+												{/if}
+											</span>
 										</div>
 										<div class="flex justify-between">
 											<span>Success fee:</span>
-											<span>{plan.pricingSuccess.doctor.successFee.amount || 0} {getCurrencySymbol(plan.pricingSuccess.doctor.successFee.currency)}</span>
+											<span>
+												{#if plan.pricingSuccess.doctor.successFee.vatAmount > 0}
+													{plan.pricingSuccess.doctor.successFee.amount + plan.pricingSuccess.doctor.successFee.vatAmount} {getCurrencySymbol(plan.pricingSuccess.doctor.successFee.currency)}
+													<span class="text-xs text-muted-foreground">
+														(incl {plan.pricingSuccess.doctor.successFee.vatPercentage}% VAT)
+													</span>
+												{:else}
+													{plan.pricingSuccess.doctor.successFee.amount} {getCurrencySymbol(plan.pricingSuccess.doctor.successFee.currency)}
+												{/if}
+											</span>
 										</div>
 									</div>
 								</div>
@@ -164,11 +184,29 @@
 									<div class="space-y-1 text-sm">
 										<div class="flex justify-between">
 											<span>Start fee:</span>
-											<span>{plan.pricingSuccess.other.startFee.amount || 0} {getCurrencySymbol(plan.pricingSuccess.other.startFee.currency)}</span>
+											<span>
+												{#if plan.pricingSuccess.other.startFee.vatAmount > 0}
+													{plan.pricingSuccess.other.startFee.amount + plan.pricingSuccess.other.startFee.vatAmount} {getCurrencySymbol(plan.pricingSuccess.other.startFee.currency)}
+													<span class="text-xs text-muted-foreground">
+														(incl {plan.pricingSuccess.other.startFee.vatPercentage}% VAT)
+													</span>
+												{:else}
+													{plan.pricingSuccess.other.startFee.amount} {getCurrencySymbol(plan.pricingSuccess.other.startFee.currency)}
+												{/if}
+											</span>
 										</div>
 										<div class="flex justify-between">
 											<span>Success fee:</span>
-											<span>{plan.pricingSuccess.other.successFee.amount || 0} {getCurrencySymbol(plan.pricingSuccess.other.successFee.currency)}</span>
+											<span>
+												{#if plan.pricingSuccess.other.successFee.vatAmount > 0}
+													{plan.pricingSuccess.other.successFee.amount + plan.pricingSuccess.other.successFee.vatAmount} {getCurrencySymbol(plan.pricingSuccess.other.successFee.currency)}
+													<span class="text-xs text-muted-foreground">
+														(incl {plan.pricingSuccess.other.successFee.vatPercentage}% VAT)
+													</span>
+												{:else}
+													{plan.pricingSuccess.other.successFee.amount} {getCurrencySymbol(plan.pricingSuccess.other.successFee.currency)}
+												{/if}
+											</span>
 										</div>
 									</div>
 								</div>

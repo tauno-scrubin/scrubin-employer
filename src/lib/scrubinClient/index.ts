@@ -235,10 +235,14 @@ export interface HuntDetail {
   startFee: {
     amount: number; // kui >0, sii stuleks payment-intent teha
     currency: string;
+    vatPercentage: number;
+    vatAmount: number;
   };
   successFee: {
     amount: number; // kuvamiseks mis raha võtame siis kui leiame
     currency: string;
+    vatPercentage: number;
+    vatAmount: number;
   } // teistel puhkudel on juba plan aktiveeritid ja midagi rohkem maksma ei pea
 }
 
@@ -402,10 +406,14 @@ export interface CompanyPlanPricingSuccess {
   doctor: {
     startFee: CompanyPlanPrice;
     successFee: CompanyPlanPrice;
+    vatPercentage: number;
+    vatAmount: number;
   };
   other: {
     startFee: CompanyPlanPrice;
     successFee: CompanyPlanPrice;
+    vatPercentage: number;
+    vatAmount: number;
   };
 }
 

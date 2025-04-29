@@ -209,7 +209,9 @@
 	let payableHuntId = $state(0);
 	let chargeableAmount = $state({
 		amount: 0,
-		currency: 'EUR'
+		currency: 'EUR',
+		vatPercentage: 0,
+		vatAmount: 0
 	});
 	
 	function selectPlan(planType: PlanType) {
@@ -269,6 +271,8 @@
 				// Show payment dialog
 				chargeableAmount.amount = response.startFee.amount;
 				chargeableAmount.currency = response.startFee.currency;
+				chargeableAmount.vatPercentage = response.startFee.vatPercentage;
+				chargeableAmount.vatAmount = response.startFee.vatAmount;
 				paymentDialogOpen = true;
 			} else {
 				//chargeableAmount.amount = response.successFee.amount;
@@ -309,6 +313,8 @@
 	huntId={payableHuntId} 
 	amount={chargeableAmount.amount} 
 	currency={chargeableAmount.currency} 
+	vatPercentage={chargeableAmount.vatPercentage}
+	vatAmount={chargeableAmount.vatAmount}
 	onSuccess={onPaymentSuccess}></PaymentDialog>
 
 <!-- 

@@ -14,6 +14,8 @@
     let {
         huntId,
         amount,
+        vatPercentage,
+        vatAmount,
         currency,
         open = $bindable(false),
         statement,
@@ -22,6 +24,8 @@
         huntId: number,
         amount: number,
         currency: string,
+        vatPercentage?: number,
+        vatAmount?: number,
         open?: boolean,
         statement?: string,
         onSuccess: (huntId: number) => void
@@ -129,12 +133,23 @@
 		<div class="space-y-2">
 			<dl class="flex items-center justify-between gap-4">
 				<dt class="text-sm font-normal text-gray-500 dark:text-gray-400">
-					{statement || 'Starting fee'}
+					{statement || 'Starting fee'} {vatAmount && vatPercentage ? '(Net)' : ''}
 				</dt>
 				<dd class="text-sm font-medium text-gray-900 dark:text-white">
                     {amount} {getCurrencySymbol(currency)}
 				</dd>
 			</dl>
+
+            {#if vatAmount && vatPercentage}
+                <dl class="flex items-center justify-between gap-4">
+                    <dt class="text-sm font-normal text-gray-500 dark:text-gray-400">
+                        VAT ({vatPercentage}%)
+                    </dt>
+                    <dd class="text-sm font-medium text-gray-900 dark:text-white">
+                        {vatAmount} {getCurrencySymbol(currency)}
+                    </dd>
+                </dl>
+            {/if}
 		</div>
 
 		<dl
@@ -142,12 +157,11 @@
 		>
 			<dt class="text-sm font-semibold text-gray-900 dark:text-white">Total</dt>
 			<dd class="text-sm font-bold text-gray-900 dark:text-white">
-                {amount} {getCurrencySymbol(currency)}
+                {(amount + (vatAmount || 0))} {getCurrencySymbol(currency)}
 			</dd>
 		</dl>
         {/if}
 	</div>
-   
 
     {#if errorMessage}
     <div class="bg-red-50 border border-red-200 rounded-md p-2 text-red-500 text-sm mt-2">{errorMessage}</div>

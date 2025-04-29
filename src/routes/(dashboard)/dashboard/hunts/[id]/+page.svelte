@@ -44,7 +44,9 @@
     let paymentDialogOpen = $state(false);
     let chargeableAmount = $state({
         amount: 0,
-        currency: 'EUR'
+        currency: 'EUR',
+        vatPercentage: 0,
+        vatAmount: 0
     });
 
     let funnelStats = $state<HuntStats>({
@@ -125,6 +127,8 @@
             if (hunt.planType === 'success_fee' && hunt.startFee?.amount > 0) {
                 chargeableAmount.amount = hunt.startFee.amount;
                 chargeableAmount.currency = hunt.startFee.currency;
+                chargeableAmount.vatPercentage = hunt.startFee.vatPercentage;
+                chargeableAmount.vatAmount = hunt.startFee.vatAmount;
                 paymentDialogOpen = true;
             } else if (hunt.planType === 'success_fee' && hunt.startFee?.amount == 0) {
                 toast.error('There is an issue with this Hunt pricing, please contact support.');
@@ -134,10 +138,13 @@
 
     async function activateHunt() {
         try {
+            console.log(hunt);
             const response = await scrubinClient.hunt.activateHuntV2(hunt.huntId);
             if (hunt.planType === 'success_fee' && hunt.startFee?.amount > 0) {
                 chargeableAmount.amount = hunt.startFee.amount;
                 chargeableAmount.currency = hunt.startFee.currency;
+                chargeableAmount.vatPercentage = hunt.startFee.vatPercentage;
+                chargeableAmount.vatAmount = hunt.startFee.vatAmount;
                 paymentDialogOpen = true;
             } else {
                 window.location.reload();
@@ -161,6 +168,8 @@
     huntId={hunt.huntId}
     amount={chargeableAmount.amount}
     currency={chargeableAmount.currency}
+    vatPercentage={chargeableAmount.vatPercentage}
+    vatAmount={chargeableAmount.vatAmount}
     onSuccess={onPaymentSuccess}
 />
 

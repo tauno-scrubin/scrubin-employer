@@ -62,20 +62,34 @@ export async function payWithStripe(huntId: number, paymentMethodId: string) {
     if (!stripe) {
         throw new Error('Payment system failed to initialize');
     }
-
     // Confirm the payment
-    const { paymentIntent, error: confirmError } = await stripe.confirmCardPayment(
+
+    const result = await stripe.confirmCardPayment(
         createPaymentIntent.clientSecret
     );
 
-    if (confirmError) {
-        const errorMessage = confirmError.message;
-        throw new Error(errorMessage);
+    console.log('Stripe response:', result); // For debugging
+
+    // Check if payment is already succeeded
+    if (result.paymentIntent?.status === 'succeeded') {
+        await scrubinClient.hunt.activateHunt(huntId, createPaymentIntent.paymentIntentId, paymentMethodId);
+        return { success: true, hunt: huntId };
     }
 
-    // Create order
-    const activateHunt = await scrubinClient.hunt.activateHunt(huntId, paymentIntent.id, paymentMethodId);
+    // If we have an error, throw it
+    if (result.error) {
+        // Check if it's the "already succeeded" error
+        if (result.error.payment_intent?.status === 'succeeded') {
+            return { success: true, hunt: huntId };
+        }
+        throw new Error(result.error.message || 'Payment failed');
+    }
 
-   return {success: true, hunt: activateHunt};
+    // If we get here without a PaymentIntent, something went wrong
+    if (!result.paymentIntent) {
+        throw new Error('Payment failed - no payment intent returned');
+    }
+
+    return { success: true, hunt: huntId };
 }
 
