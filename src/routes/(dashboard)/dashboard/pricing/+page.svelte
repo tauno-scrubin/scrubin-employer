@@ -94,7 +94,7 @@
 	{/if}
 
 
-	{#if activePlans.length < 1 && $currentUserCompany.countryIso !== 'EST'}
+	{#if activePlans.length < 1 && $currentUserCompany?.countryIso !== 'EST'}
 	<div class="p-6 rounded-lg mb-10 border border-border">
 		<div class="flex items-center mb-3">
 			<Sparkles class="w-6 h-6 text-primary mr-2" />
@@ -219,7 +219,7 @@
 		</div>
 	{/if}
 
-	{#if $currentUserCompany.countryIso !== 'EST'}
+	{#if $currentUserCompany?.countryIso !== 'EST'}
     <div class="mb-6">
         <h2 class="text-lg font-medium mb-2">Need someone short-term?</h2>
         <p class="text-muted-foreground">For <span class="font-medium">locum</span> placements or short-term contracts, we'll tailor the fee to the contract duration — starting from <span class="font-medium">{getCurrencySymbol(currency)}150/month</span>.</p>
