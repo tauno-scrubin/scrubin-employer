@@ -1,21 +1,23 @@
 <script lang="ts">
+	import { Button } from '$lib/components/ui/button';
+	import { Card, CardContent, CardFooter } from '$lib/components/ui/card';
+	import { Input } from '$lib/components/ui/input';
+	import { Label } from '$lib/components/ui/label';
 	import { Alert } from '$lib/form';
-	import ResetPasswordLink from '../reset-password-link.svelte';
-	import { Button } from "$lib/components/ui/button";
-	import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "$lib/components/ui/card";
-	import { Input } from "$lib/components/ui/input";
-	import { Label } from "$lib/components/ui/label";
-	import { Separator } from "$lib/components/ui/separator";
 	import ScrubinLogo from '@/components/scrubinLogo.svelte';
+	import ResetPasswordLink from '../reset-password-link.svelte';
 
 	export let form;
 </script>
 
 <div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
-	<div class="sm:mx-auto sm:w-full sm:max-w-sm mb-8 text-center">
+	<div class="mb-8 text-center sm:mx-auto sm:w-full sm:max-w-sm">
 		<!-- Scrubin Logo -->
-		<ScrubinLogo class="h-8 mx-auto mb-8" />
-		<p class="text-muted-foreground mt-2">Enter your credentials to access your account</p>
+		<div class="mb-4 flex flex-col items-center">
+			<ScrubinLogo class="mb-1 h-8" />
+			<span class="text-xs font-medium">Employer</span>
+		</div>
+		<p class="mt-2 text-muted-foreground">Enter your credentials to access your account</p>
 	</div>
 
 	<Card class="mx-auto w-full max-w-sm border-none shadow-none sm:border sm:shadow">
@@ -53,9 +55,7 @@
 					<Alert variant="destructive">{form?.errorMessage}</Alert>
 				{/if}
 
-				<Button type="submit" class="w-full font-medium">
-					Sign in
-				</Button>
+				<Button type="submit" class="w-full font-medium">Sign in</Button>
 			</CardContent>
 
 			<CardFooter class="flex justify-center border-t p-4">

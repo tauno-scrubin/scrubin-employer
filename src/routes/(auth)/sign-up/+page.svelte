@@ -1,15 +1,13 @@
 <script lang="ts">
+	import { Button } from '$lib/components/ui/button';
+	import { Card, CardContent, CardFooter } from '$lib/components/ui/card';
+	import { Input } from '$lib/components/ui/input';
+	import { Label } from '$lib/components/ui/label';
+	import * as Select from '$lib/components/ui/select/index.js';
 	import { Alert } from '$lib/form';
-	import ResetPasswordLink from '../reset-password-link.svelte';
-	import { Button } from "$lib/components/ui/button";
-	import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "$lib/components/ui/card";
-	import { Input } from "$lib/components/ui/input";
-	import { Label } from "$lib/components/ui/label";
-	import { Separator } from "$lib/components/ui/separator";
 	import ScrubinLogo from '@/components/scrubinLogo.svelte';
-	import * as Select from "$lib/components/ui/select/index.js";
-	import { scrubinClient } from "@/scrubinClient/client";
-	import { onMount } from "svelte";
+	import { scrubinClient } from '@/scrubinClient/client';
+	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
 
 	let {
@@ -17,7 +15,7 @@
 	}: {
 		form: {
 			errorMessage: string;
-		}
+		};
 	} = $props();
 
 	let countries = $state<string[]>([]);
@@ -34,10 +32,12 @@
 </script>
 
 <div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
-	<div class="sm:mx-auto sm:w-full sm:max-w-sm mb-8 text-center">
-		<!-- Add your logo here -->
-		<ScrubinLogo class="h-8 mx-auto mb-8" />
-		<p class="text-muted-foreground mt-2">Enter your details to sign up</p>
+	<div class="mb-8 text-center sm:mx-auto sm:w-full sm:max-w-sm">
+		<div class="mb-4 flex flex-col items-center">
+			<ScrubinLogo class="mb-1 h-8" />
+			<span class="text-xs font-medium">Employer</span>
+		</div>
+		<p class="mt-2 text-muted-foreground">Enter your details to sign up</p>
 	</div>
 
 	<Card class="mx-auto w-full max-w-sm border-none shadow-none sm:border sm:shadow">
@@ -107,7 +107,12 @@
 
 				<div class="space-y-2">
 					<Label for="country" class="text-sm font-medium">Country</Label>
-					<Select.Root name="country" value={selectedCountry} onValueChange={(value) => selectedCountry = value}>
+					<Select.Root
+						name="country"
+						type="single"
+						value={selectedCountry}
+						onValueChange={(value) => (selectedCountry = value)}
+					>
 						<Select.Trigger class="w-full shadow-sm">
 							<span>{selectedCountry || 'Select a country'}</span>
 						</Select.Trigger>
@@ -122,18 +127,21 @@
 				</div>
 
 				{#if form?.errorMessage}
-					<Alert variant="destructive">{form?.errorMessage}</Alert>
+					<Alert title={form?.errorMessage}></Alert>
 				{/if}
 
-				<Button type="submit" class="w-full font-medium">
-					Sign up
-				</Button>
+				<Button type="submit" class="w-full font-medium">Sign up</Button>
 
 				<p class="text-sm text-muted-foreground">
 					By creating an account, you agree to our
-					<a href="https://scrubin.io/terms-and-conditions" class="text-primary hover:text-primary/90">Terms of Service</a>
+					<a
+						href="https://scrubin.io/terms-and-conditions"
+						class="text-primary hover:text-primary/90">Terms of Service</a
+					>
 					and
-					<a href="https://scrubin.io/privacy-policy" class="text-primary hover:text-primary/90">Privacy Policy</a>.
+					<a href="https://scrubin.io/privacy-policy" class="text-primary hover:text-primary/90"
+						>Privacy Policy</a
+					>.
 				</p>
 			</CardContent>
 
