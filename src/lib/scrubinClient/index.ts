@@ -133,7 +133,7 @@ export interface AllRequirementsResponse {
   totalPages: number;
 }
 
-export type PlanType = 'success_fee' | 'custom' | 'ad_subscription' | "general_subscription"
+export type PlanType = 'success_fee' | 'enterprise' | 'ad_subscription' | "general_subscription"
 
 export interface Requirements {
   allowedPlanOptions: PlanType[];
@@ -400,6 +400,8 @@ export interface Feedback {
 export interface CompanyPlanPrice {
   amount: number;
   currency: string;
+  vatAmount?: number;
+  vatPercentage?: number;
 }
 
 export interface CompanyPlanPricingSuccess {
@@ -440,6 +442,11 @@ export interface CompanyPlanDetails extends CompanyPlanSummary {
   planPaymentMethod: string;
   pricingGeneral: CompanyPlanPrice;
   pricingSuccess: CompanyPlanPricingSuccess;
+  customPlanDescription?: string;
+}
+
+export interface CustomPlanRequest {
+  message: string;
 }
 
 export interface StartPlanRequest {
@@ -742,6 +749,11 @@ class CompanyResource extends BaseResource {
   async getPlanDetails(id: number): Promise<CompanyPlanDetails> {
     const url = new URL(`${this.path}/plans/${id}/details`, this.client.baseUrl);
     return this.request<CompanyPlanDetails>('GET', url.toString()) as Promise<CompanyPlanDetails>;
+  }
+
+  async requestCustomPlan(message: string): Promise<void> {
+    const url = new URL(`${this.path}/plans/request-custom`, this.client.baseUrl);
+    return this.request<void>('POST', url.toString(), { message }, true) as Promise<void>;
   }
 
   async startPlan(planType: string): Promise<CompanyPlanSummary> {
