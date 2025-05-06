@@ -1,0 +1,61 @@
+{
+	"hunt": {
+		"details": "Détails",
+		"statistics": "Statistiques",
+		"questions": "Questions",
+		"jobDetails": "Détails du poste",
+		"qualifications": "Qualifications",
+		"location": "Emplacement",
+		"huntStatus": {
+			"active": "Actif",
+			"pending": "En attente",
+			"awaitingPayment": "Prêt à activer",
+			"paused": "En pause",
+			"completed": "Terminé",
+			"cancelled": "Annulé"
+		},
+		"createdOn": "Créé le",
+		"jobRequirements": "Exigences du poste",
+		"jobTitle": "Titre du poste",
+		"jobDescription": "Description du poste",
+		"professions": "Professions",
+		"specialization": "Spécialisation",
+		"workExperience": "Expérience professionnelle",
+		"years": "années",
+		"workTime": "Temps de travail",
+		"languages": "Langues",
+		"salary": "Salaire",
+		"notSpecified": "Non spécifié",
+		"requiredQualifications": "Qualifications requises",
+		"additionalRequirements": "Exigences supplémentaires",
+		"drivingLicense": "Permis de conduire",
+		"personalCar": "Voiture personnelle",
+		"accommodation": "Hébergement",
+		"transport": "Transport",
+		"required": "Requis",
+		"notRequired": "Non requis",
+		"title": "Recherche"
+	},
+	"payment": {
+		"startFee": "Frais de démarrage",
+		"successFee": "Frais de succès"
+	},
+	"statistics": {
+		"huntConversionFunnel": "Entonnoir de conversion de recherche",
+		"totalHuntables": "Total des recherchables",
+		"contacted": "Contactés",
+		"interested": "Intéressés",
+		"readyForCompany": "Prêts pour l'entreprise",
+		"candidates": "Candidats",
+		"noInterestedCandidates": "Nous sommes à la recherche de grands talents !",
+		"noInterestedCandidatesDesc": "Pas encore de candidats intéressés, mais nous contactons des professionnels qui correspondent à vos besoins. Revenez bientôt ! Nous vous informerons dès que nous aurons des nouvelles.",
+		"interestedOn": "Intéressé le"
+	},
+	"questions": {
+		"contextQuestions": "Questions de contexte",
+		"contextQuestionsDesc": "Les questions des candidats sont collectées ici. Une fois répondues, elles font partie du contexte pour les réponses alimentées par l'IA dans les interactions futures."
+	},
+	"errors": {
+		"paymentIssue": "Il y a un problème avec la tarification de cette recherche, veuillez contacter le support."
+	}
+}

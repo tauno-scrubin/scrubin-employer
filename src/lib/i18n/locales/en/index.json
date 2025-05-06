@@ -1,0 +1,507 @@
+{
+	"app": {
+		"title": "Scrubin Employer",
+		"language": "Language",
+		"selectLanguage": "Select language"
+	},
+	"nav": {
+		"dashboard": "Dashboard",
+		"hunts": "Hunts",
+		"pricing": "Pricing",
+		"settings": "Settings",
+		"logout": "Logout",
+		"employerPlatform": "Employer Platform",
+		"help": "Help",
+		"projects": "Projects"
+	},
+	"languages": {
+		"en": "English",
+		"es": "Español",
+		"et": "Eesti",
+		"fi": "Suomi",
+		"fr": "Français",
+		"de": "Deutsch"
+	},
+	"buttons": {
+		"submit": "Submit",
+		"cancel": "Cancel",
+		"save": "Save",
+		"delete": "Delete",
+		"signIn": "Sign in",
+		"signUp": "Sign up",
+		"sendResetLink": "Send reset link",
+		"backToLogin": "Back to login"
+	},
+	"search": {
+		"placeholder": "Search...",
+		"noResults": "No results found"
+	},
+	"common": {
+		"loading": "Loading...",
+		"error": "An error occurred",
+		"success": "Success!",
+		"created": "Created on",
+		"view": "View",
+		"edit": "Edit",
+		"delete": "Delete",
+		"toggle": "Toggle"
+	},
+	"auth": {
+		"login": {
+			"title": "Enter your credentials to access your account",
+			"emailLabel": "Email address",
+			"emailPlaceholder": "name@example.com",
+			"passwordLabel": "Password",
+			"forgotPassword": "Forgot password?",
+			"passwordPlaceholder": "••••••••",
+			"noAccount": "Don't have an account?",
+			"signUp": "Sign up"
+		},
+		"resetPassword": {
+			"forgotPassword": "Forgot password?",
+			"title": "Reset password",
+			"description": "We'll send you an email with a link to reset your password.",
+			"emailLabel": "Email",
+			"emailPlaceholder": "name@example.com"
+		},
+		"employer": "Employer",
+		"wrapper": {
+			"or": "or",
+			"login": "login"
+		},
+		"signUp": {
+			"title": "Enter your details to sign up",
+			"emailLabel": "Email address",
+			"emailPlaceholder": "name@example.com",
+			"firstNameLabel": "First name",
+			"firstNamePlaceholder": "John",
+			"lastNameLabel": "Last name",
+			"lastNamePlaceholder": "Doe",
+			"phoneLabel": "Phone number",
+			"phonePlaceholder": "+1234567890",
+			"companyNameLabel": "Company name",
+			"companyNamePlaceholder": "Acme Inc.",
+			"countryLabel": "Country",
+			"countryPlaceholder": "Select a country",
+			"agreement": "By creating an account, you agree to our",
+			"termsOfService": "Terms of Service",
+			"and": "and",
+			"privacyPolicy": "Privacy Policy",
+			"haveAccount": "Already have an account?",
+			"signIn": "Sign in"
+		}
+	},
+	"account": {
+		"pendingActivation": "Account Pending Activation",
+		"scheduleCall": "Schedule a quick call with our team to activate your account.",
+		"scheduleCallBtn": "Schedule Call"
+	},
+	"help": {
+		"title": "Need Assistance?",
+		"description": "Contact your dedicated account manager",
+		"accountManager": "Account Manager",
+		"message": "Message",
+		"call": "Call",
+		"schedule": "Schedule",
+		"feedback": "Send Feedback",
+		"feedbackPlaceholder": "Let us know how we can improve or help you…",
+		"sending": "Sending…",
+		"send": "Send",
+		"thankYou": "Thank you for your feedback!"
+	},
+	"payment": {
+		"cardholderName": "Cardholder Name",
+		"cardNumber": "Card Number",
+		"expirationDate": "Expiration Date",
+		"securityCode": "Security Code",
+		"existingPaymentMethod": "Existing Payment Method",
+		"useNewCard": "Use New Card",
+		"useExistingCard": "Use Existing Card",
+		"startingFee": "Starting fee",
+		"net": "(Net)",
+		"vat": "VAT",
+		"total": "Total",
+		"pay": "Pay",
+		"stripeError": "Payment processing failed",
+		"expires": "Expires",
+		"activateHunt": "Activate Hunt",
+		"completePayment": "Complete Payment",
+		"status": {
+			"active": "Active",
+			"awaitingPayment": "Ready to Activate",
+			"pending": "Pending",
+			"paused": "Paused",
+			"completed": "Completed",
+			"cancelled": "Cancelled"
+		}
+	},
+	"dashboard": {
+		"huntsList": {
+			"headhunting": "Headhunting",
+			"noActiveHunts": "No active hunts",
+			"huntsWillAppearHere": "Your hunts will appear here",
+			"showLess": "Show Less",
+			"viewMore": "View More",
+			"drafts": "Drafts",
+			"noDrafts": "No drafts",
+			"draftsWillAppearHere": "Your drafts will appear here",
+			"untitledDraft": "Untitled Draft",
+			"draft": "Draft"
+		},
+		"searchView": {
+			"welcomeBack": "Welcome back, {{name}}!",
+			"searchPlaceholder": "I am looking for two General Practitioners from the UK with MRCGP qualifications who speak English. The salary for a full-time position is $300,000 per year.",
+			"resultsFound": "Results found",
+			"totalMatchingCandidates": "Total matching candidates",
+			"processing": "Processing...",
+			"nextStep": "Next step",
+			"activateAccount": "Activate your account to continue",
+			"noMatchesFound": "No matches found",
+			"noMatchesDescription": "We couldn't find any healthcare workers matching your criteria. Try adjusting your search parameters or broadening your requirements.",
+			"pleaseSelectCandidate": "Please select at least one candidate",
+			"errorAnalyzingRequirements": "Error analyzing requirements: "
+		},
+		"pricing": {
+			"perMonth": "/month"
+		},
+		"demand": {
+			"low": "Low",
+			"medium": "Medium",
+			"high": "High",
+			"veryHigh": "Very high",
+			"overallHiringDemand": "Overall hiring demand",
+			"estimatedTimeToFill": "Estimated time to fill",
+			"months": "months"
+		},
+		"workersResults": {
+			"selected": "selected",
+			"moreResults": "More results available",
+			"chooseProfiles": "Choose up to 10 favorite profiles to help refine your recommendations. Based on your selection, our AI agent will analyze, score, and find similar profiles. This ensures we make the best offers to the most suitable candidates, saving you time and effort in the hiring process!"
+		},
+		"worker": {
+			"registrationCountry": "Registration Country",
+			"languages": "Languages",
+			"verifications": "Verifications",
+			"totalWorkExperience": "Total Work Experience",
+			"years": "yrs",
+			"preferredSpeciality": "Preferred Speciality",
+			"preferredLocations": "Preferred Locations",
+			"lookingForWorkIn": "Looking For Work In",
+			"availability": "Availability",
+			"verified": "Verified",
+			"recentlyActive": "Recently Active",
+			"notSpecified": "Not specified"
+		},
+		"workerDialog": {
+			"workerInformation": "Worker Information",
+			"loadingError": "Failed to load worker data. Please try again.",
+			"professions": "Professions",
+			"registrationCountry": "Registration Country",
+			"speciality": "Speciality",
+			"activityStatus": "Activity Status",
+			"recentlyActive": "Recently active",
+			"notRecentlyActive": "Not recently active",
+			"verified": "Verified",
+			"notVerified": "Not verified",
+			"verifications": "Verifications",
+			"workExperience": "Work Experience",
+			"languages": "Languages",
+			"experience": "Experience",
+			"workExperienceTitle": "Work Experience",
+			"present": "Present",
+			"noWorkExperience": "No work experience listed",
+			"education": "Education",
+			"noEducation": "No education listed",
+			"trainings": "Trainings & Certifications",
+			"noTrainings": "No trainings or certifications listed",
+			"jobPreferences": "Job Preferences",
+			"countries": "Countries",
+			"preferredLocations": "Preferred Locations",
+			"preferredSpeciality": "Preferred Speciality",
+			"facilityTypes": "Facility Types",
+			"additionalInformation": "Additional Information",
+			"softSkills": "Soft Skills",
+			"otherSkills": "Other Skills",
+			"interestedOffers": "Interested Offers",
+			"top3Terms": "Top 3 Terms",
+			"about": "About",
+			"noWorkerData": "No worker data available"
+		},
+		"candidateChat": {
+			"title": "Candidate Conversation",
+			"noMessages": "No messages yet. Start the conversation!",
+			"messagePlaceholder": "Type your message...",
+			"send": "Send",
+			"justNow": "just now",
+			"minuteAgo": "minute ago",
+			"minutesAgo": "minutes ago",
+			"hourAgo": "hour ago",
+			"hoursAgo": "hours ago",
+			"dayAgo": "day ago",
+			"daysAgo": "days ago",
+			"monthAgo": "month ago",
+			"monthsAgo": "months ago",
+			"yearAgo": "year ago",
+			"yearsAgo": "years ago",
+			"read": "Read"
+		},
+		"candidateNotes": {
+			"title": "Candidate Notes",
+			"lastSaved": "Last saved",
+			"unsavedChanges": "Unsaved changes",
+			"saving": "Saving...",
+			"save": "Save",
+			"placeholder": "Add notes about this candidate...",
+			"characters": "characters"
+		},
+		"chatWindowPricing": {
+			"title": "AI Recruitment Automation",
+			"description": "Once activated, our AI Agent automatically sends personalized job offers to candidates when they're most likely to respond.",
+			"perMonth": "/month",
+			"features": {
+				"nonStop": {
+					"title": "24/7 Operation",
+					"description": "Continuous outreach without manual intervention"
+				},
+				"timezone": {
+					"title": "Timezone Intelligence",
+					"description": "Analyzes user timezones for optimal engagement"
+				},
+				"ai": {
+					"title": "AI-Powered Personalization",
+					"description": "Tailored messages based on candidate profiles"
+				},
+				"engagement": {
+					"title": "Automated Engagement",
+					"description": "Maximizes response rates through smart timing"
+				}
+			},
+			"activateMessage": "Activate to automate recruitment while you focus on evaluating qualified candidates."
+		},
+		"interestedWorkerDialog": {
+			"title": "Interested Candidate",
+			"description": "Candidate who has expressed interest",
+			"loading": "Failed to load candidate data. Please try again.",
+			"tabs": {
+				"profile": "Profile",
+				"messages": "Messages",
+				"notes": "Notes"
+			},
+			"interview": "Interview booked for",
+			"contactInfo": "Contact Information",
+			"email": "Email",
+			"phone": "Phone",
+			"interestedSince": "Interested since",
+			"professionalRegistration": "Professional Registration",
+			"professions": "Professions",
+			"registrationCountry": "Registration Country",
+			"speciality": "Speciality",
+			"activityStatus": "Activity Status",
+			"verified": "Verified",
+			"verifications": "Verifications",
+			"workExperience": "Work Experience",
+			"languages": "Languages",
+			"experience": "Experience",
+			"present": "Present",
+			"education": "Education",
+			"trainings": "Trainings & Certifications",
+			"jobPreferences": "Job Preferences",
+			"countries": "Countries",
+			"preferredLocations": "Preferred Locations",
+			"preferredSpeciality": "Preferred Speciality",
+			"facilityTypes": "Facility Types",
+			"interestedOffers": "Interested Offers",
+			"top3Terms": "Top 3 Terms",
+			"additionalInfo": "Additional Information",
+			"about": "About",
+			"softSkills": "Soft Skills",
+			"otherSkills": "Other Skills",
+			"noData": "No candidate data available."
+		},
+		"questionsInHunt": {
+			"noQuestions": "No Questions Yet",
+			"noQuestionsDesc": "Questions from candidates will appear here. These help build context for future interactions.",
+			"question": "Question",
+			"answer": "Answer",
+			"pendingAnswer": "Pending Answer",
+			"addAnswer": "Add Answer",
+			"answerPlaceholder": "Type your answer...",
+			"submit": "Submit",
+			"cancel": "Cancel"
+		},
+		"searchHistory": {
+			"title": "Recent Searches",
+			"loading": "Loading...",
+			"noHistory": "No recent searches",
+			"noHistoryDesc": "Your search history will appear here",
+			"runAgain": "Run again",
+			"showMore": "Show more",
+			"remaining": "remaining"
+		},
+		"campaign": {
+			"startDate": "Start Date",
+			"endDate": "End Date",
+			"statistics": {
+				"totalHuntables": "Total Huntables",
+				"readyForCompany": "Ready for Company",
+				"totalViews": "Total Views",
+				"totalClicks": "Total Clicks",
+				"totalCustomActions": "Total Custom Actions"
+			},
+			"performance": "Performance Over Time",
+			"views": "Views",
+			"clicks": "Clicks",
+			"customActions": "Custom Actions",
+			"total": "total",
+			"customActionsHistory": "Custom Actions history",
+			"noCustomActions": "No custom actions yet",
+			"campaignFiles": "Campaign Files"
+		},
+		"chatWindow": {
+			"followUpQuestions": "Follow-up Questions",
+			"goBack": "Go back",
+			"analyzing": "Analyzing your answers...",
+			"readyToActivate": "Ready to activate",
+			"completeQuestions": "Complete questions for better results",
+			"selectSearchType": "Select search type:",
+			"activationNeeded": "This plan type needs to be activated first in your account settings.",
+			"confirming": "Confirming...",
+			"confirm": "Confirm",
+			"additionalInstructions": "Additional Instructions",
+			"addCustomRequirements": "Add any custom requirements or clarifications that weren't covered by the questions above.",
+			"additionalInstructionsPlaceholder": "Type any additional instructions here...",
+			"submitting": "Submitting...",
+			"submit": "Submit",
+			"jobRequirements": "Job Requirements",
+			"notSpecified": "Not specified",
+			"jobTitle": "Job title",
+			"jobDescription": "Job description",
+			"professions": "Professions",
+			"specialization": "Specialization",
+			"workExperience": "Work Experience",
+			"years": "years",
+			"location": "Location",
+			"workTime": "Work Time",
+			"languages": "Languages",
+			"salary": "Salary",
+			"requiredQualifications": "Required Qualifications",
+			"additionalRequirements": "Additional Requirements",
+			"drivingLicense": "Driving License",
+			"required": "Required",
+			"notRequired": "Not required",
+			"personalCar": "Personal Car",
+			"accommodation": "Accommodation",
+			"transport": "Transport",
+			"searchScope": "Search Scope",
+			"globalSearch": "Global search with preference for listed countries"
+		}
+	},
+	"settings": {
+		"title": "Settings",
+		"profile": {
+			"title": "Profile Settings",
+			"description": "Manage your account settings and preferences",
+			"firstName": "First Name",
+			"firstNamePlaceholder": "Enter your first name",
+			"lastName": "Last Name",
+			"lastNamePlaceholder": "Enter your last name",
+			"email": "Email",
+			"phoneNumber": "Phone Number",
+			"phoneNumberPlaceholder": "Enter your phone number",
+			"calendarLink": "Calendar Link",
+			"calendarLinkPlaceholder": "Enter your calendar link (e.g. google calendar, cal.com, calendly )",
+			"saveChanges": "Save Changes"
+		},
+		"password": {
+			"title": "Password Settings",
+			"description": "Manage your account password",
+			"oldPassword": "Old Password",
+			"oldPasswordPlaceholder": "Enter your old password",
+			"newPassword": "New Password",
+			"newPasswordPlaceholder": "Enter your new password",
+			"updatePassword": "Update Password"
+		},
+		"company": {
+			"title": "Company Settings",
+			"description": "Manage your company profile and business details",
+			"brandName": "Brand Name",
+			"brandNamePlaceholder": "Enter brand name",
+			"description": "Description",
+			"descriptionPlaceholder": "Enter company description",
+			"companyName": "Company Name",
+			"companyNamePlaceholder": "Enter company name",
+			"registrationCode": "Registration Code",
+			"registrationCodePlaceholder": "Enter registration code",
+			"vatNumber": "VAT Number",
+			"vatNumberPlaceholder": "Enter VAT number",
+			"country": "Country",
+			"countryPlaceholder": "Select a country",
+			"city": "City",
+			"cityPlaceholder": "Enter city",
+			"address": "Address",
+			"addressPlaceholder": "Enter street address",
+			"zipCode": "ZIP Code",
+			"zipCodePlaceholder": "Enter ZIP code",
+			"save": "Save"
+		},
+		"payment": {
+			"title": "Payment Method",
+			"expires": "Expires"
+		},
+		"notifications": {
+			"settingsUpdated": "Settings updated successfully",
+			"passwordUpdated": "Password updated successfully",
+			"updateError": "Failed to update user settings",
+			"passwordUpdateError": "Failed to update password"
+		}
+	},
+	"pricing": {
+		"title": "Pricing Plans",
+		"subtitle": "Choose solution that works best for your healthcare recruitment needs",
+		"activePlans": {
+			"title": "Your Active Plans",
+			"activeSince": "Active since",
+			"customPlanDetails": "Custom Plan Details",
+			"generalFee": "General fee",
+			"viewSuccessFees": "View success fees",
+			"endPlan": "End Plan",
+			"doctorsTitle": "Doctors",
+			"otherProfessionalsTitle": "Other Healthcare Professionals",
+			"startFee": "Start fee",
+			"successFee": "Success fee"
+		},
+		"startingFee": {
+			"title": "Start with {{amount}} {{currency}}",
+			"withFee": "Begin recruiting with a {{amount}} {{currency}} starting fee",
+			"withoutFee": "Begin recruiting immediately with no upfront costs or commitments",
+			"payWhenSuccessful": "Only pay when you successfully hire"
+		},
+		"availablePlans": {
+			"title": "Available Plans",
+			"generalFee": "General fee",
+			"noGeneralFee": "No general fee",
+			"startPlan": "Start Plan",
+			"successFees": "Success Fees",
+			"vatLabel": "(+{{percentage}}% VAT)",
+			"successFeeNotice": "Success fee is paid in monthly installments when both parties confirm the candidate has started working and continues for a 12-month commitment period"
+		},
+		"customSolutions": {
+			"title": "CUSTOM SOLUTIONS",
+			"description": "Need something specific? Or do you need locum or short-term placements? Contact us for tailored recruitment packages with premium benefits and competitive rates",
+			"contactUs": "Contact Us"
+		},
+		"contactForm": {
+			"title": "Contact Us",
+			"description": "Tell us about your specific recruitment needs and we'll get back to you shortly.",
+			"messageLabel": "Your Message",
+			"messagePlaceholder": "Tell us about your specific recruitment needs...",
+			"cancel": "Cancel",
+			"sending": "Sending...",
+			"send": "Send Message",
+			"success": "Message sent successfully!"
+		},
+		"errors": {
+			"fetchFailed": "Failed to send message"
+		}
+	}
+}

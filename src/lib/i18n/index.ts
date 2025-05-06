@@ -1,20 +1,46 @@
 import { writable, derived } from 'svelte/store';
 import { browser } from '$app/environment';
 import { availableLanguages, defaultLanguage, isLanguageSupported } from './config';
-import en from './locales/en/common.json';
-import es from './locales/es/common.json';
+import en from './locales/en/index.json';
+import es from './locales/es/index.json';
+import et from './locales/et/index.json';
+import fi from './locales/fi/index.json';
+import fr from './locales/fr/index.json';
+import de from './locales/de/index.json';
+import enHuntDetails from './locales/en/huntDetails.json';
+import esHuntDetails from './locales/es/huntDetails.json';
+import etHuntDetails from './locales/et/huntDetails.json';
+import fiHuntDetails from './locales/fi/huntDetails.json';
+import frHuntDetails from './locales/fr/huntDetails.json';
+import deHuntDetails from './locales/de/huntDetails.json';
+
+// Define recursive types properly to avoid circular references
+interface TranslationObject {
+	[key: string]: string | TranslationObject;
+}
+
+// Function to merge translations
+function mergeTranslations(...objs: TranslationObject[]): TranslationObject {
+	return objs.reduce((acc, obj) => {
+		return { ...acc, ...obj };
+	}, {});
+}
 
 // Create a map of all translations
-const translations: Record<string, any> = {
-	en,
-	es
+const translations: Record<string, TranslationObject> = {
+	en: mergeTranslations(en, enHuntDetails),
+	es: mergeTranslations(es, esHuntDetails),
+	et: mergeTranslations(et, etHuntDetails),
+	fi: mergeTranslations(fi, fiHuntDetails),
+	fr: mergeTranslations(fr, frHuntDetails),
+	de: mergeTranslations(de, deHuntDetails)
 };
 
 // Get initial locale based on:
 // 1. localStorage preference (if in browser)
 // 2. navigator language (if in browser)
 // 3. Default to the default language
-function getInitialLocale(): string {
+export function getInitialLocale(): string {
 	if (browser) {
 		// First check localStorage for saved preference
 		const savedLocale = localStorage.getItem('preferredLanguage');
@@ -40,16 +66,25 @@ export const locale = writable(getInitialLocale());
 if (browser) {
 	locale.subscribe((value) => {
 		if (value) {
+			// Store the preference in localStorage for persistence across page loads
 			localStorage.setItem('preferredLanguage', value);
+
+			// Also update the HTML lang attribute directly
+			// This provides redundancy with the effect in layout.svelte
+			document.documentElement.setAttribute('lang', value);
 		}
 	});
 }
 
 // Function to get a nested property from an object using a path string
-function getNestedProperty(obj: any, path: string) {
-	return path
-		.split('.')
-		.reduce((prev, curr) => (prev && prev[curr] !== undefined ? prev[curr] : undefined), obj);
+function getNestedProperty(obj: TranslationObject, path: string): string | undefined {
+	const result = path.split('.').reduce<string | TranslationObject | undefined>((prev, curr) => {
+		if (!prev || typeof prev !== 'object') return undefined;
+		return prev[curr];
+	}, obj);
+
+	// Return only string values, not nested objects
+	return typeof result === 'string' ? result : undefined;
 }
 
 // Create a derived store for translations
@@ -67,12 +102,13 @@ export const t = derived(locale, ($locale) => {
 		if (!text) return key;
 
 		// Replace any variables in the translation
+		let result = text;
 		Object.keys(vars).forEach((k) => {
 			const regex = new RegExp(`{{${k}}}`, 'g');
-			text = text.replace(regex, vars[k]);
+			result = result.replace(regex, vars[k]);
 		});
 
-		return text;
+		return result;
 	};
 });
 

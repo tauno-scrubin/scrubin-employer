@@ -1,0 +1,507 @@
+{
+	"app": {
+		"title": "Scrubin Employer",
+		"language": "Kieli",
+		"selectLanguage": "Valitse kieli"
+	},
+	"nav": {
+		"dashboard": "Kojelauta",
+		"hunts": "Haut",
+		"pricing": "Hinnoittelu",
+		"settings": "Asetukset",
+		"logout": "Kirjaudu ulos",
+		"employerPlatform": "Työnantajan alusta",
+		"help": "Ohje",
+		"projects": "Projektit"
+	},
+	"languages": {
+		"en": "English",
+		"es": "Español",
+		"et": "Eesti",
+		"fi": "Suomi",
+		"fr": "Français",
+		"de": "Deutsch"
+	},
+	"buttons": {
+		"submit": "Lähetä",
+		"cancel": "Peruuta",
+		"save": "Tallenna",
+		"delete": "Poista",
+		"signIn": "Kirjaudu sisään",
+		"signUp": "Rekisteröidy",
+		"sendResetLink": "Lähetä palautuslinkki",
+		"backToLogin": "Takaisin kirjautumiseen"
+	},
+	"search": {
+		"placeholder": "Hae...",
+		"noResults": "Ei hakutuloksia"
+	},
+	"common": {
+		"loading": "Ladataan...",
+		"error": "Tapahtui virhe",
+		"success": "Onnistui!",
+		"created": "Luotu",
+		"view": "Näytä",
+		"edit": "Muokkaa",
+		"delete": "Poista",
+		"toggle": "Vaihda"
+	},
+	"auth": {
+		"login": {
+			"title": "Syötä kirjautumistietosi päästäksesi tilillesi",
+			"emailLabel": "Sähköpostiosoite",
+			"emailPlaceholder": "nimi@esimerkki.com",
+			"passwordLabel": "Salasana",
+			"forgotPassword": "Unohditko salasanan?",
+			"passwordPlaceholder": "••••••••",
+			"noAccount": "Eikö sinulla ole tiliä?",
+			"signUp": "Rekisteröidy"
+		},
+		"resetPassword": {
+			"forgotPassword": "Unohditko salasanan?",
+			"title": "Nollaa salasana",
+			"description": "Lähetämme sähköpostiisi linkin salasanan nollaamiseksi.",
+			"emailLabel": "Sähköposti",
+			"emailPlaceholder": "nimi@esimerkki.com"
+		},
+		"employer": "Työnantaja",
+		"wrapper": {
+			"or": "tai",
+			"login": "kirjaudu sisään"
+		},
+		"signUp": {
+			"title": "Syötä tietosi rekisteröityäksesi",
+			"emailLabel": "Sähköpostiosoite",
+			"emailPlaceholder": "nimi@esimerkki.com",
+			"firstNameLabel": "Etunimi",
+			"firstNamePlaceholder": "Matti",
+			"lastNameLabel": "Sukunimi",
+			"lastNamePlaceholder": "Meikäläinen",
+			"phoneLabel": "Puhelinnumero",
+			"phonePlaceholder": "+358501234567",
+			"companyNameLabel": "Yrityksen nimi",
+			"companyNamePlaceholder": "Yritys Oy",
+			"countryLabel": "Maa",
+			"countryPlaceholder": "Valitse maa",
+			"agreement": "Luomalla tilin hyväksyt",
+			"termsOfService": "käyttöehdot",
+			"and": "ja",
+			"privacyPolicy": "tietosuojakäytännön",
+			"haveAccount": "Onko sinulla jo tili?",
+			"signIn": "Kirjaudu sisään"
+		}
+	},
+	"account": {
+		"pendingActivation": "Tilin aktivointi odottaa",
+		"scheduleCall": "Varaa lyhyt puhelu tiimimme kanssa aktivoidaksesi tilisi.",
+		"scheduleCallBtn": "Varaa puhelu"
+	},
+	"help": {
+		"title": "Tarvitsetko apua?",
+		"description": "Ota yhteyttä omaan yhteyshenkilöösi",
+		"accountManager": "Yhteyshenkilö",
+		"message": "Viesti",
+		"call": "Soita",
+		"schedule": "Varaa aika",
+		"feedback": "Lähetä palautetta",
+		"feedbackPlaceholder": "Kerro kuinka voimme parantaa tai auttaa sinua...",
+		"sending": "Lähetetään...",
+		"send": "Lähetä",
+		"thankYou": "Kiitos palautteestasi!"
+	},
+	"payment": {
+		"cardholderName": "Kortinhaltijan nimi",
+		"cardNumber": "Kortin numero",
+		"expirationDate": "Voimassaolopäivä",
+		"securityCode": "Turvakoodi",
+		"existingPaymentMethod": "Olemassa oleva maksutapa",
+		"useNewCard": "Käytä uutta korttia",
+		"useExistingCard": "Käytä olemassa olevaa korttia",
+		"startingFee": "Aloitusmaksu",
+		"net": "(Netto)",
+		"vat": "ALV",
+		"total": "Yhteensä",
+		"pay": "Maksa",
+		"stripeError": "Maksun käsittely epäonnistui",
+		"expires": "Vanhenee",
+		"activateHunt": "Aktivoi haku",
+		"completePayment": "Suorita maksu",
+		"status": {
+			"active": "Aktiivinen",
+			"awaitingPayment": "Valmis aktivoitavaksi",
+			"pending": "Odottaa",
+			"paused": "Pysäytetty",
+			"completed": "Valmis",
+			"cancelled": "Peruutettu"
+		}
+	},
+	"dashboard": {
+		"huntsList": {
+			"headhunting": "Headhunting",
+			"noActiveHunts": "Ei aktiivisia hakuja",
+			"huntsWillAppearHere": "Hakusi näkyvät täällä",
+			"showLess": "Näytä vähemmän",
+			"viewMore": "Näytä lisää",
+			"drafts": "Luonnokset",
+			"noDrafts": "Ei luonnoksia",
+			"draftsWillAppearHere": "Luonnoksesi näkyvät täällä",
+			"untitledDraft": "Nimetön luonnos",
+			"draft": "Luonnos"
+		},
+		"searchView": {
+			"welcomeBack": "Tervetuloa takaisin, {{name}}!",
+			"searchPlaceholder": "Etsin kahta yleislääkäriä Iso-Britanniasta MRCGP-pätevyydellä, jotka puhuvat englantia. Kokopäiväisen työn palkka on 300 000 $ vuodessa.",
+			"resultsFound": "Tuloksia löytyi",
+			"totalMatchingCandidates": "Yhteensä sopivia ehdokkaita",
+			"processing": "Käsitellään...",
+			"nextStep": "Seuraava vaihe",
+			"activateAccount": "Aktivoi tilisi jatkaaksesi",
+			"noMatchesFound": "Ei hakutuloksia",
+			"noMatchesDescription": "Emme löytäneet terveydenhuollon työntekijöitä, jotka vastaisivat kriteereitäsi. Kokeile muuttaa hakuparametrejä tai laajentaa vaatimuksiasi.",
+			"pleaseSelectCandidate": "Valitse vähintään yksi ehdokas",
+			"errorAnalyzingRequirements": "Virhe vaatimusten analysoinnissa: "
+		},
+		"pricing": {
+			"perMonth": "/kuukausi"
+		},
+		"demand": {
+			"low": "Alhainen",
+			"medium": "Keskitaso",
+			"high": "Korkea",
+			"veryHigh": "Erittäin korkea",
+			"overallHiringDemand": "Kokonaiskysynnän taso",
+			"estimatedTimeToFill": "Arvioitu täyttöaika",
+			"months": "kuukautta"
+		},
+		"workersResults": {
+			"selected": "valittu",
+			"moreResults": "Lisää tuloksia saatavilla",
+			"chooseProfiles": "Valitse enintään 10 suosikkiprofiilia auttaaksesi tarkentamaan suosituksiasi. Valintasi perusteella tekoälymme analysoi, arvioi ja löytää samankaltaisia profiileja. Näin varmistamme, että teemme parhaat tarjoukset sopivimmille ehdokkaille, säästäen aikaa ja vaivaa rekrytointiprosessissa!"
+		},
+		"worker": {
+			"registrationCountry": "Rekisteröintimaa",
+			"languages": "Kielet",
+			"verifications": "Vahvistukset",
+			"totalWorkExperience": "Kokonaistyökokemus",
+			"years": "vuotta",
+			"preferredSpeciality": "Ensisijainen erikoisala",
+			"preferredLocations": "Ensisijaiset sijainnit",
+			"lookingForWorkIn": "Etsii työtä alueelta",
+			"availability": "Saatavuus",
+			"verified": "Vahvistettu",
+			"recentlyActive": "Äskettäin aktiivinen",
+			"notSpecified": "Ei määritelty"
+		},
+		"workerDialog": {
+			"workerInformation": "Työntekijän tiedot",
+			"loadingError": "Työntekijän tietojen lataus epäonnistui. Yritä uudelleen.",
+			"professions": "Ammatit",
+			"registrationCountry": "Rekisteröintimaa",
+			"speciality": "Erikoisala",
+			"activityStatus": "Aktiivisuusstatus",
+			"recentlyActive": "Äskettäin aktiivinen",
+			"notRecentlyActive": "Ei äskettäin aktiivinen",
+			"verified": "Vahvistettu",
+			"notVerified": "Ei vahvistettu",
+			"verifications": "Vahvistukset",
+			"workExperience": "Työkokemus",
+			"languages": "Kielet",
+			"experience": "Kokemus",
+			"workExperienceTitle": "Työkokemus",
+			"present": "Nykyinen",
+			"noWorkExperience": "Ei työkokemustietoja",
+			"education": "Koulutus",
+			"noEducation": "Ei koulutustietoja",
+			"trainings": "Koulutukset ja sertifioinnit",
+			"noTrainings": "Ei koulutuksia tai sertifiointeja",
+			"jobPreferences": "Työtoiveet",
+			"countries": "Maat",
+			"preferredLocations": "Ensisijaiset sijainnit",
+			"preferredSpeciality": "Ensisijainen erikoisala",
+			"facilityTypes": "Toimipaikan tyypit",
+			"additionalInformation": "Lisätiedot",
+			"softSkills": "Pehmeät taidot",
+			"otherSkills": "Muut taidot",
+			"interestedOffers": "Kiinnostavat tarjoukset",
+			"top3Terms": "3 tärkeintä ehtoa",
+			"about": "Tietoa",
+			"noWorkerData": "Ei työntekijätietoja saatavilla"
+		},
+		"candidateChat": {
+			"title": "Ehdokaskeskustelu",
+			"noMessages": "Ei viestejä vielä. Aloita keskustelu!",
+			"messagePlaceholder": "Kirjoita viestisi...",
+			"send": "Lähetä",
+			"justNow": "juuri nyt",
+			"minuteAgo": "minuutti sitten",
+			"minutesAgo": "minuuttia sitten",
+			"hourAgo": "tunti sitten",
+			"hoursAgo": "tuntia sitten",
+			"dayAgo": "päivä sitten",
+			"daysAgo": "päivää sitten",
+			"monthAgo": "kuukausi sitten",
+			"monthsAgo": "kuukautta sitten",
+			"yearAgo": "vuosi sitten",
+			"yearsAgo": "vuotta sitten",
+			"read": "Luettu"
+		},
+		"candidateNotes": {
+			"title": "Ehdokasmuistiinpanot",
+			"lastSaved": "Viimeksi tallennettu",
+			"unsavedChanges": "Tallentamattomia muutoksia",
+			"saving": "Tallennetaan...",
+			"save": "Tallenna",
+			"placeholder": "Lisää muistiinpanoja tästä ehdokkaasta...",
+			"characters": "merkkiä"
+		},
+		"chatWindowPricing": {
+			"title": "Tekoälyrekrytoinnin automatisointi",
+			"description": "Aktivoinnin jälkeen tekoälyagenttimme lähettää automaattisesti personoituja työtarjouksia ehdokkaille silloin, kun he todennäköisimmin vastaavat.",
+			"perMonth": "/kuukausi",
+			"features": {
+				"nonStop": {
+					"title": "24/7 Toiminta",
+					"description": "Jatkuva yhteydenotto ilman manuaalista työtä"
+				},
+				"timezone": {
+					"title": "Aikavyöhykeälykkyys",
+					"description": "Analysoi käyttäjien aikavyöhykkeet optimaalista sitoutumista varten"
+				},
+				"ai": {
+					"title": "Tekoälypohjainen personointi",
+					"description": "Räätälöidyt viestit ehdokasprofiilien perusteella"
+				},
+				"engagement": {
+					"title": "Automatisoitu sitoutuminen",
+					"description": "Maksimoi vastausprosentit älykkään ajoituksen avulla"
+				}
+			},
+			"activateMessage": "Aktivoi automatisoidaksesi rekrytoinnin ja keskity arvioimaan sopivia ehdokkaita."
+		},
+		"interestedWorkerDialog": {
+			"title": "Kiinnostunut ehdokas",
+			"description": "Ehdokas joka on ilmaissut kiinnostuksensa",
+			"loading": "Ehdokkaan tietojen lataus epäonnistui. Yritä uudelleen.",
+			"tabs": {
+				"profile": "Profiili",
+				"messages": "Viestit",
+				"notes": "Muistiinpanot"
+			},
+			"interview": "Haastattelu varattu",
+			"contactInfo": "Yhteystiedot",
+			"email": "Sähköposti",
+			"phone": "Puhelin",
+			"interestedSince": "Kiinnostunut alkaen",
+			"professionalRegistration": "Ammatillinen rekisteröinti",
+			"professions": "Ammatit",
+			"registrationCountry": "Rekisteröintimaa",
+			"speciality": "Erikoisala",
+			"activityStatus": "Aktiivisuusstatus",
+			"verified": "Vahvistettu",
+			"verifications": "Vahvistukset",
+			"workExperience": "Työkokemus",
+			"languages": "Kielet",
+			"experience": "Kokemus",
+			"present": "Nykyinen",
+			"education": "Koulutus",
+			"trainings": "Koulutukset & Sertifioinnit",
+			"jobPreferences": "Työtoiveet",
+			"countries": "Maat",
+			"preferredLocations": "Ensisijaiset sijainnit",
+			"preferredSpeciality": "Ensisijainen erikoisala",
+			"facilityTypes": "Toimipaikan tyypit",
+			"interestedOffers": "Kiinnostavat tarjoukset",
+			"top3Terms": "Top 3 ehdot",
+			"additionalInfo": "Lisätiedot",
+			"about": "Tietoa",
+			"softSkills": "Pehmeät taidot",
+			"otherSkills": "Muut taidot",
+			"noData": "Ei ehdokastietoja saatavilla."
+		},
+		"questionsInHunt": {
+			"noQuestions": "Ei kysymyksiä vielä",
+			"noQuestionsDesc": "Ehdokkaiden kysymykset näkyvät täällä. Nämä auttavat rakentamaan kontekstin tuleville keskusteluille.",
+			"question": "Kysymys",
+			"answer": "Vastaus",
+			"pendingAnswer": "Vastaus odottaa",
+			"addAnswer": "Lisää vastaus",
+			"answerPlaceholder": "Kirjoita vastauksesi...",
+			"submit": "Lähetä",
+			"cancel": "Peruuta"
+		},
+		"searchHistory": {
+			"title": "Viimeisimmät haut",
+			"loading": "Ladataan...",
+			"noHistory": "Ei viimeaikaisia hakuja",
+			"noHistoryDesc": "Hakuhistoriasi näkyy täällä",
+			"runAgain": "Suorita uudelleen",
+			"showMore": "Näytä lisää",
+			"remaining": "jäljellä"
+		},
+		"campaign": {
+			"startDate": "Aloituspäivä",
+			"endDate": "Päättymispäivä",
+			"statistics": {
+				"totalHuntables": "Kokonaismäärä",
+				"readyForCompany": "Valmiina yritykselle",
+				"totalViews": "Näyttöjä yhteensä",
+				"totalClicks": "Klikkauksia yhteensä",
+				"totalCustomActions": "Mukautettuja toimintoja yhteensä"
+			},
+			"performance": "Suorituskyky ajan mittaan",
+			"views": "Näyttöjä",
+			"clicks": "Klikkauksia",
+			"customActions": "Mukautettuja toimintoja",
+			"total": "yhteensä",
+			"customActionsHistory": "Mukautettujen toimintojen historia",
+			"noCustomActions": "Ei mukautettuja toimintoja vielä",
+			"campaignFiles": "Kampanjan tiedostot"
+		},
+		"chatWindow": {
+			"followUpQuestions": "Jatkokysymykset",
+			"goBack": "Takaisin",
+			"analyzing": "Analysoidaan vastauksiasi...",
+			"readyToActivate": "Valmis aktivoitavaksi",
+			"completeQuestions": "Täydennä kysymykset saadaksesi parempia tuloksia",
+			"selectSearchType": "Valitse hakutyyppi:",
+			"activationNeeded": "Tämä suunnitelmatyyppi on aktivoitava ensin tiliasetuksissasi.",
+			"confirming": "Vahvistetaan...",
+			"confirm": "Vahvista",
+			"additionalInstructions": "Lisäohjeet",
+			"addCustomRequirements": "Lisää mukautettuja vaatimuksia tai selvennyksiä, joita yllä olevat kysymykset eivät kattaneet.",
+			"additionalInstructionsPlaceholder": "Kirjoita lisäohjeet tähän...",
+			"submitting": "Lähetetään...",
+			"submit": "Lähetä",
+			"jobRequirements": "Työvaatimukset",
+			"notSpecified": "Ei määritelty",
+			"jobTitle": "Työnimike",
+			"jobDescription": "Työnkuvaus",
+			"professions": "Ammatit",
+			"specialization": "Erikoistuminen",
+			"workExperience": "Työkokemus",
+			"years": "vuotta",
+			"location": "Sijainti",
+			"workTime": "Työaika",
+			"languages": "Kielet",
+			"salary": "Palkka",
+			"requiredQualifications": "Vaaditut pätevyydet",
+			"additionalRequirements": "Lisävaatimukset",
+			"drivingLicense": "Ajokortti",
+			"required": "Vaaditaan",
+			"notRequired": "Ei vaadita",
+			"personalCar": "Oma auto",
+			"accommodation": "Majoitus",
+			"transport": "Kuljetus",
+			"searchScope": "Hakualue",
+			"globalSearch": "Maailmanlaajuinen haku, painottaen listattuja maita"
+		}
+	},
+	"settings": {
+		"title": "Asetukset",
+		"profile": {
+			"title": "Profiiliasetukset",
+			"description": "Hallitse tiliasetuksiasi ja preferenssejäsi",
+			"firstName": "Etunimi",
+			"firstNamePlaceholder": "Syötä etunimesi",
+			"lastName": "Sukunimi",
+			"lastNamePlaceholder": "Syötä sukunimesi",
+			"email": "Sähköposti",
+			"phoneNumber": "Puhelinnumero",
+			"phoneNumberPlaceholder": "Syötä puhelinnumerosi",
+			"calendarLink": "Kalenterilinkki",
+			"calendarLinkPlaceholder": "Syötä kalenterilinkkisi (esim. Google-kalenteri, cal.com, calendly)",
+			"saveChanges": "Tallenna muutokset"
+		},
+		"password": {
+			"title": "Salasana-asetukset",
+			"description": "Hallitse tilisi salasanaa",
+			"oldPassword": "Vanha salasana",
+			"oldPasswordPlaceholder": "Syötä vanha salasanasi",
+			"newPassword": "Uusi salasana",
+			"newPasswordPlaceholder": "Syötä uusi salasanasi",
+			"updatePassword": "Päivitä salasana"
+		},
+		"company": {
+			"title": "Yritysasetukset",
+			"description": "Hallitse yrityksesi profiilia ja liiketoiminnan tietoja",
+			"brandName": "Brändinimi",
+			"brandNamePlaceholder": "Syötä brändinimi",
+			"description": "Kuvaus",
+			"descriptionPlaceholder": "Syötä yrityksen kuvaus",
+			"companyName": "Yrityksen nimi",
+			"companyNamePlaceholder": "Syötä yrityksen nimi",
+			"registrationCode": "Rekisteröintitunnus",
+			"registrationCodePlaceholder": "Syötä rekisteröintitunnus",
+			"vatNumber": "ALV-numero",
+			"vatNumberPlaceholder": "Syötä ALV-numero",
+			"country": "Maa",
+			"countryPlaceholder": "Valitse maa",
+			"city": "Kaupunki",
+			"cityPlaceholder": "Syötä kaupunki",
+			"address": "Osoite",
+			"addressPlaceholder": "Syötä katuosoite",
+			"zipCode": "Postinumero",
+			"zipCodePlaceholder": "Syötä postinumero",
+			"save": "Tallenna"
+		},
+		"payment": {
+			"title": "Maksutapa",
+			"expires": "Vanhenee"
+		},
+		"notifications": {
+			"settingsUpdated": "Asetukset päivitetty onnistuneesti",
+			"passwordUpdated": "Salasana päivitetty onnistuneesti",
+			"updateError": "Käyttäjäasetusten päivitys epäonnistui",
+			"passwordUpdateError": "Salasanan päivitys epäonnistui"
+		}
+	},
+	"pricing": {
+		"title": "Hinnoittelusuunnitelmat",
+		"subtitle": "Valitse ratkaisu, joka toimii parhaiten terveydenhuollon rekrytointitarpeisiisi",
+		"activePlans": {
+			"title": "Aktiiviset suunnitelmasi",
+			"activeSince": "Aktiivinen alkaen",
+			"customPlanDetails": "Mukautetun suunnitelman tiedot",
+			"generalFee": "Yleinen maksu",
+			"viewSuccessFees": "Näytä onnistumismaksut",
+			"endPlan": "Lopeta suunnitelma",
+			"doctorsTitle": "Lääkärit",
+			"otherProfessionalsTitle": "Muut terveydenhuollon ammattilaiset",
+			"startFee": "Aloitusmaksu",
+			"successFee": "Onnistumismaksu"
+		},
+		"startingFee": {
+			"title": "Aloita {{amount}} {{currency}}",
+			"withFee": "Aloita rekrytointi {{amount}} {{currency}} aloitusmaksulla",
+			"withoutFee": "Aloita rekrytointi heti ilman ennakkomaksuja tai sitoumuksia",
+			"payWhenSuccessful": "Maksat vain kun rekrytointi onnistuu"
+		},
+		"availablePlans": {
+			"title": "Saatavilla olevat suunnitelmat",
+			"generalFee": "Yleinen maksu",
+			"noGeneralFee": "Ei yleistä maksua",
+			"startPlan": "Aloita suunnitelma",
+			"successFees": "Onnistumismaksut",
+			"vatLabel": "(+{{percentage}}% ALV)",
+			"successFeeNotice": "Onnistumismaksu maksetaan kuukausittaisissa erissä, kun molemmat osapuolet vahvistavat, että ehdokas on aloittanut työskentelyn, ja se jatkuu 12 kuukauden sitoumusjakson ajan"
+		},
+		"customSolutions": {
+			"title": "MUKAUTETUT RATKAISUT",
+			"description": "Tarvitsetko jotain erityistä? Tai tarvitsetko sijaisia tai lyhytaikaisia työpaikkoja? Ota yhteyttä saadaksesi räätälöityjä rekrytointipaketteja premium-eduilla ja kilpailukykyisillä hinnoilla",
+			"contactUs": "Ota yhteyttä"
+		},
+		"contactForm": {
+			"title": "Ota yhteyttä",
+			"description": "Kerro meille erityisistä rekrytointitarpeistasi, niin otamme yhteyttä pian.",
+			"messageLabel": "Viestisi",
+			"messagePlaceholder": "Kerro meille erityisistä rekrytointitarpeistasi...",
+			"cancel": "Peruuta",
+			"sending": "Lähetetään...",
+			"send": "Lähetä viesti",
+			"success": "Viesti lähetetty onnistuneesti!"
+		},
+		"errors": {
+			"fetchFailed": "Viestin lähetys epäonnistui"
+		}
+	}
+}

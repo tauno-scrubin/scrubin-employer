@@ -1,0 +1,61 @@
+{
+	"hunt": {
+		"details": "Detailid",
+		"statistics": "Statistika",
+		"questions": "Küsimused",
+		"jobDetails": "Töö detailid",
+		"qualifications": "Kvalifikatsioonid",
+		"location": "Asukoht",
+		"huntStatus": {
+			"active": "Aktiivne",
+			"pending": "Ootel",
+			"awaitingPayment": "Valmis Aktiveerimiseks",
+			"paused": "Peatatud",
+			"completed": "Lõpetatud",
+			"cancelled": "Tühistatud"
+		},
+		"createdOn": "Loodud",
+		"jobRequirements": "Töö Nõuded",
+		"jobTitle": "Ametinimetus",
+		"jobDescription": "Töö kirjeldus",
+		"professions": "Ametid",
+		"specialization": "Spetsialiseerumine",
+		"workExperience": "Töökogemus",
+		"years": "aastat",
+		"workTime": "Tööaeg",
+		"languages": "Keeled",
+		"salary": "Palk",
+		"notSpecified": "Määramata",
+		"requiredQualifications": "Nõutavad Kvalifikatsioonid",
+		"additionalRequirements": "Täiendavad Nõuded",
+		"drivingLicense": "Juhiluba",
+		"personalCar": "Isiklik Auto",
+		"accommodation": "Majutus",
+		"transport": "Transport",
+		"required": "Nõutav",
+		"notRequired": "Ei ole nõutav",
+		"title": "Sihtotsing"
+	},
+	"payment": {
+		"startFee": "Alustustasu",
+		"successFee": "Edutasu"
+	},
+	"statistics": {
+		"huntConversionFunnel": "Sihtotsingu Konversiooni Lehter",
+		"totalHuntables": "Potentsiaalseid kandidaate kokku",
+		"contacted": "Kontakteeritud",
+		"interested": "Huvitatud",
+		"readyForCompany": "Valmis intervjuuks",
+		"candidates": "Kandidaadid",
+		"noInterestedCandidates": "Otsime Teile suurepäraseid talente!",
+		"noInterestedCandidatesDesc": "Huvitatud kandidaate pole veel, kuid võtame ühendust spetsialistidega, kes vastavad teie vajadustele. Vaadake varsti uuesti! Anname teile teada kohe, kui meil on uuendusi.",
+		"interestedOn": "Huvitatud kuupäeval"
+	},
+	"questions": {
+		"contextQuestions": "Konteksti küsimused",
+		"contextQuestionsDesc": "Kandidaatide küsimused kogutakse siia. Pärast vastamist saavad need osaks tehisintellekti vastuste kontekstist tulevastes suhtlustes."
+	},
+	"errors": {
+		"paymentIssue": "Selle otsingu hinnastamisega on probleem, palun võtke ühendust klienditoega."
+	}
+}

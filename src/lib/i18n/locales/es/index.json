@@ -1,0 +1,505 @@
+{
+	"app": {
+		"title": "Scrubin Employer",
+		"language": "Idioma",
+		"selectLanguage": "Seleccionar idioma"
+	},
+	"nav": {
+		"dashboard": "Panel de control",
+		"hunts": "Búsquedas",
+		"pricing": "Precios",
+		"settings": "Configuración",
+		"logout": "Cerrar sesión",
+		"employerPlatform": "Plataforma de empleadores",
+		"help": "Ayuda",
+		"projects": "Proyectos"
+	},
+	"languages": {
+		"en": "Inglés",
+		"es": "Español",
+		"et": "Eesti",
+		"fi": "Suomi",
+		"fr": "Français",
+		"de": "Deutsch"
+	},
+	"buttons": {
+		"submit": "Enviar",
+		"cancel": "Cancelar",
+		"save": "Guardar",
+		"delete": "Eliminar",
+		"signIn": "Iniciar sesión",
+		"signUp": "Registrarse",
+		"sendResetLink": "Enviar enlace de restablecimiento",
+		"backToLogin": "Volver al inicio de sesión"
+	},
+	"search": {
+		"placeholder": "Buscar...",
+		"noResults": "No se encontraron resultados"
+	},
+	"common": {
+		"loading": "Cargando...",
+		"error": "Ocurrió un error",
+		"success": "¡Éxito!",
+		"created": "Creado el",
+		"view": "Ver",
+		"edit": "Editar",
+		"delete": "Eliminar",
+		"toggle": "Alternar"
+	},
+	"auth": {
+		"login": {
+			"title": "Ingrese sus credenciales para acceder a su cuenta",
+			"emailLabel": "Correo electrónico",
+			"emailPlaceholder": "nombre@ejemplo.com",
+			"passwordLabel": "Contraseña",
+			"forgotPassword": "¿Olvidó su contraseña?",
+			"passwordPlaceholder": "••••••••",
+			"noAccount": "¿No tiene una cuenta?",
+			"signUp": "Registrarse"
+		},
+		"resetPassword": {
+			"forgotPassword": "¿Olvidó su contraseña?",
+			"title": "Restablecer contraseña",
+			"description": "Le enviaremos un correo electrónico con un enlace para restablecer su contraseña.",
+			"emailLabel": "Correo electrónico",
+			"emailPlaceholder": "nombre@ejemplo.com"
+		},
+		"employer": "Empleador",
+		"wrapper": {
+			"or": "o",
+			"login": "iniciar sesión"
+		},
+		"signUp": {
+			"title": "Ingrese sus datos para registrarse",
+			"emailLabel": "Correo electrónico",
+			"emailPlaceholder": "nombre@ejemplo.com",
+			"firstNameLabel": "Nombre",
+			"firstNamePlaceholder": "Juan",
+			"lastNameLabel": "Apellido",
+			"lastNamePlaceholder": "Pérez",
+			"phoneLabel": "Número de teléfono",
+			"phonePlaceholder": "+1234567890",
+			"companyNameLabel": "Nombre de la empresa",
+			"companyNamePlaceholder": "Acme Inc.",
+			"countryLabel": "País",
+			"countryPlaceholder": "Seleccione un país",
+			"agreement": "Al crear una cuenta, acepta nuestros",
+			"termsOfService": "Términos de servicio",
+			"and": "y",
+			"privacyPolicy": "Política de privacidad",
+			"haveAccount": "¿Ya tiene una cuenta?",
+			"signIn": "Iniciar sesión"
+		}
+	},
+	"account": {
+		"pendingActivation": "Cuenta pendiente de activación",
+		"scheduleCall": "Programe una llamada rápida con nuestro equipo para activar su cuenta.",
+		"scheduleCallBtn": "Programar llamada"
+	},
+	"help": {
+		"title": "¿Necesita ayuda?",
+		"description": "Contacte a su gerente de cuenta dedicado",
+		"accountManager": "Gerente de cuenta",
+		"message": "Mensaje",
+		"call": "Llamada",
+		"schedule": "Programar",
+		"feedback": "Enviar comentarios",
+		"feedbackPlaceholder": "Háganos saber cómo podemos mejorar o ayudarle…",
+		"sending": "Enviando…",
+		"send": "Enviar",
+		"thankYou": "¡Gracias por sus comentarios!"
+	},
+	"payment": {
+		"cardholderName": "Nombre del titular",
+		"cardNumber": "Número de tarjeta",
+		"expirationDate": "Fecha de vencimiento",
+		"securityCode": "Código de seguridad",
+		"existingPaymentMethod": "Método de pago existente",
+		"useNewCard": "Usar nueva tarjeta",
+		"useExistingCard": "Usar tarjeta existente",
+		"startingFee": "Tarifa inicial",
+		"net": "(Neto)",
+		"vat": "IVA",
+		"total": "Total",
+		"pay": "Pagar",
+		"stripeError": "Error en el procesamiento del pago",
+		"expires": "Vence",
+		"activateHunt": "Activar búsqueda",
+		"completePayment": "Completar pago",
+		"status": {
+			"active": "Activo",
+			"awaitingPayment": "Listo para activar",
+			"pending": "Pendiente",
+			"paused": "Pausado",
+			"completed": "Completado",
+			"cancelled": "Cancelado"
+		}
+	},
+	"dashboard": {
+		"huntsList": {
+			"headhunting": "Caza de talentos",
+			"noActiveHunts": "No hay búsquedas activas",
+			"huntsWillAppearHere": "Sus búsquedas aparecerán aquí",
+			"showLess": "Mostrar menos",
+			"viewMore": "Ver más",
+			"drafts": "Borradores",
+			"noDrafts": "No hay borradores",
+			"draftsWillAppearHere": "Sus borradores aparecerán aquí",
+			"untitledDraft": "Borrador sin título",
+			"draft": "Borrador"
+		},
+		"searchView": {
+			"welcomeBack": "¡Bienvenido de nuevo, {{name}}!",
+			"searchPlaceholder": "Estoy buscando dos médicos generales del Reino Unido con calificaciones MRCGP que hablen inglés. El salario para un puesto a tiempo completo es de $300,000 al año.",
+			"resultsFound": "Resultados encontrados",
+			"totalMatchingCandidates": "Total de candidatos coincidentes",
+			"processing": "Procesando...",
+			"nextStep": "Siguiente paso",
+			"activateAccount": "Active su cuenta para continuar",
+			"noMatchesFound": "No se encontraron coincidencias",
+			"noMatchesDescription": "No pudimos encontrar trabajadores de la salud que coincidan con sus criterios. Intente ajustar sus parámetros de búsqueda o ampliar sus requisitos.",
+			"pleaseSelectCandidate": "Por favor seleccione al menos un candidato",
+			"errorAnalyzingRequirements": "Error al analizar requisitos: "
+		},
+		"pricing": {
+			"perMonth": "/mes"
+		},
+		"demand": {
+			"low": "Baja",
+			"medium": "Media",
+			"high": "Alta",
+			"veryHigh": "Muy alta",
+			"overallHiringDemand": "Demanda general de contratación",
+			"estimatedTimeToFill": "Tiempo estimado para cubrir",
+			"months": "meses"
+		},
+		"workersResults": {
+			"selected": "seleccionado",
+			"moreResults": "Más resultados disponibles",
+			"chooseProfiles": "Elija hasta 10 perfiles favoritos para ayudar a refinar sus recomendaciones. Basándose en su selección, nuestro agente de IA analizará, calificará y encontrará perfiles similares. ¡Esto asegura que hagamos las mejores ofertas a los candidatos más adecuados, ahorrándole tiempo y esfuerzo en el proceso de contratación!"
+		},
+		"worker": {
+			"registrationCountry": "País de registro",
+			"languages": "Idiomas",
+			"verifications": "Verificaciones",
+			"totalWorkExperience": "Experiencia laboral total",
+			"years": "años",
+			"preferredSpeciality": "Especialidad preferida",
+			"preferredLocations": "Ubicaciones preferidas",
+			"lookingForWorkIn": "Buscando trabajo en",
+			"availability": "Disponibilidad",
+			"verified": "Verificado",
+			"recentlyActive": "Recientemente activo",
+			"notSpecified": "No especificado"
+		},
+		"workerDialog": {
+			"workerInformation": "Información del trabajador",
+			"loadingError": "Error al cargar los datos del trabajador. Por favor, inténtelo de nuevo.",
+			"professions": "Profesiones",
+			"registrationCountry": "País de registro",
+			"speciality": "Especialidad",
+			"activityStatus": "Estado de actividad",
+			"recentlyActive": "Recientemente activo",
+			"notRecentlyActive": "No recientemente activo",
+			"verified": "Verificado",
+			"notVerified": "No verificado",
+			"verifications": "Verificaciones",
+			"workExperience": "Experiencia laboral",
+			"languages": "Idiomas",
+			"experience": "Experiencia",
+			"workExperienceTitle": "Experiencia laboral",
+			"present": "Presente",
+			"noWorkExperience": "No hay experiencia laboral listada",
+			"education": "Educación",
+			"noEducation": "No hay educación listada",
+			"trainings": "Formación y certificaciones",
+			"noTrainings": "No hay formación o certificaciones listadas",
+			"jobPreferences": "Preferencias laborales",
+			"countries": "Países",
+			"preferredLocations": "Ubicaciones preferidas",
+			"preferredSpeciality": "Especialidad preferida",
+			"facilityTypes": "Tipos de instalaciones",
+			"additionalInformation": "Información adicional",
+			"softSkills": "Habilidades blandas",
+			"otherSkills": "Otras habilidades",
+			"interestedOffers": "Ofertas de interés",
+			"top3Terms": "3 términos principales",
+			"about": "Acerca de",
+			"noWorkerData": "No hay datos del trabajador disponibles"
+		},
+		"candidateChat": {
+			"title": "Conversación con el candidato",
+			"noMessages": "Aún no hay mensajes. ¡Inicie la conversación!",
+			"messagePlaceholder": "Escriba su mensaje...",
+			"send": "Enviar",
+			"justNow": "ahora mismo",
+			"minuteAgo": "hace un minuto",
+			"minutesAgo": "hace minutos",
+			"hourAgo": "hace una hora",
+			"hoursAgo": "hace horas",
+			"dayAgo": "hace un día",
+			"daysAgo": "hace días",
+			"monthAgo": "hace un mes",
+			"monthsAgo": "hace meses",
+			"yearAgo": "hace un año",
+			"yearsAgo": "hace años",
+			"read": "Leído"
+		},
+		"candidateNotes": {
+			"title": "Notas del candidato",
+			"lastSaved": "Último guardado",
+			"unsavedChanges": "Cambios no guardados",
+			"saving": "Guardando...",
+			"save": "Guardar",
+			"placeholder": "Añadir notas sobre este candidato...",
+			"characters": "caracteres"
+		},
+		"chatWindowPricing": {
+			"title": "Automatización de reclutamiento con IA",
+			"description": "Una vez activado, nuestro Agente de IA envía automáticamente ofertas de trabajo personalizadas a los candidatos cuando es más probable que respondan.",
+			"perMonth": "/mes",
+			"features": {
+				"nonStop": {
+					"title": "Operación 24/7",
+					"description": "Alcance continuo sin intervención manual"
+				},
+				"timezone": {
+					"title": "Inteligencia de zona horaria",
+					"description": "Analiza las zonas horarias de los usuarios para un compromiso óptimo"
+				},
+				"ai": {
+					"title": "Personalización impulsada por IA",
+					"description": "Mensajes personalizados basados en perfiles de candidatos"
+				},
+				"engagement": {
+					"title": "Compromiso automatizado",
+					"description": "Maximiza las tasas de respuesta a través de un tiempo inteligente"
+				}
+			},
+			"activateMessage": "Active para automatizar el reclutamiento mientras se concentra en evaluar candidatos calificados."
+		},
+		"interestedWorkerDialog": {
+			"title": "Candidato interesado",
+			"description": "Candidato que ha expresado interés",
+			"loading": "Error al cargar los datos del candidato. Por favor, inténtelo de nuevo.",
+			"tabs": {
+				"profile": "Perfil",
+				"messages": "Mensajes",
+				"notes": "Notas"
+			},
+			"interview": "Entrevista reservada para",
+			"contactInfo": "Información de contacto",
+			"email": "Correo electrónico",
+			"phone": "Teléfono",
+			"interestedSince": "Interesado desde",
+			"professionalRegistration": "Registro profesional",
+			"professions": "Profesiones",
+			"registrationCountry": "País de registro",
+			"speciality": "Especialidad",
+			"activityStatus": "Estado de actividad",
+			"verified": "Verificado",
+			"verifications": "Verificaciones",
+			"workExperience": "Experiencia laboral",
+			"languages": "Idiomas",
+			"experience": "Experiencia",
+			"present": "Presente",
+			"education": "Educación",
+			"trainings": "Formación y certificaciones",
+			"jobPreferences": "Preferencias laborales",
+			"countries": "Países",
+			"preferredLocations": "Ubicaciones preferidas",
+			"preferredSpeciality": "Especialidad preferida",
+			"facilityTypes": "Tipos de instalaciones",
+			"interestedOffers": "Ofertas de interés",
+			"top3Terms": "3 términos principales",
+			"additionalInfo": "Información adicional",
+			"about": "Acerca de",
+			"softSkills": "Habilidades blandas",
+			"otherSkills": "Otras habilidades",
+			"noData": "No hay datos del candidato disponibles."
+		},
+		"questionsInHunt": {
+			"noQuestions": "Aún no hay preguntas",
+			"noQuestionsDesc": "Las preguntas de los candidatos aparecerán aquí. Estas ayudan a construir contexto para futuras interacciones.",
+			"question": "Pregunta",
+			"answer": "Respuesta",
+			"pendingAnswer": "Respuesta pendiente",
+			"addAnswer": "Añadir respuesta",
+			"answerPlaceholder": "Escriba su respuesta...",
+			"submit": "Enviar",
+			"cancel": "Cancelar"
+		},
+		"searchHistory": {
+			"title": "Búsquedas recientes",
+			"loading": "Cargando...",
+			"noHistory": "No hay búsquedas recientes",
+			"noHistoryDesc": "Su historial de búsqueda aparecerá aquí",
+			"runAgain": "Ejecutar de nuevo",
+			"showMore": "Mostrar más",
+			"remaining": "restantes"
+		},
+		"campaign": {
+			"startDate": "Fecha de inicio",
+			"endDate": "Fecha de finalización",
+			"statistics": {
+				"totalViews": "Total de vistas",
+				"totalClicks": "Total de clics",
+				"totalCustomActions": "Total de acciones personalizadas"
+			},
+			"performance": "Rendimiento a lo largo del tiempo",
+			"views": "Vistas",
+			"clicks": "Clics",
+			"customActions": "Acciones personalizadas",
+			"total": "total",
+			"customActionsHistory": "Historial de acciones personalizadas",
+			"noCustomActions": "Aún no hay acciones personalizadas",
+			"campaignFiles": "Archivos de campaña"
+		},
+		"chatWindow": {
+			"followUpQuestions": "Preguntas de seguimiento",
+			"goBack": "Volver",
+			"analyzing": "Analizando sus respuestas...",
+			"readyToActivate": "Listo para activar",
+			"completeQuestions": "Complete las preguntas para obtener mejores resultados",
+			"selectSearchType": "Seleccione el tipo de búsqueda:",
+			"activationNeeded": "Este tipo de plan necesita ser activado primero en la configuración de su cuenta.",
+			"confirming": "Confirmando...",
+			"confirm": "Confirmar",
+			"additionalInstructions": "Instrucciones adicionales",
+			"addCustomRequirements": "Agregue cualquier requisito personalizado o aclaración que no haya sido cubierto por las preguntas anteriores.",
+			"additionalInstructionsPlaceholder": "Escriba cualquier instrucción adicional aquí...",
+			"submitting": "Enviando...",
+			"submit": "Enviar",
+			"jobRequirements": "Requisitos del trabajo",
+			"notSpecified": "No especificado",
+			"jobTitle": "Título del trabajo",
+			"jobDescription": "Descripción del trabajo",
+			"professions": "Profesiones",
+			"specialization": "Especialización",
+			"workExperience": "Experiencia laboral",
+			"years": "años",
+			"location": "Ubicación",
+			"workTime": "Tiempo de trabajo",
+			"languages": "Idiomas",
+			"salary": "Salario",
+			"requiredQualifications": "Calificaciones requeridas",
+			"additionalRequirements": "Requisitos adicionales",
+			"drivingLicense": "Licencia de conducir",
+			"required": "Requerido",
+			"notRequired": "No requerido",
+			"personalCar": "Coche personal",
+			"accommodation": "Alojamiento",
+			"transport": "Transporte",
+			"searchScope": "Alcance de búsqueda",
+			"globalSearch": "Búsqueda global con preferencia por países listados"
+		}
+	},
+	"settings": {
+		"title": "Configuración",
+		"profile": {
+			"title": "Configuración de perfil",
+			"description": "Administre la configuración y preferencias de su cuenta",
+			"firstName": "Nombre",
+			"firstNamePlaceholder": "Introduzca su nombre",
+			"lastName": "Apellido",
+			"lastNamePlaceholder": "Introduzca su apellido",
+			"email": "Correo electrónico",
+			"phoneNumber": "Número de teléfono",
+			"phoneNumberPlaceholder": "Introduzca su número de teléfono",
+			"calendarLink": "Enlace de calendario",
+			"calendarLinkPlaceholder": "Introduzca su enlace de calendario (p. ej. google calendar, cal.com, calendly)",
+			"saveChanges": "Guardar cambios"
+		},
+		"password": {
+			"title": "Configuración de contraseña",
+			"description": "Administre la contraseña de su cuenta",
+			"oldPassword": "Contraseña antigua",
+			"oldPasswordPlaceholder": "Introduzca su contraseña antigua",
+			"newPassword": "Nueva contraseña",
+			"newPasswordPlaceholder": "Introduzca su nueva contraseña",
+			"updatePassword": "Actualizar contraseña"
+		},
+		"company": {
+			"title": "Configuración de la empresa",
+			"description": "Administre el perfil de su empresa y detalles comerciales",
+			"brandName": "Nombre de la marca",
+			"brandNamePlaceholder": "Introduzca el nombre de la marca",
+			"description": "Descripción",
+			"descriptionPlaceholder": "Introduzca la descripción de la empresa",
+			"companyName": "Nombre de la empresa",
+			"companyNamePlaceholder": "Introduzca el nombre de la empresa",
+			"registrationCode": "Código de registro",
+			"registrationCodePlaceholder": "Introduzca el código de registro",
+			"vatNumber": "Número de IVA",
+			"vatNumberPlaceholder": "Introduzca el número de IVA",
+			"country": "País",
+			"countryPlaceholder": "Seleccione un país",
+			"city": "Ciudad",
+			"cityPlaceholder": "Introduzca la ciudad",
+			"address": "Dirección",
+			"addressPlaceholder": "Introduzca la dirección",
+			"zipCode": "Código postal",
+			"zipCodePlaceholder": "Introduzca el código postal",
+			"save": "Guardar"
+		},
+		"payment": {
+			"title": "Método de pago",
+			"expires": "Vence"
+		},
+		"notifications": {
+			"settingsUpdated": "Configuración actualizada exitosamente",
+			"passwordUpdated": "Contraseña actualizada exitosamente",
+			"updateError": "Error al actualizar la configuración del usuario",
+			"passwordUpdateError": "Error al actualizar la contraseña"
+		}
+	},
+	"pricing": {
+		"title": "Planes de precios",
+		"subtitle": "Elija la solución que mejor se adapte a sus necesidades de contratación de personal sanitario",
+		"activePlans": {
+			"title": "Sus planes activos",
+			"activeSince": "Activo desde",
+			"customPlanDetails": "Detalles del plan personalizado",
+			"generalFee": "Tarifa general",
+			"viewSuccessFees": "Ver tarifas de éxito",
+			"endPlan": "Finalizar plan",
+			"doctorsTitle": "Médicos",
+			"otherProfessionalsTitle": "Otros profesionales sanitarios",
+			"startFee": "Tarifa inicial",
+			"successFee": "Tarifa de éxito"
+		},
+		"startingFee": {
+			"title": "Comience con {{amount}} {{currency}}",
+			"withFee": "Comience a reclutar con una tarifa inicial de {{amount}} {{currency}}",
+			"withoutFee": "Comience a reclutar inmediatamente sin costos iniciales ni compromisos",
+			"payWhenSuccessful": "Solo pague cuando contrate con éxito"
+		},
+		"availablePlans": {
+			"title": "Planes disponibles",
+			"generalFee": "Tarifa general",
+			"noGeneralFee": "Sin tarifa general",
+			"startPlan": "Iniciar plan",
+			"successFees": "Tarifas de éxito",
+			"vatLabel": "(+{{percentage}}% IVA)",
+			"successFeeNotice": "La tarifa de éxito se paga en cuotas mensuales cuando ambas partes confirman que el candidato ha comenzado a trabajar y continúa durante un período de compromiso de 12 meses"
+		},
+		"customSolutions": {
+			"title": "SOLUCIONES PERSONALIZADAS",
+			"description": "¿Necesita algo específico? ¿O necesita suplentes o colocaciones a corto plazo? Contáctenos para paquetes de reclutamiento personalizados con beneficios premium y tarifas competitivas",
+			"contactUs": "Contáctenos"
+		},
+		"contactForm": {
+			"title": "Contáctenos",
+			"description": "Cuéntenos sobre sus necesidades específicas de reclutamiento y nos pondremos en contacto con usted en breve.",
+			"messageLabel": "Su mensaje",
+			"messagePlaceholder": "Cuéntenos sobre sus necesidades específicas de reclutamiento...",
+			"cancel": "Cancelar",
+			"sending": "Enviando...",
+			"send": "Enviar mensaje",
+			"success": "¡Mensaje enviado correctamente!"
+		},
+		"errors": {
+			"fetchFailed": "Error al enviar el mensaje"
+		}
+	}
+}

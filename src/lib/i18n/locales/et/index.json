@@ -1,0 +1,505 @@
+{
+	"app": {
+		"title": "Scrubin Employer",
+		"language": "Keel",
+		"selectLanguage": "Vali keel"
+	},
+	"nav": {
+		"dashboard": "Töölaud",
+		"hunts": "Otsingud",
+		"pricing": "Hinnastamine",
+		"settings": "Seaded",
+		"logout": "Logi välja",
+		"employerPlatform": "Tööandja platvorm",
+		"help": "Abi",
+		"projects": "Projektid"
+	},
+	"languages": {
+		"en": "English",
+		"es": "Español",
+		"et": "Eesti",
+		"fi": "Suomi",
+		"fr": "Français",
+		"de": "Deutsch"
+	},
+	"buttons": {
+		"submit": "Esita",
+		"cancel": "Tühista",
+		"save": "Salvesta",
+		"delete": "Kustuta",
+		"signIn": "Logi sisse",
+		"signUp": "Registreeru",
+		"sendResetLink": "Saada lähtestamislink",
+		"backToLogin": "Tagasi sisselogimise juurde"
+	},
+	"search": {
+		"placeholder": "Otsi...",
+		"noResults": "Tulemusi ei leitud"
+	},
+	"common": {
+		"loading": "Laadimine...",
+		"error": "Tekkis viga",
+		"success": "Õnnestus!",
+		"created": "Loodud",
+		"view": "Vaata",
+		"edit": "Muuda",
+		"delete": "Kustuta",
+		"toggle": "Lülita"
+	},
+	"auth": {
+		"login": {
+			"title": "Sisesta oma andmed kontole ligipääsemiseks",
+			"emailLabel": "E-posti aadress",
+			"emailPlaceholder": "nimi@example.com",
+			"passwordLabel": "Parool",
+			"forgotPassword": "Unustasid parooli?",
+			"passwordPlaceholder": "••••••••",
+			"noAccount": "Pole kontot?",
+			"signUp": "Registreeru"
+		},
+		"resetPassword": {
+			"forgotPassword": "Unustasid parooli?",
+			"title": "Lähtesta parool",
+			"description": "Saadame sulle e-kirja parooli lähtestamise lingiga.",
+			"emailLabel": "E-post",
+			"emailPlaceholder": "nimi@example.com"
+		},
+		"employer": "Employer",
+		"wrapper": {
+			"or": "või",
+			"login": "logi sisse"
+		},
+		"signUp": {
+			"title": "Sisesta oma andmed registreerumiseks",
+			"emailLabel": "E-posti aadress",
+			"emailPlaceholder": "nimi@example.com",
+			"firstNameLabel": "Eesnimi",
+			"firstNamePlaceholder": "Jaan",
+			"lastNameLabel": "Perekonnanimi",
+			"lastNamePlaceholder": "Tamm",
+			"phoneLabel": "Telefoninumber",
+			"phonePlaceholder": "+1234567890",
+			"companyNameLabel": "Ettevõtte nimi",
+			"companyNamePlaceholder": "Acme OÜ",
+			"countryLabel": "Riik",
+			"countryPlaceholder": "Vali riik",
+			"agreement": "Konto loomisel nõustud meie",
+			"termsOfService": "Kasutustingimustega",
+			"and": "ja",
+			"privacyPolicy": "Privaatsuspoliitikaga",
+			"haveAccount": "Juba on konto?",
+			"signIn": "Logi sisse"
+		}
+	},
+	"account": {
+		"pendingActivation": "Konto ootab aktiveerimist",
+		"scheduleCall": "Planeeri kiire kõne meie meeskonnaga konto aktiveerimiseks.",
+		"scheduleCallBtn": "Planeeri kõne"
+	},
+	"help": {
+		"title": "Vajad abi?",
+		"description": "Võta ühendust oma kliendihaldajaga",
+		"accountManager": "Kliendihaldur",
+		"message": "Sõnum",
+		"call": "Helista",
+		"schedule": "Planeeri",
+		"feedback": "Saada tagasisidet",
+		"feedbackPlaceholder": "Anna meile teada, kuidas saame paremaks muutuda või sind aidata...",
+		"sending": "Saadan...",
+		"send": "Saada",
+		"thankYou": "Täname tagasiside eest!"
+	},
+	"payment": {
+		"cardholderName": "Kaardiomaniku nimi",
+		"cardNumber": "Kaardi number",
+		"expirationDate": "Aegumiskuupäev",
+		"securityCode": "Turvakood",
+		"existingPaymentMethod": "Olemasolev makseviis",
+		"useNewCard": "Kasuta uut kaarti",
+		"useExistingCard": "Kasuta olemasolevat kaarti",
+		"startingFee": "Alustamistasu",
+		"net": "(Neto)",
+		"vat": "KM",
+		"total": "Kokku",
+		"pay": "Maksa",
+		"stripeError": "Makse töötlemine ebaõnnestus",
+		"expires": "Aegub",
+		"activateHunt": "Aktiveeri otsing",
+		"completePayment": "Lõpeta makse",
+		"status": {
+			"active": "Aktiivne",
+			"awaitingPayment": "Valmis aktiveerimiseks",
+			"pending": "Ootel",
+			"paused": "Peatatud",
+			"completed": "Lõpetatud",
+			"cancelled": "Tühistatud"
+		}
+	},
+	"dashboard": {
+		"huntsList": {
+			"headhunting": "Sihtotsing",
+			"noActiveHunts": "Aktiivseid otsinguid pole",
+			"huntsWillAppearHere": "Sinu otsingud ilmuvad siia",
+			"showLess": "Näita vähem",
+			"viewMore": "Vaata rohkem",
+			"drafts": "Mustandid",
+			"noDrafts": "Mustandeid pole",
+			"draftsWillAppearHere": "Sinu mustandid ilmuvad siia",
+			"untitledDraft": "Pealkirjata mustand",
+			"draft": "Mustand"
+		},
+		"searchView": {
+			"welcomeBack": "Tere tulemast tagasi, {{name}}!",
+			"searchPlaceholder": "Otsin kahte perearsti Ühendkuningriigist MRCGP kvalifikatsiooniga, kes räägivad inglise keelt. Täistööaja palk on 300 000 dollarit aastas.",
+			"resultsFound": "Leitud tulemused",
+			"totalMatchingCandidates": "Sobivate kandidaatide koguarv",
+			"processing": "Töötlemine...",
+			"nextStep": "Järgmine samm",
+			"activateAccount": "Jätkamiseks aktiveeri oma konto",
+			"noMatchesFound": "Vasteid ei leitud",
+			"noMatchesDescription": "Me ei leidnud sinu kriteeriumitele vastavaid tervishoiutöötajaid. Proovi kohandada otsingut või laiendada nõudmisi.",
+			"pleaseSelectCandidate": "Palun vali vähemalt üks kandidaat",
+			"errorAnalyzingRequirements": "Viga nõuete analüüsimisel: "
+		},
+		"pricing": {
+			"perMonth": "/kuu"
+		},
+		"demand": {
+			"low": "Madal",
+			"medium": "Keskmine",
+			"high": "Kõrge",
+			"veryHigh": "Väga kõrge",
+			"overallHiringDemand": "Üldine värbamisvajadus",
+			"estimatedTimeToFill": "Hinnanguline täitmise aeg",
+			"months": "kuud"
+		},
+		"workersResults": {
+			"selected": "valitud",
+			"moreResults": "Rohkem tulemusi saadaval",
+			"chooseProfiles": "Vali kuni 10 lemmikprofiili, et aidata täpsustada soovitusi. Sinu valiku põhjal meie tehisintellekt analüüsib, hindab ja leiab sarnaseid profiile. See tagab, et teeme parimad pakkumised kõige sobivamatele kandidaatidele, säästes sinu aega ja vaeva värbamisprotsessis!"
+		},
+		"worker": {
+			"registrationCountry": "Registreerimisriik",
+			"languages": "Keeled",
+			"verifications": "Kontrollimised",
+			"totalWorkExperience": "Töökogemus kokku",
+			"years": "aastat",
+			"preferredSpeciality": "Eelistatud eriala",
+			"preferredLocations": "Eelistatud asukohad",
+			"lookingForWorkIn": "Otsib tööd",
+			"availability": "Saadavus",
+			"verified": "Kontrollitud",
+			"recentlyActive": "Hiljuti aktiivne",
+			"notSpecified": "Pole määratud"
+		},
+		"workerDialog": {
+			"workerInformation": "Töötaja info",
+			"loadingError": "Töötaja andmete laadimine ebaõnnestus. Palun proovi uuesti.",
+			"professions": "Elukutsed",
+			"registrationCountry": "Registreerimisriik",
+			"speciality": "Eriala",
+			"activityStatus": "Aktiivsuse staatus",
+			"recentlyActive": "Hiljuti aktiivne",
+			"notRecentlyActive": "Pole hiljuti aktiivne",
+			"verified": "Kontrollitud",
+			"notVerified": "Kontrollimata",
+			"verifications": "Kontrollimised",
+			"workExperience": "Töökogemus",
+			"languages": "Keeled",
+			"experience": "Kogemus",
+			"workExperienceTitle": "Töökogemus",
+			"present": "Praegune",
+			"noWorkExperience": "Töökogemus puudub",
+			"education": "Haridus",
+			"noEducation": "Haridus puudub",
+			"trainings": "Koolitused ja sertifikaadid",
+			"noTrainings": "Koolitused ja sertifikaadid puuduvad",
+			"jobPreferences": "Tööeelistused",
+			"countries": "Riigid",
+			"preferredLocations": "Eelistatud asukohad",
+			"preferredSpeciality": "Eelistatud eriala",
+			"facilityTypes": "Asutuse tüübid",
+			"additionalInformation": "Lisainfo",
+			"softSkills": "Pehmed oskused",
+			"otherSkills": "Muud oskused",
+			"interestedOffers": "Huvipakkuvad pakkumised",
+			"top3Terms": "Top 3 tingimust",
+			"about": "Teave",
+			"noWorkerData": "Töötaja andmed puuduvad"
+		},
+		"candidateChat": {
+			"title": "Kandidaadiga vestlus",
+			"noMessages": "Sõnumeid veel pole. Alusta vestlust!",
+			"messagePlaceholder": "Kirjuta oma sõnum...",
+			"send": "Saada",
+			"justNow": "just praegu",
+			"minuteAgo": "minut tagasi",
+			"minutesAgo": "minutit tagasi",
+			"hourAgo": "tund tagasi",
+			"hoursAgo": "tundi tagasi",
+			"dayAgo": "päev tagasi",
+			"daysAgo": "päeva tagasi",
+			"monthAgo": "kuu tagasi",
+			"monthsAgo": "kuud tagasi",
+			"yearAgo": "aasta tagasi",
+			"yearsAgo": "aastat tagasi",
+			"read": "Loetud"
+		},
+		"candidateNotes": {
+			"title": "Kandidaadi märkmed",
+			"lastSaved": "Viimati salvestatud",
+			"unsavedChanges": "Salvestamata muudatused",
+			"saving": "Salvestamine...",
+			"save": "Salvesta",
+			"placeholder": "Lisa märkmeid selle kandidaadi kohta...",
+			"characters": "tähemärki"
+		},
+		"chatWindowPricing": {
+			"title": "AI-värbamisautomaatika",
+			"description": "Pärast aktiveerimist saadab meie AI-agent automaatselt isikupärastatud tööpakkumisi kandidaatidele, kui nad tõenäoliselt vastavad.",
+			"perMonth": "/kuu",
+			"features": {
+				"nonStop": {
+					"title": "24/7 töö",
+					"description": "Pidev suhtlus ilma käsitsi sekkumiseta"
+				},
+				"timezone": {
+					"title": "Ajavööndi intelligentsus",
+					"description": "Analüüsib kasutajate ajavööndeid optimaalseks suhtluseks"
+				},
+				"ai": {
+					"title": "AI-põhine isikupärastamine",
+					"description": "Kohandatud sõnumid vastavalt kandidaatide profiilidele"
+				},
+				"engagement": {
+					"title": "Automatiseeritud kaasamine",
+					"description": "Maksimeerib vastamismäära tänu nutikale ajastusele"
+				}
+			},
+			"activateMessage": "Aktiveeri värbamise automatiseerimine, et saaksid keskenduda kvalifitseeritud kandidaatide hindamisele."
+		},
+		"interestedWorkerDialog": {
+			"title": "Huvitatud kandidaat",
+			"description": "Kandidaat, kes on huvi väljendanud",
+			"loading": "Kandidaadi andmete laadimine ebaõnnestus. Palun proovi uuesti.",
+			"tabs": {
+				"profile": "Profiil",
+				"messages": "Sõnumid",
+				"notes": "Märkmed"
+			},
+			"interview": "Intervjuu broneeritud",
+			"contactInfo": "Kontaktandmed",
+			"email": "E-post",
+			"phone": "Telefon",
+			"interestedSince": "Huvitatud alates",
+			"professionalRegistration": "Ametialane registreerimine",
+			"professions": "Elukutsed",
+			"registrationCountry": "Registreerimisriik",
+			"speciality": "Eriala",
+			"activityStatus": "Aktiivsuse staatus",
+			"verified": "Kontrollitud",
+			"verifications": "Kontrollimised",
+			"workExperience": "Töökogemus",
+			"languages": "Keeled",
+			"experience": "Kogemus",
+			"present": "Praegune",
+			"education": "Haridus",
+			"trainings": "Koolitused ja sertifikaadid",
+			"jobPreferences": "Tööeelistused",
+			"countries": "Riigid",
+			"preferredLocations": "Eelistatud asukohad",
+			"preferredSpeciality": "Eelistatud eriala",
+			"facilityTypes": "Asutuse tüübid",
+			"interestedOffers": "Huvipakkuvad pakkumised",
+			"top3Terms": "Top 3 tingimust",
+			"additionalInfo": "Lisainfo",
+			"about": "Teave",
+			"softSkills": "Pehmed oskused",
+			"otherSkills": "Muud oskused",
+			"noData": "Kandidaadi andmed puuduvad."
+		},
+		"questionsInHunt": {
+			"noQuestions": "Küsimusi pole veel",
+			"noQuestionsDesc": "Kandidaatide küsimused ilmuvad siia. Need aitavad luua konteksti tulevasteks suhtlusteks.",
+			"question": "Küsimus",
+			"answer": "Vastus",
+			"pendingAnswer": "Vastus ootel",
+			"addAnswer": "Lisa vastus",
+			"answerPlaceholder": "Kirjuta oma vastus...",
+			"submit": "Esita",
+			"cancel": "Tühista"
+		},
+		"searchHistory": {
+			"title": "Hiljutised otsingud",
+			"loading": "Laadimine...",
+			"noHistory": "Hiljutisi otsinguid pole",
+			"noHistoryDesc": "Sinu otsinguajalugu ilmub siia",
+			"runAgain": "Käivita uuesti",
+			"showMore": "Näita rohkem",
+			"remaining": "allesjäänud"
+		},
+		"campaign": {
+			"startDate": "Alguskuupäev",
+			"endDate": "Lõppkuupäev",
+			"statistics": {
+				"totalViews": "Vaatamisi kokku",
+				"totalClicks": "Klikke kokku",
+				"totalCustomActions": "Kohandatud tegevusi kokku"
+			},
+			"performance": "Tulemuslikkus ajas",
+			"views": "Vaatamised",
+			"clicks": "Klikid",
+			"customActions": "Kohandatud tegevused",
+			"total": "kokku",
+			"customActionsHistory": "Kohandatud tegevuste ajalugu",
+			"noCustomActions": "Kohandatud tegevusi pole veel",
+			"campaignFiles": "Kampaania failid"
+		},
+		"chatWindow": {
+			"followUpQuestions": "Järelküsimused",
+			"goBack": "Mine tagasi",
+			"analyzing": "Analüüsin sinu vastuseid...",
+			"readyToActivate": "Valmis aktiveerimiseks",
+			"completeQuestions": "Täida küsimused paremate tulemuste saamiseks",
+			"selectSearchType": "Vali otsingu tüüp:",
+			"activationNeeded": "See plaani tüüp vajab esmalt aktiveerimist sinu konto seadetes.",
+			"confirming": "Kinnitan...",
+			"confirm": "Kinnita",
+			"additionalInstructions": "Täiendavad juhised",
+			"addCustomRequirements": "Lisa mis tahes kohandatud nõudeid või selgitusi, mida ülaltoodud küsimused ei käsitlenud.",
+			"additionalInstructionsPlaceholder": "Kirjuta siia täiendavad juhised...",
+			"submitting": "Esitan...",
+			"submit": "Esita",
+			"jobRequirements": "Töö nõuded",
+			"notSpecified": "Pole määratud",
+			"jobTitle": "Ametinimetus",
+			"jobDescription": "Töö kirjeldus",
+			"professions": "Elukutsed",
+			"specialization": "Spetsialiseerimine",
+			"workExperience": "Töökogemus",
+			"years": "aastat",
+			"location": "Asukoht",
+			"workTime": "Tööaeg",
+			"languages": "Keeled",
+			"salary": "Palk",
+			"requiredQualifications": "Nõutud kvalifikatsioonid",
+			"additionalRequirements": "Täiendavad nõuded",
+			"drivingLicense": "Juhiluba",
+			"required": "Nõutud",
+			"notRequired": "Pole nõutud",
+			"personalCar": "Isiklik auto",
+			"accommodation": "Majutus",
+			"transport": "Transport",
+			"searchScope": "Otsingu ulatus",
+			"globalSearch": "Globaalne otsing eelistusega loetletud riikidele"
+		}
+	},
+	"settings": {
+		"title": "Seaded",
+		"profile": {
+			"title": "Profiili seaded",
+			"description": "Halda oma konto seadeid ja eelistusi",
+			"firstName": "Eesnimi",
+			"firstNamePlaceholder": "Sisesta oma eesnimi",
+			"lastName": "Perekonnanimi",
+			"lastNamePlaceholder": "Sisesta oma perekonnanimi",
+			"email": "E-post",
+			"phoneNumber": "Telefoninumber",
+			"phoneNumberPlaceholder": "Sisesta oma telefoninumber",
+			"calendarLink": "Kalendri link",
+			"calendarLinkPlaceholder": "Sisesta oma kalendri link (nt Google calendar, cal.com, calendly)",
+			"saveChanges": "Salvesta muudatused"
+		},
+		"password": {
+			"title": "Parooli seaded",
+			"description": "Halda oma konto parooli",
+			"oldPassword": "Vana parool",
+			"oldPasswordPlaceholder": "Sisesta oma vana parool",
+			"newPassword": "Uus parool",
+			"newPasswordPlaceholder": "Sisesta oma uus parool",
+			"updatePassword": "Uuenda parool"
+		},
+		"company": {
+			"title": "Ettevõtte seaded",
+			"description": "Halda oma ettevõtte profiili ja äri üksikasju",
+			"brandName": "Brändi nimi",
+			"brandNamePlaceholder": "Sisesta brändi nimi",
+			"description": "Kirjeldus",
+			"descriptionPlaceholder": "Sisesta ettevõtte kirjeldus",
+			"companyName": "Ettevõtte nimi",
+			"companyNamePlaceholder": "Sisesta ettevõtte nimi",
+			"registrationCode": "Registrikood",
+			"registrationCodePlaceholder": "Sisesta registrikood",
+			"vatNumber": "KM number",
+			"vatNumberPlaceholder": "Sisesta KM number",
+			"country": "Riik",
+			"countryPlaceholder": "Vali riik",
+			"city": "Linn",
+			"cityPlaceholder": "Sisesta linn",
+			"address": "Aadress",
+			"addressPlaceholder": "Sisesta tänava aadress",
+			"zipCode": "Postiindeks",
+			"zipCodePlaceholder": "Sisesta postiindeks",
+			"save": "Salvesta"
+		},
+		"payment": {
+			"title": "Makseviis",
+			"expires": "Aegub"
+		},
+		"notifications": {
+			"settingsUpdated": "Seaded edukalt uuendatud",
+			"passwordUpdated": "Parool edukalt uuendatud",
+			"updateError": "Kasutaja seadete uuendamine ebaõnnestus",
+			"passwordUpdateError": "Parooli uuendamine ebaõnnestus"
+		}
+	},
+	"pricing": {
+		"title": "Hinnapaketid",
+		"subtitle": "Vali lahendus, mis sobib kõige paremini sinu tervishoiutöötajate värbamise vajadustega",
+		"activePlans": {
+			"title": "Sinu aktiivsed paketid",
+			"activeSince": "Aktiivne alates",
+			"customPlanDetails": "Kohandatud paketi üksikasjad",
+			"generalFee": "Üldine tasu",
+			"viewSuccessFees": "Vaata edukustasusid",
+			"endPlan": "Lõpeta pakett",
+			"doctorsTitle": "Arstid",
+			"otherProfessionalsTitle": "Teised tervishoiutöötajad",
+			"startFee": "Alustustasu",
+			"successFee": "Edukustasu"
+		},
+		"startingFee": {
+			"title": "Alusta {{amount}} {{currency}}",
+			"withFee": "Alusta sihtotsingut {{amount}} {{currency}} alustustasuga",
+			"withoutFee": "Alusta sihtotsingut kohe ilma ettemaksude või kohustusteta",
+			"payWhenSuccessful": "Maksa ainult siis, kui sihtotsing õnnestub"
+		},
+		"availablePlans": {
+			"title": "Saadaval paketid",
+			"generalFee": "Üldine tasu",
+			"noGeneralFee": "Üldine tasu puudub",
+			"startPlan": "Alusta paketti",
+			"successFees": "Edukustasud",
+			"vatLabel": "(+{{percentage}}% KM)",
+			"successFeeNotice": "Edukustasu makstakse igakuiste osamaksetena, kui mõlemad osapooled kinnitavad, et kandidaat on alustanud tööd, ja jätkub 12-kuulise kohustusperioodi jooksul"
+		},
+		"customSolutions": {
+			"title": "KOHANDATUD LAHENDUSED",
+			"description": "Vajad midagi spetsiifilist? Või vajad asendajaid või lühiajalisi töölepinguid? Võta meiega ühendust kohandatud sihtotsingupakettide jaoks, mis sisaldavad premium hüvesid ja konkurentsivõimelisi tasusid",
+			"contactUs": "Võta meiega ühendust"
+		},
+		"contactForm": {
+			"title": "Võta meiega ühendust",
+			"description": "Räägi meile oma konkreetsetest värbamisvajadustest ja me võtame sinuga peagi ühendust.",
+			"messageLabel": "Sinu sõnum",
+			"messagePlaceholder": "Räägi meile oma konkreetsetest värbamisvajadustest...",
+			"cancel": "Tühista",
+			"sending": "Saadan...",
+			"send": "Saada sõnum",
+			"success": "Sõnum edukalt saadetud!"
+		},
+		"errors": {
+			"fetchFailed": "Sõnumi saatmine ebaõnnestus"
+		}
+	}
+}

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { t } from '$lib/i18n';
 	export let title: string;
 </script>
 
@@ -10,7 +11,10 @@
 
 <div class="text-center text-black dark:text-white">
 	<slot name="altaction">
-		or <a class="text-indigo-500 hover:underline cursor-pointer" href="/login">login</a>
+		{$t('auth.wrapper.or')}
+		<a class="cursor-pointer text-indigo-500 hover:underline" href="/login"
+			>{$t('auth.wrapper.login')}</a
+		>
 	</slot>
 </div>
 

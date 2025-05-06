@@ -1,17 +1,10 @@
 <script lang="ts">
-	import SEO from "$lib/components/SEO.svelte";
-	import SearchView from "@/components/dashboard/searchView.svelte";
-	import * as Card from "$lib/components/ui/card/index.js";
-	import { scrubinClient } from '@/scrubinClient/client';
-	import type { WorkerLookup } from '@/scrubinClient';
-	import { Loader2, RotateCcw } from 'lucide-svelte';
-	import { onMount } from 'svelte';
-	import Button from "$lib/components/ui/button/button.svelte";
-	import AnalyzingOverlay from "@/components/dashboard/analyzingOverlay.svelte";
-	import SearchHistory from "@/components/dashboard/searchHistory.svelte";
-	import * as Tabs from "$lib/components/ui/tabs/index.js";
 	import HuntsList from "@/components/dashboard/huntsList.svelte";
-	import Separator from "@/components/ui/separator/separator.svelte";
+	import SearchHistory from "@/components/dashboard/searchHistory.svelte";
+	import SearchView from "@/components/dashboard/searchView.svelte";
+	import type { WorkerLookup } from '@/scrubinClient';
+	import { scrubinClient } from '@/scrubinClient/client';
+	import { onMount } from 'svelte';
 
 	let searchViewComponent: SearchView;
 	let isLoading = $state(false);
@@ -30,21 +23,6 @@
 		}
 	}
 
-	function handleRerunSearch(searchText: string) {
-		searchViewComponent.searchWorkers(searchText);
-		isSearchActive = true;
-	}
-
-	function formatDate(dateString: string) {
-		return new Date(dateString).toLocaleDateString('en-US', {
-			year: 'numeric',
-			month: 'short',
-			day: 'numeric',
-			hour: '2-digit',
-			minute: '2-digit'
-		});
-	}
-
 	function handleSearchComplete() {
 		isSearchActive = true;
 	}
@@ -58,16 +36,6 @@
 	});
 
 </script>
-  
-<SEO 
-	title="Worker Search | Admin Dashboard"
-	description="Search and analyze worker candidates based on job descriptions and requirements."
-	keywords="worker search, candidates, admin dashboard, sveltekit"
-	image="/images/workers-search.jpg"
-	type="website"
-	canonicalUrl="https://yourwebsite.com/worker-search" />
-
-
   
 <div class="space-y-2 max-w-screen-xl mx-auto w-full">
 

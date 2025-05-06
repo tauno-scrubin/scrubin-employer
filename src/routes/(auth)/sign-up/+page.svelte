@@ -4,11 +4,13 @@
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
 	import * as Select from '$lib/components/ui/select/index.js';
-	import { Alert } from '$lib/form';
+	import { Alert } from '$lib/components/ui/alert';
 	import ScrubinLogo from '@/components/scrubinLogo.svelte';
 	import { scrubinClient } from '@/scrubinClient/client';
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
+	import { t } from '$lib/i18n';
+	import LanguageSelector from '$lib/components/ui/language-selector.svelte';
 
 	let {
 		form
@@ -35,78 +37,84 @@
 	<div class="mb-8 text-center sm:mx-auto sm:w-full sm:max-w-sm">
 		<div class="mb-4 flex flex-col items-center">
 			<ScrubinLogo class="mb-1 h-8" />
-			<span class="text-xs font-medium">Employer</span>
+			<span class="text-xs font-medium">{$t('auth.employer')}</span>
 		</div>
-		<p class="mt-2 text-muted-foreground">Enter your details to sign up</p>
+		<p class="mt-2 text-muted-foreground">{$t('auth.signUp.title')}</p>
 	</div>
 
 	<Card class="mx-auto w-full max-w-sm border-none shadow-none sm:border sm:shadow">
 		<form method="POST" class="space-y-2">
 			<CardContent class="space-y-4 pt-6">
 				<div class="space-y-2">
-					<Label for="email" class="text-sm font-medium">Email address</Label>
+					<Label for="email" class="text-sm font-medium">{$t('auth.signUp.emailLabel')}</Label>
 					<Input
 						id="email"
 						name="email"
 						type="email"
 						required
 						autocomplete="email"
-						placeholder="name@example.com"
+						placeholder={$t('auth.signUp.emailPlaceholder')}
 						class="shadow-sm"
 					/>
 				</div>
 
 				<div class="grid grid-cols-2 gap-4">
 					<div class="space-y-2">
-						<Label for="firstName" class="text-sm font-medium">First name</Label>
+						<Label for="firstName" class="text-sm font-medium"
+							>{$t('auth.signUp.firstNameLabel')}</Label
+						>
 						<Input
 							id="firstName"
 							name="firstName"
 							type="text"
 							required
-							placeholder="John"
+							placeholder={$t('auth.signUp.firstNamePlaceholder')}
 							class="shadow-sm"
 						/>
 					</div>
 					<div class="space-y-2">
-						<Label for="lastName" class="text-sm font-medium">Last name</Label>
+						<Label for="lastName" class="text-sm font-medium"
+							>{$t('auth.signUp.lastNameLabel')}</Label
+						>
 						<Input
 							id="lastName"
 							name="lastName"
 							type="text"
 							required
-							placeholder="Doe"
+							placeholder={$t('auth.signUp.lastNamePlaceholder')}
 							class="shadow-sm"
 						/>
 					</div>
 				</div>
 
 				<div class="space-y-2">
-					<Label for="phone" class="text-sm font-medium">Phone number</Label>
+					<Label for="phone" class="text-sm font-medium">{$t('auth.signUp.phoneLabel')}</Label>
 					<Input
 						id="phone"
 						name="phone"
 						type="tel"
 						required
-						placeholder="+1234567890"
+						placeholder={$t('auth.signUp.phonePlaceholder')}
 						class="shadow-sm"
 					/>
 				</div>
 
 				<div class="space-y-2">
-					<Label for="companyName" class="text-sm font-medium">Company name</Label>
+					<Label for="companyName" class="text-sm font-medium"
+						>{$t('auth.signUp.companyNameLabel')}</Label
+					>
 					<Input
 						id="companyName"
 						name="companyName"
 						type="text"
 						required
-						placeholder="Acme Inc."
+						placeholder={$t('auth.signUp.companyNamePlaceholder')}
 						class="shadow-sm"
 					/>
 				</div>
 
 				<div class="space-y-2">
-					<Label for="country" class="text-sm font-medium">Country</Label>
+					<Label for="country" class="text-sm font-medium">{$t('auth.signUp.countryLabel')}</Label>
 					<Select.Root
 						name="country"
 						type="single"
@@ -114,7 +122,7 @@
 						onValueChange={(value) => (selectedCountry = value)}
 					>
 						<Select.Trigger class="w-full shadow-sm">
-							<span>{selectedCountry || 'Select a country'}</span>
+							<span>{selectedCountry || $t('auth.signUp.countryPlaceholder')}</span>
 						</Select.Trigger>
 						<Select.Content>
 							<Select.Group>
@@ -127,29 +135,32 @@
 				</div>
 
 				{#if form?.errorMessage}
-					<Alert title={form?.errorMessage}></Alert>
+					<Alert variant="destructive">{form?.errorMessage}</Alert>
 				{/if}
 
-				<Button type="submit" class="w-full font-medium">Sign up</Button>
+				<Button type="submit" class="w-full font-medium">{$t('buttons.signUp')}</Button>
 
 				<p class="text-sm text-muted-foreground">
-					By creating an account, you agree to our
+					{$t('auth.signUp.agreement')}
 					<a
 						href="https://scrubin.io/terms-and-conditions"
-						class="text-primary hover:text-primary/90">Terms of Service</a
+						class="text-primary hover:text-primary/90">{$t('auth.signUp.termsOfService')}</a
 					>
-					and
+					{$t('auth.signUp.and')}
 					<a href="https://scrubin.io/privacy-policy" class="text-primary hover:text-primary/90"
-						>Privacy Policy</a
+						>{$t('auth.signUp.privacyPolicy')}</a
 					>.
 				</p>
 			</CardContent>
 
-			<CardFooter class="flex justify-center border-t p-4">
+			<CardFooter class="flex flex-col gap-4 border-t p-4">
 				<p class="text-sm text-muted-foreground">
-					Already have an account?
-					<a href="/login" class="text-primary hover:text-primary/90">Sign in</a>
+					{$t('auth.signUp.haveAccount')}
+					<a href="/login" class="text-primary hover:text-primary/90">{$t('auth.signUp.signIn')}</a>
 				</p>
+				<div class="flex justify-center">
+					<LanguageSelector variant="ghost" />
+				</div>
 			</CardFooter>
 		</form>
 	</Card>

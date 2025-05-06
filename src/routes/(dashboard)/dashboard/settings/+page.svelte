@@ -1,16 +1,17 @@
 <script lang="ts">
-	import SEO from "$lib/components/SEO.svelte";
-	import { onMount } from "svelte";
-	import { currentUser, scrubinClient } from "@/scrubinClient/client";
-	import type { PortalUser, Company, CompanyBilling } from "@/scrubinClient";
-	import * as Card from "$lib/components/ui/card/index.js";
-	import { Button } from "$lib/components/ui/button";
-	import { Input } from "$lib/components/ui/input";
-	import { Label } from "$lib/components/ui/label";
-	import { User, Phone, Mail, Asterisk, Building2, MapPin, Calendar } from "lucide-svelte";
-	import { toast } from "svelte-sonner";
-	import { PUBLIC_ORIGIN } from "$env/static/public";
-	import * as Select from "$lib/components/ui/select/index.js";
+	import SEO from '$lib/components/SEO.svelte';
+	import { onMount } from 'svelte';
+	import { currentUser, scrubinClient } from '@/scrubinClient/client';
+	import type { PortalUser, Company, CompanyBilling } from '@/scrubinClient';
+	import * as Card from '$lib/components/ui/card/index.js';
+	import { Button } from '$lib/components/ui/button';
+	import { Input } from '$lib/components/ui/input';
+	import { Label } from '$lib/components/ui/label';
+	import { User, Phone, Mail, Asterisk, Building2, MapPin, Calendar } from 'lucide-svelte';
+	import { toast } from 'svelte-sonner';
+	import { PUBLIC_ORIGIN } from '$env/static/public';
+	import * as Select from '$lib/components/ui/select/index.js';
+	import { t } from '$lib/i18n';
 
 	interface Address {
 		city: string;
@@ -73,10 +74,12 @@
 				calendarLink: user.calendarLink
 			});
 			currentUser.set(user);
-			toast.success('Settings updated successfully');
+			toast.success($t('settings.notifications.settingsUpdated'));
 		} catch (error) {
 			console.error('Error updating user:', error);
-			toast.error( error instanceof Error ? error.message : 'Failed to update user settings');
+			toast.error(
+				error instanceof Error ? error.message : $t('settings.notifications.updateError')
+			);
 		} finally {
 			isSaving = false;
 		}
@@ -89,12 +92,14 @@
 				oldPassword: oldPassword.toString(),
 				newPassword: newPassword.toString()
 			});
-			toast.success('Password updated successfully');
+			toast.success($t('settings.notifications.passwordUpdated'));
 			oldPassword = '';
 			newPassword = '';
 		} catch (error) {
 			console.error('Error updating password:', error);
-			toast.error( error instanceof Error ? error.message : 'Failed to update password');
+			toast.error(
+				error instanceof Error ? error.message : $t('settings.notifications.passwordUpdateError')
+			);
 		} finally {
 			isSavingPassword = false;
 		}
@@ -105,156 +110,149 @@
 		isSavingCompany = true;
 		try {
 			await scrubinClient.company.updateCompany(companyProfile);
-			toast.success('Settings updated successfully');
+			toast.success($t('settings.notifications.settingsUpdated'));
 		} catch (error) {
 			console.error('Error updating:', error);
-			toast.error( error instanceof Error ? error.message : 'Failed to update settings');
+			toast.error(
+				error instanceof Error ? error.message : $t('settings.notifications.updateError')
+			);
 		} finally {
 			isSavingCompany = false;
 		}
 	}
 </script>
 
-<SEO 
-	title="Settings | Dashboard"
-	description="User settings and preferences"
+<SEO
+	title={$t('settings.title') + ' | Dashboard'}
+	description={$t('settings.profile.description')}
 	type="website"
 />
 
 <div class="space-y-6">
 	<div class="flex items-center justify-between">
-		<h2 class="text-3xl font-bold tracking-tight">Settings</h2>
+		<h2 class="text-3xl font-bold tracking-tight">{$t('settings.title')}</h2>
 	</div>
 
 	<Card.Root>
 		<Card.Header>
-			<Card.Title>Profile Settings</Card.Title>
+			<Card.Title>{$t('settings.profile.title')}</Card.Title>
 			<Card.Description>
-				Manage your account settings and preferences
+				{$t('settings.profile.description')}
 			</Card.Description>
 		</Card.Header>
 		<Card.Content>
 			{#if isLoading}
-				<div class="flex justify-center items-center h-32">
+				<div class="flex h-32 items-center justify-center">
 					<span class="loading loading-spinner loading-lg"></span>
 				</div>
-			{:else}
-				{#if user}
-					<form on:submit|preventDefault={handleSubmit} class="space-y-6">
-						<div class="grid gap-6 md:grid-cols-2">
-							<div class="space-y-2">
-								<Label for="firstName">First Name</Label>
-								<div class="relative">
-									<User class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-									<Input
-										id="firstName"
-										bind:value={user.firstName}
-										class="pl-9"
-										placeholder="Enter your first name"
-									/>
-								</div>
-							</div>
-
-							<div class="space-y-2">
-								<Label for="lastName">Last Name</Label>
-								<div class="relative">
-									<User class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-									<Input
-										id="lastName"
-										bind:value={user.lastName}
-										class="pl-9"
-										placeholder="Enter your last name"
-									/>
-								</div>
-							</div>
-
-							<div class="space-y-2">
-								<Label for="email">Email</Label>
-								<div class="relative">
-									<Mail class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-									<Input
-										id="email"
-										value={user.email}
-										class="pl-9"
-										disabled
-										readonly
-									/>
-								</div>
-							</div>
-
-							<div class="space-y-2">
-								<Label for="phoneNumber">Phone Number</Label>
-								<div class="relative">
-									<Phone class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-									<Input
-										id="phoneNumber"
-										bind:value={user.phoneNumber}
-										class="pl-9"
-										placeholder="Enter your phone number"
-									/>
-								</div>
-							</div>
-
-
-							<div class="space-y-2">
-								<Label for="calendarLink">Calendar Link</Label>
-								<div class="relative">
-									<Calendar class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-									<Input
-										id="calendarLink"
-										bind:value={user.calendarLink}
-										class="pl-9"
-										placeholder="Enter your calendar link (e.g. google calendar, cal.com, calendly )"
-									/>
-								</div>
+			{:else if user}
+				<form on:submit|preventDefault={handleSubmit} class="space-y-6">
+					<div class="grid gap-6 md:grid-cols-2">
+						<div class="space-y-2">
+							<Label for="firstName">{$t('settings.profile.firstName')}</Label>
+							<div class="relative">
+								<User class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+								<Input
+									id="firstName"
+									bind:value={user.firstName}
+									class="pl-9"
+									placeholder={$t('settings.profile.firstNamePlaceholder')}
+								/>
 							</div>
 						</div>
 
-						<div class="flex justify-end">
-							<Button type="submit" disabled={isSaving}>
-								{#if isSaving}
-									<span class="loading loading-spinner loading-sm mr-2"></span>
-								{/if}
-								Save Changes
-							</Button>
+						<div class="space-y-2">
+							<Label for="lastName">{$t('settings.profile.lastName')}</Label>
+							<div class="relative">
+								<User class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+								<Input
+									id="lastName"
+									bind:value={user.lastName}
+									class="pl-9"
+									placeholder={$t('settings.profile.lastNamePlaceholder')}
+								/>
+							</div>
 						</div>
-					</form>
-				{/if}
+
+						<div class="space-y-2">
+							<Label for="email">{$t('settings.profile.email')}</Label>
+							<div class="relative">
+								<Mail class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+								<Input id="email" value={user.email} class="pl-9" disabled readonly />
+							</div>
+						</div>
+
+						<div class="space-y-2">
+							<Label for="phoneNumber">{$t('settings.profile.phoneNumber')}</Label>
+							<div class="relative">
+								<Phone class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+								<Input
+									id="phoneNumber"
+									bind:value={user.phoneNumber}
+									class="pl-9"
+									placeholder={$t('settings.profile.phoneNumberPlaceholder')}
+								/>
+							</div>
+						</div>
+
+						<div class="space-y-2">
+							<Label for="calendarLink">{$t('settings.profile.calendarLink')}</Label>
+							<div class="relative">
+								<Calendar class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+								<Input
+									id="calendarLink"
+									bind:value={user.calendarLink}
+									class="pl-9"
+									placeholder={$t('settings.profile.calendarLinkPlaceholder')}
+								/>
+							</div>
+						</div>
+					</div>
+
+					<div class="flex justify-end">
+						<Button type="submit" disabled={isSaving}>
+							{#if isSaving}
+								<span class="loading loading-spinner loading-sm mr-2"></span>
+							{/if}
+							{$t('settings.profile.saveChanges')}
+						</Button>
+					</div>
+				</form>
 			{/if}
 		</Card.Content>
 	</Card.Root>
 
 	<Card.Root>
 		<Card.Header>
-			<Card.Title>Password Settings</Card.Title>
+			<Card.Title>{$t('settings.password.title')}</Card.Title>
 			<Card.Description>
-				Manage your account password
+				{$t('settings.password.description')}
 			</Card.Description>
 		</Card.Header>
 		<Card.Content>
 			{#if isLoading}
-				<div class="flex justify-center items-center h-32">
+				<div class="flex h-32 items-center justify-center">
 					<span class="loading loading-spinner loading-lg"></span>
 				</div>
 			{:else}
 				<form on:submit|preventDefault={handleSubmitPassword} class="space-y-6">
 					<div class="grid gap-6 md:grid-cols-2">
 						<div class="space-y-2">
-							<Label for="oldPassword">Old Password</Label>
+							<Label for="oldPassword">{$t('settings.password.oldPassword')}</Label>
 							<div class="relative">
 								<Asterisk class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
 								<Input
 									id="oldPassword"
 									bind:value={oldPassword}
 									class="pl-9"
-									placeholder="Enter your old password"
+									placeholder={$t('settings.password.oldPasswordPlaceholder')}
 									type="password"
 								/>
 							</div>
 						</div>
 
 						<div class="space-y-2">
-							<Label for="newPassword">New Password</Label>
+							<Label for="newPassword">{$t('settings.password.newPassword')}</Label>
 							<div class="relative">
 								<Asterisk class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
 								<Input
@@ -262,7 +260,7 @@
 									bind:value={newPassword}
 									type="password"
 									class="pl-9"
-									placeholder="Enter your new password"
+									placeholder={$t('settings.password.newPasswordPlaceholder')}
 								/>
 							</div>
 						</div>
@@ -273,7 +271,7 @@
 							{#if isSavingPassword}
 								<span class="loading loading-spinner loading-sm mr-2"></span>
 							{/if}
-							Update Password
+							{$t('settings.password.updatePassword')}
 						</Button>
 					</div>
 				</form>
@@ -283,90 +281,92 @@
 
 	<Card.Root>
 		<Card.Header>
-			<Card.Title>Company Settings</Card.Title>
+			<Card.Title>{$t('settings.company.title')}</Card.Title>
 			<Card.Description>
-				Manage your company profile and business details
+				{$t('settings.company.description')}
 			</Card.Description>
 		</Card.Header>
 		<Card.Content>
 			{#if isLoadingAdvertiser}
-				<div class="flex justify-center items-center h-32">
+				<div class="flex h-32 items-center justify-center">
 					<span class="loading loading-spinner loading-lg"></span>
 				</div>
 			{:else if companyProfile}
 				<form on:submit|preventDefault={handleSubmitAdvertiser} class="space-y-6">
 					<div class="grid gap-6 md:grid-cols-2">
 						<div class="space-y-2">
-							<Label for="brandName">Brand Name</Label>
+							<Label for="brandName">{$t('settings.company.brandName')}</Label>
 							<div class="relative">
 								<Building2 class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
 								<Input
 									id="brandName"
 									bind:value={companyProfile.brandName}
 									class="pl-9"
-									placeholder="Enter brand name"
+									placeholder={$t('settings.company.brandNamePlaceholder')}
 								/>
 							</div>
 						</div>
 
 						<div class="space-y-2 md:col-span-2">
-							<Label for="description">Description</Label>
+							<Label for="description">{$t('settings.company.description')}</Label>
 							<div class="relative">
 								<Building2 class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
 								<Input
 									id="description"
 									bind:value={companyProfile.description}
 									class="pl-9"
-									placeholder="Enter company description"
+									placeholder={$t('settings.company.descriptionPlaceholder')}
 								/>
 							</div>
 						</div>
 
 						<div class="space-y-2">
-							<Label for="companyLegalName">Company Name</Label>
+							<Label for="companyLegalName">{$t('settings.company.companyName')}</Label>
 							<div class="relative">
 								<Building2 class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
 								<Input
 									id="companyLegalName"
 									bind:value={companyProfile.companyLegalName}
 									class="pl-9"
-									placeholder="Enter company name"
+									placeholder={$t('settings.company.companyNamePlaceholder')}
 								/>
 							</div>
 						</div>
 
 						<div class="space-y-2">
-							<Label for="registrationCode">Registration Code</Label>
+							<Label for="registrationCode">{$t('settings.company.registrationCode')}</Label>
 							<div class="relative">
 								<Building2 class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
 								<Input
 									id="registrationCode"
 									bind:value={companyProfile.registrationCode}
 									class="pl-9"
-									placeholder="Enter registration code"
+									placeholder={$t('settings.company.registrationCodePlaceholder')}
 								/>
 							</div>
 						</div>
 
 						<div class="space-y-2">
-							<Label for="vatNumber">VAT Number</Label>
+							<Label for="vatNumber">{$t('settings.company.vatNumber')}</Label>
 							<div class="relative">
 								<Building2 class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
 								<Input
 									id="vatNumber"
 									bind:value={companyProfile.vatNumber}
 									class="pl-9"
-									placeholder="Enter VAT number"
+									placeholder={$t('settings.company.vatNumberPlaceholder')}
 								/>
 							</div>
 						</div>
 
 						<div class="space-y-2">
-							<Label for="country">Country</Label>
+							<Label for="country">{$t('settings.company.country')}</Label>
 							<div class="relative">
 								<MapPin class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-								<Select.Root disabled type="single"
-									value={companyProfile?.country} 
+								<Select.Root
+									disabled
+									type="single"
+									value={companyProfile?.country}
 									onValueChange={(value) => {
 										if (companyProfile) {
 											companyProfile.country = value;
@@ -374,7 +374,7 @@
 									}}
 								>
 									<Select.Trigger class="w-full pl-9">
-										{companyProfile?.country ?? 'Select a country'}
+										{companyProfile?.country ?? $t('settings.company.countryPlaceholder')}
 									</Select.Trigger>
 									<Select.Content>
 										<Select.Group>
@@ -388,64 +388,67 @@
 						</div>
 
 						<div class="space-y-2">
-							<Label for="city">City</Label>
+							<Label for="city">{$t('settings.company.city')}</Label>
 							<div class="relative">
 								<MapPin class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
 								<Input
 									id="city"
 									bind:value={companyProfile.address.city}
 									class="pl-9"
-									placeholder="Enter city"
+									placeholder={$t('settings.company.cityPlaceholder')}
 								/>
 							</div>
 						</div>
 
 						<div class="space-y-2">
-							<Label for="address">Address</Label>
+							<Label for="address">{$t('settings.company.address')}</Label>
 							<div class="relative">
 								<MapPin class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
 								<Input
 									id="address"
 									bind:value={companyProfile.address.address}
 									class="pl-9"
-									placeholder="Enter street address"
+									placeholder={$t('settings.company.addressPlaceholder')}
 								/>
 							</div>
 						</div>
 
 						<div class="space-y-2">
-							<Label for="zipCode">ZIP Code</Label>
+							<Label for="zipCode">{$t('settings.company.zipCode')}</Label>
 							<div class="relative">
 								<MapPin class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
 								<Input
 									id="zipCode"
 									bind:value={companyProfile.address.zipCode}
 									class="pl-9"
-									placeholder="Enter ZIP code"
+									placeholder={$t('settings.company.zipCodePlaceholder')}
 								/>
 							</div>
 						</div>
 					</div>
 
 					{#if billingInfo?.stripePaymentMethod && billingInfo?.stripePaymentMethod?.brand}
-						<div class="mt-6 border rounded-lg p-4 bg-card shadow-sm">
-							<div class="flex items-center justify-between mb-3">
-								<h3 class="text-lg font-medium">Payment Method</h3>
+						<div class="mt-6 rounded-lg border bg-card p-4 shadow-sm">
+							<div class="mb-3 flex items-center justify-between">
+								<h3 class="text-lg font-medium">{$t('settings.payment.title')}</h3>
 							</div>
 							<div class="flex items-center space-x-4">
-								<div class="bg-muted p-2 rounded-md flex items-center justify-center">
-									<img 
-										src="/cards/{billingInfo.stripePaymentMethod.brand.toLowerCase()}.png" 
-										alt="{billingInfo.stripePaymentMethod.brand}" 
-										class="w-auto h-6 rounded-sm" 
+								<div class="flex items-center justify-center rounded-md bg-muted p-2">
+									<img
+										src="/cards/{billingInfo.stripePaymentMethod.brand.toLowerCase()}.png"
+										alt={billingInfo.stripePaymentMethod.brand}
+										class="h-6 w-auto rounded-sm"
 									/>
 								</div>
 								<div class="flex-1">
-									<p class="text-sm font-medium flex items-center">
-										{billingInfo.stripePaymentMethod.brand.toUpperCase()} •••• {billingInfo.stripePaymentMethod.last4Digits}
+									<p class="flex items-center text-sm font-medium">
+										{billingInfo.stripePaymentMethod.brand.toUpperCase()} •••• {billingInfo
+											.stripePaymentMethod.last4Digits}
 									</p>
 									<p class="text-xs text-muted-foreground">
-										Expires {billingInfo.stripePaymentMethod.expirationMonth}/{billingInfo.stripePaymentMethod.expirationYear}
+										{$t('settings.payment.expires')}
+										{billingInfo.stripePaymentMethod.expirationMonth}/{billingInfo
+											.stripePaymentMethod.expirationYear}
 									</p>
 								</div>
 							</div>
@@ -457,7 +460,7 @@
 							{#if isSavingCompany}
 								<span class="loading loading-spinner loading-sm mr-2"></span>
 							{/if}
-							Save
+							{$t('settings.company.save')}
 						</Button>
 					</div>
 				</form>

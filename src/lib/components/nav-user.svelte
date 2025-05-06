@@ -1,8 +1,4 @@
 <script lang="ts">
-	import ChevronsUpDown from 'lucide-svelte/icons/chevrons-up-down';
-	import Globe from 'lucide-svelte/icons/globe';
-	import LogOut from 'lucide-svelte/icons/log-out';
-
 	import { goto } from '$app/navigation';
 	import * as Avatar from '$lib/components/ui/avatar/index.js';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
@@ -10,6 +6,10 @@
 	import { useSidebar } from '$lib/components/ui/sidebar/index.js';
 	import { locale, t } from '$lib/i18n';
 	import { availableLanguages } from '$lib/i18n/config';
+	import { changeLanguage } from '$lib/utils/languageUtils';
+	import ChevronsUpDown from 'lucide-svelte/icons/chevrons-up-down';
+	import Globe from 'lucide-svelte/icons/globe';
+	import LogOut from 'lucide-svelte/icons/log-out';
 
 	let {
 		user
@@ -23,10 +23,8 @@
 
 	const sidebar = useSidebar();
 
-	// Function to update language - now just updates localStorage
-	function setLanguage(lang: string) {
-		$locale = lang;
-		// The locale store internally saves the selection to localStorage
+	function handleLogout() {
+		goto('/logout');
 	}
 </script>
 
@@ -73,32 +71,31 @@
 				<DropdownMenu.Separator />
 
 				<!-- Language selection -->
-				<!-- <DropdownMenu.Sub>
+				<DropdownMenu.Sub>
 					<DropdownMenu.SubTrigger>
 						<Globe class="mr-2 h-4 w-4" />
-						{$t('app.language')}
+						<span>{$t(`languages.${$locale}`)}</span>
 					</DropdownMenu.SubTrigger>
 					<DropdownMenu.SubContent>
 						{#each availableLanguages as loc}
-							<DropdownMenu.Item
-								onclick={() => setLanguage(loc)}
-								class={$locale === loc ? 'bg-accent' : ''}
-							>
-								{$t(`languages.${loc}`)}
-							</DropdownMenu.Item>
+							<!-- svelte-ignore a11y-click-events-have-key-events -->
+							<div on:click={() => changeLanguage(loc)} role="menuitem" tabindex="0">
+								<DropdownMenu.Item class={$locale === loc ? 'bg-accent' : ''}>
+									{$t(`languages.${loc}`)}
+								</DropdownMenu.Item>
+							</div>
 						{/each}
 					</DropdownMenu.SubContent>
-				</DropdownMenu.Sub> -->
+				</DropdownMenu.Sub>
 
 				<DropdownMenu.Separator />
-				<DropdownMenu.Item
-					onclick={() => {
-						goto('/logout');
-					}}
-				>
-					<LogOut />
-					Log out
-				</DropdownMenu.Item>
+				<!-- svelte-ignore a11y-click-events-have-key-events -->
+				<div on:click={handleLogout} role="menuitem" tabindex="0">
+					<DropdownMenu.Item>
+						<LogOut />
+						{$t('nav.logout')}
+					</DropdownMenu.Item>
+				</div>
 			</DropdownMenu.Content>
 		</DropdownMenu.Root>
 	</Sidebar.MenuItem>

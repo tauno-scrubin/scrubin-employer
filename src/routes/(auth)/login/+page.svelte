@@ -3,9 +3,11 @@
 	import { Card, CardContent, CardFooter } from '$lib/components/ui/card';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
-	import { Alert } from '$lib/form';
+	import { Alert } from '$lib/components/ui/alert';
 	import ScrubinLogo from '@/components/scrubinLogo.svelte';
 	import ResetPasswordLink from '../reset-password-link.svelte';
+	import { t } from '$lib/i18n';
+	import LanguageSelector from '$lib/components/ui/language-selector.svelte';
 
 	export let form;
 </script>
@@ -15,30 +17,32 @@
 		<!-- Scrubin Logo -->
 		<div class="mb-4 flex flex-col items-center">
 			<ScrubinLogo class="mb-1 h-8" />
-			<span class="text-xs font-medium">Employer</span>
+			<span class="text-xs font-medium">{$t('auth.employer')}</span>
 		</div>
-		<p class="mt-2 text-muted-foreground">Enter your credentials to access your account</p>
+		<p class="mt-2 text-muted-foreground">{$t('auth.login.title')}</p>
 	</div>
 
 	<Card class="mx-auto w-full max-w-sm border-none shadow-none sm:border sm:shadow">
 		<form method="POST" class="space-y-6">
 			<CardContent class="space-y-4 pt-6">
 				<div class="space-y-2">
-					<Label for="email" class="text-sm font-medium">Email address</Label>
+					<Label for="email" class="text-sm font-medium">{$t('auth.login.emailLabel')}</Label>
 					<Input
 						id="email"
 						name="email"
 						type="email"
 						required
 						autocomplete="email"
-						placeholder="name@example.com"
+						placeholder={$t('auth.login.emailPlaceholder')}
 						class="shadow-sm"
 					/>
 				</div>
 
 				<div class="space-y-2">
 					<div class="flex items-center justify-between">
-						<Label for="password" class="text-sm font-medium">Password</Label>
+						<Label for="password" class="text-sm font-medium"
+							>{$t('auth.login.passwordLabel')}</Label
+						>
 						<ResetPasswordLink class="text-sm text-primary hover:text-primary/90" />
 					</div>
 					<Input
@@ -46,7 +50,7 @@
 						name="password"
 						type="password"
 						required
-						placeholder="••••••••"
+						placeholder={$t('auth.login.passwordPlaceholder')}
 						class="shadow-sm"
 					/>
 				</div>
@@ -55,14 +59,18 @@
 					<Alert variant="destructive">{form?.errorMessage}</Alert>
 				{/if}
 
-				<Button type="submit" class="w-full font-medium">Sign in</Button>
+				<Button type="submit" class="w-full font-medium">{$t('buttons.signIn')}</Button>
 			</CardContent>
 
-			<CardFooter class="flex justify-center border-t p-4">
+			<CardFooter class="flex flex-col gap-4 border-t p-4">
 				<p class="text-sm text-muted-foreground">
-					Don't have an account?
-					<a href="/sign-up" class="text-primary hover:text-primary/90">Sign up</a>
+					{$t('auth.login.noAccount')}
+					<a href="/sign-up" class="text-primary hover:text-primary/90">{$t('auth.login.signUp')}</a
+					>
 				</p>
+				<div class="flex justify-center">
+					<LanguageSelector variant="ghost" />
+				</div>
 			</CardFooter>
 		</form>
 	</Card>

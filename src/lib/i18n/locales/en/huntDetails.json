@@ -1,0 +1,61 @@
+{
+	"hunt": {
+		"details": "Details",
+		"statistics": "Statistics",
+		"questions": "Questions",
+		"jobDetails": "Job Details",
+		"qualifications": "Qualifications",
+		"location": "Location",
+		"huntStatus": {
+			"active": "Active",
+			"pending": "Pending",
+			"awaitingPayment": "Ready to Activate",
+			"paused": "Paused",
+			"completed": "Completed",
+			"cancelled": "Cancelled"
+		},
+		"createdOn": "Created on",
+		"jobRequirements": "Job Requirements",
+		"jobTitle": "Job title",
+		"jobDescription": "Job description",
+		"professions": "Professions",
+		"specialization": "Specialization",
+		"workExperience": "Work Experience",
+		"years": "years",
+		"workTime": "Work Time",
+		"languages": "Languages",
+		"salary": "Salary",
+		"notSpecified": "Not specified",
+		"requiredQualifications": "Required Qualifications",
+		"additionalRequirements": "Additional Requirements",
+		"drivingLicense": "Driving License",
+		"personalCar": "Personal Car",
+		"accommodation": "Accommodation",
+		"transport": "Transport",
+		"required": "Required",
+		"notRequired": "Not required",
+		"title": "Hunt"
+	},
+	"payment": {
+		"startFee": "Start Fee",
+		"successFee": "Success Fee"
+	},
+	"statistics": {
+		"huntConversionFunnel": "Hunt Conversion Funnel",
+		"totalHuntables": "Total Huntables",
+		"contacted": "Contacted",
+		"interested": "Interested",
+		"readyForCompany": "Ready for Company",
+		"candidates": "Candidates",
+		"noInterestedCandidates": "We're on the Hunt for Great Talent!",
+		"noInterestedCandidatesDesc": "No interested candidates yet, but we're reaching out to professionals who fit your needs. Check back soon! We'll let you know as soon as we have updates.",
+		"interestedOn": "Interested on"
+	},
+	"questions": {
+		"contextQuestions": "Context Questions",
+		"contextQuestionsDesc": "Questions from candidates are collected here. Once answered, they become part of the context for AI-powered responses in future interactions."
+	},
+	"errors": {
+		"paymentIssue": "There is an issue with this Hunt pricing, please contact support."
+	}
+}

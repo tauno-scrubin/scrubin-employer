@@ -1,0 +1,61 @@
+{
+	"hunt": {
+		"details": "Tiedot",
+		"statistics": "Tilastot",
+		"questions": "Kysymykset",
+		"jobDetails": "Työn tiedot",
+		"qualifications": "Pätevyydet",
+		"location": "Sijainti",
+		"huntStatus": {
+			"active": "Aktiivinen",
+			"pending": "Odottaa",
+			"awaitingPayment": "Valmis aktivoitavaksi",
+			"paused": "Pysäytetty",
+			"completed": "Valmis",
+			"cancelled": "Peruutettu"
+		},
+		"createdOn": "Luotu",
+		"jobRequirements": "Työvaatimukset",
+		"jobTitle": "Työnimike",
+		"jobDescription": "Työnkuvaus",
+		"professions": "Ammatit",
+		"specialization": "Erikoistuminen",
+		"workExperience": "Työkokemus",
+		"years": "vuotta",
+		"workTime": "Työaika",
+		"languages": "Kielet",
+		"salary": "Palkka",
+		"notSpecified": "Ei määritelty",
+		"requiredQualifications": "Vaaditut pätevyydet",
+		"additionalRequirements": "Lisävaatimukset",
+		"drivingLicense": "Ajokortti",
+		"personalCar": "Oma auto",
+		"accommodation": "Majoitus",
+		"transport": "Kuljetus",
+		"required": "Vaaditaan",
+		"notRequired": "Ei vaadita",
+		"title": "Haku"
+	},
+	"payment": {
+		"startFee": "Aloitusmaksu",
+		"successFee": "Onnistumismaksu"
+	},
+	"statistics": {
+		"huntConversionFunnel": "Hakukonversiosuppilo",
+		"totalHuntables": "Kokonaismäärä",
+		"contacted": "Kontaktoitu",
+		"interested": "Kiinnostunut",
+		"readyForCompany": "Valmis yritykselle",
+		"candidates": "Ehdokkaat",
+		"noInterestedCandidates": "Etsimme parhaita osaajia!",
+		"noInterestedCandidatesDesc": "Ei kiinnostuneita ehdokkaita vielä, mutta otamme yhteyttä ammattilaisiin, jotka vastaavat tarpeitasi. Tarkista tilanne pian! Ilmoitamme sinulle heti, kun meillä on päivityksiä.",
+		"interestedOn": "Kiinnostunut"
+	},
+	"questions": {
+		"contextQuestions": "Kontekstikysymykset",
+		"contextQuestionsDesc": "Ehdokkaiden kysymykset kerätään tänne. Kun niihin on vastattu, ne muodostavat kontekstin tekoälypohjaisille vastauksille tulevissa keskusteluissa."
+	},
+	"errors": {
+		"paymentIssue": "Tämän haun hinnoittelussa on ongelma, ota yhteyttä tukeen."
+	}
+}

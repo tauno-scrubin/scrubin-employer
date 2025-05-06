@@ -27,7 +27,8 @@ export interface PortalUser {
   calendarLink: string;
   isDemoUser: boolean;
   passwordSet: boolean;
-  status?: "pending" | "active"
+  status?: "pending" | "active",
+  userLanguage: string;
 }
 
 export interface UpdatePortalUser {
@@ -688,6 +689,11 @@ class PortalResource extends BaseResource {
   async updateUser(data: UpdatePortalUser): Promise<UpdatePortalUser> {
     const url = new URL(this.path, this.client.baseUrl);
     return this.request<UpdatePortalUser>('PUT', url.toString(), data) as Promise<UpdatePortalUser>;
+  }
+
+  async updateUserLanguage(newLanguage: string): Promise<void> {
+    const url = new URL(`${this.path}/language`, this.client.baseUrl);
+    return this.request<void>('PUT', url.toString(), { language: newLanguage }) as Promise<void>;
   }
 
   async updatePassword(data: UpdatePortalUserPassword): Promise<UpdatePortalUserPassword> {

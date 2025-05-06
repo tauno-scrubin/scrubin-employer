@@ -1,28 +1,20 @@
 <script lang="ts">
-	import BookOpen from 'lucide-svelte/icons/book-open';
-	import Bot from 'lucide-svelte/icons/bot';
-	import ChartPie from 'lucide-svelte/icons/chart-pie';
-	import Frame from 'lucide-svelte/icons/frame';
-	import LifeBuoy from 'lucide-svelte/icons/life-buoy';
-	import Map from 'lucide-svelte/icons/map';
-	import Send from 'lucide-svelte/icons/send';
-	import Settings2 from 'lucide-svelte/icons/settings-2';
-	import SquareTerminal from 'lucide-svelte/icons/square-terminal';
+	import { page } from '$app/stores';
 	import NavMain from '$lib/components/nav-main.svelte';
-	import NavProjects from '$lib/components/nav-projects.svelte';
-	import NavSecondary from '$lib/components/nav-secondary.svelte';
 	import NavUser from '$lib/components/nav-user.svelte';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
-	import Command from 'lucide-svelte/icons/command';
-	import { onMount, type ComponentProps } from 'svelte';
-	import type { PortalUser } from '@/scrubinClient';
-	import { page } from '$app/stores';
-	import { currentUser, currentUserCompany } from '@/scrubinClient/client';
+	import { t } from '$lib/i18n';
 	import scrubin from '$lib/scrubin-new.json';
+	import type { PortalUser } from '@/scrubinClient';
+	import { currentUser } from '@/scrubinClient/client';
 	import Scrubinsvg from '@/scrubinsvg.svelte';
 	import { Calendar, HelpCircle } from 'lucide-svelte';
-	import Button from './ui/button/button.svelte';
+	import ChartPie from 'lucide-svelte/icons/chart-pie';
+	import Settings2 from 'lucide-svelte/icons/settings-2';
+	import SquareTerminal from 'lucide-svelte/icons/square-terminal';
+	import { onMount, type ComponentProps } from 'svelte';
 	import HelpDialog from './dashboard/helpDialog.svelte';
+	import Button from './ui/button/button.svelte';
 
 	let {
 		ref = $bindable(null),
@@ -32,13 +24,13 @@
 
 	const data = $derived({
 		user: {
-			name: $currentUser?.firstName,
-			email: $currentUser?.email,
-			avatar: '/avatars/shadcn.jpg'
+			name: $currentUser?.firstName || 'User',
+			email: $currentUser?.email || 'user@example.com',
+			avatar: null
 		},
 		navMain: [
 			{
-				title: 'Dashboard',
+				title: $t('nav.dashboard'),
 				url: '/dashboard',
 				isActive:
 					$page.url.pathname.includes('/dashboard/playground') ||
@@ -46,19 +38,18 @@
 				icon: SquareTerminal
 			},
 			{
-				title: 'Settings',
+				title: $t('nav.settings'),
 				url: '/dashboard/settings',
 				icon: Settings2,
 				isActive: $page.url.href.includes('/settings')
 			},
 			{
-				title: 'Pricing',
+				title: $t('nav.pricing'),
 				url: '/dashboard/pricing',
 				icon: ChartPie,
 				isActive: $page.url.href.includes('/pricing')
 			}
 		],
-		navSecondary: [],
 		projects: []
 	});
 
@@ -108,14 +99,13 @@
 	</Sidebar.Header>
 	<Sidebar.Content>
 		<NavMain items={data.navMain} />
-		<NavSecondary items={data.navSecondary} class="mt-auto" />
 		{#if $currentUser?.status == 'pending'}
 			<div
 				class="mx-2 mb-4 rounded-lg border border-yellow-200 bg-gradient-to-b from-yellow-100 via-yellow-100 to-yellow-50 px-4 py-3 shadow-inner shadow-yellow-50"
 			>
-				<h4 class="mb-1 text-sm font-medium text-yellow-800">Account Pending Activation</h4>
+				<h4 class="mb-1 text-sm font-medium text-yellow-800">{$t('account.pendingActivation')}</h4>
 				<p class="mb-2 text-xs text-yellow-600">
-					Schedule a quick call with our team to activate your account.
+					{$t('account.scheduleCall')}
 				</p>
 				<a
 					href="https://calendar.app.google/VN4kA74b4Xjn6tHN7"
@@ -124,12 +114,12 @@
 					class="inline-flex items-center gap-2 rounded-md bg-yellow-200 px-2 py-1 text-xs font-medium text-yellow-800 transition-colors hover:bg-yellow-300"
 				>
 					<Calendar class="h-3 w-3" />
-					Schedule Call
+					{$t('account.scheduleCallBtn')}
 				</a>
 			</div>
 		{/if}
 	</Sidebar.Content>
-	<Sidebar.Footer>
+	<Sidebar.Footer>		
 		<Button
 			variant="ghost"
 			size="sm"
@@ -139,7 +129,7 @@
 			}}
 		>
 			<HelpCircle />
-			Help
+			{$t('nav.help')}
 		</Button>
 		<NavUser user={data.user} />
 	</Sidebar.Footer>

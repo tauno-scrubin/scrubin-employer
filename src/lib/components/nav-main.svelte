@@ -1,10 +1,11 @@
 <script lang="ts">
-	import * as Collapsible from "$lib/components/ui/collapsible/index.js";
-	import * as Sidebar from "$lib/components/ui/sidebar/index.js";
-	import ChevronRight from "lucide-svelte/icons/chevron-right";
+	import * as Collapsible from '$lib/components/ui/collapsible/index.js';
+	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
+	import ChevronRight from 'lucide-svelte/icons/chevron-right';
+	import { t } from '$lib/i18n';
 
 	let {
-		items,
+		items
 	}: {
 		items: {
 			title: string;
@@ -22,7 +23,7 @@
 </script>
 
 <Sidebar.Group>
-	<Sidebar.GroupLabel>Employer Platform</Sidebar.GroupLabel>
+	<Sidebar.GroupLabel>{$t('nav.employerPlatform')}</Sidebar.GroupLabel>
 	<Sidebar.Menu>
 		{#each items as mainItem (mainItem.title)}
 			<Collapsible.Root open={mainItem.isActive}>
@@ -42,12 +43,9 @@
 						{#if mainItem.items?.length}
 							<Collapsible.Trigger>
 								{#snippet child({ props })}
-									<Sidebar.MenuAction
-										{...props}
-										class="data-[state=open]:rotate-90"
-									>
+									<Sidebar.MenuAction {...props} class="data-[state=open]:rotate-90">
 										<ChevronRight />
-										<span class="sr-only">Toggle</span>
+										<span class="sr-only">{$t('common.toggle')}</span>
 									</Sidebar.MenuAction>
 								{/snippet}
 							</Collapsible.Trigger>

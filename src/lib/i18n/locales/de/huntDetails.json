@@ -1,0 +1,61 @@
+{
+	"hunt": {
+		"details": "Details",
+		"statistics": "Statistiken",
+		"questions": "Fragen",
+		"jobDetails": "Jobdetails",
+		"qualifications": "Qualifikationen",
+		"location": "Standort",
+		"huntStatus": {
+			"active": "Aktiv",
+			"pending": "Ausstehend",
+			"awaitingPayment": "Bereit zur Aktivierung",
+			"paused": "Pausiert",
+			"completed": "Abgeschlossen",
+			"cancelled": "Abgebrochen"
+		},
+		"createdOn": "Erstellt am",
+		"jobRequirements": "Jobanforderungen",
+		"jobTitle": "Jobtitel",
+		"jobDescription": "Jobbeschreibung",
+		"professions": "Berufe",
+		"specialization": "Spezialisierung",
+		"workExperience": "Berufserfahrung",
+		"years": "Jahre",
+		"workTime": "Arbeitszeit",
+		"languages": "Sprachen",
+		"salary": "Gehalt",
+		"notSpecified": "Nicht angegeben",
+		"requiredQualifications": "Erforderliche Qualifikationen",
+		"additionalRequirements": "Zusätzliche Anforderungen",
+		"drivingLicense": "Führerschein",
+		"personalCar": "Eigenes Auto",
+		"accommodation": "Unterkunft",
+		"transport": "Transport",
+		"required": "Erforderlich",
+		"notRequired": "Nicht erforderlich",
+		"title": "Suche"
+	},
+	"payment": {
+		"startFee": "Startgebühr",
+		"successFee": "Erfolgsgebühr"
+	},
+	"statistics": {
+		"huntConversionFunnel": "Such-Konversionstrichter",
+		"totalHuntables": "Gesamtzahl der Suchbaren",
+		"contacted": "Kontaktiert",
+		"interested": "Interessiert",
+		"readyForCompany": "Bereit für Unternehmen",
+		"candidates": "Kandidaten",
+		"noInterestedCandidates": "Wir sind auf der Suche nach großartigen Talenten!",
+		"noInterestedCandidatesDesc": "Noch keine interessierten Kandidaten, aber wir kontaktieren Fachleute, die Ihren Anforderungen entsprechen. Schauen Sie bald wieder vorbei! Wir informieren Sie, sobald wir Updates haben.",
+		"interestedOn": "Interessiert am"
+	},
+	"questions": {
+		"contextQuestions": "Kontextfragen",
+		"contextQuestionsDesc": "Fragen von Kandidaten werden hier gesammelt. Sobald sie beantwortet sind, werden sie Teil des Kontexts für KI-gestützte Antworten in zukünftigen Interaktionen."
+	},
+	"errors": {
+		"paymentIssue": "Es gibt ein Problem mit der Preisgestaltung dieser Suche, bitte kontaktieren Sie den Support."
+	}
+}

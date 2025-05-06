@@ -1,14 +1,12 @@
 <script lang="ts">
-	import { scrubinClient } from '@/scrubinClient/client';
+	import { goto } from '$app/navigation';
+	import { ScrollArea } from '$lib/components/ui/scroll-area/index.js';
+	import { t } from '$lib/i18n';
 	import type { WorkerLookup } from '@/scrubinClient';
-	import * as Card from '$lib/components/ui/card/index.js';
-	import { Loader2, ArrowRight, Clock, Search, History } from 'lucide-svelte';
+	import { scrubinClient } from '@/scrubinClient/client';
+	import { ArrowRight, Clock, Loader2, Search } from 'lucide-svelte';
 	import { onMount } from 'svelte';
 	import Button from '../ui/button/button.svelte';
-	import { goto } from '$app/navigation';
-	import { ScrollArea } from "$lib/components/ui/scroll-area/index.js";
-
-
 
 	let isLoading = $state(false);
 	let searchHistory: WorkerLookup[] = $state([]);
@@ -32,7 +30,7 @@
 	}
 
 	function handleRerunSearch(searchText: string) {
-		goto("/dashboard/search?search=" + searchText);
+		goto('/dashboard/search?search=' + searchText);
 	}
 
 	function formatDate(dateString: string) {
@@ -54,58 +52,61 @@
 		loadSearchHistory();
 	});
 </script>
-<h2 class="text-2xl font-medium text-gray-800 mb-4">Recent Searches</h2>
 
-		{#if isLoading}
-			<div class="flex justify-center items-center h-40">
-				<Loader2 class="h-5 w-5 animate-spin text-primary/70" />
-			</div>
-		{:else if searchHistory.length === 0}
-			<div class="flex flex-col items-center justify-center py-12 text-center">
-				<div class="bg-blue-50/50 p-3 rounded-full mb-3">
-					<Search class="h-5 w-5 text-primary/60" />
-				</div>
-				<p class="text-sm font-medium text-gray-600">No recent searches</p>
-				<p class="text-xs text-gray-400 mt-1 max-w-[200px]">Your search history will appear here</p>
-			</div>
-		{:else}
-		<ScrollArea class="h-[600px]">
-			<div class="divide-y">
-				{#each searchHistory.slice(0, displayLimit) as lookup}
-					<div class="hover:bg-blue-50/30 transition-colors duration-200">
-						<button 
-							class="w-full text-left px-4 pl-0 py-3 focus:outline-none focus:bg-blue-50/50"
-							onclick={() => handleRerunSearch(lookup.userInput)}
-						>
-							<div class="flex flex-col">
-								<p class="font-medium text-sm text-gray-800 line-clamp-2">{lookup.userInput}</p>
-								<div class="flex items-center gap-2 mt-1.5">
-									<span class="text-xs text-gray-400 flex items-center">
-										<Clock class="w-3 h-3 mr-1 inline" />
-										{formatDate(lookup.createdAt)} at {formatTime(lookup.createdAt)}
-									</span>
-									<span class="text-xs text-primary font-medium flex items-center ml-auto">
-										Run again
-										<ArrowRight class="w-3 h-3 ml-1" />
-									</span>
-								</div>
+<h2 class="mb-4 text-2xl font-medium text-gray-800">{$t('dashboard.searchHistory.title')}</h2>
+
+{#if isLoading}
+	<div class="flex h-40 items-center justify-center">
+		<Loader2 class="h-5 w-5 animate-spin text-primary/70" />
+	</div>
+{:else if searchHistory.length === 0}
+	<div class="flex flex-col items-center justify-center py-12 text-center">
+		<div class="mb-3 rounded-full bg-blue-50/50 p-3">
+			<Search class="h-5 w-5 text-primary/60" />
+		</div>
+		<p class="text-sm font-medium text-gray-600">{$t('dashboard.searchHistory.noHistory')}</p>
+		<p class="mt-1 max-w-[200px] text-xs text-gray-400">
+			{$t('dashboard.searchHistory.noHistoryDesc')}
+		</p>
+	</div>
+{:else}
+	<ScrollArea class="h-[600px]">
+		<div class="divide-y">
+			{#each searchHistory.slice(0, displayLimit) as lookup}
+				<div class="transition-colors duration-200 hover:bg-blue-50/30">
+					<button
+						class="w-full px-4 py-3 pl-0 text-left focus:bg-blue-50/50 focus:outline-none"
+						onclick={() => handleRerunSearch(lookup.userInput)}
+					>
+						<div class="flex flex-col">
+							<p class="line-clamp-2 text-sm font-medium text-gray-800">{lookup.userInput}</p>
+							<div class="mt-1.5 flex items-center gap-2">
+								<span class="flex items-center text-xs text-gray-400">
+									<Clock class="mr-1 inline h-3 w-3" />
+									{formatDate(lookup.createdAt)} at {formatTime(lookup.createdAt)}
+								</span>
+								<span class="ml-auto flex items-center text-xs font-medium text-primary">
+									{$t('dashboard.searchHistory.runAgain')}
+									<ArrowRight class="ml-1 h-3 w-3" />
+								</span>
 							</div>
-						</button>
-					</div>
-				{/each}
-				
-				{#if hasMoreItems}
-					<div class="pt-3 pb-2">
-						<Button 
-							variant="ghost" 
-							class="w-full text-primary text-sm font-medium"
-							onclick={showMoreItems}
-						>
-							Show more ({searchHistory.length - displayLimit} remaining)
-						</Button>
-					</div>
-				{/if}
-			</div>
-		</ScrollArea>
-		{/if}
+						</div>
+					</button>
+				</div>
+			{/each}
 
+			{#if hasMoreItems}
+				<div class="pb-2 pt-3">
+					<Button
+						variant="ghost"
+						class="w-full text-sm font-medium text-primary"
+						onclick={showMoreItems}
+					>
+						{$t('dashboard.searchHistory.showMore')} ({searchHistory.length - displayLimit}
+						{$t('dashboard.searchHistory.remaining')})
+					</Button>
+				</div>
+			{/if}
+		</div>
+	</ScrollArea>
+{/if}
