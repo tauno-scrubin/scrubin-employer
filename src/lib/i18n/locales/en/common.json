@@ -1,0 +1,36 @@
+{
+	"app": {
+		"title": "Scrubin Employer",
+		"language": "Language"
+	},
+	"nav": {
+		"dashboard": "Dashboard",
+		"hunts": "Hunts",
+		"pricing": "Pricing",
+		"settings": "Settings",
+		"logout": "Logout"
+	},
+	"languages": {
+		"en": "Englishhhhhh",
+		"es": "Spanish"
+	},
+	"buttons": {
+		"submit": "Submit",
+		"cancel": "Cancel",
+		"save": "Save",
+		"delete": "Delete"
+	},
+	"search": {
+		"placeholder": "Search...",
+		"noResults": "No results found"
+	},
+	"common": {
+		"loading": "Loading...",
+		"error": "An error occurred",
+		"success": "Success!",
+		"created": "Created on",
+		"view": "View",
+		"edit": "Edit",
+		"delete": "Delete"
+	}
+}

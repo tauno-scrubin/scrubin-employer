@@ -1,21 +1,18 @@
 <script lang="ts">
-	import BadgeCheck from "lucide-svelte/icons/badge-check";
-	import Bell from "lucide-svelte/icons/bell";
-	import ChevronsUpDown from "lucide-svelte/icons/chevrons-up-down";
-	import CreditCard from "lucide-svelte/icons/credit-card";
-	import LogOut from "lucide-svelte/icons/log-out";
-	import Sparkles from "lucide-svelte/icons/sparkles";
+	import ChevronsUpDown from 'lucide-svelte/icons/chevrons-up-down';
+	import Globe from 'lucide-svelte/icons/globe';
+	import LogOut from 'lucide-svelte/icons/log-out';
 
-	import * as Avatar from "$lib/components/ui/avatar/index.js";
-	import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
-	import * as Sidebar from "$lib/components/ui/sidebar/index.js";
-	import { useSidebar } from "$lib/components/ui/sidebar/index.js";
-	import { goto } from "$app/navigation";
-	import HelpDialog from "./dashboard/helpDialog.svelte";
-	import { HelpCircle } from "lucide-svelte";
+	import { goto } from '$app/navigation';
+	import * as Avatar from '$lib/components/ui/avatar/index.js';
+	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
+	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
+	import { useSidebar } from '$lib/components/ui/sidebar/index.js';
+	import { locale, t } from '$lib/i18n';
+	import { availableLanguages } from '$lib/i18n/config';
 
 	let {
-		user,
+		user
 	}: {
 		user: {
 			name: string;
@@ -25,8 +22,13 @@
 	} = $props();
 
 	const sidebar = useSidebar();
-</script>
 
+	// Function to update language - now just updates localStorage
+	function setLanguage(lang: string) {
+		$locale = lang;
+		// The locale store internally saves the selection to localStorage
+	}
+</script>
 
 <Sidebar.Menu>
 	<Sidebar.MenuItem>
@@ -52,7 +54,7 @@
 			</DropdownMenu.Trigger>
 			<DropdownMenu.Content
 				class="w-[--bits-dropdown-menu-anchor-width] min-w-56 rounded-lg"
-				side={sidebar.isMobile ? "bottom" : "right"}
+				side={sidebar.isMobile ? 'bottom' : 'right'}
 				align="end"
 				sideOffset={4}
 			>
@@ -69,7 +71,31 @@
 					</div>
 				</DropdownMenu.Label>
 				<DropdownMenu.Separator />
-				<DropdownMenu.Item onclick={() => { goto('/logout') }}>
+
+				<!-- Language selection -->
+				<!-- <DropdownMenu.Sub>
+					<DropdownMenu.SubTrigger>
+						<Globe class="mr-2 h-4 w-4" />
+						{$t('app.language')}
+					</DropdownMenu.SubTrigger>
+					<DropdownMenu.SubContent>
+						{#each availableLanguages as loc}
+							<DropdownMenu.Item
+								onclick={() => setLanguage(loc)}
+								class={$locale === loc ? 'bg-accent' : ''}
+							>
+								{$t(`languages.${loc}`)}
+							</DropdownMenu.Item>
+						{/each}
+					</DropdownMenu.SubContent>
+				</DropdownMenu.Sub> -->
+
+				<DropdownMenu.Separator />
+				<DropdownMenu.Item
+					onclick={() => {
+						goto('/logout');
+					}}
+				>
 					<LogOut />
 					Log out
 				</DropdownMenu.Item>

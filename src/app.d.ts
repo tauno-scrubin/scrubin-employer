@@ -7,6 +7,7 @@ declare global {
 			scrubinClient: ScrubinClient;
 			user: PortalUser | undefined;
 			company: Company | undefined;
+			locale?: string;
 		}
 	}
 }

@@ -1,0 +1,36 @@
+{
+	"app": {
+		"title": "Scrubin Empleador",
+		"language": "Idioma"
+	},
+	"nav": {
+		"dashboard": "Panel",
+		"hunts": "Búsquedas",
+		"pricing": "Precios",
+		"settings": "Configuración",
+		"logout": "Cerrar sesión"
+	},
+	"languages": {
+		"en": "Inglés",
+		"es": "Español"
+	},
+	"buttons": {
+		"submit": "Enviar",
+		"cancel": "Cancelar",
+		"save": "Guardar",
+		"delete": "Eliminar"
+	},
+	"search": {
+		"placeholder": "Buscar...",
+		"noResults": "No se encontraron resultados"
+	},
+	"common": {
+		"loading": "Cargando...",
+		"error": "Ha ocurrido un error",
+		"success": "¡Éxito!",
+		"created": "Creado el",
+		"view": "Ver",
+		"edit": "Editar",
+		"delete": "Eliminar"
+	}
+}

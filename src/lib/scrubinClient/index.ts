@@ -69,6 +69,7 @@ export interface Company {
   countryIso: string;
   registrationCode: string;
   vatNumber: string;
+  languageIso: string;
   address: {
     stateProvinceRegion: string;
     city: string;
