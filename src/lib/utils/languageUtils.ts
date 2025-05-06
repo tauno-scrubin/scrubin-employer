@@ -29,7 +29,7 @@ export async function changeLanguage(lang: string): Promise<void> {
 
 	// If user is logged in, update their language preference in the database
 	const currentUserStore = get(currentUser);
-	if (currentUserStore?.userLanguage !== lang) {
+	if (currentUserStore && currentUserStore.userLanguage !== lang) {
 		try {
 			await scrubinClient.portal.updateUserLanguage(lang);
 			if (currentUserStore) {
