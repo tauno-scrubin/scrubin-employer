@@ -3,7 +3,7 @@
 	import NavMain from '$lib/components/nav-main.svelte';
 	import NavUser from '$lib/components/nav-user.svelte';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
-	import { t } from '$lib/i18n';
+	import { t, locale } from '$lib/i18n';
 	import scrubin from '$lib/scrubin-new.json';
 	import type { PortalUser } from '@/scrubinClient';
 	import { currentUser } from '@/scrubinClient/client';
@@ -15,6 +15,10 @@
 	import { onMount, type ComponentProps } from 'svelte';
 	import HelpDialog from './dashboard/helpDialog.svelte';
 	import Button from './ui/button/button.svelte';
+	import { availableLanguages } from '$lib/i18n/config';
+	import { changeLanguage } from '$lib/utils/languageUtils';
+	import Globe from 'lucide-svelte/icons/globe';
+	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 
 	let {
 		ref = $bindable(null),
@@ -26,7 +30,7 @@
 		user: {
 			name: $currentUser?.firstName || 'User',
 			email: $currentUser?.email || 'user@example.com',
-			avatar: null
+			avatar: ''
 		},
 		navMain: [
 			{
@@ -75,6 +79,7 @@
 	});
 
 	let openHelpDialog = $state(false);
+	let languageDropdownOpen = $state(false);
 </script>
 
 <HelpDialog bind:open={openHelpDialog} />
@@ -119,16 +124,39 @@
 			</div>
 		{/if}
 	</Sidebar.Content>
-	<Sidebar.Footer>		
+	<Sidebar.Footer>
+		<DropdownMenu.Root bind:open={languageDropdownOpen}>
+			<DropdownMenu.Trigger class="w-full">
+				<Button variant="ghost" size="sm" class="w-full justify-start text-start">
+					<Globe class="mr-2 h-4 w-4" />
+					{$t(`languages.${$locale}`)}
+				</Button>
+			</DropdownMenu.Trigger>
+			<DropdownMenu.Content side="top" align="start" class="w-[--bits-dropdown-menu-anchor-width]">
+				{#each availableLanguages as lang}
+					<button
+						onclick={() => changeLanguage(lang)}
+						role="menuitem"
+						tabindex="0"
+						class="w-full text-left"
+					>
+						<DropdownMenu.Item class={$locale === lang ? 'bg-accent' : ''}>
+							{$t(`languages.${lang}`)}
+						</DropdownMenu.Item>
+					</button>
+				{/each}
+			</DropdownMenu.Content>
+		</DropdownMenu.Root>
+
 		<Button
 			variant="ghost"
 			size="sm"
-			class="justify-start text-start"
+			class="w-full justify-start text-start"
 			onclick={() => {
 				openHelpDialog = true;
 			}}
 		>
-			<HelpCircle />
+			<HelpCircle class="mr-2 h-4 w-4" />
 			{$t('nav.help')}
 		</Button>
 		<NavUser user={data.user} />

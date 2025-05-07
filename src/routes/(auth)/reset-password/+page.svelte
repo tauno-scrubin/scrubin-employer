@@ -13,11 +13,20 @@
 	import { Label } from '$lib/components/ui/label';
 	import LanguageSelector from '$lib/components/ui/language-selector.svelte';
 	import { t } from '$lib/i18n';
+	import ScrubinLogo from '@/components/scrubinLogo.svelte';
 
 	export let form;
 </script>
 
-<div class="container flex min-h-[600px] items-center justify-center py-8 sm:min-h-screen">
+<div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
+	<div class="mb-8 text-center sm:mx-auto sm:w-full sm:max-w-sm">
+		<!-- Scrubin Logo -->
+		<div class="mb-4 flex flex-col items-center">
+			<ScrubinLogo class="mb-1 h-8" />
+			<span class="text-xs font-medium">{$t('auth.employer')}</span>
+		</div>
+	</div>
+
 	<Card class="w-full max-w-md">
 		<CardHeader>
 			<CardTitle>{$t('auth.resetPassword.title')}</CardTitle>

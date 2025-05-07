@@ -69,33 +69,12 @@
 					</div>
 				</DropdownMenu.Label>
 				<DropdownMenu.Separator />
-
-				<!-- Language selection -->
-				<DropdownMenu.Sub>
-					<DropdownMenu.SubTrigger>
-						<Globe class="mr-2 h-4 w-4" />
-						<span>{$t(`languages.${$locale}`)}</span>
-					</DropdownMenu.SubTrigger>
-					<DropdownMenu.SubContent>
-						{#each availableLanguages as loc}
-							<!-- svelte-ignore a11y-click-events-have-key-events -->
-							<div on:click={() => changeLanguage(loc)} role="menuitem" tabindex="0">
-								<DropdownMenu.Item class={$locale === loc ? 'bg-accent' : ''}>
-									{$t(`languages.${loc}`)}
-								</DropdownMenu.Item>
-							</div>
-						{/each}
-					</DropdownMenu.SubContent>
-				</DropdownMenu.Sub>
-
-				<DropdownMenu.Separator />
-				<!-- svelte-ignore a11y-click-events-have-key-events -->
-				<div on:click={handleLogout} role="menuitem" tabindex="0">
+				<button onclick={handleLogout} role="menuitem" tabindex="0" class="w-full">
 					<DropdownMenu.Item>
 						<LogOut />
 						{$t('nav.logout')}
 					</DropdownMenu.Item>
-				</div>
+				</button>
 			</DropdownMenu.Content>
 		</DropdownMenu.Root>
 	</Sidebar.MenuItem>
