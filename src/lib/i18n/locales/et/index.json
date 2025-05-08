@@ -392,6 +392,18 @@
 			"transport": "Transport",
 			"searchScope": "Otsingu ulatus",
 			"globalSearch": "Globaalne otsing eelistusega loetletud riikidele"
+		},
+		"analyzingOverlay": {
+			"analyzing": "Analüüsin sinu sisu...",
+			"processing": "Töötlen sinu päringut...",
+			"generating": "Genereerin arusaamu...",
+			"thinking": "Mõtlen loovalt...",
+			"exploring": "Uurin võimalusi...",
+			"connecting": "Ühendame punkte...",
+			"crafting": "Kujundan vastust...",
+			"considering": "Arvestan konteksti...",
+			"refining": "Täiendan ideid...",
+			"almostThere": "Peaaegu valmis..."
 		}
 	},
 	"settings": {

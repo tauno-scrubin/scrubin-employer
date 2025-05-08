@@ -9,7 +9,7 @@
 		"huntStatus": {
 			"active": "Activo",
 			"pending": "Pendiente",
-			"awaitingPayment": "Listo para Activar",
+			"awaiting_payment": "Listo para Activar",
 			"paused": "Pausado",
 			"completed": "Completado",
 			"cancelled": "Cancelado"

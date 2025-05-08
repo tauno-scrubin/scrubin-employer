@@ -9,7 +9,7 @@
 		"huntStatus": {
 			"active": "Aktiivne",
 			"pending": "Ootel",
-			"awaitingPayment": "Valmis Aktiveerimiseks",
+			"awaiting_payment": "Valmis Aktiveerimiseks",
 			"paused": "Peatatud",
 			"completed": "Lõpetatud",
 			"cancelled": "Tühistatud"

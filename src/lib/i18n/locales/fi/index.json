@@ -394,6 +394,18 @@
 			"transport": "Kuljetus",
 			"searchScope": "Hakualue",
 			"globalSearch": "Maailmanlaajuinen haku, painottaen listattuja maita"
+		},
+		"analyzingOverlay": {
+			"analyzing": "Analysoin sisältöäsi...",
+			"processing": "Käsittelen pyyntöäsi...",
+			"generating": "Luon oivalluksia...",
+			"thinking": "Ajattelen luovasti...",
+			"exploring": "Tutkin mahdollisuuksia...",
+			"connecting": "Yhdistän pisteitä...",
+			"crafting": "Muotoilen vastausta...",
+			"considering": "Huomioin kontekstin...",
+			"refining": "Hion ideoita...",
+			"almostThere": "Melkein valmis..."
 		}
 	},
 	"settings": {

@@ -9,7 +9,7 @@
 		"huntStatus": {
 			"active": "Aktiivinen",
 			"pending": "Odottaa",
-			"awaitingPayment": "Valmis aktivoitavaksi",
+			"awaiting_payment": "Valmis aktivoitavaksi",
 			"paused": "Pysäytetty",
 			"completed": "Valmis",
 			"cancelled": "Peruutettu"

@@ -320,14 +320,14 @@
 				<ChevronLeft class="h-4 w-4" />
 			</Button>
 
-			{$t('chatWindow.followUpQuestions')}
+			{$t('dashboard.chatWindow.followUpQuestions')}
 		</h2>
 
 		{#if isAnalyzing}
 			<div class="flex items-center justify-center rounded-lg bg-blue-50/70 p-4">
 				<div class="flex flex-col items-center gap-2">
 					<Loader2 class="h-6 w-6 animate-spin text-primary" />
-					<p class="text-sm font-medium text-primary/80">{$t('chatWindow.analyzing')}</p>
+					<p class="text-sm font-medium text-primary/80">{$t('dashboard.chatWindow.analyzing')}</p>
 				</div>
 			</div>
 		{:else if requirements?.canBeActivated}
@@ -335,12 +335,16 @@
 				<div class="flex flex-col gap-3">
 					<p class="inline-flex items-center gap-2 text-sm font-medium text-primary/90">
 						<Sparkle fill="currentColor" strokeWidth="1" class="h-4 w-4 rotate-45 text-blue-500" />
-						{isComplete ? $t('chatWindow.readyToActivate') : $t('chatWindow.completeQuestions')}
+						{isComplete
+							? $t('dashboard.chatWindow.readyToActivate')
+							: $t('dashboard.chatWindow.completeQuestions')}
 					</p>
 
 					{#if requirements.allowedPlanOptions && requirements.allowedPlanOptions.length > 0}
 						<div class="mt-2">
-							<h3 class="mb-2 text-sm font-medium">{$t('chatWindow.selectSearchType')}</h3>
+							<h3 class="mb-2 text-sm font-medium">
+								{$t('dashboard.chatWindow.selectSearchType')}
+							</h3>
 							<div class="w-full">
 								<div class="w-full space-y-2">
 									{#each requirements.allowedPlanOptions as planType}
@@ -360,7 +364,7 @@
 									class="mt-2 flex items-center gap-2 rounded bg-amber-50 p-2 text-xs text-amber-600"
 								>
 									<AlertCircle class="h-4 w-4" />
-									<p>{$t('chatWindow.activationNeeded')}</p>
+									<p>{$t('dashboard.chatWindow.activationNeeded')}</p>
 								</div>
 							{/if}
 						</div>
@@ -375,9 +379,9 @@
 					>
 						{#if isActivating}
 							<Loader2 class="mr-2 h-3 w-3 animate-spin" />
-							{$t('chatWindow.confirming')}
+							{$t('dashboard.chatWindow.confirming')}
 						{:else}
-							{$t('chatWindow.confirm')}
+							{$t('dashboard.chatWindow.confirm')}
 						{/if}
 					</Button>
 				</div>
@@ -428,12 +432,11 @@
 									<Input
 										type="text"
 										placeholder="Type your answer here..."
-										value={answers[question.title] || ''}
-										class="transition-all duration-200 focus:ring-primary/30"
-										oninput={(e) => {
-											const value = e.currentTarget.value;
-											handleAnswerInput(i, value);
+										value={answers[question.title]}
+										onchange={(e) => {
+											handleAnswerInput(i, e.currentTarget.value);
 										}}
+										class="transition-all duration-200 focus:ring-primary/30"
 									/>
 								</div>
 							</div>
@@ -445,12 +448,14 @@
 				<div class="mt-6 overflow-hidden rounded-lg border shadow-sm transition-all duration-200">
 					<div class="bg-white p-3">
 						<p class="mb-3 text-sm font-medium text-gray-700">
-							{$t('chatWindow.additionalInstructions')}
+							{$t('dashboard.chatWindow.additionalInstructions')}
 						</p>
-						<p class="mb-3 text-sm text-gray-500">{$t('chatWindow.addCustomRequirements')}</p>
+						<p class="mb-3 text-sm text-gray-500">
+							{$t('dashboard.chatWindow.addCustomRequirements')}
+						</p>
 						<div class="flex flex-col gap-3">
 							<textarea
-								placeholder={$t('chatWindow.additionalInstructionsPlaceholder')}
+								placeholder={$t('dashboard.chatWindow.additionalInstructionsPlaceholder')}
 								value={customInstructions}
 								class="min-h-[100px] w-full rounded-md border p-3 text-sm transition-all duration-200 focus:border-primary/50 focus:ring-primary/30"
 								onchange={(e) => {
@@ -473,10 +478,10 @@
 					>
 						{#if isSubmitting}
 							<Loader2 class="h-4 w-4 animate-spin" />
-							{$t('chatWindow.submitting')}
+							{$t('dashboard.chatWindow.submitting')}
 						{:else}
 							<Check class="h-4 w-4" />
-							{$t('chatWindow.submit')}
+							{$t('dashboard.chatWindow.submit')}
 						{/if}
 					</Button>
 				</div>
@@ -485,14 +490,19 @@
 			<div class="mt-6 overflow-hidden rounded-lg border shadow-sm transition-all duration-200">
 				<div class="bg-white p-3">
 					<p class="mb-3 text-sm font-medium text-gray-700">
-						{$t('chatWindow.additionalInstructions')}
+						{$t('dashboard.chatWindow.additionalInstructions')}
 					</p>
-					<p class="mb-3 text-sm text-gray-500">{$t('chatWindow.addCustomRequirements')}</p>
+					<p class="mb-3 text-sm text-gray-500">
+						{$t('dashboard.chatWindow.addCustomRequirements')}
+					</p>
 					<div class="flex flex-col gap-3">
 						<textarea
-							placeholder={$t('chatWindow.additionalInstructionsPlaceholder')}
-							bind:value={customInstructions}
+							placeholder={$t('dashboard.chatWindow.additionalInstructionsPlaceholder')}
+							value={customInstructions}
 							class="min-h-[100px] w-full rounded-md border p-3 text-sm transition-all duration-200 focus:border-primary/50 focus:ring-primary/30"
+							onchange={(e) => {
+								customInstructions = e.currentTarget.value;
+							}}
 						></textarea>
 					</div>
 				</div>
@@ -509,10 +519,10 @@
 				>
 					{#if isSubmitting}
 						<Loader2 class="h-4 w-4 animate-spin" />
-						{$t('chatWindow.submitting')}
+						{$t('dashboard.chatWindow.submitting')}
 					{:else}
 						<Check class="h-4 w-4" />
-						{$t('chatWindow.submit')}
+						{$t('dashboard.chatWindow.submit')}
 					{/if}
 				</Button>
 			</div>
@@ -522,27 +532,27 @@
 	<!-- Right side: Job Requirements -->
 	<div class="rounded-md bg-white p-4 md:w-2/3">
 		<Sparkle fill="currentColor" strokeWidth="1" class="mb-4 h-8 w-8 rotate-45 text-blue-500" />
-		<h2 class="mb-4 text-xl font-medium">{$t('chatWindow.jobRequirements')}</h2>
+		<h2 class="mb-4 text-xl font-medium">{$t('dashboard.chatWindow.jobRequirements')}</h2>
 
 		{#if requirements.requirements}
 			<div class="space-y-3">
 				<div class="grid grid-cols-1 gap-4 border-b pb-3 text-sm">
 					<div class="grid w-full grid-cols-[150px_1fr] items-start">
-						<h4 class="font-semibold">{$t('chatWindow.jobTitle')}</h4>
+						<h4 class="font-semibold">{$t('dashboard.chatWindow.jobTitle')}</h4>
 						<p class={requirements.requirements.jobTitle ? 'text-gray-900' : 'text-gray-500'}>
-							{requirements.requirements.jobTitle || $t('chatWindow.notSpecified')}
+							{requirements.requirements.jobTitle || $t('dashboard.chatWindow.notSpecified')}
 						</p>
 					</div>
 
 					<div class="grid w-full grid-cols-[150px_1fr] items-start">
-						<h4 class="font-semibold">{$t('chatWindow.jobDescription')}</h4>
+						<h4 class="font-semibold">{$t('dashboard.chatWindow.jobDescription')}</h4>
 						<p class={requirements.requirements.jobDescription ? 'text-gray-900' : 'text-gray-500'}>
-							{requirements.requirements.jobDescription || $t('chatWindow.notSpecified')}
+							{requirements.requirements.jobDescription || $t('dashboard.chatWindow.notSpecified')}
 						</p>
 					</div>
 
 					<div class="grid w-full grid-cols-[150px_1fr] items-start">
-						<h4 class="font-semibold">{$t('chatWindow.professions')}</h4>
+						<h4 class="font-semibold">{$t('dashboard.chatWindow.professions')}</h4>
 						<div class="flex flex-row flex-wrap gap-2">
 							{#each requirements.requirements.professions || [] as profession}
 								<span class="rounded bg-gray-100 px-2 py-0.5 text-xs text-gray-700"
@@ -555,26 +565,26 @@
 
 				<div class="grid grid-cols-1 gap-4 text-sm">
 					<div class="grid w-full grid-cols-[150px_1fr] items-start">
-						<h4 class="font-semibold">{$t('chatWindow.specialization')}</h4>
+						<h4 class="font-semibold">{$t('dashboard.chatWindow.specialization')}</h4>
 						<p class={requirements.requirements.specialization ? 'text-gray-900' : 'text-gray-500'}>
-							{requirements.requirements.specialization || $t('chatWindow.notSpecified')}
+							{requirements.requirements.specialization || $t('dashboard.chatWindow.notSpecified')}
 						</p>
 					</div>
 
 					<div class="grid w-full grid-cols-[150px_1fr] items-start">
-						<h4 class="font-semibold">{$t('chatWindow.workExperience')}</h4>
+						<h4 class="font-semibold">{$t('dashboard.chatWindow.workExperience')}</h4>
 						<p
 							class={requirements.requirements.jobRequiredWorkExperience
 								? 'text-gray-900'
 								: 'text-gray-500'}
 						>
 							{requirements.requirements.jobRequiredWorkExperience || 0}
-							{$t('chatWindow.years')}
+							{$t('dashboard.chatWindow.years')}
 						</p>
 					</div>
 
 					<div class="grid w-full grid-cols-[150px_1fr] items-start">
-						<h4 class="font-semibold">{$t('chatWindow.location')}</h4>
+						<h4 class="font-semibold">{$t('dashboard.chatWindow.location')}</h4>
 						<p
 							class={requirements.requirements.address?.city ||
 							requirements.requirements.address?.stateProvinceRegion
@@ -592,14 +602,15 @@
 					</div>
 
 					<div class="grid w-full grid-cols-[150px_1fr] items-start">
-						<h4 class="font-semibold">{$t('chatWindow.workTime')}</h4>
+						<h4 class="font-semibold">{$t('dashboard.chatWindow.workTime')}</h4>
 						<p class={requirements.requirements.workTimeType ? 'text-gray-900' : 'text-gray-500'}>
-							{requirements.requirements.workTimeType?.join(', ') || $t('chatWindow.notSpecified')}
+							{requirements.requirements.workTimeType?.join(', ') ||
+								$t('dashboard.chatWindow.notSpecified')}
 						</p>
 					</div>
 
 					<div class="grid w-full grid-cols-[150px_1fr] items-start">
-						<h4 class="font-semibold text-gray-900">{$t('chatWindow.languages')}</h4>
+						<h4 class="font-semibold text-gray-900">{$t('dashboard.chatWindow.languages')}</h4>
 						<div class="flex flex-wrap gap-1">
 							{#each requirements.requirements.jobRequiredLanguages || [] as language}
 								<span class="rounded bg-gray-100 px-2 py-0.5 text-xs text-gray-700">{language}</span
@@ -609,7 +620,7 @@
 					</div>
 
 					<div class="grid w-full grid-cols-[150px_1fr] items-start">
-						<h4 class="font-semibold">{$t('chatWindow.salary')}</h4>
+						<h4 class="font-semibold">{$t('dashboard.chatWindow.salary')}</h4>
 						<p
 							class={requirements.requirements.salary?.amountStart ||
 							requirements.requirements.salary?.amountEnd
@@ -622,55 +633,61 @@
 								{requirements.requirements.salary.currency || ''} ({requirements.requirements.salary
 									.type || ''})
 							{:else}
-								{requirements.requirements.salary?.amountText || $t('chatWindow.notSpecified')}
+								{requirements.requirements.salary?.amountText ||
+									$t('dashboard.chatWindow.notSpecified')}
 							{/if}
 						</p>
 					</div>
 				</div>
 
 				<div class="mt-4 border-t pt-3">
-					<h4 class="mb-4 text-xl font-medium">{$t('chatWindow.requiredQualifications')}</h4>
+					<h4 class="mb-4 text-xl font-medium">
+						{$t('dashboard.chatWindow.requiredQualifications')}
+					</h4>
 					<p
 						class="{requirements.requirements.jobRequiredQualifications
 							? 'text-gray-900'
 							: 'text-gray-500'} text-sm"
 					>
-						{requirements.requirements.jobRequiredQualifications || $t('chatWindow.notSpecified')}
+						{requirements.requirements.jobRequiredQualifications ||
+							$t('dashboard.chatWindow.notSpecified')}
 					</p>
 				</div>
 
 				<div class="border-t pt-3">
-					<h4 class="mb-4 text-xl font-medium">{$t('chatWindow.additionalRequirements')}</h4>
+					<h4 class="mb-4 text-xl font-medium">
+						{$t('dashboard.chatWindow.additionalRequirements')}
+					</h4>
 					<div class="mt-1 grid grid-cols-1 gap-2 text-sm">
 						<div class="grid w-full grid-cols-[150px_1fr] items-start">
-							<h4 class="font-semibold">{$t('chatWindow.drivingLicense')}</h4>
+							<h4 class="font-semibold">{$t('dashboard.chatWindow.drivingLicense')}</h4>
 							<p
 								class={requirements.requirements.extras?.drivingLicenceRequired
 									? 'text-gray-900'
 									: 'text-gray-500'}
 							>
 								{requirements.requirements.extras?.drivingLicenceRequired
-									? $t('chatWindow.required')
-									: $t('chatWindow.notRequired')}
+									? $t('dashboard.chatWindow.required')
+									: $t('dashboard.chatWindow.notRequired')}
 							</p>
 						</div>
 
 						<div class="grid w-full grid-cols-[150px_1fr] items-start">
-							<h4 class="font-semibold">{$t('chatWindow.personalCar')}</h4>
+							<h4 class="font-semibold">{$t('dashboard.chatWindow.personalCar')}</h4>
 							<p
 								class={requirements.requirements.extras?.personalCarRequired
 									? 'text-gray-900'
 									: 'text-gray-500'}
 							>
 								{requirements.requirements.extras?.personalCarRequired
-									? $t('chatWindow.required')
-									: $t('chatWindow.notRequired')}
+									? $t('dashboard.chatWindow.required')
+									: $t('dashboard.chatWindow.notRequired')}
 							</p>
 						</div>
 
 						{#if requirements.requirements.extras?.accommodationCompensationType}
 							<div class="grid w-full grid-cols-[150px_1fr] items-start">
-								<h4 class="font-semibold">{$t('chatWindow.accommodation')}</h4>
+								<h4 class="font-semibold">{$t('dashboard.chatWindow.accommodation')}</h4>
 								<p
 									class={requirements.requirements.extras?.accommodationCompensationType
 										? 'text-gray-900'
@@ -683,7 +700,7 @@
 
 						{#if requirements.requirements.extras?.transportCompensationType}
 							<div class="grid w-full grid-cols-[150px_1fr] items-start">
-								<h4 class="font-semibold">{$t('chatWindow.transport')}</h4>
+								<h4 class="font-semibold">{$t('dashboard.chatWindow.transport')}</h4>
 								<p
 									class={requirements.requirements.extras?.transportCompensationType
 										? 'text-gray-900'
@@ -696,7 +713,7 @@
 
 						{#if requirements.huntInstructions?.onlyCountriesToSearch?.length || requirements.huntInstructions?.preferredCountriesToSearch?.length}
 							<div class="grid w-full grid-cols-[150px_1fr] items-start">
-								<h4 class="font-semibold">{$t('chatWindow.searchScope')}</h4>
+								<h4 class="font-semibold">{$t('dashboard.chatWindow.searchScope')}</h4>
 								<div class="flex flex-col gap-1">
 									{#if requirements.huntInstructions?.onlyCountriesToSearch?.length}
 										<div class="flex flex-wrap gap-1">
@@ -715,7 +732,9 @@
 													>
 												{/each}
 											</div>
-											<span class="text-xs text-gray-500">{$t('chatWindow.globalSearch')}</span>
+											<span class="text-xs text-gray-500"
+												>{$t('dashboard.chatWindow.globalSearch')}</span
+											>
 										</div>
 									{/if}
 								</div>
@@ -725,7 +744,7 @@
 				</div>
 			</div>
 		{:else}
-			<p class="text-sm text-gray-500">{$t('chatWindow.notSpecified')}</p>
+			<p class="text-sm text-gray-500">{$t('dashboard.chatWindow.notSpecified')}</p>
 		{/if}
 	</div>
 </div>

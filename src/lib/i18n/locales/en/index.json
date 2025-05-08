@@ -394,6 +394,18 @@
 			"transport": "Transport",
 			"searchScope": "Search Scope",
 			"globalSearch": "Global search with preference for listed countries"
+		},
+		"analyzingOverlay": {
+			"analyzing": "Analyzing your content...",
+			"processing": "Processing your request...",
+			"generating": "Generating insights...",
+			"thinking": "Thinking creatively...",
+			"exploring": "Exploring possibilities...",
+			"connecting": "Connecting the dots...",
+			"crafting": "Crafting a response...",
+			"considering": "Considering context...",
+			"refining": "Refining ideas...",
+			"almostThere": "Almost there..."
 		}
 	},
 	"settings": {
