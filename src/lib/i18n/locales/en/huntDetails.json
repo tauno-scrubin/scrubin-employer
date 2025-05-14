@@ -38,7 +38,9 @@
 	},
 	"payment": {
 		"startFee": "Start Fee",
-		"successFee": "Success Fee"
+		"successFee": "Success Fee",
+		"activateHunt": "Activate Hunt",
+		"completePayment": "Complete Payment"
 	},
 	"statistics": {
 		"huntConversionFunnel": "Hunt Conversion Funnel",

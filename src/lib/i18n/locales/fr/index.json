@@ -393,7 +393,10 @@
 			"accommodation": "Hébergement",
 			"transport": "Transport",
 			"searchScope": "Portée de la recherche",
-			"globalSearch": "Recherche mondiale avec préférence pour les pays listés"
+			"globalSearch": "Recherche mondiale avec préférence pour les pays listés",
+			"editManually": "Modifier manuellement",
+			"save": "Enregistrer les modifications",
+			"saving": "Enregistrement en cours..."
 		},
 		"analyzingOverlay": {
 			"analyzing": "Analyse de votre contenu...",

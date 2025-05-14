@@ -13,14 +13,18 @@
 	import QuestionsInHunt from '@/components/dashboard/questionsInHunt.svelte';
 	import { getStatusColor } from '@/components/payment/payments.js';
 	import Separator from '@/components/ui/separator/separator.svelte';
+	import { Input } from '$lib/components/ui/input';
 	import {
 		ArrowLeft,
 		DollarSign,
 		FileText,
 		GraduationCap,
+		Loader2,
 		Mail,
 		MapPin,
+		Pencil,
 		Phone,
+		Save,
 		Sparkle
 	} from 'lucide-svelte';
 	import { onMount } from 'svelte';
@@ -39,6 +43,80 @@
 		vatPercentage: 0,
 		vatAmount: 0
 	});
+
+	// Manual edit mode state
+	let isEditMode = $state(false);
+	let isSaving = $state(false);
+	let editableRequirements = $state<{
+		jobTitle: string;
+		jobDescription: string;
+		jobRequiredQualifications: string;
+		jobRequiredWorkExperience: number;
+	}>({
+		jobTitle: '',
+		jobDescription: '',
+		jobRequiredQualifications: '',
+		jobRequiredWorkExperience: 0
+	});
+
+	$effect(() => {
+		if (hunt) {
+			// Initialize editable requirements based on current hunt requirements
+			editableRequirements = {
+				jobTitle: hunt.requirements.jobTitle || '',
+				jobDescription: hunt.requirements.jobDescription || '',
+				jobRequiredQualifications: hunt.requirements.jobRequiredQualifications || '',
+				jobRequiredWorkExperience: hunt.requirements.jobRequiredWorkExperience || 0
+			};
+		}
+	});
+
+	function toggleEditMode() {
+		isEditMode = !isEditMode;
+
+		// If exiting edit mode without saving, reset values
+		if (!isEditMode) {
+			editableRequirements = {
+				jobTitle: hunt.requirements.jobTitle || '',
+				jobDescription: hunt.requirements.jobDescription || '',
+				jobRequiredQualifications: hunt.requirements.jobRequiredQualifications || '',
+				jobRequiredWorkExperience: hunt.requirements.jobRequiredWorkExperience || 0
+			};
+		}
+	}
+
+	async function saveManualEdits() {
+		if (!hunt.huntId) {
+			toast.error('No hunt ID available.');
+			return;
+		}
+
+		isSaving = true;
+
+		try {
+			const response = await scrubinClient.hunt.updateRequirementsManually(hunt.requirements.id, {
+				jobTitle: editableRequirements.jobTitle,
+				jobDescription: editableRequirements.jobDescription,
+				jobRequiredQualifications: editableRequirements.jobRequiredQualifications,
+				jobRequiredWorkExperience: editableRequirements.jobRequiredWorkExperience
+			});
+
+			// Update hunt data
+			hunt.requirements.jobTitle = editableRequirements.jobTitle;
+			hunt.requirements.jobDescription = editableRequirements.jobDescription;
+			hunt.requirements.jobRequiredQualifications = editableRequirements.jobRequiredQualifications;
+			hunt.requirements.jobRequiredWorkExperience = editableRequirements.jobRequiredWorkExperience;
+
+			// Exit edit mode
+			isEditMode = false;
+			toast.success('Requirements updated successfully');
+		} catch (error) {
+			console.error('Failed to save manual edits:', error);
+			toast.error('Failed to update requirements. Please try again.');
+		} finally {
+			isSaving = false;
+		}
+	}
 
 	let funnelStats = $state<HuntStats>({
 		huntId: 0,
@@ -227,7 +305,7 @@
 								{$t(`hunt.huntStatus.${hunt.status.toLowerCase()}`)}
 							</Badge>
 							<Button variant="default" onclick={handleActivateOrPay} class="ml-2">
-								{hunt.status === 'PENDING'
+								{hunt.status === 'PENDING' || hunt.status === 'AWAITING_PAYMENT'
 									? $t('payment.activateHunt')
 									: $t('payment.completePayment')}
 							</Button>
@@ -278,21 +356,63 @@
 				{/if}
 
 				<div class="rounded-md bg-white p-4 shadow-sm">
-					<h2 class="mb-4 text-xl font-medium">{$t('hunt.jobRequirements')}</h2>
+					<div class="mb-4 flex items-center justify-between">
+						<h2 class="text-xl font-medium">{$t('hunt.jobRequirements')}</h2>
+						<Button
+							variant={isEditMode ? 'default' : 'outline'}
+							size="sm"
+							onclick={isEditMode ? saveManualEdits : toggleEditMode}
+							class="flex items-center gap-2"
+						>
+							{#if isEditMode}
+								{#if isSaving}
+									<Loader2 class="h-4 w-4 animate-spin" />
+									{$t('dashboard.chatWindow.saving')}
+								{:else}
+									<Save class="h-4 w-4" />
+									{$t('dashboard.chatWindow.save')}
+								{/if}
+							{:else}
+								<Pencil class="h-4 w-4" />
+								{$t('common.edit')}
+							{/if}
+						</Button>
+					</div>
 					<div class="space-y-3">
 						<div class="grid grid-cols-1 gap-4 border-b pb-3 text-sm">
 							<div class="grid w-full grid-cols-[150px_1fr] items-start">
 								<h4 class="font-semibold">{$t('hunt.jobTitle')}</h4>
-								<p class={hunt.requirements.jobTitle ? 'text-gray-900' : 'text-gray-500'}>
-									{hunt.requirements.jobTitle || $t('hunt.notSpecified')}
-								</p>
+								{#if isEditMode}
+									<Input
+										type="text"
+										value={editableRequirements.jobTitle}
+										onchange={(e) => {
+											editableRequirements.jobTitle = e.currentTarget.value;
+										}}
+										class="transition-all duration-200 focus:ring-primary/30"
+									/>
+								{:else}
+									<p class={hunt.requirements.jobTitle ? 'text-gray-900' : 'text-gray-500'}>
+										{hunt.requirements.jobTitle || $t('hunt.notSpecified')}
+									</p>
+								{/if}
 							</div>
 
 							<div class="grid w-full grid-cols-[150px_1fr] items-start">
 								<h4 class="font-semibold">{$t('hunt.jobDescription')}</h4>
-								<p class={hunt.requirements.jobDescription ? 'text-gray-900' : 'text-gray-500'}>
-									{hunt.requirements.jobDescription || $t('hunt.notSpecified')}
-								</p>
+								{#if isEditMode}
+									<textarea
+										value={editableRequirements.jobDescription}
+										onchange={(e) => {
+											editableRequirements.jobDescription = e.currentTarget.value;
+										}}
+										class="min-h-[100px] w-full rounded-md border p-2 text-sm transition-all duration-200 focus:border-primary/50 focus:ring-primary/30"
+									></textarea>
+								{:else}
+									<p class={hunt.requirements.jobDescription ? 'text-gray-900' : 'text-gray-500'}>
+										{hunt.requirements.jobDescription || $t('hunt.notSpecified')}
+									</p>
+								{/if}
 							</div>
 
 							<div class="grid w-full grid-cols-[150px_1fr] items-start">
@@ -317,14 +437,27 @@
 
 							<div class="grid w-full grid-cols-[150px_1fr] items-start">
 								<h4 class="font-semibold">{$t('hunt.workExperience')}</h4>
-								<p
-									class={hunt.requirements.jobRequiredWorkExperience
-										? 'text-gray-900'
-										: 'text-gray-500'}
-								>
-									{hunt.requirements.jobRequiredWorkExperience || 0}
-									{$t('hunt.years')}
-								</p>
+								{#if isEditMode}
+									<Input
+										type="number"
+										min="0"
+										value={editableRequirements.jobRequiredWorkExperience}
+										onchange={(e) => {
+											editableRequirements.jobRequiredWorkExperience =
+												parseInt(e.currentTarget.value) || 0;
+										}}
+										class="w-20 transition-all duration-200 focus:ring-primary/30"
+									/>
+								{:else}
+									<p
+										class={hunt.requirements.jobRequiredWorkExperience
+											? 'text-gray-900'
+											: 'text-gray-500'}
+									>
+										{hunt.requirements.jobRequiredWorkExperience || 0}
+										{$t('hunt.years')}
+									</p>
+								{/if}
 							</div>
 
 							<div class="grid w-full grid-cols-[150px_1fr] items-start">
@@ -384,13 +517,23 @@
 
 						<div class="mt-4 border-t pt-3">
 							<h4 class="mb-4 text-xl font-medium">{$t('hunt.requiredQualifications')}</h4>
-							<p
-								class="{hunt.requirements.jobRequiredQualifications
-									? 'text-gray-900'
-									: 'text-gray-500'} text-sm"
-							>
-								{hunt.requirements.jobRequiredQualifications || $t('hunt.notSpecified')}
-							</p>
+							{#if isEditMode}
+								<textarea
+									value={editableRequirements.jobRequiredQualifications}
+									onchange={(e) => {
+										editableRequirements.jobRequiredQualifications = e.currentTarget.value;
+									}}
+									class="min-h-[100px] w-full rounded-md border p-2 text-sm transition-all duration-200 focus:border-primary/50 focus:ring-primary/30"
+								></textarea>
+							{:else}
+								<p
+									class="{hunt.requirements.jobRequiredQualifications
+										? 'text-gray-900'
+										: 'text-gray-500'} text-sm"
+								>
+									{hunt.requirements.jobRequiredQualifications || $t('hunt.notSpecified')}
+								</p>
+							{/if}
 						</div>
 
 						<div class="border-t pt-3">

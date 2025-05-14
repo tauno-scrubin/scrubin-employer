@@ -38,7 +38,9 @@
 	},
 	"payment": {
 		"startFee": "Aloitusmaksu",
-		"successFee": "Onnistumismaksu"
+		"successFee": "Onnistumismaksu",
+		"activateHunt": "Aktivoi haku",
+		"completePayment": "Suorita maksu"
 	},
 	"statistics": {
 		"huntConversionFunnel": "Hakukonversiosuppilo",

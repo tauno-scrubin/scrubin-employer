@@ -5,7 +5,17 @@
 	import type { CompanyPlanSummary, PlanType, RequirementsWithInstructions } from '@/scrubinClient';
 	import { scrubinClient } from '@/scrubinClient/client';
 	import { t } from '$lib/i18n';
-	import { AlertCircle, Check, ChevronDown, ChevronLeft, Loader2, Sparkle } from 'lucide-svelte';
+	import {
+		AlertCircle,
+		Check,
+		ChevronDown,
+		ChevronLeft,
+		Edit,
+		Loader2,
+		Pencil,
+		Save,
+		Sparkle
+	} from 'lucide-svelte';
 	import { onMount, tick } from 'svelte';
 	import { toast } from 'svelte-sonner';
 	import PaymentDialog from '../payment/paymentDialog.svelte';
@@ -21,8 +31,6 @@
 	let companyActivePlans = $state<CompanyPlanSummary[]>([]);
 	onMount(async () => {
 		companyActivePlans = await scrubinClient.company.getActivePlans();
-		console.log(companyActivePlans);
-		console.log(requirements);
 	});
 
 	let currentQuestionIndex = $state(0);
@@ -37,6 +45,21 @@
 	let selectedPlanType = $state<PlanType | null>(null);
 	let showPlanActivationMessage = $state(false);
 
+	// Manual edit mode state
+	let isEditMode = $state(false);
+	let isSaving = $state(false);
+	let editableRequirements = $state<{
+		jobTitle: string;
+		jobDescription: string;
+		jobRequiredQualifications: string;
+		jobRequiredWorkExperience: number;
+	}>({
+		jobTitle: '',
+		jobDescription: '',
+		jobRequiredQualifications: '',
+		jobRequiredWorkExperience: 0
+	});
+
 	// Collapsible questions state
 	let expandedQuestions = $state(new Set([0])); // Example: first 3 expanded by default
 
@@ -49,8 +72,77 @@
 			isAnalyzing = false;
 			isEditingPrevious = false;
 			customInstructions = '';
+
+			// Initialize editable requirements based on current requirements
+			if (requirements.requirements) {
+				editableRequirements = {
+					jobTitle: requirements.requirements.jobTitle || '',
+					jobDescription: requirements.requirements.jobDescription || '',
+					jobRequiredQualifications: requirements.requirements.jobRequiredQualifications || '',
+					jobRequiredWorkExperience: requirements.requirements.jobRequiredWorkExperience || 0
+				};
+			}
 		}
 	});
+
+	function toggleEditMode() {
+		isEditMode = !isEditMode;
+
+		// If exiting edit mode without saving, reset values
+		if (!isEditMode) {
+			if (requirements.requirements) {
+				editableRequirements = {
+					jobTitle: requirements.requirements.jobTitle || '',
+					jobDescription: requirements.requirements.jobDescription || '',
+					jobRequiredQualifications: requirements.requirements.jobRequiredQualifications || '',
+					jobRequiredWorkExperience: requirements.requirements.jobRequiredWorkExperience || 0
+				};
+			}
+		}
+	}
+
+	async function saveManualEdits() {
+		if (!requirements.requirements?.id) {
+			toast.error('No requirements ID available.');
+			return;
+		}
+
+		isSaving = true;
+
+		try {
+			// Use the new updateRequirementsManually method which sends a PATCH request
+			const response = await scrubinClient.hunt.updateRequirementsManually(
+				requirements.requirements.id,
+				{
+					jobTitle: editableRequirements.jobTitle,
+					jobDescription: editableRequirements.jobDescription,
+					jobRequiredQualifications: editableRequirements.jobRequiredQualifications,
+					jobRequiredWorkExperience: editableRequirements.jobRequiredWorkExperience
+				}
+			);
+
+			// Only update the requirements part of the object, preserving other state
+			if (requirements.requirements) {
+				// Update only the specific fields that were modified
+				requirements.requirements.jobTitle = editableRequirements.jobTitle;
+				requirements.requirements.jobDescription = editableRequirements.jobDescription;
+				requirements.requirements.jobRequiredQualifications =
+					editableRequirements.jobRequiredQualifications;
+				requirements.requirements.jobRequiredWorkExperience =
+					editableRequirements.jobRequiredWorkExperience;
+			}
+
+			// Exit edit mode
+			isEditMode = false;
+			toast.success('Requirements updated successfully');
+		} catch (error) {
+			console.error('Failed to save manual edits:', error);
+			toast.error('Failed to update requirements. Please try again.');
+		} finally {
+			isSaving = false;
+		}
+	}
+
 	function handleNextQuestion() {
 		if (!requirements.followUpQuestionsV2) {
 			toast.error('No follow-up questions available.');
@@ -531,24 +623,74 @@
 
 	<!-- Right side: Job Requirements -->
 	<div class="rounded-md bg-white p-4 md:w-2/3">
-		<Sparkle fill="currentColor" strokeWidth="1" class="mb-4 h-8 w-8 rotate-45 text-blue-500" />
-		<h2 class="mb-4 text-xl font-medium">{$t('dashboard.chatWindow.jobRequirements')}</h2>
+		<div class="mb-4 flex items-center justify-between">
+			<div class="flex items-center gap-3">
+				<Sparkle fill="currentColor" strokeWidth="1" class="h-8 w-8 rotate-45 text-blue-500" />
+				<h2 class="text-xl font-medium">{$t('dashboard.chatWindow.jobRequirements')}</h2>
+			</div>
+
+			{#if requirements.requirements}
+				<Button
+					variant={isEditMode ? 'default' : 'outline'}
+					size="sm"
+					onclick={isEditMode ? saveManualEdits : toggleEditMode}
+					class="flex items-center gap-2"
+				>
+					{#if isEditMode}
+						{#if isSaving}
+							<Loader2 class="h-4 w-4 animate-spin" />
+							{$t('dashboard.chatWindow.saving')}
+						{:else}
+							<Save class="h-4 w-4" />
+							{$t('dashboard.chatWindow.save')}
+						{/if}
+					{:else}
+						<Pencil class="h-4 w-4" />
+						{$t('dashboard.chatWindow.editManually')}
+					{/if}
+				</Button>
+			{/if}
+		</div>
 
 		{#if requirements.requirements}
 			<div class="space-y-3">
 				<div class="grid grid-cols-1 gap-4 border-b pb-3 text-sm">
 					<div class="grid w-full grid-cols-[150px_1fr] items-start">
 						<h4 class="font-semibold">{$t('dashboard.chatWindow.jobTitle')}</h4>
-						<p class={requirements.requirements.jobTitle ? 'text-gray-900' : 'text-gray-500'}>
-							{requirements.requirements.jobTitle || $t('dashboard.chatWindow.notSpecified')}
-						</p>
+						{#if isEditMode}
+							<Input
+								type="text"
+								value={editableRequirements.jobTitle}
+								onchange={(e) => {
+									editableRequirements.jobTitle = e.currentTarget.value;
+								}}
+								class="transition-all duration-200 focus:ring-primary/30"
+							/>
+						{:else}
+							<p class={requirements.requirements.jobTitle ? 'text-gray-900' : 'text-gray-500'}>
+								{requirements.requirements.jobTitle || $t('dashboard.chatWindow.notSpecified')}
+							</p>
+						{/if}
 					</div>
 
 					<div class="grid w-full grid-cols-[150px_1fr] items-start">
 						<h4 class="font-semibold">{$t('dashboard.chatWindow.jobDescription')}</h4>
-						<p class={requirements.requirements.jobDescription ? 'text-gray-900' : 'text-gray-500'}>
-							{requirements.requirements.jobDescription || $t('dashboard.chatWindow.notSpecified')}
-						</p>
+						{#if isEditMode}
+							<textarea
+								value={editableRequirements.jobDescription}
+								onchange={(e) => {
+									editableRequirements.jobDescription = e.currentTarget.value;
+								}}
+								class="min-h-[100px] w-full rounded-md border p-2 text-sm transition-all duration-200 focus:border-primary/50 focus:ring-primary/30"
+							></textarea>
+						{:else}
+							<p
+								class={requirements.requirements.jobDescription ? 'text-gray-900' : 'text-gray-500'}
+							>
+								{requirements.requirements.jobDescription ||
+									$t('dashboard.chatWindow.notSpecified')}
+							</p>
+						{/if}
 					</div>
 
 					<div class="grid w-full grid-cols-[150px_1fr] items-start">
@@ -573,14 +715,27 @@
 
 					<div class="grid w-full grid-cols-[150px_1fr] items-start">
 						<h4 class="font-semibold">{$t('dashboard.chatWindow.workExperience')}</h4>
-						<p
-							class={requirements.requirements.jobRequiredWorkExperience
-								? 'text-gray-900'
-								: 'text-gray-500'}
-						>
-							{requirements.requirements.jobRequiredWorkExperience || 0}
-							{$t('dashboard.chatWindow.years')}
-						</p>
+						{#if isEditMode}
+							<Input
+								type="number"
+								min="0"
+								value={editableRequirements.jobRequiredWorkExperience}
+								onchange={(e) => {
+									editableRequirements.jobRequiredWorkExperience =
+										parseInt(e.currentTarget.value) || 0;
+								}}
+								class="w-20 transition-all duration-200 focus:ring-primary/30"
+							/>
+						{:else}
+							<p
+								class={requirements.requirements.jobRequiredWorkExperience
+									? 'text-gray-900'
+									: 'text-gray-500'}
+							>
+								{requirements.requirements.jobRequiredWorkExperience || 0}
+								{$t('dashboard.chatWindow.years')}
+							</p>
+						{/if}
 					</div>
 
 					<div class="grid w-full grid-cols-[150px_1fr] items-start">
@@ -644,14 +799,24 @@
 					<h4 class="mb-4 text-xl font-medium">
 						{$t('dashboard.chatWindow.requiredQualifications')}
 					</h4>
-					<p
-						class="{requirements.requirements.jobRequiredQualifications
-							? 'text-gray-900'
-							: 'text-gray-500'} text-sm"
-					>
-						{requirements.requirements.jobRequiredQualifications ||
-							$t('dashboard.chatWindow.notSpecified')}
-					</p>
+					{#if isEditMode}
+						<textarea
+							value={editableRequirements.jobRequiredQualifications}
+							onchange={(e) => {
+								editableRequirements.jobRequiredQualifications = e.currentTarget.value;
+							}}
+							class="min-h-[100px] w-full rounded-md border p-2 text-sm transition-all duration-200 focus:border-primary/50 focus:ring-primary/30"
+						></textarea>
+					{:else}
+						<p
+							class="{requirements.requirements.jobRequiredQualifications
+								? 'text-gray-900'
+								: 'text-gray-500'} text-sm"
+						>
+							{requirements.requirements.jobRequiredQualifications ||
+								$t('dashboard.chatWindow.notSpecified')}
+						</p>
+					{/if}
 				</div>
 
 				<div class="border-t pt-3">

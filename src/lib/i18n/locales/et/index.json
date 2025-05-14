@@ -391,7 +391,10 @@
 			"accommodation": "Majutus",
 			"transport": "Transport",
 			"searchScope": "Otsingu ulatus",
-			"globalSearch": "Globaalne otsing eelistusega loetletud riikidele"
+			"globalSearch": "Globaalne otsing eelistusega loetletud riikidele",
+			"editManually": "Muuda käsitsi",
+			"save": "Salvesta muudatused",
+			"saving": "Salvestamine..."
 		},
 		"analyzingOverlay": {
 			"analyzing": "Analüüsin sinu sisu...",

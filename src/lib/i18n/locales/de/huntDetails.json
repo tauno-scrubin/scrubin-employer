@@ -38,7 +38,9 @@
 	},
 	"payment": {
 		"startFee": "Startgebühr",
-		"successFee": "Erfolgsgebühr"
+		"successFee": "Erfolgsgebühr",
+		"activateHunt": "Suche aktivieren",
+		"completePayment": "Zahlung abschließen"
 	},
 	"statistics": {
 		"huntConversionFunnel": "Such-Konversionstrichter",

@@ -393,7 +393,10 @@
 			"accommodation": "Unterkunft",
 			"transport": "Transport",
 			"searchScope": "Suchbereich",
-			"globalSearch": "Globale Suche mit Präferenz für aufgelistete Länder"
+			"globalSearch": "Globale Suche mit Präferenz für aufgelistete Länder",
+			"editManually": "Manuell bearbeiten",
+			"save": "Änderungen speichern",
+			"saving": "Wird gespeichert..."
 		},
 		"analyzingOverlay": {
 			"analyzing": "Analysiere deinen Inhalt...",
