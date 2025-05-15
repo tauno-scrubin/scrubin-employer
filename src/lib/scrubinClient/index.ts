@@ -937,6 +937,16 @@ class HuntResource extends BaseResource {
     const url = new URL(`/api/v1/hunts/${id}/cancel`, this.client.baseUrl);
     return this.request<Hunt>('POST', url.toString()) as Promise<Hunt>;
   }
+
+  async updateRequirementFields(id: number, data: {
+    jobTitle?: string,
+    jobRequiredQualifications?: string,
+    jobRequiredWorkExperience?: number,
+    jobDescription?: string
+  }): Promise<Requirements['requirements']> {
+    const url = new URL(`${this.path}/requirements/${id}`, this.client.baseUrl);
+    return this.request<Requirements['requirements']>('PATCH', url.toString(), data) as Promise<Requirements['requirements']>;
+  }
 }
 
 // ─── CLIENT CLASS ─────────────────────────────────────────────────────────────
