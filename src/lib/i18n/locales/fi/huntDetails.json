@@ -1,9 +1,4 @@
 {
-	"common": {
-		"saving": "Tallentaminen",
-		"save": "Tallenna",
-		"cancel": "Peruuta"
-	},
 	"hunt": {
 		"details": "Tiedot",
 		"statistics": "Tilastot",

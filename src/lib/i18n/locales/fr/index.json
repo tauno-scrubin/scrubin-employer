@@ -44,7 +44,10 @@
 		"view": "Voir",
 		"edit": "Modifier",
 		"delete": "Supprimer",
-		"toggle": "Basculer"
+		"toggle": "Basculer",
+		"saving": "Enregistrement",
+		"save": "Enregistrer",
+		"cancel": "Annuler"
 	},
 	"auth": {
 		"login": {

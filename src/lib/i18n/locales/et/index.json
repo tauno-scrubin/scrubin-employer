@@ -44,7 +44,10 @@
 		"view": "Vaata",
 		"edit": "Muuda",
 		"delete": "Kustuta",
-		"toggle": "Lülita"
+		"toggle": "Lülita",
+		"saving": "Salvestamine",
+		"save": "Salvesta",
+		"cancel": "Tühista"
 	},
 	"auth": {
 		"login": {

@@ -44,7 +44,10 @@
 		"view": "Näytä",
 		"edit": "Muokkaa",
 		"delete": "Poista",
-		"toggle": "Vaihda"
+		"toggle": "Vaihda",
+		"saving": "Tallentaminen",
+		"save": "Tallenna",
+		"cancel": "Peruuta"
 	},
 	"auth": {
 		"login": {

@@ -44,7 +44,10 @@
 		"view": "View",
 		"edit": "Edit",
 		"delete": "Delete",
-		"toggle": "Toggle"
+		"toggle": "Toggle",
+		"saving": "Saving",
+		"save": "Save",
+		"cancel": "Cancel"
 	},
 	"auth": {
 		"login": {

@@ -1,9 +1,4 @@
 {
-	"common": {
-		"saving": "Saving",
-		"save": "Save",
-		"cancel": "Cancel"
-	},
 	"hunt": {
 		"details": "Details",
 		"statistics": "Statistics",

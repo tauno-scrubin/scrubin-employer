@@ -94,7 +94,7 @@
 		isSaving = true;
 
 		try {
-			const response = await scrubinClient.hunt.updateRequirementsManually(hunt.requirements.id, {
+			const response = await scrubinClient.hunt.updateRequirementFields(hunt.requirements.id, {
 				jobTitle: editableRequirements.jobTitle,
 				jobDescription: editableRequirements.jobDescription,
 				jobRequiredQualifications: editableRequirements.jobRequiredQualifications,

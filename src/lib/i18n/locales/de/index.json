@@ -44,7 +44,10 @@
 		"view": "Ansehen",
 		"edit": "Bearbeiten",
 		"delete": "Löschen",
-		"toggle": "Umschalten"
+		"toggle": "Umschalten",
+		"saving": "Speichern",
+		"save": "Speichern",
+		"cancel": "Abbrechen"
 	},
 	"auth": {
 		"login": {

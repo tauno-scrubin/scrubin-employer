@@ -1,9 +1,4 @@
 {
-	"common": {
-		"saving": "Salvestamine",
-		"save": "Salvesta",
-		"cancel": "Tühista"
-	},
 	"hunt": {
 		"details": "Detailid",
 		"statistics": "Statistika",
