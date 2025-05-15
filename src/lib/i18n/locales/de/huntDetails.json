@@ -36,6 +36,11 @@
 		"notRequired": "Nicht erforderlich",
 		"title": "Suche"
 	},
+	"common": {
+		"saving": "Speichern",
+		"save": "Speichern",
+		"cancel": "Abbrechen"
+	},
 	"payment": {
 		"startFee": "Startgebühr",
 		"successFee": "Erfolgsgebühr",

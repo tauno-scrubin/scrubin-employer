@@ -5,17 +5,7 @@
 	import type { CompanyPlanSummary, PlanType, RequirementsWithInstructions } from '@/scrubinClient';
 	import { scrubinClient } from '@/scrubinClient/client';
 	import { t } from '$lib/i18n';
-	import {
-		AlertCircle,
-		Check,
-		ChevronDown,
-		ChevronLeft,
-		Edit,
-		Loader2,
-		Pencil,
-		Save,
-		Sparkle
-	} from 'lucide-svelte';
+	import { AlertCircle, Check, ChevronDown, ChevronLeft, Loader2, Sparkle, Pen, X } from 'lucide-svelte';
 	import { onMount, tick } from 'svelte';
 	import { toast } from 'svelte-sonner';
 	import PaymentDialog from '../payment/paymentDialog.svelte';
@@ -31,6 +21,8 @@
 	let companyActivePlans = $state<CompanyPlanSummary[]>([]);
 	onMount(async () => {
 		companyActivePlans = await scrubinClient.company.getActivePlans();
+		console.log(companyActivePlans);
+		console.log(requirements);
 	});
 
 	let currentQuestionIndex = $state(0);
@@ -45,21 +37,6 @@
 	let selectedPlanType = $state<PlanType | null>(null);
 	let showPlanActivationMessage = $state(false);
 
-	// Manual edit mode state
-	let isEditMode = $state(false);
-	let isSaving = $state(false);
-	let editableRequirements = $state<{
-		jobTitle: string;
-		jobDescription: string;
-		jobRequiredQualifications: string;
-		jobRequiredWorkExperience: number;
-	}>({
-		jobTitle: '',
-		jobDescription: '',
-		jobRequiredQualifications: '',
-		jobRequiredWorkExperience: 0
-	});
-
 	// Collapsible questions state
 	let expandedQuestions = $state(new Set([0])); // Example: first 3 expanded by default
 
@@ -72,77 +49,8 @@
 			isAnalyzing = false;
 			isEditingPrevious = false;
 			customInstructions = '';
-
-			// Initialize editable requirements based on current requirements
-			if (requirements.requirements) {
-				editableRequirements = {
-					jobTitle: requirements.requirements.jobTitle || '',
-					jobDescription: requirements.requirements.jobDescription || '',
-					jobRequiredQualifications: requirements.requirements.jobRequiredQualifications || '',
-					jobRequiredWorkExperience: requirements.requirements.jobRequiredWorkExperience || 0
-				};
-			}
 		}
 	});
-
-	function toggleEditMode() {
-		isEditMode = !isEditMode;
-
-		// If exiting edit mode without saving, reset values
-		if (!isEditMode) {
-			if (requirements.requirements) {
-				editableRequirements = {
-					jobTitle: requirements.requirements.jobTitle || '',
-					jobDescription: requirements.requirements.jobDescription || '',
-					jobRequiredQualifications: requirements.requirements.jobRequiredQualifications || '',
-					jobRequiredWorkExperience: requirements.requirements.jobRequiredWorkExperience || 0
-				};
-			}
-		}
-	}
-
-	async function saveManualEdits() {
-		if (!requirements.requirements?.id) {
-			toast.error('No requirements ID available.');
-			return;
-		}
-
-		isSaving = true;
-
-		try {
-			// Use the new updateRequirementsManually method which sends a PATCH request
-			const response = await scrubinClient.hunt.updateRequirementsManually(
-				requirements.requirements.id,
-				{
-					jobTitle: editableRequirements.jobTitle,
-					jobDescription: editableRequirements.jobDescription,
-					jobRequiredQualifications: editableRequirements.jobRequiredQualifications,
-					jobRequiredWorkExperience: editableRequirements.jobRequiredWorkExperience
-				}
-			);
-
-			// Only update the requirements part of the object, preserving other state
-			if (requirements.requirements) {
-				// Update only the specific fields that were modified
-				requirements.requirements.jobTitle = editableRequirements.jobTitle;
-				requirements.requirements.jobDescription = editableRequirements.jobDescription;
-				requirements.requirements.jobRequiredQualifications =
-					editableRequirements.jobRequiredQualifications;
-				requirements.requirements.jobRequiredWorkExperience =
-					editableRequirements.jobRequiredWorkExperience;
-			}
-
-			// Exit edit mode
-			isEditMode = false;
-			toast.success('Requirements updated successfully');
-		} catch (error) {
-			console.error('Failed to save manual edits:', error);
-			toast.error('Failed to update requirements. Please try again.');
-		} finally {
-			isSaving = false;
-		}
-	}
-
 	function handleNextQuestion() {
 		if (!requirements.followUpQuestionsV2) {
 			toast.error('No follow-up questions available.');
@@ -388,6 +296,91 @@
 	function goBack() {
 		window.history.back();
 	}
+
+	// Add state for editable fields
+	let editableFields = $state({
+		jobTitle: false,
+		jobDescription: false,
+		jobRequiredQualifications: false,
+		jobRequiredWorkExperience: false
+	});
+
+	let editValues = $state({
+		jobTitle: '',
+		jobDescription: '',
+		jobRequiredQualifications: '',
+		jobRequiredWorkExperience: 0
+	});
+
+	let isEditing = $state(false);
+	let isSaving = $state(false);
+
+	$effect(() => {
+		if (requirements?.requirements) {
+			// Initialize edit values from requirements
+			editValues = {
+				jobTitle: requirements.requirements.jobTitle || '',
+				jobDescription: requirements.requirements.jobDescription || '',
+				jobRequiredQualifications: requirements.requirements.jobRequiredQualifications || '',
+				jobRequiredWorkExperience: requirements.requirements.jobRequiredWorkExperience || 0
+			};
+		}
+	});
+
+	async function saveField(field: keyof typeof editableFields) {
+		if (!requirements?.requirements?.id) return;
+		
+		isSaving = true;
+		
+		try {
+			// Only update the specific field being edited
+			const updateData = {
+				[field]: editValues[field]
+			};
+
+			const updatedRequirements = await scrubinClient.hunt.updateRequirementFields(
+				requirements.requirements.id,
+				updateData
+			);
+
+			// Update local data
+			requirements = {
+				...requirements,
+				requirements: updatedRequirements
+			};
+
+			// Close edit mode
+			editableFields[field] = false;
+			
+			toast.success(`Updated successfully`);
+		} catch (error) {
+			console.error(`Failed to update ${field}:`, error);
+			toast.error(`Failed to update ${field}. Please try again.`);
+		} finally {
+			isSaving = false;
+		}
+	}
+
+	function startEditing(field: keyof typeof editableFields) {
+		// Close any other open edit fields
+		Object.keys(editableFields).forEach(key => {
+			editableFields[key as keyof typeof editableFields] = false;
+		});
+		
+		// Open the selected field
+		editableFields[field] = true;
+		isEditing = true;
+	}
+
+	function cancelEditing(field: keyof typeof editableFields) {
+		// Reset the field value
+		editValues[field] = requirements?.requirements?.[field] || '';
+		// Close edit mode
+		editableFields[field] = false;
+		
+		// Check if we're still editing any field
+		isEditing = Object.values(editableFields).some(value => value);
+	}
 </script>
 
 <PaymentDialog
@@ -623,82 +616,118 @@
 
 	<!-- Right side: Job Requirements -->
 	<div class="rounded-md bg-white p-4 md:w-2/3">
-		<div class="mb-4 flex items-center justify-between">
-			<div class="flex items-center gap-3">
-				<Sparkle fill="currentColor" strokeWidth="1" class="h-8 w-8 rotate-45 text-blue-500" />
-				<h2 class="text-xl font-medium">{$t('dashboard.chatWindow.jobRequirements')}</h2>
-			</div>
-
-			{#if requirements.requirements}
-				<Button
-					variant={isEditMode ? 'default' : 'outline'}
-					size="sm"
-					onclick={isEditMode ? saveManualEdits : toggleEditMode}
-					class="flex items-center gap-2"
-				>
-					{#if isEditMode}
-						{#if isSaving}
-							<Loader2 class="h-4 w-4 animate-spin" />
-							{$t('dashboard.chatWindow.saving')}
-						{:else}
-							<Save class="h-4 w-4" />
-							{$t('dashboard.chatWindow.save')}
-						{/if}
-					{:else}
-						<Pencil class="h-4 w-4" />
-						{$t('dashboard.chatWindow.editManually')}
-					{/if}
-				</Button>
-			{/if}
-		</div>
+		<Sparkle fill="currentColor" strokeWidth="1" class="mb-4 h-8 w-8 rotate-45 text-blue-500" />
+		<h2 class="mb-4 text-xl font-medium">{$t('dashboard.chatWindow.jobRequirements')}</h2>
 
 		{#if requirements.requirements}
 			<div class="space-y-3">
 				<div class="grid grid-cols-1 gap-4 border-b pb-3 text-sm">
-					<div class="grid w-full grid-cols-[150px_1fr] items-start">
+					<div 
+						class="grid w-full grid-cols-[150px_1fr] items-start transition-colors duration-200 hover:bg-gray-50 rounded p-1 pl-0 group"
+					>
 						<h4 class="font-semibold">{$t('dashboard.chatWindow.jobTitle')}</h4>
-						{#if isEditMode}
-							<Input
-								type="text"
-								value={editableRequirements.jobTitle}
-								onchange={(e) => {
-									editableRequirements.jobTitle = e.currentTarget.value;
-								}}
-								class="transition-all duration-200 focus:ring-primary/30"
-							/>
+						
+						{#if editableFields.jobTitle}
+							<div class="flex gap-2 w-full">
+								<Input 
+									type="text" 
+									value={editValues.jobTitle} 
+									onchange={(e) => { editValues.jobTitle = e.currentTarget.value; }}
+									class="flex-1"
+								/>
+								<Button 
+									size="icon" 
+									variant="default" 
+									onclick={() => saveField('jobTitle')}
+									disabled={isSaving}
+								>
+									{#if isSaving}
+										<Loader2 class="h-4 w-4 animate-spin" />
+									{:else}
+										<Check class="h-4 w-4" />
+									{/if}
+								</Button>
+								<Button 
+									size="icon" 
+									variant="outline" 
+									onclick={() => cancelEditing('jobTitle')}
+								>
+									<X class="h-4 w-4" />
+								</Button>
+							</div>
 						{:else}
-							<p class={requirements.requirements.jobTitle ? 'text-gray-900' : 'text-gray-500'}>
-								{requirements.requirements.jobTitle || $t('dashboard.chatWindow.notSpecified')}
-							</p>
+							<div class="flex items-center gap-2">
+								<p class={requirements.requirements.jobTitle ? 'text-gray-900' : 'text-gray-500'}>
+									{requirements.requirements.jobTitle || $t('dashboard.chatWindow.notSpecified')}
+								</p>
+								<button 
+									class="opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+									onclick={() => startEditing('jobTitle')}
+								>
+									<Pen class="h-3.5 w-3.5 text-gray-400 hover:text-primary" />
+								</button>
+							</div>
 						{/if}
 					</div>
 
-					<div class="grid w-full grid-cols-[150px_1fr] items-start">
+					<div 
+						class="grid w-full grid-cols-[150px_1fr] items-start transition-colors duration-200 hover:bg-gray-50 rounded p-1 pl-0 group"
+					>
 						<h4 class="font-semibold">{$t('dashboard.chatWindow.jobDescription')}</h4>
-						{#if isEditMode}
-							<textarea
-								value={editableRequirements.jobDescription}
-								onchange={(e) => {
-									editableRequirements.jobDescription = e.currentTarget.value;
-								}}
-								class="min-h-[100px] w-full rounded-md border p-2 text-sm transition-all duration-200 focus:border-primary/50 focus:ring-primary/30"
-							></textarea>
+						
+						{#if editableFields.jobDescription}
+							<div class="flex flex-col gap-2 w-full">
+								<textarea 
+									value={editValues.jobDescription} 
+									onchange={(e) => { editValues.jobDescription = e.currentTarget.value; }}
+									class="w-full rounded-md border p-2 text-sm min-h-[100px]"
+								></textarea>
+								<div class="flex justify-end gap-2">
+									<Button 
+										size="sm" 
+										variant="default" 
+										onclick={() => saveField('jobDescription')}
+										disabled={isSaving}
+									>
+										{#if isSaving}
+											<Loader2 class="h-4 w-4 animate-spin mr-2" />
+											{$t('common.saving')}
+										{:else}
+											<Check class="h-4 w-4 mr-2" />
+											{$t('common.save')}
+										{/if}
+									</Button>
+									<Button 
+										size="sm" 
+										variant="outline" 
+										onclick={() => cancelEditing('jobDescription')}
+									>
+										<X class="h-4 w-4 mr-2" />
+										{$t('common.cancel')}
+									</Button>
+								</div>
+							</div>
 						{:else}
-							<p
-								class={requirements.requirements.jobDescription ? 'text-gray-900' : 'text-gray-500'}
-							>
-								{requirements.requirements.jobDescription ||
-									$t('dashboard.chatWindow.notSpecified')}
-							</p>
+							<div class="flex items-start gap-2">
+								<p class={requirements.requirements.jobDescription ? 'text-gray-900' : 'text-gray-500'}>
+									{requirements.requirements.jobDescription || $t('dashboard.chatWindow.notSpecified')}
+								</p>
+								<button 
+									class="opacity-0 group-hover:opacity-100 transition-opacity duration-200 mt-0.5"
+									onclick={() => startEditing('jobDescription')}
+								>
+									<Pen class="h-3.5 w-3.5 text-gray-400 hover:text-primary" />
+								</button>
+							</div>
 						{/if}
 					</div>
 
+					<!-- Existing professions field (non-editable) -->
 					<div class="grid w-full grid-cols-[150px_1fr] items-start">
 						<h4 class="font-semibold">{$t('dashboard.chatWindow.professions')}</h4>
 						<div class="flex flex-row flex-wrap gap-2">
 							{#each requirements.requirements.professions || [] as profession}
-								<span class="rounded bg-gray-100 px-2 py-0.5 text-xs text-gray-700"
-									>{profession}</span
+								<span class="rounded bg-gray-100 px-2 py-0.5 text-xs text-gray-700">{profession}</span
 								>
 							{/each}
 						</div>
@@ -706,6 +735,7 @@
 				</div>
 
 				<div class="grid grid-cols-1 gap-4 text-sm">
+					<!-- Existing specialization (non-editable) -->
 					<div class="grid w-full grid-cols-[150px_1fr] items-start">
 						<h4 class="font-semibold">{$t('dashboard.chatWindow.specialization')}</h4>
 						<p class={requirements.requirements.specialization ? 'text-gray-900' : 'text-gray-500'}>
@@ -713,28 +743,53 @@
 						</p>
 					</div>
 
-					<div class="grid w-full grid-cols-[150px_1fr] items-start">
+					<div 
+						class="grid w-full grid-cols-[150px_1fr] items-start transition-colors duration-200 hover:bg-gray-50 rounded p-1 pl-0 group"
+					>
 						<h4 class="font-semibold">{$t('dashboard.chatWindow.workExperience')}</h4>
-						{#if isEditMode}
-							<Input
-								type="number"
-								min="0"
-								value={editableRequirements.jobRequiredWorkExperience}
-								onchange={(e) => {
-									editableRequirements.jobRequiredWorkExperience =
-										parseInt(e.currentTarget.value) || 0;
-								}}
-								class="w-20 transition-all duration-200 focus:ring-primary/30"
-							/>
+						
+						{#if editableFields.jobRequiredWorkExperience}
+							<div class="flex gap-2 w-full">
+								<Input 
+									type="number" 
+									value={editValues.jobRequiredWorkExperience} 
+									onchange={(e) => { editValues.jobRequiredWorkExperience = parseInt(e.currentTarget.value) || 0; }}
+									class="flex-1"
+									min="0"
+								/>
+								<Button 
+									size="icon" 
+									variant="default" 
+									onclick={() => saveField('jobRequiredWorkExperience')}
+									disabled={isSaving}
+								>
+									{#if isSaving}
+										<Loader2 class="h-4 w-4 animate-spin" />
+									{:else}
+										<Check class="h-4 w-4" />
+									{/if}
+								</Button>
+								<Button 
+									size="icon" 
+									variant="outline" 
+									onclick={() => cancelEditing('jobRequiredWorkExperience')}
+								>
+									<X class="h-4 w-4" />
+								</Button>
+							</div>
 						{:else}
-							<p
-								class={requirements.requirements.jobRequiredWorkExperience
-									? 'text-gray-900'
-									: 'text-gray-500'}
-							>
-								{requirements.requirements.jobRequiredWorkExperience || 0}
-								{$t('dashboard.chatWindow.years')}
-							</p>
+							<div class="flex items-center gap-2">
+								<p class={requirements.requirements.jobRequiredWorkExperience ? 'text-gray-900' : 'text-gray-500'}>
+									{requirements.requirements.jobRequiredWorkExperience || 0}
+									{$t('dashboard.chatWindow.years')}
+								</p>
+								<button 
+									class="opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+									onclick={() => startEditing('jobRequiredWorkExperience')}
+								>
+									<Pen class="h-3.5 w-3.5 text-gray-400 hover:text-primary" />
+								</button>
+							</div>
 						{/if}
 					</div>
 
@@ -799,24 +854,54 @@
 					<h4 class="mb-4 text-xl font-medium">
 						{$t('dashboard.chatWindow.requiredQualifications')}
 					</h4>
-					{#if isEditMode}
-						<textarea
-							value={editableRequirements.jobRequiredQualifications}
-							onchange={(e) => {
-								editableRequirements.jobRequiredQualifications = e.currentTarget.value;
-							}}
-							class="min-h-[100px] w-full rounded-md border p-2 text-sm transition-all duration-200 focus:border-primary/50 focus:ring-primary/30"
-						></textarea>
-					{:else}
-						<p
-							class="{requirements.requirements.jobRequiredQualifications
-								? 'text-gray-900'
-								: 'text-gray-500'} text-sm"
-						>
-							{requirements.requirements.jobRequiredQualifications ||
-								$t('dashboard.chatWindow.notSpecified')}
-						</p>
-					{/if}
+					
+					<div class="transition-colors duration-200 hover:bg-gray-50 rounded p-1 group">
+						{#if editableFields.jobRequiredQualifications}
+							<div class="flex flex-col gap-2 w-full">
+								<textarea 
+									value={editValues.jobRequiredQualifications} 
+									onchange={(e) => { editValues.jobRequiredQualifications = e.currentTarget.value; }}
+									class="w-full rounded-md border p-2 text-sm min-h-[100px]"
+								></textarea>
+								<div class="flex justify-end gap-2">
+									<Button 
+										size="sm" 
+										variant="default" 
+										onclick={() => saveField('jobRequiredQualifications')}
+										disabled={isSaving}
+									>
+										{#if isSaving}
+											<Loader2 class="h-4 w-4 animate-spin mr-2" />
+											{$t('common.saving')}
+										{:else}
+											<Check class="h-4 w-4 mr-2" />
+											{$t('common.save')}
+										{/if}
+									</Button>
+									<Button 
+										size="sm" 
+										variant="outline" 
+										onclick={() => cancelEditing('jobRequiredQualifications')}
+									>
+										<X class="h-4 w-4 mr-2" />
+										{$t('common.cancel')}
+									</Button>
+								</div>
+							</div>
+						{:else}
+							<div class="flex items-start gap-2">
+								<p class="{requirements.requirements.jobRequiredQualifications ? 'text-gray-900' : 'text-gray-500'} text-sm">
+									{requirements.requirements.jobRequiredQualifications || $t('dashboard.chatWindow.notSpecified')}
+								</p>
+								<button 
+									class="opacity-0 group-hover:opacity-100 transition-opacity duration-200 mt-0.5"
+									onclick={() => startEditing('jobRequiredQualifications')}
+								>
+									<Pen class="h-3.5 w-3.5 text-gray-400 hover:text-primary" />
+								</button>
+							</div>
+						{/if}
+					</div>
 				</div>
 
 				<div class="border-t pt-3">
@@ -876,33 +961,26 @@
 							</div>
 						{/if}
 
-						{#if requirements.huntInstructions?.onlyCountriesToSearch?.length || requirements.huntInstructions?.preferredCountriesToSearch?.length}
-							<div class="grid w-full grid-cols-[150px_1fr] items-start">
-								<h4 class="font-semibold">{$t('dashboard.chatWindow.searchScope')}</h4>
-								<div class="flex flex-col gap-1">
-									{#if requirements.huntInstructions?.onlyCountriesToSearch?.length}
-										<div class="flex flex-wrap gap-1">
-											{#each requirements.huntInstructions.onlyCountriesToSearch as country}
-												<span class="rounded bg-blue-50 px-2 py-0.5 text-xs text-blue-700"
-													>{country}</span
-												>
-											{/each}
-										</div>
-									{:else if requirements.huntInstructions?.preferredCountriesToSearch?.length}
-										<div>
-											<div class="mb-1 flex flex-wrap gap-1">
-												{#each requirements.huntInstructions.preferredCountriesToSearch as country}
-													<span class="rounded bg-green-50 px-2 py-0.5 text-xs text-green-700"
-														>{country}</span
-													>
-												{/each}
-											</div>
-											<span class="text-xs text-gray-500"
-												>{$t('dashboard.chatWindow.globalSearch')}</span
-											>
-										</div>
-									{/if}
+						{#if requirements.huntInstructions?.onlyCountriesToSearch?.length}
+							<div class="flex flex-wrap gap-1">
+								{#each requirements.huntInstructions.onlyCountriesToSearch as country}
+									<span class="rounded bg-blue-50 px-2 py-0.5 text-xs text-blue-700"
+										>{country}</span
+									>
+								{/each}
+							</div>
+						{:else if requirements.huntInstructions?.preferredCountriesToSearch?.length}
+							<div>
+								<div class="mb-1 flex flex-wrap gap-1">
+									{#each requirements.huntInstructions.preferredCountriesToSearch as country}
+										<span class="rounded bg-green-50 px-2 py-0.5 text-xs text-green-700"
+											>{country}</span
+										>
+									{/each}
 								</div>
+								<span class="text-xs text-gray-500"
+									>{$t('dashboard.chatWindow.globalSearch')}</span
+								>
 							</div>
 						{/if}
 					</div>

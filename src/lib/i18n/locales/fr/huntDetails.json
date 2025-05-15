@@ -1,4 +1,9 @@
 {
+	"common": {
+		"saving": "Enregistrement",
+		"save": "Enregistrer",
+		"cancel": "Annuler"
+	},
 	"hunt": {
 		"details": "Détails",
 		"statistics": "Statistiques",

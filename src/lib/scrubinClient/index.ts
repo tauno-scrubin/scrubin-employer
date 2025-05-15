@@ -793,258 +793,177 @@ class CompanyResource extends BaseResource {
 
 // Hunt endpoints
 class HuntResource extends BaseResource {
-	constructor(client: ScrubinClient) {
-		super(client, '/api/v1/hunt');
-	}
+  constructor(client: ScrubinClient) {
+    super(client, '/api/v1/hunt');
+  }
 
-	// GET /api/v1/hunt/worker-lookups
-	async getWorkerLookups(): Promise<WorkerLookupsResponse> {
-		const url = new URL(`${this.path}/worker-lookups`, this.client.baseUrl);
-		return this.request<WorkerLookupsResponse>(
-			'GET',
-			url.toString()
-		) as Promise<WorkerLookupsResponse>;
-	}
+  // GET /api/v1/hunt/worker-lookups
+  async getWorkerLookups(): Promise<WorkerLookupsResponse> {
+    const url = new URL(`${this.path}/worker-lookups`, this.client.baseUrl);
+    return this.request<WorkerLookupsResponse>('GET', url.toString()) as Promise<WorkerLookupsResponse>;
+  }
 
-	// POST /api/v1/hunt/worker-lookups/analyze
-	async analyzeWorkerLookups(description: string): Promise<AnalyzeResponse> {
-		const url = new URL(`${this.path}/worker-lookups/analyze`, this.client.baseUrl);
-		return this.request<AnalyzeResponse>('POST', url.toString(), {
-			description
-		}) as Promise<AnalyzeResponse>;
-	}
+  // POST /api/v1/hunt/worker-lookups/analyze
+  async analyzeWorkerLookups(description: string): Promise<AnalyzeResponse> {
+    const url = new URL(`${this.path}/worker-lookups/analyze`, this.client.baseUrl);
+    return this.request<AnalyzeResponse>('POST', url.toString(), { description }) as Promise<AnalyzeResponse>;
+  }
 
-	// POST /api/v1/hunt/requirements/analyze
-	async createJobRequirements(
-		workerLookupId: number,
-		favoriteCandidateIds: string[]
-	): Promise<Requirements> {
-		const url = new URL(`${this.path}/requirements/create`, this.client.baseUrl);
-		return this.request<Requirements>('POST', url.toString(), {
-			workerLookupId,
-			favoriteCandidateIds
-		}) as Promise<Requirements>;
-	}
+  // POST /api/v1/hunt/requirements/analyze
+  async createJobRequirements(workerLookupId: number, favoriteCandidateIds: string[]): Promise<Requirements> {
+    const url = new URL(`${this.path}/requirements/create`, this.client.baseUrl);
+    return this.request<Requirements>('POST', url.toString(), { workerLookupId, favoriteCandidateIds }) as Promise<Requirements>;
+  }
 
-	// PUT /api/v1/hunt/requirements/{id}/analyze
-	async updateRequirements(id: number, textInput: string): Promise<RequirementsWithInstructions> {
-		const url = new URL(`${this.path}/requirements/${id}/analyze`, this.client.baseUrl);
-		return this.request<RequirementsWithInstructions>('PUT', url.toString(), {
-			textInput
-		}) as Promise<RequirementsWithInstructions>;
-	}
+  // PUT /api/v1/hunt/requirements/{id}/analyze
+  async updateRequirements(id: number, textInput: string): Promise<RequirementsWithInstructions> {
+    const url = new URL(`${this.path}/requirements/${id}/analyze`, this.client.baseUrl);
+    return this.request<RequirementsWithInstructions>('PUT', url.toString(), { textInput }) as Promise<RequirementsWithInstructions>;
+  }
 
-	// PUT /api/v1/hunt/requirements/{id}/activate
-	async activateRequirements(id: number): Promise<ActivateHuntResponse> {
-		const url = new URL(`${this.path}/requirements/${id}/activate-hunt`, this.client.baseUrl);
-		return this.request<ActivateHuntResponse>(
-			'POST',
-			url.toString()
-		) as Promise<ActivateHuntResponse>;
-	}
+  // PUT /api/v1/hunt/requirements/{id}/activate
+  async activateRequirements(id: number): Promise<ActivateHuntResponse> {
+    const url = new URL(`${this.path}/requirements/${id}/activate-hunt`, this.client.baseUrl);
+    return this.request<ActivateHuntResponse>('POST', url.toString()) as Promise<ActivateHuntResponse>;
+  }
 
-	async getAnalyzeResult(id: number): Promise<Requirements['requirements']> {
-		const url = new URL(`${this.path}/requirements/${id}/analyze-result`, this.client.baseUrl);
-		return this.request<Requirements['requirements']>('GET', url.toString()) as Promise<
-			Requirements['requirements']
-		>;
-	}
+  async getAnalyzeResult(id: number): Promise<Requirements['requirements']> {
+    const url = new URL(`${this.path}/requirements/${id}/analyze-result`, this.client.baseUrl);
+    return this.request<Requirements['requirements']>('GET', url.toString()) as Promise<Requirements['requirements']>;
+  }
 
-	async getAllRequirements(): Promise<AllRequirementsResponse> {
-		const url = new URL(`${this.path}/requirements`, this.client.baseUrl);
-		return this.request<AllRequirementsResponse>(
-			'GET',
-			url.toString()
-		) as Promise<AllRequirementsResponse>;
-	}
+  async getAllRequirements(): Promise<AllRequirementsResponse> {
+    const url = new URL(`${this.path}/requirements`, this.client.baseUrl);
+    return this.request<AllRequirementsResponse>('GET', url.toString()) as Promise<AllRequirementsResponse>;
+  }
 
-	async getRequirements(id: number): Promise<Requirements['requirements']> {
-		const url = new URL(`${this.path}/requirements/${id}`, this.client.baseUrl);
-		return this.request<Requirements['requirements']>('GET', url.toString()) as Promise<
-			Requirements['requirements']
-		>;
-	}
+  async getRequirements(id: number): Promise<Requirements['requirements']> {
+    const url = new URL(`${this.path}/requirements/${id}`, this.client.baseUrl);
+    return this.request<Requirements['requirements']>('GET', url.toString()) as Promise<Requirements['requirements']>;
+  }
 
-	// GET /api/v1/hunts
-	async getHunts(page: number = 0, size: number = 20): Promise<HuntsResponse> {
-		const url = new URL('/api/v1/hunts', this.client.baseUrl);
-		url.search = new URLSearchParams({ page: page.toString(), size: size.toString() }).toString();
-		return this.request<HuntsResponse>('GET', url.toString()) as Promise<HuntsResponse>;
-	}
+  // GET /api/v1/hunts
+  async getHunts(page: number = 0, size: number = 20): Promise<HuntsResponse> {
+    const url = new URL('/api/v1/hunts', this.client.baseUrl);
+    url.search = new URLSearchParams({ page: page.toString(), size: size.toString() }).toString();
+    return this.request<HuntsResponse>('GET', url.toString()) as Promise<HuntsResponse>;
+  }
 
-	// GET /api/v1/hunts/{id}
-	async getHuntById(id: number): Promise<HuntDetail> {
-		const url = new URL(`/api/v1/hunts/${id}`, this.client.baseUrl);
-		return this.request<HuntDetail>('GET', url.toString()) as Promise<HuntDetail>;
-	}
+  // GET /api/v1/hunts/{id}
+  async getHuntById(id: number): Promise<HuntDetail> {
+    const url = new URL(`/api/v1/hunts/${id}`, this.client.baseUrl);
+    return this.request<HuntDetail>('GET', url.toString()) as Promise<HuntDetail>;
+  }
 
-	// GET /api/v1/hunts/{id}/stats
-	async getHuntStats(id: number): Promise<HuntStats> {
-		const url = new URL(`/api/v1/hunts/${id}/stats`, this.client.baseUrl);
-		return this.request<HuntStats>('GET', url.toString()) as Promise<HuntStats>;
-	}
+  // GET /api/v1/hunts/{id}/stats
+  async getHuntStats(id: number): Promise<HuntStats> {
+    const url = new URL(`/api/v1/hunts/${id}/stats`, this.client.baseUrl);
+    return this.request<HuntStats>('GET', url.toString()) as Promise<HuntStats>;
+  }
 
-	// GET /api/v1/hunts/{id}/candidates
-	async getHuntCandidates(
-		id: number,
-		page: number = 0,
-		size: number = 20
-	): Promise<HuntCandidatesResponse> {
-		const url = new URL(`/api/v1/hunts/${id}/candidates`, this.client.baseUrl);
-		url.search = new URLSearchParams({ page: page.toString(), size: size.toString() }).toString();
-		return this.request<HuntCandidatesResponse>(
-			'GET',
-			url.toString()
-		) as Promise<HuntCandidatesResponse>;
-	}
+  // GET /api/v1/hunts/{id}/candidates
+  async getHuntCandidates(id: number, page: number = 0, size: number = 20): Promise<HuntCandidatesResponse> {
+    const url = new URL(`/api/v1/hunts/${id}/candidates`, this.client.baseUrl);
+    url.search = new URLSearchParams({ page: page.toString(), size: size.toString() }).toString();
+    return this.request<HuntCandidatesResponse>('GET', url.toString()) as Promise<HuntCandidatesResponse>;
+  }
 
-	// POST /api/v1/hunt/requirements/{id}/create-hunt
-	async createHuntFromRequirements(id: number, planType: PlanType): Promise<HuntDetail> {
-		const url = new URL(`${this.path}/requirements/${id}/create-hunt`, this.client.baseUrl);
-		return this.request<HuntDetail>('POST', url.toString(), { planType }) as Promise<HuntDetail>;
-	}
+  // POST /api/v1/hunt/requirements/{id}/create-hunt
+  async createHuntFromRequirements(id: number, planType: PlanType): Promise<HuntDetail> {
+    const url = new URL(`${this.path}/requirements/${id}/create-hunt`, this.client.baseUrl);
+    return this.request<HuntDetail>('POST', url.toString(), { planType }) as Promise<HuntDetail>;
+  }
 
-	// POST /api/v1/hunts/{id}/payment-intent
-	async createPaymentIntent(id: number): Promise<PaymentIntent> {
-		const url = new URL(`/api/v1/hunts/${id}/payment-intent`, this.client.baseUrl);
-		return this.request<PaymentIntent>('POST', url.toString()) as Promise<PaymentIntent>;
-	}
+  // POST /api/v1/hunts/{id}/payment-intent
+  async createPaymentIntent(id: number): Promise<PaymentIntent> {
+    const url = new URL(`/api/v1/hunts/${id}/payment-intent`, this.client.baseUrl);
+    return this.request<PaymentIntent>('POST', url.toString()) as Promise<PaymentIntent>;
+  }
 
-	// POST /api/v1/hunts/{id}/activate
-	async activateHunt(
-		id: number,
-		paymentIntentId: string,
-		paymentMethodId: string
-	): Promise<HuntPaymentResponse> {
-		const url = new URL(`/api/v1/hunts/${id}/activate`, this.client.baseUrl);
-		return this.request<HuntPaymentResponse>('POST', url.toString(), {
-			paymentIntentId,
-			paymentMethodId
-		}) as Promise<HuntPaymentResponse>;
-	}
+  // POST /api/v1/hunts/{id}/activate
+  async activateHunt(id: number, paymentIntentId: string, paymentMethodId: string): Promise<HuntPaymentResponse> {
+    const url = new URL(`/api/v1/hunts/${id}/activate`, this.client.baseUrl);
+    return this.request<HuntPaymentResponse>('POST', url.toString(), {
+      paymentIntentId,
+      paymentMethodId
+    }) as Promise<HuntPaymentResponse>;
+  }
 
-	// GET /api/v1/landing/worker-lookups/{lookupId}/huntable/{id}
-	async getHuntableDetails(lookupId: string, id: string): Promise<HuntableDetails> {
-		const url = new URL(
-			`/api/v1/hunt/worker-lookups/${lookupId}/huntable/${id}`,
-			this.client.baseUrl
-		);
-		return this.request<HuntableDetails>('GET', url.toString()) as Promise<HuntableDetails>;
-	}
+  // GET /api/v1/landing/worker-lookups/{lookupId}/huntable/{id}
+  async getHuntableDetails(lookupId: string, id: string): Promise<HuntableDetails> {
+    const url = new URL(`/api/v1/hunt/worker-lookups/${lookupId}/huntable/${id}`, this.client.baseUrl);
+    return this.request<HuntableDetails>('GET', url.toString()) as Promise<HuntableDetails>;
+  }
 
-	// GET /api/v1/hunts/{id}/interested-candidates
-	async getInterestedCandidates(id: number): Promise<InterestedCandidate[]> {
-		const url = new URL(`/api/v1/hunts/${id}/interested-candidates`, this.client.baseUrl);
-		return this.request<InterestedCandidate[]>('GET', url.toString()) as Promise<
-			InterestedCandidate[]
-		>;
-	}
+  // GET /api/v1/hunts/{id}/interested-candidates
+  async getInterestedCandidates(id: number): Promise<InterestedCandidate[]> {
+    const url = new URL(`/api/v1/hunts/${id}/interested-candidates`, this.client.baseUrl);
+    return this.request<InterestedCandidate[]>('GET', url.toString()) as Promise<InterestedCandidate[]>;
+  }
 
-	// GET /api/v1/hunts/{id}/interested-candidates/{candidateId}
-	async getInterestedCandidateDetails(
-		id: number,
-		candidateId: number
-	): Promise<InterestedCandidateDetails> {
-		const url = new URL(
-			`/api/v1/hunts/${id}/interested-candidates/${candidateId}`,
-			this.client.baseUrl
-		);
-		return this.request<InterestedCandidateDetails>(
-			'GET',
-			url.toString()
-		) as Promise<InterestedCandidateDetails>;
-	}
+  // GET /api/v1/hunts/{id}/interested-candidates/{candidateId}
+  async getInterestedCandidateDetails(id: number, candidateId: number): Promise<InterestedCandidateDetails> {
+    const url = new URL(`/api/v1/hunts/${id}/interested-candidates/${candidateId}`, this.client.baseUrl);
+    return this.request<InterestedCandidateDetails>('GET', url.toString()) as Promise<InterestedCandidateDetails>;
+  }
 
-	// PUT /api/v1/hunts/{id}/interested-candidates/{candidateId}/notes
-	async updateInterestedCandidateNotes(
-		id: number,
-		candidateId: number,
-		notes: string
-	): Promise<void> {
-		const url = new URL(
-			`/api/v1/hunts/${id}/interested-candidates/${candidateId}/notes`,
-			this.client.baseUrl
-		);
-		return this.request<void>('PUT', url.toString(), { notes }, true) as Promise<void>;
-	}
+  // PUT /api/v1/hunts/{id}/interested-candidates/{candidateId}/notes
+  async updateInterestedCandidateNotes(id: number, candidateId: number, notes: string): Promise<void> {
+    const url = new URL(`/api/v1/hunts/${id}/interested-candidates/${candidateId}/notes`, this.client.baseUrl);
+    return this.request<void>('PUT', url.toString(), { notes }, true) as Promise<void>;
+  }
 
-	// GET /api/v1/hunts/{id}/interested-candidates/{candidateId}/chat
-	async getInterestedCandidateChat(id: number, candidateId: number): Promise<ChatMessage[]> {
-		const url = new URL(
-			`/api/v1/hunts/${id}/interested-candidates/${candidateId}/chat`,
-			this.client.baseUrl
-		);
-		return this.request<ChatMessage[]>('GET', url.toString()) as Promise<ChatMessage[]>;
-	}
+  // GET /api/v1/hunts/{id}/interested-candidates/{candidateId}/chat
+  async getInterestedCandidateChat(id: number, candidateId: number): Promise<ChatMessage[]> {
+    const url = new URL(`/api/v1/hunts/${id}/interested-candidates/${candidateId}/chat`, this.client.baseUrl);
+    return this.request<ChatMessage[]>('GET', url.toString()) as Promise<ChatMessage[]>;
+  }
 
-	// POST /api/v1/hunts/{id}/interested-candidates/{candidateId}/chat
-	async createInterestedCandidateMessage(
-		id: number,
-		candidateId: number,
-		message: string
-	): Promise<ChatMessage[]> {
-		const url = new URL(
-			`/api/v1/hunts/${id}/interested-candidates/${candidateId}/chat`,
-			this.client.baseUrl
-		);
-		return this.request<ChatMessage[]>('POST', url.toString(), { message }) as Promise<
-			ChatMessage[]
-		>;
-	}
+  // POST /api/v1/hunts/{id}/interested-candidates/{candidateId}/chat
+  async createInterestedCandidateMessage(id: number, candidateId: number, message: string): Promise<ChatMessage[]> {
+    const url = new URL(`/api/v1/hunts/${id}/interested-candidates/${candidateId}/chat`, this.client.baseUrl);
+    return this.request<ChatMessage[]>('POST', url.toString(), { message }) as Promise<ChatMessage[]>;
+  }
 
-	// GET /api/v1/hunts/{id}/context-questions
-	async getHuntContextQuestions(id: number): Promise<ContextQuestion[]> {
-		const url = new URL(`/api/v1/hunts/${id}/context-questions`, this.client.baseUrl);
-		return this.request<ContextQuestion[]>('GET', url.toString()) as Promise<ContextQuestion[]>;
-	}
+  // GET /api/v1/hunts/{id}/context-questions
+  async getHuntContextQuestions(id: number): Promise<ContextQuestion[]> {
+    const url = new URL(`/api/v1/hunts/${id}/context-questions`, this.client.baseUrl);
+    return this.request<ContextQuestion[]>('GET', url.toString()) as Promise<ContextQuestion[]>;
+  }
 
-	// POST /api/v1/hunts/{id}/context-questions/{questionId}
-	async answerHuntContextQuestion(
-		id: number,
-		questionId: number,
-		answer: string
-	): Promise<ContextQuestion> {
-		const url = new URL(`/api/v1/hunts/${id}/context-questions/${questionId}`, this.client.baseUrl);
-		return this.request<ContextQuestion>('POST', url.toString(), {
-			answer
-		}) as Promise<ContextQuestion>;
-	}
+  // POST /api/v1/hunts/{id}/context-questions/{questionId}
+  async answerHuntContextQuestion(id: number, questionId: number, answer: string): Promise<ContextQuestion> {
+    const url = new URL(`/api/v1/hunts/${id}/context-questions/${questionId}`, this.client.baseUrl);
+    return this.request<ContextQuestion>('POST', url.toString(), { answer }) as Promise<ContextQuestion>;
+  }
 
-	// POST /api/v2/hunts/{id}/activate
-	async activateHuntV2(id: number): Promise<Hunt> {
-		const url = new URL(`/api/v2/hunts/${id}/activate`, this.client.baseUrl);
-		return this.request<Hunt>('POST', url.toString()) as Promise<Hunt>;
-	}
+  // POST /api/v2/hunts/{id}/activate
+  async activateHuntV2(id: number): Promise<Hunt> {
+    const url = new URL(`/api/v2/hunts/${id}/activate`, this.client.baseUrl);
+    return this.request<Hunt>('POST', url.toString()) as Promise<Hunt>;
+  }
 
-	// POST /api/v1/hunts/{id}/complete
-	async completeHunt(id: number): Promise<Hunt> {
-		const url = new URL(`/api/v1/hunts/${id}/complete`, this.client.baseUrl);
-		return this.request<Hunt>('POST', url.toString()) as Promise<Hunt>;
-	}
+  // POST /api/v1/hunts/{id}/complete
+  async completeHunt(id: number): Promise<Hunt> {
+    const url = new URL(`/api/v1/hunts/${id}/complete`, this.client.baseUrl);
+    return this.request<Hunt>('POST', url.toString()) as Promise<Hunt>;
+  }
 
-	// POST /api/v1/hunts/{id}/cancel
-	async cancelHunt(id: number): Promise<Hunt> {
-		const url = new URL(`/api/v1/hunts/${id}/cancel`, this.client.baseUrl);
-		return this.request<Hunt>('POST', url.toString()) as Promise<Hunt>;
-	}
+  // POST /api/v1/hunts/{id}/cancel
+  async cancelHunt(id: number): Promise<Hunt> {
+    const url = new URL(`/api/v1/hunts/${id}/cancel`, this.client.baseUrl);
+    return this.request<Hunt>('POST', url.toString()) as Promise<Hunt>;
+  }
 
-	// PATCH /api/v1/hunt/requirements/{id}
-	async updateRequirementsManually(
-		id: number,
-		data: {
-			jobTitle?: string;
-			jobDescription?: string;
-			jobRequiredQualifications?: string;
-			jobRequiredWorkExperience?: number;
-		}
-	): Promise<RequirementsWithInstructions> {
-		const url = new URL(`${this.path}/requirements/${id}`, this.client.baseUrl);
-		return this.request<RequirementsWithInstructions>(
-			'PATCH',
-			url.toString(),
-			data
-		) as Promise<RequirementsWithInstructions>;
-	}
+  async updateRequirementFields(id: number, data: {
+    jobTitle?: string,
+    jobRequiredQualifications?: string,
+    jobRequiredWorkExperience?: number,
+    jobDescription?: string
+  }): Promise<Requirements['requirements']> {
+    const url = new URL(`${this.path}/requirements/${id}`, this.client.baseUrl);
+    return this.request<Requirements['requirements']>('PATCH', url.toString(), data) as Promise<Requirements['requirements']>;
+  }
 }
 
 // ─── CLIENT CLASS ─────────────────────────────────────────────────────────────
