@@ -42,8 +42,10 @@
 		"title": "Recherche"
 	},
 	"payment": {
-		"startFee": "Frais de démarrage",
-		"successFee": "Frais de succès"
+		"startFee": "Frais initiaux",
+		"successFee": "Prime de succès",
+		"activateHunt": "Activer la recherche",
+		"completePayment": "Finaliser le paiement"
 	},
 	"statistics": {
 		"huntConversionFunnel": "Entonnoir de conversion de recherche",

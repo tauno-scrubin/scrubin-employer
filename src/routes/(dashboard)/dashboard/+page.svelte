@@ -1,4 +1,5 @@
 <script lang="ts">
+	import SEO from '$lib/components/SEO.svelte';
 	import HuntsList from "@/components/dashboard/huntsList.svelte";
 	import SearchHistory from "@/components/dashboard/searchHistory.svelte";
 	import SearchView from "@/components/dashboard/searchView.svelte";
@@ -36,6 +37,12 @@
 	});
 
 </script>
+
+<SEO
+	title='Employer | Scrubin'
+	description=''
+	type="website"
+/>
   
 <div class="space-y-2 max-w-screen-xl mx-auto w-full">
 

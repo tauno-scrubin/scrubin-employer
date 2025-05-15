@@ -43,7 +43,9 @@
 	},
 	"payment": {
 		"startFee": "Tarifa Inicial",
-		"successFee": "Tarifa de Éxito"
+		"successFee": "Tarifa de Éxito",
+		"activateHunt": "Activar búsqueda",
+		"completePayment": "Completar pago"
 	},
 	"statistics": {
 		"huntConversionFunnel": "Embudo de Conversión de Búsqueda",

@@ -122,11 +122,11 @@
 	}
 </script>
 
-<SEO
+<!-- <SEO
 	title={$t('settings.title') + ' | Dashboard'}
 	description={$t('settings.profile.description')}
 	type="website"
-/>
+/> -->
 
 <div class="space-y-6">
 	<div class="flex items-center justify-between">

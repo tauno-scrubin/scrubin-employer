@@ -42,8 +42,10 @@
 		"title": "Sihtotsing"
 	},
 	"payment": {
-		"startFee": "Alustustasu",
-		"successFee": "Edutasu"
+		"startFee": "Alustamistasu",
+		"successFee": "Edutasu",
+		"activateHunt": "Aktiveeri otsing",
+		"completePayment": "Lõpeta makse"
 	},
 	"statistics": {
 		"huntConversionFunnel": "Sihtotsingu Konversiooni Lehter",

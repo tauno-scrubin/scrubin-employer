@@ -373,7 +373,6 @@
 			"submitting": "Submitting...",
 			"submit": "Submit",
 			"jobRequirements": "Job Requirements",
-			"notSpecified": "Not specified",
 			"jobTitle": "Job title",
 			"jobDescription": "Job description",
 			"professions": "Professions",
@@ -387,13 +386,17 @@
 			"requiredQualifications": "Required Qualifications",
 			"additionalRequirements": "Additional Requirements",
 			"drivingLicense": "Driving License",
-			"required": "Required",
-			"notRequired": "Not required",
 			"personalCar": "Personal Car",
 			"accommodation": "Accommodation",
 			"transport": "Transport",
 			"searchScope": "Search Scope",
-			"globalSearch": "Global search with preference for listed countries"
+			"globalSearch": "Global search enabled",
+			"notSpecified": "Not specified",
+			"required": "Required",
+			"notRequired": "Not required",
+			"editManually": "Edit Manually",
+			"save": "Save Changes",
+			"saving": "Saving..."
 		},
 		"analyzingOverlay": {
 			"analyzing": "Analyzing your content...",

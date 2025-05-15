@@ -393,7 +393,10 @@
 			"accommodation": "Majoitus",
 			"transport": "Kuljetus",
 			"searchScope": "Hakualue",
-			"globalSearch": "Maailmanlaajuinen haku, painottaen listattuja maita"
+			"globalSearch": "Maailmanlaajuinen haku, painottaen listattuja maita",
+			"editManually": "Muokkaa manuaalisesti",
+			"save": "Tallenna muutokset",
+			"saving": "Tallennetaan..."
 		},
 		"analyzingOverlay": {
 			"analyzing": "Analysoin sisältöäsi...",
