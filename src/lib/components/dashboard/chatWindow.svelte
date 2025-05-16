@@ -2,7 +2,7 @@
 	import { goto } from '$app/navigation';
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
-	import type { CompanyPlanSummary, PlanType, RequirementsWithInstructions } from '@/scrubinClient';
+	import type { CompanyPlanSummary, PlanType, RequirementsWithInstructions, Currency } from '@/scrubinClient';
 	import { scrubinClient } from '@/scrubinClient/client';
 	import { t } from '$lib/i18n';
 	import { AlertCircle, Check, ChevronDown, ChevronLeft, Loader2, Sparkle, Pen, X } from 'lucide-svelte';
@@ -11,6 +11,7 @@
 	import PaymentDialog from '../payment/paymentDialog.svelte';
 	import ChatWindowDemand from './chatWindowDemand.svelte';
 	import { visible } from './overlay';
+	import DropdownComponent from '../dropdownComponent.svelte';
 
 	let {
 		requirements = $bindable<RequirementsWithInstructions>()
@@ -23,6 +24,8 @@
 		companyActivePlans = await scrubinClient.company.getActivePlans();
 		console.log(companyActivePlans);
 		console.log(requirements);
+		availableCurrencies = await scrubinClient.company.getCurrencies();
+		availableCountries = await scrubinClient.company.getCountries();
 	});
 
 	let currentQuestionIndex = $state(0);
@@ -36,6 +39,8 @@
 	let customInstructions = $state('');
 	let selectedPlanType = $state<PlanType | null>(null);
 	let showPlanActivationMessage = $state(false);
+	let availableCurrencies = $state<Currency[]>([]);
+	let availableCountries = $state<string[]>([]);
 
 	// Collapsible questions state
 	let expandedQuestions = $state(new Set([0])); // Example: first 3 expanded by default
@@ -297,19 +302,32 @@
 		window.history.back();
 	}
 
-	// Add state for editable fields
 	let editableFields = $state({
-		jobTitle: false,
-		jobDescription: false,
-		jobRequiredQualifications: false,
-		jobRequiredWorkExperience: false
+	jobTitle: false,
+	jobDescription: false,
+	jobRequiredQualifications: false,
+	jobRequiredWorkExperience: false,
+	salaryStart: false,
+	salaryEnd: false,
+	salaryCurrency: false,
+	country: false,
+	city: false,
+	address: false,
+	stateProvinceRegion: false
 	});
 
 	let editValues = $state({
-		jobTitle: '',
-		jobDescription: '',
-		jobRequiredQualifications: '',
-		jobRequiredWorkExperience: 0
+	jobTitle: '',
+	jobDescription: '',
+	jobRequiredQualifications: '',
+	jobRequiredWorkExperience: 0,
+	salaryStart: 0,
+	salaryEnd: 0,
+	address: '',
+	salaryCurrency: requirements?.requirements.salary?.currency || '',
+	country: requirements?.requirements.country || '',
+	city: requirements?.requirements.address?.city || '',
+	stateProvinceRegion: requirements?.requirements.address?.stateProvinceRegion || []
 	});
 
 	let isEditing = $state(false);
@@ -322,36 +340,50 @@
 				jobTitle: requirements.requirements.jobTitle || '',
 				jobDescription: requirements.requirements.jobDescription || '',
 				jobRequiredQualifications: requirements.requirements.jobRequiredQualifications || '',
-				jobRequiredWorkExperience: requirements.requirements.jobRequiredWorkExperience || 0
+				jobRequiredWorkExperience: requirements.requirements.jobRequiredWorkExperience || 0,
+				salaryStart: requirements.requirements.salary?.amountStart || 0,
+				salaryEnd: requirements.requirements.salary?.amountEnd || 0,
+				salaryCurrency: requirements.requirements.salary?.currency || '',
+				country: requirements.requirements.country || '',
+				address: requirements.requirements.address.address || '',
+				city: requirements.requirements.address?.city || '',
+				stateProvinceRegion: requirements.requirements.address?.stateProvinceRegion || []
 			};
 		}
 	});
 
 	async function saveField(field: keyof typeof editableFields) {
 		if (!requirements?.requirements?.id) return;
-		
 		isSaving = true;
-		
 		try {
-			// Only update the specific field being edited
-			const updateData = {
-				[field]: editValues[field]
-			};
+			let updateData: any = {};
+			if (field === 'salaryStart' || field === 'salaryEnd' || field === 'salaryCurrency') {
+				// group under salary
+				updateData = {
+					salaryAmountStart: editValues.salaryStart  ? editValues.salaryStart : requirements.requirements.salary?.amountStart,
+					salaryAmountEnd:   editValues.salaryEnd  ? editValues.salaryEnd : requirements.requirements.salary?.amountEnd,
+					salaryCurrency:    editValues.salaryCurrency  ? editValues.salaryCurrency : requirements.requirements.salary?.currency
+				};
+			} else if (field === 'country' || field === 'city' || field === 'stateProvinceRegion') {
+				// group under address & country
+				updateData = {
+					country: editValues.country,
+					address: editValues.address,
+					city: editValues.city,
+					stateProvinceRegion: editValues.stateProvinceRegion
+				};
+			} else {
+				updateData = { [field]: editValues[field] };
+			}
 
 			const updatedRequirements = await scrubinClient.hunt.updateRequirementFields(
-				requirements.requirements.id,
-				updateData
+			requirements.requirements.id,
+			updateData
 			);
-
-			// Update local data
-			requirements = {
-				...requirements,
-				requirements: updatedRequirements
-			};
-
-			// Close edit mode
-			editableFields[field] = false;
-			
+			requirements = { ...requirements, requirements: updatedRequirements };
+			Object.keys(editableFields).forEach(key => {
+				editableFields[key as keyof typeof editableFields] = false;
+			});
 			toast.success(`Updated successfully`);
 		} catch (error) {
 			console.error(`Failed to update ${field}:`, error);
@@ -359,7 +391,8 @@
 		} finally {
 			isSaving = false;
 		}
-	}
+		}
+
 
 	function startEditing(field: keyof typeof editableFields) {
 		// Close any other open edit fields
@@ -793,22 +826,88 @@
 						{/if}
 					</div>
 
-					<div class="grid w-full grid-cols-[150px_1fr] items-start">
+					<div class="grid w-full grid-cols-[150px_1fr] items-start transition-colors duration-200 hover:bg-gray-50 rounded p-1 pl-0 group">
 						<h4 class="font-semibold">{$t('dashboard.chatWindow.location')}</h4>
-						<p
-							class={requirements.requirements.address?.city ||
-							requirements.requirements.address?.stateProvinceRegion
-								? 'text-gray-900'
-								: 'text-gray-500'}
-						>
-							{requirements.requirements.country},
-							{requirements.requirements.address?.city || ''}
-							{requirements.requirements.address?.stateProvinceRegion
-								? Array.isArray(requirements.requirements.address.stateProvinceRegion)
-									? requirements.requirements.address.stateProvinceRegion.join(', ')
-									: requirements.requirements.address.stateProvinceRegion
-								: ''}
-						</p>
+						
+						{#if editableFields.country || editableFields.city || editableFields.stateProvinceRegion}
+							<div class="flex flex-col gap-2 w-full">
+								<div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+									<DropdownComponent
+											options={availableCountries}
+											value={editValues.country}
+											justString={true}
+											onValueChange={(value) => {
+												editValues.country = value;
+											}}
+											placeholder="Country"
+											optionKey="code"
+											labelKey="name"
+										/>
+									<Input 
+										type="text" 
+										placeholder="City"
+										value={editValues.city} 
+										onchange={(e) => { editValues.city = e.currentTarget.value; }}
+									/>
+									<Input 
+										type="text" 
+										placeholder="Region/State/Province"
+										value={editValues.stateProvinceRegion} 
+										onchange={(e) => { editValues.stateProvinceRegion = e.currentTarget.value; }}
+									/>
+								</div>
+								<div class="flex justify-end gap-2">
+									<Button 
+										size="sm" 
+										variant="default" 
+										onclick={() => saveField('country')}
+										disabled={isSaving}
+									>
+										{#if isSaving}
+											<Loader2 class="h-4 w-4 animate-spin mr-2" />
+											{$t('common.saving')}
+										{:else}
+											<Check class="h-4 w-4 mr-2" />
+											{$t('common.save')}
+										{/if}
+									</Button>
+									<Button 
+										size="sm" 
+										variant="outline" 
+										onclick={() => {
+											cancelEditing('country');
+											cancelEditing('city');
+											cancelEditing('stateProvinceRegion');
+										}}
+									>
+										<X class="h-4 w-4 mr-2" />
+										{$t('common.cancel')}
+									</Button>
+								</div>
+							</div>
+						{:else}
+							<div class="flex items-center gap-2">
+								<p class={requirements.requirements.address?.city || requirements.requirements.address?.stateProvinceRegion ? 'text-gray-900' : 'text-gray-500'}>
+									{requirements.requirements.country},
+									{requirements.requirements.address?.city || ''}
+									{requirements.requirements.address?.stateProvinceRegion
+										? Array.isArray(requirements.requirements.address.stateProvinceRegion)
+											? requirements.requirements.address.stateProvinceRegion.join(', ')
+											: requirements.requirements.address.stateProvinceRegion
+										: ''}
+								</p>
+								<button 
+									class="opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+									onclick={() => {
+										startEditing('country');
+										startEditing('city');
+										startEditing('stateProvinceRegion');
+									}}
+								>
+									<Pen class="h-3.5 w-3.5 text-gray-400 hover:text-primary" />
+								</button>
+							</div>
+						{/if}
 					</div>
 
 					<div class="grid w-full grid-cols-[150px_1fr] items-start">
@@ -829,24 +928,91 @@
 						</div>
 					</div>
 
-					<div class="grid w-full grid-cols-[150px_1fr] items-start">
+					<div class="grid w-full grid-cols-[150px_1fr] items-start transition-colors duration-200 hover:bg-gray-50 rounded p-1 pl-0 group">
 						<h4 class="font-semibold">{$t('dashboard.chatWindow.salary')}</h4>
-						<p
-							class={requirements.requirements.salary?.amountStart ||
-							requirements.requirements.salary?.amountEnd
-								? 'text-gray-900'
-								: 'text-gray-500'}
-						>
-							{#if requirements.requirements.salary?.amountStart && requirements.requirements.salary?.amountEnd}
-								{requirements.requirements.salary.amountStart} - {requirements.requirements.salary
-									.amountEnd}
-								{requirements.requirements.salary.currency || ''} ({requirements.requirements.salary
-									.type || ''})
-							{:else}
-								{requirements.requirements.salary?.amountText ||
-									$t('dashboard.chatWindow.notSpecified')}
-							{/if}
-						</p>
+						
+						{#if editableFields.salaryStart || editableFields.salaryEnd || editableFields.salaryCurrency}
+							<div class="flex flex-col gap-2 w-full">
+								<div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+									<Input 
+										type="number" 
+										placeholder="From"
+										value={editValues.salaryStart} 
+										onchange={(e) => { editValues.salaryStart = parseInt(e.currentTarget.value) || 0; }}
+										min="0"
+									/>
+									<Input 
+										type="number" 
+										placeholder="To"
+										value={editValues.salaryEnd} 
+										onchange={(e) => { editValues.salaryEnd = parseInt(e.currentTarget.value) || 0; }}
+										min="0"
+									/>
+
+									<DropdownComponent
+											options={availableCurrencies}
+											value={editValues.salaryCurrency}
+											showLabelInBrackets={true}
+											onValueChange={(value) => {
+												editValues.salaryCurrency = value;
+											}}
+											placeholder="Currency"
+											optionKey="code"
+											labelKey="name"
+										/>
+									
+								</div>
+								<div class="flex justify-end gap-2">
+									<Button 
+										size="sm" 
+										variant="default" 
+										onclick={() => saveField('salaryStart')}
+										disabled={isSaving}
+									>
+										{#if isSaving}
+											<Loader2 class="h-4 w-4 animate-spin mr-2" />
+											{$t('common.saving')}
+										{:else}
+											<Check class="h-4 w-4 mr-2" />
+											{$t('common.save')}
+										{/if}
+									</Button>
+									<Button 
+										size="sm" 
+										variant="outline" 
+										onclick={() => {
+											cancelEditing('salaryStart');
+											cancelEditing('salaryEnd');
+											cancelEditing('salaryCurrency');
+										}}
+									>
+										<X class="h-4 w-4 mr-2" />
+										{$t('common.cancel')}
+									</Button>
+								</div>
+							</div>
+						{:else}
+							<div class="flex items-center gap-2">
+								<p class={requirements.requirements.salary?.amountStart || requirements.requirements.salary?.amountEnd ? 'text-gray-900' : 'text-gray-500'}>
+									{#if requirements.requirements.salary?.amountStart && requirements.requirements.salary?.amountEnd}
+										{requirements.requirements.salary.amountStart} - {requirements.requirements.salary.amountEnd}
+										{requirements.requirements.salary.currency || ''} ({requirements.requirements.salary.type || ''})
+									{:else}
+										{requirements.requirements.salary?.amountText || $t('dashboard.chatWindow.notSpecified')}
+									{/if}
+								</p>
+								<button 
+									class="opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+									onclick={() => {
+										startEditing('salaryStart');
+										startEditing('salaryEnd');
+										startEditing('salaryCurrency');
+									}}
+								>
+									<Pen class="h-3.5 w-3.5 text-gray-400 hover:text-primary" />
+								</button>
+							</div>
+						{/if}
 					</div>
 				</div>
 

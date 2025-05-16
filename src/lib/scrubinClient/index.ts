@@ -455,6 +455,12 @@ export interface StartPlanRequest {
 	planType: string;
 }
 
+// Add this interface with the other interfaces
+export interface Currency {
+	code: string;
+	name: string;
+}
+
 // ─── AUTH STORE ───────────────────────────────────────────────────────────────
 
 class AuthStore {
@@ -789,6 +795,11 @@ class CompanyResource extends BaseResource {
 		const url = new URL(`${this.path}/plans/${id}/end`, this.client.baseUrl);
 		return this.request<CompanyPlanSummary>('POST', url.toString()) as Promise<CompanyPlanSummary>;
 	}
+
+	async getCurrencies(): Promise<Currency[]> {
+		const url = new URL(`/api/v1/data/currencies`, this.client.baseUrl);
+		return this.request<Currency[]>('GET', url.toString()) as Promise<Currency[]>;
+	}
 }
 
 // Hunt endpoints
@@ -959,7 +970,15 @@ class HuntResource extends BaseResource {
     jobTitle?: string,
     jobRequiredQualifications?: string,
     jobRequiredWorkExperience?: number,
-    jobDescription?: string
+    jobDescription?: string,
+    country?: string,
+    stateProvinceRegion?: string[],
+    city?: string,
+    address?: string,
+    salaryAmountStart?: number,
+    salaryAmountEnd?: number,
+    salaryCurrency?: string,
+    cityBorough?: string[]
   }): Promise<Requirements['requirements']> {
     const url = new URL(`${this.path}/requirements/${id}`, this.client.baseUrl);
     return this.request<Requirements['requirements']>('PATCH', url.toString(), data) as Promise<Requirements['requirements']>;

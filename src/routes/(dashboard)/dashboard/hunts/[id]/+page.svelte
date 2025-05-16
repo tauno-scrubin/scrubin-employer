@@ -16,6 +16,7 @@
 	import { Input } from '$lib/components/ui/input';
 	import {
 		ArrowLeft,
+		Currency,
 		DollarSign,
 		FileText,
 		GraduationCap,
@@ -29,6 +30,8 @@
 	} from 'lucide-svelte';
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
+	import DropdownComponent from '@/components/dropdownComponent.svelte';
+	import type { Currency as Cur } from '$lib/scrubinClient';
 
 	let { data } = $props();
 	let hunt = $derived(data.hunt);
@@ -36,6 +39,8 @@
 	let isLoading = $state(true);
 	let showInterestedWorkerDialog = $state(false);
 	let selectedCandidateId = $state(0);
+	let availableCurrencies = $state<Cur[]>([])
+	let availableCountries = $state<string[]>([])
 	let paymentDialogOpen = $state(false);
 	let chargeableAmount = $state({
 		amount: 0,
@@ -52,11 +57,23 @@
 		jobDescription: string;
 		jobRequiredQualifications: string;
 		jobRequiredWorkExperience: number;
+		salaryStart: number;
+		salaryEnd: number;
+		salaryCurrency: string;
+		country: string;
+		city: string;
+		stateProvinceRegion: string | string[];
 	}>({
 		jobTitle: '',
 		jobDescription: '',
 		jobRequiredQualifications: '',
-		jobRequiredWorkExperience: 0
+		jobRequiredWorkExperience: 0,
+		salaryStart: 0,
+		salaryEnd: 0,
+		salaryCurrency: '',
+		country: '',
+		city: '',
+		stateProvinceRegion: ''
 	});
 
 	$effect(() => {
@@ -66,7 +83,13 @@
 				jobTitle: hunt.requirements.jobTitle || '',
 				jobDescription: hunt.requirements.jobDescription || '',
 				jobRequiredQualifications: hunt.requirements.jobRequiredQualifications || '',
-				jobRequiredWorkExperience: hunt.requirements.jobRequiredWorkExperience || 0
+				jobRequiredWorkExperience: hunt.requirements.jobRequiredWorkExperience || 0,
+				salaryStart: hunt.requirements.salary?.amountStart || 0,
+				salaryEnd: hunt.requirements.salary?.amountEnd || 0,
+				salaryCurrency: hunt.requirements.salary?.currency || '',
+				country: hunt.requirements.country || '',
+				city: hunt.requirements.address?.city || '',
+				stateProvinceRegion: hunt.requirements.address?.stateProvinceRegion || ''
 			};
 		}
 	});
@@ -80,7 +103,13 @@
 				jobTitle: hunt.requirements.jobTitle || '',
 				jobDescription: hunt.requirements.jobDescription || '',
 				jobRequiredQualifications: hunt.requirements.jobRequiredQualifications || '',
-				jobRequiredWorkExperience: hunt.requirements.jobRequiredWorkExperience || 0
+				jobRequiredWorkExperience: hunt.requirements.jobRequiredWorkExperience || 0,
+				salaryStart: hunt.requirements.salary?.amountStart || 0,
+				salaryEnd: hunt.requirements.salary?.amountEnd || 0,
+				salaryCurrency: hunt.requirements.salary?.currency || '',
+				country: hunt.requirements.country || '',
+				city: hunt.requirements.address?.city || '',
+				stateProvinceRegion: hunt.requirements.address?.stateProvinceRegion || ''
 			};
 		}
 	}
@@ -98,21 +127,26 @@
 				jobTitle: editableRequirements.jobTitle,
 				jobDescription: editableRequirements.jobDescription,
 				jobRequiredQualifications: editableRequirements.jobRequiredQualifications,
-				jobRequiredWorkExperience: editableRequirements.jobRequiredWorkExperience
+				jobRequiredWorkExperience: editableRequirements.jobRequiredWorkExperience,
+				salaryAmountStart: editableRequirements.salaryStart,
+				salaryAmountEnd: editableRequirements.salaryEnd,
+				salaryCurrency: editableRequirements.salaryCurrency,
+				country: editableRequirements.country,
+				city: editableRequirements.city,
+				stateProvinceRegion: typeof editableRequirements.stateProvinceRegion === 'string' 
+					? [editableRequirements.stateProvinceRegion] 
+					: editableRequirements.stateProvinceRegion
 			});
 
-			// Update hunt data
-			hunt.requirements.jobTitle = editableRequirements.jobTitle;
-			hunt.requirements.jobDescription = editableRequirements.jobDescription;
-			hunt.requirements.jobRequiredQualifications = editableRequirements.jobRequiredQualifications;
-			hunt.requirements.jobRequiredWorkExperience = editableRequirements.jobRequiredWorkExperience;
-
+			hunt.requirements = response
 			// Exit edit mode
 			isEditMode = false;
 			toast.success('Requirements updated successfully');
 		} catch (error) {
 			console.error('Failed to save manual edits:', error);
-			toast.error('Failed to update requirements. Please try again.');
+			toast.error('Failed to update requirements. Please try again.', {
+				description: (error as Error).message
+			});
 		} finally {
 			isSaving = false;
 		}
@@ -151,6 +185,9 @@
 				showInterestedWorkerDialog = true;
 				activeTab = 'statistics';
 			}
+
+			availableCurrencies = await scrubinClient.company.getCurrencies();
+			availableCountries = await scrubinClient.company.getCountries();
 		} catch (error) {
 			console.error('Failed to fetch data:', error);
 		} finally {
@@ -462,20 +499,57 @@
 
 							<div class="grid w-full grid-cols-[150px_1fr] items-start">
 								<h4 class="font-semibold">{$t('hunt.location')}</h4>
-								<p
-									class={hunt.requirements.address?.city ||
-									hunt.requirements.address?.stateProvinceRegion
-										? 'text-gray-900'
-										: 'text-gray-500'}
-								>
-									{hunt.requirements.country},
-									{hunt.requirements.address?.city || ''}
-									{hunt.requirements.address?.stateProvinceRegion
-										? Array.isArray(hunt.requirements.address.stateProvinceRegion)
-											? hunt.requirements.address.stateProvinceRegion.join(', ')
-											: hunt.requirements.address.stateProvinceRegion
-										: ''}
-								</p>
+								{#if isEditMode}
+									<div class="flex flex-col gap-2">
+										<DropdownComponent
+											options={availableCountries}
+											value={editableRequirements.country}
+											justString={true}
+											onValueChange={(value) => {
+												editableRequirements.country = value;
+											}}
+											placeholder="Country"
+											optionKey="code"
+											labelKey="name"
+										/>
+										
+										<Input
+											type="text"
+											placeholder="City"
+											value={editableRequirements.city}
+											onchange={(e) => {
+												editableRequirements.city = e.currentTarget.value;
+											}}
+											class="transition-all duration-200 focus:ring-primary/30"
+										/>
+										<Input
+											type="text"
+											placeholder="State/Province/Region"
+											value={typeof editableRequirements.stateProvinceRegion === 'string' 
+												? editableRequirements.stateProvinceRegion 
+												: (editableRequirements.stateProvinceRegion[0] || '')}
+											onchange={(e) => {
+												editableRequirements.stateProvinceRegion = e.currentTarget.value;
+											}}
+											class="transition-all duration-200 focus:ring-primary/30"
+										/>
+									</div>
+								{:else}
+									<p
+										class={hunt.requirements.address?.city ||
+										hunt.requirements.address?.stateProvinceRegion
+											? 'text-gray-900'
+											: 'text-gray-500'}
+									>
+										{hunt.requirements.country},
+										{hunt.requirements.address?.city || ''}
+										{hunt.requirements.address?.stateProvinceRegion
+											? Array.isArray(hunt.requirements.address.stateProvinceRegion)
+												? hunt.requirements.address.stateProvinceRegion.join(', ')
+												: hunt.requirements.address.stateProvinceRegion
+											: ''}
+									</p>
+								{/if}
 							</div>
 
 							<div class="grid w-full grid-cols-[150px_1fr] items-start">
@@ -498,20 +572,57 @@
 
 							<div class="grid w-full grid-cols-[150px_1fr] items-start">
 								<h4 class="font-semibold">{$t('hunt.salary')}</h4>
-								<p
-									class={hunt.requirements.salary?.amountStart ||
-									hunt.requirements.salary?.amountEnd
-										? 'text-gray-900'
-										: 'text-gray-500'}
-								>
-									{#if hunt.requirements.salary?.amountStart && hunt.requirements.salary?.amountEnd}
-										{hunt.requirements.salary.amountStart} - {hunt.requirements.salary.amountEnd}
-										{hunt.requirements.salary.currency || ''} ({hunt.requirements.salary.type ||
-											''})
-									{:else}
-										{hunt.requirements.salary?.amountText || $t('hunt.notSpecified')}
-									{/if}
-								</p>
+								{#if isEditMode}
+									<div class="flex items-center gap-2">
+										<Input
+											type="number"
+											placeholder="Start"
+											value={editableRequirements.salaryStart}
+											onchange={(e) => {
+												editableRequirements.salaryStart = parseFloat(e.currentTarget.value) || 0;
+											}}
+											class="w-24 transition-all duration-200 focus:ring-primary/30"
+										/>
+										<span>-</span>
+										<Input
+											type="number"
+											placeholder="End"
+											value={editableRequirements.salaryEnd}
+											onchange={(e) => {
+												editableRequirements.salaryEnd = parseFloat(e.currentTarget.value) || 0;
+											}}
+											class="w-24 transition-all duration-200 focus:ring-primary/30"
+										/>
+
+										<DropdownComponent
+											options={availableCurrencies}
+											value={editableRequirements.salaryCurrency}
+											showLabelInBrackets={true}
+											onValueChange={(value) => {
+												editableRequirements.salaryCurrency = value;
+											}}
+											placeholder="Currency"
+											optionKey="code"
+											labelKey="name"
+										/>
+										
+									</div>
+								{:else}
+									<p
+										class={hunt.requirements.salary?.amountStart ||
+										hunt.requirements.salary?.amountEnd
+											? 'text-gray-900'
+											: 'text-gray-500'}
+									>
+										{#if hunt.requirements.salary?.amountStart && hunt.requirements.salary?.amountEnd}
+											{hunt.requirements.salary.amountStart} - {hunt.requirements.salary.amountEnd}
+											{hunt.requirements.salary.currency || ''} ({hunt.requirements.salary.type ||
+												''})
+										{:else}
+											{hunt.requirements.salary?.amountText || $t('hunt.notSpecified')}
+										{/if}
+									</p>
+								{/if}
 							</div>
 						</div>
 
