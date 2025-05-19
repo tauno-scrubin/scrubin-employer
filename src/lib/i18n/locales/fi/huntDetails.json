@@ -34,7 +34,11 @@
 		"transport": "Kuljetus",
 		"required": "Vaaditaan",
 		"notRequired": "Ei vaadita",
-		"title": "Haku"
+		"title": "Haku",
+		"readyForCompany": "Valmis haastatteluun",
+		"offersMade": "Tehdyt tarjoukset",
+		"hired": "Palkattu",
+		"candidates": "Ehdokkaat"
 	},
 	"payment": {
 		"startFee": "Aloitusmaksu",

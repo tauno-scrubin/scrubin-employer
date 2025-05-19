@@ -157,7 +157,9 @@
 		totalHuntables: 0,
 		totalHuntablesContacted: 0,
 		totalHuntablesInterested: 0,
-		totalInterestedReadyForCompany: 0
+		totalInterestedReadyForCompany: 0,
+		totalOffersMade: 0,
+		totalHired: 0
 	});
 
 	onMount(async () => {
@@ -172,7 +174,9 @@
 				totalHuntables: stats.totalHuntables || 0,
 				totalHuntablesContacted: stats.totalHuntablesContacted || 0,
 				totalHuntablesInterested: stats.totalHuntablesInterested || 0,
-				totalInterestedReadyForCompany: stats.totalInterestedReadyForCompany || 0
+				totalInterestedReadyForCompany: stats.totalInterestedReadyForCompany || 0,
+				totalOffersMade: stats.totalOffersMade || 0,
+				totalHired: stats.totalHired || 0
 			};
 
 			// Check URL for candidateId and open dialog if present
@@ -202,7 +206,9 @@
 			{ name: 'statistics.totalHuntables', value: funnelStats.totalHuntables },
 			{ name: 'statistics.contacted', value: funnelStats.totalHuntablesContacted },
 			{ name: 'statistics.interested', value: funnelStats.totalHuntablesInterested },
-			{ name: 'statistics.readyForCompany', value: funnelStats.totalInterestedReadyForCompany }
+			{ name: 'statistics.readyForCompany', value: funnelStats.totalInterestedReadyForCompany },
+			{ name: 'statistics.offersMade', value: funnelStats.totalOffersMade },
+			{ name: 'statistics.hired', value: funnelStats.totalHired }
 		];
 	});
 

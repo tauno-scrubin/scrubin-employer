@@ -34,7 +34,11 @@
 		"transport": "Transport",
 		"required": "Nõutav",
 		"notRequired": "Ei ole nõutav",
-		"title": "Sihtotsing"
+		"title": "Sihtotsing",
+		"readyForCompany": "Valmis intervjuuks",
+		"offersMade": "Tehtud pakkumised",
+		"hired": "Tööle võetud",
+		"candidates": "Kandidaadid"
 	},
 	"payment": {
 		"startFee": "Alustamistasu",

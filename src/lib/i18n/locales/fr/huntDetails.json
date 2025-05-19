@@ -34,7 +34,10 @@
 		"transport": "Transport",
 		"required": "Requis",
 		"notRequired": "Non requis",
-		"title": "Recherche"
+		"title": "Recherche",
+		"readyForCompany": "Prêt pour l'entretien",
+		"offersMade": "Offres faites",
+		"hired": "Embauché"
 	},
 	"payment": {
 		"startFee": "Frais initiaux",

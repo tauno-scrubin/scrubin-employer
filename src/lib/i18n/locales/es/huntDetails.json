@@ -34,7 +34,11 @@
 		"transport": "Transporte",
 		"required": "Requerido",
 		"notRequired": "No requerido",
-		"title": "Búsqueda"
+		"title": "Búsqueda",
+		"readyForCompany": "Listo para Entrevista",
+		"offersMade": "Ofertas Realizadas",
+		"hired": "Contratado",
+		"candidates": "Candidatos"
 	},
 	"payment": {
 		"startFee": "Tarifa Inicial",

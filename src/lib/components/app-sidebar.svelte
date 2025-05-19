@@ -8,7 +8,7 @@
 	import type { PortalUser } from '@/scrubinClient';
 	import { currentUser } from '@/scrubinClient/client';
 	import Scrubinsvg from '@/scrubinsvg.svelte';
-	import { Calendar, HelpCircle } from 'lucide-svelte';
+	import { Calendar, DollarSign, HelpCircle } from 'lucide-svelte';
 	import ChartPie from 'lucide-svelte/icons/chart-pie';
 	import Settings2 from 'lucide-svelte/icons/settings-2';
 	import SquareTerminal from 'lucide-svelte/icons/square-terminal';
@@ -50,7 +50,7 @@
 			{
 				title: $t('nav.pricing'),
 				url: '/dashboard/pricing',
-				icon: ChartPie,
+				icon: DollarSign,
 				isActive: $page.url.href.includes('/pricing')
 			}
 		],
