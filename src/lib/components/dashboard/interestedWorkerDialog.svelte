@@ -2,6 +2,8 @@
 	import * as Card from '$lib/components/ui/card/index.js';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import * as Tabs from '$lib/components/ui/tabs/index.js';
+	import * as Button from '$lib/components/ui/button/index.js';
+	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
 	import { t } from '$lib/i18n';
 	import type { InterestedCandidateDetails } from '@/scrubinClient';
 	import { scrubinClient } from '@/scrubinClient/client';
@@ -12,7 +14,10 @@
 		GraduationCap,
 		Mail,
 		Phone,
-		Sparkle
+		Sparkle,
+		CheckCircle,
+		XCircle,
+		Handshake
 	} from 'lucide-svelte';
 	import CandidateChat from './candidateChat.svelte';
 	import CandidateNotes from './candidateNotes.svelte';
@@ -31,6 +36,8 @@
 	let isLoading = $state(false);
 	let hasError = $state(false);
 	let activeTab = $state('profile'); // profile, messages, notes
+	let isProcessing = $state(false);
+	let actionError = $state('');
 
 	$effect(() => {
 		if (open && huntId && candidateId) {
@@ -50,6 +57,41 @@
 			hasError = true;
 		} finally {
 			isLoading = false;
+		}
+	}
+
+	async function handleStatusChange(action: 'offer' | 'hired' | 'decline') {
+		if (!worker || !huntId || !candidateId) return;
+
+		isProcessing = true;
+		actionError = '';
+
+		try {
+			switch (action) {
+				case 'offer':
+					await scrubinClient.hunt.markInterestedCandidateStatusToCompanyOfferMade(
+						huntId,
+						candidateId
+					);
+					break;
+				case 'hired':
+					await scrubinClient.hunt.markInterestedCandidateStatusToHired(huntId, candidateId);
+					break;
+				case 'decline':
+					await scrubinClient.hunt.markInterestedCandidateStatusToDeclined(huntId, candidateId);
+					break;
+			}
+
+			// Reload hunt stats
+			await scrubinClient.hunt.getHuntStats(huntId);
+
+			// Refresh worker details
+			await getWorker();
+		} catch (error) {
+			console.error(`Error changing status to ${action}:`, error);
+			actionError = $t('dashboard.interestedWorkerDialog.updateStatusError');
+		} finally {
+			isProcessing = false;
 		}
 	}
 
@@ -148,9 +190,34 @@
 										>
 											{worker.firstName?.[0]}{worker.lastName?.[0]}
 										</div>
-										<span class="text-lg font-semibold text-gray-900"
-											>{worker.firstName} {worker.lastName}</span
-										>
+										<div class="flex flex-1 items-center justify-between">
+											<span class="text-lg font-semibold text-gray-900"
+												>{worker.firstName} {worker.lastName}</span
+											>
+											{#if worker.status}
+												<div class="flex items-center gap-2">
+													<span class="text-xs font-medium text-gray-500">
+														{$t('dashboard.interestedWorkerDialog.currentStatus')}:
+													</span>
+													<span
+														class="rounded-full px-2 py-1 text-xs font-medium
+														{worker.status.toLowerCase() === 'interested'
+															? 'bg-blue-100 text-blue-800'
+															: worker.status.toLowerCase() === 'offer_made'
+																? 'bg-yellow-100 text-yellow-800'
+																: worker.status.toLowerCase() === 'hired'
+																	? 'bg-green-100 text-green-800'
+																	: worker.status.toLowerCase() === 'declined'
+																		? 'bg-red-100 text-red-800'
+																		: 'bg-gray-100 text-gray-800'}"
+													>
+														{$t(
+															`dashboard.interestedWorkerDialog.status.${worker.status.toLowerCase()}`
+														)}
+													</span>
+												</div>
+											{/if}
+										</div>
 									</div>
 
 									<div class="grid grid-cols-1 gap-2 pl-1 md:grid-cols-2">
@@ -225,6 +292,116 @@
 										</div>
 									{/if}
 								</div>
+							</div>
+
+							<!-- Candidate Action Buttons -->
+							<div class="mb-6 rounded-md border border-gray-200 bg-gray-50 p-4">
+								<h4 class="mb-3 text-lg font-medium text-gray-800">
+									{$t('dashboard.interestedWorkerDialog.actions')}
+								</h4>
+
+								{#if actionError}
+									<div class="mb-4 rounded-md bg-red-50 p-3 text-sm text-red-800">
+										{actionError}
+									</div>
+								{/if}
+
+								<div class="grid grid-cols-1 gap-3 md:grid-cols-3">
+									{#if worker && worker.status && worker.status.toLowerCase() === 'interested'}
+										<!-- Show Offer Made button only for interested candidates -->
+										<div class="flex flex-col gap-2">
+											<Tooltip.Root>
+												<Tooltip.Trigger>
+													<div class="w-full">
+														<Button.Root
+															class="w-full justify-start gap-2 bg-white hover:bg-blue-50"
+															variant="outline"
+															disabled={isProcessing}
+															onclick={() => handleStatusChange('offer')}
+														>
+															<Handshake class="h-5 w-5 text-blue-600" />
+															<span>{$t('dashboard.interestedWorkerDialog.offerMade')}</span>
+														</Button.Root>
+													</div>
+												</Tooltip.Trigger>
+												<Tooltip.Content side="bottom" class="max-w-xs">
+													<p class="text-sm">
+														{$t('dashboard.interestedWorkerDialog.offerMadeTooltip')}
+													</p>
+												</Tooltip.Content>
+											</Tooltip.Root>
+										</div>
+									{/if}
+
+									{#if worker && worker.status && ['interested', 'offer_made', 'declined'].includes(worker.status.toLowerCase())}
+										<!-- Show Hired button for interested, offer_made, and declined states -->
+										<div class="flex flex-col gap-2">
+											<Tooltip.Root>
+												<Tooltip.Trigger>
+													<div class="w-full">
+														<Button.Root
+															class="w-full justify-start gap-2 bg-white hover:bg-green-50"
+															variant="outline"
+															disabled={isProcessing}
+															onclick={() => handleStatusChange('hired')}
+														>
+															<CheckCircle class="h-5 w-5 text-green-600" />
+															<span>{$t('dashboard.interestedWorkerDialog.hired')}</span>
+														</Button.Root>
+													</div>
+												</Tooltip.Trigger>
+												<Tooltip.Content side="bottom" class="max-w-xs">
+													<p class="text-sm">
+														{$t('dashboard.interestedWorkerDialog.hiredTooltip')}
+													</p>
+												</Tooltip.Content>
+											</Tooltip.Root>
+										</div>
+									{/if}
+
+									{#if worker && worker.status && ['interested', 'offer_made'].includes(worker.status.toLowerCase())}
+										<!-- Show Decline button only for interested or offer_made statuses -->
+										<div class="flex flex-col gap-2">
+											<Tooltip.Root>
+												<Tooltip.Trigger>
+													<div class="w-full">
+														<Button.Root
+															class="w-full justify-start gap-2 bg-white hover:bg-red-50"
+															variant="outline"
+															disabled={isProcessing}
+															onclick={() => handleStatusChange('decline')}
+														>
+															<XCircle class="h-5 w-5 text-red-600" />
+															<span>{$t('dashboard.interestedWorkerDialog.decline')}</span>
+														</Button.Root>
+													</div>
+												</Tooltip.Trigger>
+												<Tooltip.Content side="bottom" class="max-w-xs">
+													<p class="text-sm">
+														{$t('dashboard.interestedWorkerDialog.declineTooltip')}
+													</p>
+												</Tooltip.Content>
+											</Tooltip.Root>
+										</div>
+									{/if}
+
+									{#if worker && worker.status && worker.status.toLowerCase() === 'hired'}
+										<div
+											class="col-span-full flex items-center gap-2 rounded-md bg-green-100 p-3 text-sm text-green-800"
+										>
+											<CheckCircle class="h-4 w-4" />
+											<span>{$t('dashboard.interestedWorkerDialog.hiredStatus')}</span>
+										</div>
+									{/if}
+								</div>
+
+								{#if isProcessing}
+									<div class="mt-4 flex justify-center">
+										<div
+											class="h-5 w-5 animate-spin rounded-full border-2 border-blue-500 border-t-transparent"
+										></div>
+									</div>
+								{/if}
 							</div>
 
 							<div class="space-y-3">
@@ -521,7 +698,7 @@
 									</div>
 								</div>
 
-								<div class="border-t pt-3">
+								<div class="mt-4 border-t pt-3">
 									<h4 class="mb-4 text-xl font-medium">
 										{$t('dashboard.interestedWorkerDialog.additionalInfo')}
 									</h4>
@@ -581,7 +758,7 @@
 				</Tabs.Content>
 
 				<Tabs.Content value="notes">
-					<CandidateNotes bind:huntId bind:candidateId bind:notes={worker.notes} />
+					<CandidateNotes bind:huntId bind:candidateId notes={worker?.notes || ''} />
 				</Tabs.Content>
 			</Tabs.Root>
 		{:else}

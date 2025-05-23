@@ -292,6 +292,7 @@
 			},
 			"interview": "Interview booked for",
 			"contactInfo": "Contact Information",
+			"currentStatus": "Current Status",
 			"email": "Email",
 			"phone": "Phone",
 			"interestedSince": "Interested since",
@@ -319,7 +320,22 @@
 			"about": "About",
 			"softSkills": "Soft Skills",
 			"otherSkills": "Other Skills",
-			"noData": "No candidate data available."
+			"noData": "No candidate data available.",
+			"actions": "Candidate Actions",
+			"offerMade": "Offer Made",
+			"offerMadeTooltip": "Indicates you have contacted the candidate, conducted an interview and made a formal offer.",
+			"hired": "Hired",
+			"hiredTooltip": "Indicates the deal is complete and the candidate will start working with your company.",
+			"decline": "Decline",
+			"declineTooltip": "Indicates there's no match or you couldn't reach an agreement with the candidate.",
+			"hiredStatus": "This candidate has been hired.",
+			"updateStatusError": "Failed to update candidate status",
+			"status": {
+				"interested": "Interested",
+				"offer_made": "Offer Made",
+				"hired": "Hired",
+				"declined": "Declined"
+			}
 		},
 		"questionsInHunt": {
 			"noQuestions": "No Questions Yet",

@@ -39,8 +39,8 @@
 	let isLoading = $state(true);
 	let showInterestedWorkerDialog = $state(false);
 	let selectedCandidateId = $state(0);
-	let availableCurrencies = $state<Cur[]>([])
-	let availableCountries = $state<string[]>([])
+	let availableCurrencies = $state<Cur[]>([]);
+	let availableCountries = $state<string[]>([]);
 	let paymentDialogOpen = $state(false);
 	let chargeableAmount = $state({
 		amount: 0,
@@ -133,12 +133,13 @@
 				salaryCurrency: editableRequirements.salaryCurrency,
 				country: editableRequirements.country,
 				city: editableRequirements.city,
-				stateProvinceRegion: typeof editableRequirements.stateProvinceRegion === 'string' 
-					? [editableRequirements.stateProvinceRegion] 
-					: editableRequirements.stateProvinceRegion
+				stateProvinceRegion:
+					typeof editableRequirements.stateProvinceRegion === 'string'
+						? [editableRequirements.stateProvinceRegion]
+						: editableRequirements.stateProvinceRegion
 			});
 
-			hunt.requirements = response
+			hunt.requirements = response;
 			// Exit edit mode
 			isEditMode = false;
 			toast.success('Requirements updated successfully');
@@ -518,7 +519,7 @@
 											optionKey="code"
 											labelKey="name"
 										/>
-										
+
 										<Input
 											type="text"
 											placeholder="City"
@@ -531,9 +532,9 @@
 										<Input
 											type="text"
 											placeholder="State/Province/Region"
-											value={typeof editableRequirements.stateProvinceRegion === 'string' 
-												? editableRequirements.stateProvinceRegion 
-												: (editableRequirements.stateProvinceRegion[0] || '')}
+											value={typeof editableRequirements.stateProvinceRegion === 'string'
+												? editableRequirements.stateProvinceRegion
+												: editableRequirements.stateProvinceRegion[0] || ''}
 											onchange={(e) => {
 												editableRequirements.stateProvinceRegion = e.currentTarget.value;
 											}}
@@ -611,7 +612,6 @@
 											optionKey="code"
 											labelKey="name"
 										/>
-										
 									</div>
 								{:else}
 									<p
@@ -773,14 +773,38 @@
 
 												<div class="flex-1 space-y-1">
 													<div class="flex items-start justify-between">
-														<h3 class="text-base font-medium">
-															{candidate.firstName}
-															{candidate.lastName}
-														</h3>
-														<Badge variant="outline" class="text-xs">
-															{$t('statistics.interestedOn')}
-															{formatDate(candidate.dateInterested)}
-														</Badge>
+														<div class="flex flex-col gap-1">
+															<h3 class="text-base font-medium">
+																{candidate.firstName}
+																{candidate.lastName}
+															</h3>
+														</div>
+														<div class="flex flex-col items-end gap-2">
+															<div class="flex items-center gap-2">
+																{#if candidate.status}
+																	<span
+																		class="w-fit rounded-full px-2 py-1 text-xs font-medium
+																		{candidate.status.toLowerCase() === 'interested'
+																			? 'bg-blue-100 text-blue-800'
+																			: candidate.status.toLowerCase() === 'offer_made'
+																				? 'bg-yellow-100 text-yellow-800'
+																				: candidate.status.toLowerCase() === 'hired'
+																					? 'bg-green-100 text-green-800'
+																					: candidate.status.toLowerCase() === 'declined'
+																						? 'bg-red-100 text-red-800'
+																						: 'bg-gray-100 text-gray-800'}"
+																	>
+																		{$t(
+																			`dashboard.interestedWorkerDialog.status.${candidate.status.toLowerCase()}`
+																		)}
+																	</span>
+																{/if}
+																<Badge variant="outline" class="text-xs">
+																	{$t('statistics.interestedOn')}
+																	{formatDate(candidate.dateInterested)}
+																</Badge>
+															</div>
+														</div>
 													</div>
 
 													<div class="flex gap-4 text-sm text-muted-foreground">

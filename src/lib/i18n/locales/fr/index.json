@@ -292,6 +292,7 @@
 			},
 			"interview": "Entretien prévu pour",
 			"contactInfo": "Coordonnées",
+			"currentStatus": "Statut actuel",
 			"email": "E-mail",
 			"phone": "Téléphone",
 			"interestedSince": "Intéressé depuis",
@@ -319,7 +320,22 @@
 			"about": "À propos",
 			"softSkills": "Compétences personnelles",
 			"otherSkills": "Autres compétences",
-			"noData": "Aucune donnée de candidat disponible."
+			"noData": "Aucune donnée de candidat disponible.",
+			"actions": "Actions du candidat",
+			"offerMade": "Offre faite",
+			"offerMadeTooltip": "Indique que vous avez contacté le candidat, mené un entretien et fait une offre formelle.",
+			"hired": "Embauché",
+			"hiredTooltip": "Indique que l'accord est conclu et que le candidat commencera à travailler avec votre entreprise.",
+			"decline": "Refuser",
+			"declineTooltip": "Indique qu'il n'y a pas de correspondance ou que vous n'avez pas pu parvenir à un accord avec le candidat.",
+			"hiredStatus": "Ce candidat a été embauché.",
+			"updateStatusError": "Échec de la mise à jour du statut du candidat",
+			"status": {
+				"interested": "Intéressé",
+				"offer_made": "Offre faite",
+				"hired": "Embauché",
+				"declined": "Refusé"
+			}
 		},
 		"questionsInHunt": {
 			"noQuestions": "Pas encore de questions",

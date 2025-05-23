@@ -337,7 +337,12 @@ export interface InterestedCandidate {
 	lastName: string;
 	email: string;
 	phone: string;
+	status: string;
 	dateInterested: string;
+}
+
+export interface InterestedCandidateStatusResponse {
+	status: string;
 }
 
 export interface Message {
@@ -362,6 +367,7 @@ export interface InterestedCandidateDetails extends HuntableDetails {
 	lastName: string;
 	email: string;
 	phone: string;
+	status: string;
 	professionNumbers?: Array<{
 		countryRegistered: string;
 		number: string;
@@ -919,6 +925,21 @@ class HuntResource extends BaseResource {
     const url = new URL(`/api/v1/hunts/${id}/interested-candidates/${candidateId}`, this.client.baseUrl);
     return this.request<InterestedCandidateDetails>('GET', url.toString()) as Promise<InterestedCandidateDetails>;
   }
+
+	async markInterestedCandidateStatusToCompanyOfferMade(id: number, candidateId: number): Promise<InterestedCandidateStatusResponse> {
+		const url = new URL(`/api/v1/hunts/${id}/interested-candidates/${candidateId}/offer-made`, this.client.baseUrl);
+		return this.request<InterestedCandidateStatusResponse>('POST', url.toString()) as Promise<InterestedCandidateStatusResponse>;
+	}
+
+	async markInterestedCandidateStatusToHired(id: number, candidateId: number): Promise<InterestedCandidateStatusResponse> {
+		const url = new URL(`/api/v1/hunts/${id}/interested-candidates/${candidateId}/hired`, this.client.baseUrl);
+		return this.request<InterestedCandidateStatusResponse>('POST', url.toString()) as Promise<InterestedCandidateStatusResponse>;
+	}
+
+	async markInterestedCandidateStatusToDeclined(id: number, candidateId: number): Promise<InterestedCandidateStatusResponse> {
+		const url = new URL(`/api/v1/hunts/${id}/interested-candidates/${candidateId}/decline`, this.client.baseUrl);
+		return this.request<InterestedCandidateStatusResponse>('POST', url.toString()) as Promise<InterestedCandidateStatusResponse>;
+	}
 
   // PUT /api/v1/hunts/{id}/interested-candidates/{candidateId}/notes
   async updateInterestedCandidateNotes(id: number, candidateId: number, notes: string): Promise<void> {

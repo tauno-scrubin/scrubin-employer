@@ -284,7 +284,7 @@
 		"interestedWorkerDialog": {
 			"title": "Candidato interesado",
 			"description": "Candidato que ha expresado interés",
-			"loading": "Error al cargar los datos del candidato. Por favor, inténtelo de nuevo.",
+			"loading": "Error al cargar los datos del candidato. Inténtelo de nuevo.",
 			"tabs": {
 				"profile": "Perfil",
 				"messages": "Mensajes",
@@ -292,6 +292,7 @@
 			},
 			"interview": "Entrevista reservada para",
 			"contactInfo": "Información de contacto",
+			"currentStatus": "Estado actual",
 			"email": "Correo electrónico",
 			"phone": "Teléfono",
 			"interestedSince": "Interesado desde",
@@ -319,7 +320,22 @@
 			"about": "Acerca de",
 			"softSkills": "Habilidades blandas",
 			"otherSkills": "Otras habilidades",
-			"noData": "No hay datos del candidato disponibles."
+			"noData": "No hay datos del candidato disponibles.",
+			"actions": "Acciones del candidato",
+			"offerMade": "Oferta realizada",
+			"offerMadeTooltip": "Indica que ha contactado al candidato, realizado una entrevista y hecho una oferta formal.",
+			"hired": "Contratado",
+			"hiredTooltip": "Indica que el trato está cerrado y el candidato empezará a trabajar con su empresa.",
+			"decline": "Rechazar",
+			"declineTooltip": "Indica que no hay coincidencia o no se pudo llegar a un acuerdo con el candidato.",
+			"hiredStatus": "Este candidato ha sido contratado.",
+			"updateStatusError": "Error al actualizar el estado del candidato",
+			"status": {
+				"interested": "Interesado",
+				"offer_made": "Oferta realizada",
+				"hired": "Contratado",
+				"declined": "Rechazado"
+			}
 		},
 		"questionsInHunt": {
 			"noQuestions": "Aún no hay preguntas",
