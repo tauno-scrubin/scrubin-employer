@@ -136,7 +136,9 @@
 			"paused": "Pausiert",
 			"completed": "Abgeschlossen",
 			"cancelled": "Abgebrochen"
-		}
+		},
+		"startFee": "Startgebühr",
+		"successFee": "Erfolgsgebühr"
 	},
 	"dashboard": {
 		"huntsList": {
@@ -508,7 +510,7 @@
 			"title": "Starten Sie mit {{amount}} {{currency}}",
 			"withFee": "Beginnen Sie mit der Rekrutierung mit einer Startgebühr von {{amount}} {{currency}}",
 			"withoutFee": "Beginnen Sie sofort mit der Rekrutierung ohne Vorabkosten oder Verpflichtungen",
-			"payWhenSuccessful": "Zahlen Sie nur, wenn Sie erfolgreich einstellen"
+			"payWhenSuccessful": "Zahlen Sie Erfolgsgebühren nur bei erfolgreicher Einstellung"
 		},
 		"availablePlans": {
 			"title": "Verfügbare Pläne",
@@ -517,7 +519,7 @@
 			"startPlan": "Plan starten",
 			"successFees": "Erfolgsgebühren",
 			"vatLabel": "(+{{percentage}}% MwSt.)",
-			"successFeeNotice": "Die Erfolgsgebühr wird in monatlichen Raten gezahlt, wenn beide Parteien bestätigen, dass der Kandidat mit der Arbeit begonnen hat, und setzt sich über einen Verpflichtungszeitraum von 12 Monaten fort"
+			"successFeeNotice": "Die Erfolgsgebühr wird in monatlichen Raten gezahlt, wenn beide Parteien bestätigen, dass der Kandidat mit der Arbeit begonnen hat, und setzt sich fort, solange der Kandidat dort arbeitet"
 		},
 		"customSolutions": {
 			"title": "INDIVIDUELLE LÖSUNGEN",

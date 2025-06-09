@@ -136,7 +136,9 @@
 			"paused": "Paused",
 			"completed": "Completed",
 			"cancelled": "Cancelled"
-		}
+		},
+		"startFee": "Start Fee",
+		"successFee": "Success Fee"
 	},
 	"dashboard": {
 		"huntsList": {
@@ -508,7 +510,7 @@
 			"title": "Start with {{amount}} {{currency}}",
 			"withFee": "Begin recruiting with a {{amount}} {{currency}} starting fee",
 			"withoutFee": "Begin recruiting immediately with no upfront costs or commitments",
-			"payWhenSuccessful": "Only pay when you successfully hire"
+			"payWhenSuccessful": "Pay success fees only on successful hire"
 		},
 		"availablePlans": {
 			"title": "Available Plans",
@@ -517,7 +519,7 @@
 			"startPlan": "Start Plan",
 			"successFees": "Success Fees",
 			"vatLabel": "(+{{percentage}}% VAT)",
-			"successFeeNotice": "Success fee is paid in monthly installments when both parties confirm the candidate has started working and continues for a 12-month commitment period"
+			"successFeeNotice": "Success fee is paid in monthly installments when both parties confirm the candidate has started working and continues as long as the candidate works there"
 		},
 		"customSolutions": {
 			"title": "CUSTOM SOLUTIONS",

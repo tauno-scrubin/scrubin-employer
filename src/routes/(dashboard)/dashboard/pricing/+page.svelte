@@ -14,7 +14,7 @@
 	import {
 		ArrowRight,
 		BadgeCheck,
-		CheckCircle2,
+		InfoIcon,
 		Send,
 		Sparkles,
 		Stethoscope,
@@ -25,14 +25,10 @@
 	import { fade } from 'svelte/transition';
 	import { currentUserCompany } from '../../../../lib/scrubinClient/client';
 
-	let { data } = $props();
-
-	const pricingOptions = data.pricingOptions;
-	const startingFee = data.startingFee;
-	const currency = data.currency;
-
 	let availablePlans = $state<AvailablePlansResponse['plans']>([]);
 	let activePlans = $state<CompanyPlanSummary[]>([]);
+	let startingFee = $state(0);
+	let currency = $state('');
 	let planDetails = $state<CompanyPlanDetails[]>([]);
 	let isLoading = $state(true);
 	let error: string | null = $state(null);
@@ -49,13 +45,17 @@
 
 	onMount(async () => {
 		try {
-			availablePlans = (await scrubinClient.company.getAvailablePlans()).plans;
+			const availablePlansResponse = await scrubinClient.company.getAvailablePlans();
+			availablePlans = availablePlansResponse.plans;
 			activePlans = await scrubinClient.company.getActivePlans();
+			const successFeePlan = availablePlans.find((plan) => plan.planType === 'success_fee');
+			if (successFeePlan) {
+				startingFee = successFeePlan.pricingSuccess.other.startFee.amount;
+				currency = successFeePlan.pricingSuccess.other.startFee.currency;
+			}
 
 			// Fetch details for all active plans
-			for (const plan of activePlans) {
-				await fetchPlanDetails(plan.id);
-			}
+			await Promise.all(activePlans.map((plan) => fetchPlanDetails(plan.id)));
 
 			isLoading = false;
 		} catch (err) {
@@ -104,7 +104,8 @@
 		contactDialogOpen = false;
 	};
 
-	const submitContactForm = async () => {
+	const submitContactForm = async (event: SubmitEvent) => {
+		event.preventDefault();
 		isSending = true;
 		sendSuccess = false;
 		sendError = null;
@@ -232,6 +233,14 @@
 												</div>
 											</div>
 										</details>
+
+										<div class="mt-3 text-sm text-muted-foreground">
+											<div class="flex items-start">
+												<InfoIcon class="mr-2 mt-0.5 h-5 w-5 text-primary" />
+												<span>{$t('pricing.availablePlans.successFeeNotice')}</span>
+											</div>
+										</div>
+
 									{/if}
 								{/if}
 							</div>
@@ -251,7 +260,7 @@
 				<Sparkles class="mr-2 h-6 w-6 text-primary" />
 				<h1 class="text-lg font-bold text-primary">
 					{$t('pricing.startingFee.title', {
-						amount: startingFee,
+						amount: startingFee?.toString(),
 						currency: getCurrencySymbol(currency)
 					})}
 				</h1>
@@ -259,7 +268,7 @@
 			{#if startingFee > 0}
 				<p class="mb-4 text-base">
 					{$t('pricing.startingFee.withFee', {
-						amount: startingFee,
+						amount: startingFee?.toString(),
 						currency: getCurrencySymbol(currency)
 					})}
 				</p>
@@ -322,7 +331,8 @@
 													{getCurrencySymbol(plan.pricingSuccess.doctor.startFee.currency)}
 													<span class="text-xs text-muted-foreground">
 														{$t('pricing.availablePlans.vatLabel', {
-															percentage: plan.pricingSuccess.doctor.startFee.vatPercentage
+															percentage:
+																plan.pricingSuccess.doctor.startFee.vatPercentage?.toString() || '0'
 														})}
 													</span>
 												{:else}
@@ -339,7 +349,9 @@
 													{getCurrencySymbol(plan.pricingSuccess.doctor.successFee.currency)}
 													<span class="text-xs text-muted-foreground">
 														{$t('pricing.availablePlans.vatLabel', {
-															percentage: plan.pricingSuccess.doctor.successFee.vatPercentage
+															percentage:
+																plan.pricingSuccess.doctor.successFee.vatPercentage?.toString() ||
+																'0'
 														})}
 													</span>
 												{:else}
@@ -367,7 +379,8 @@
 													{getCurrencySymbol(plan.pricingSuccess.other.startFee.currency)}
 													<span class="text-xs text-muted-foreground">
 														{$t('pricing.availablePlans.vatLabel', {
-															percentage: plan.pricingSuccess.other.startFee.vatPercentage
+															percentage:
+																plan.pricingSuccess.other.startFee.vatPercentage?.toString() || '0'
 														})}
 													</span>
 												{:else}
@@ -384,7 +397,9 @@
 													{getCurrencySymbol(plan.pricingSuccess.other.successFee.currency)}
 													<span class="text-xs text-muted-foreground">
 														{$t('pricing.availablePlans.vatLabel', {
-															percentage: plan.pricingSuccess.other.successFee.vatPercentage
+															percentage:
+																plan.pricingSuccess.other.successFee.vatPercentage?.toString() ||
+																'0'
 														})}
 													</span>
 												{:else}
@@ -398,7 +413,7 @@
 							</div>
 							<div class="mt-3 text-sm text-muted-foreground">
 								<div class="flex items-start">
-									<CheckCircle2 class="mr-2 mt-0.5 h-4 w-4 text-primary" />
+									<InfoIcon class="mr-2 mt-0.5 h-5 w-5 text-primary" />
 									<span>{$t('pricing.availablePlans.successFeeNotice')}</span>
 								</div>
 							</div>
@@ -438,7 +453,7 @@
 			</Dialog.Description>
 		</Dialog.Header>
 
-		<form on:submit|preventDefault={submitContactForm}>
+		<form onsubmit={submitContactForm}>
 			<div class="space-y-4 py-4">
 				<div class="space-y-2">
 					<Label for="message" class="text-sm font-medium"

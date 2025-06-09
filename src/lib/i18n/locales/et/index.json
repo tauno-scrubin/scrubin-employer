@@ -136,7 +136,9 @@
 			"paused": "Peatatud",
 			"completed": "Lõpetatud",
 			"cancelled": "Tühistatud"
-		}
+		},
+		"startFee": "Alustamistasu",
+		"successFee": "Edutasu"
 	},
 	"dashboard": {
 		"huntsList": {
@@ -506,7 +508,7 @@
 			"title": "Alusta {{amount}} {{currency}}",
 			"withFee": "Alusta sihtotsingut {{amount}} {{currency}} alustustasuga",
 			"withoutFee": "Alusta sihtotsingut kohe ilma ettemaksude või kohustusteta",
-			"payWhenSuccessful": "Maksa ainult siis, kui sihtotsing õnnestub"
+			"payWhenSuccessful": "Maksa edukustasusid ainult eduka värbamise korral"
 		},
 		"availablePlans": {
 			"title": "Saadaval paketid",
@@ -515,7 +517,7 @@
 			"startPlan": "Alusta paketti",
 			"successFees": "Edukustasud",
 			"vatLabel": "(+{{percentage}}% KM)",
-			"successFeeNotice": "Edukustasu makstakse igakuiste osamaksetena, kui mõlemad osapooled kinnitavad, et kandidaat on alustanud tööd, ja jätkub 12-kuulise kohustusperioodi jooksul"
+			"successFeeNotice": "Edukustasu makstakse igakuiste osamaksetena, kui mõlemad osapooled kinnitavad, et kandidaat on alustanud tööd, ja jätkub seni, kuni kandidaat seal töötab"
 		},
 		"customSolutions": {
 			"title": "KOHANDATUD LAHENDUSED",

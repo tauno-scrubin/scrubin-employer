@@ -430,7 +430,7 @@ export interface CompanyPlanPricingSuccess {
 }
 
 export interface AvailablePlan {
-	planType: string;
+	planType: PlanType;
 	pricingGeneral: CompanyPlanPrice;
 	pricingSuccess: CompanyPlanPricingSuccess;
 }

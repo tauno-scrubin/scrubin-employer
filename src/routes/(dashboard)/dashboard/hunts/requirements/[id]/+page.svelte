@@ -9,9 +9,6 @@
 			requirements: Requirements
 		}
 	} = $props();
-
-	console.log(data);
-
 </script>
 <div class="space-y-2 max-w-screen-xl mx-auto w-full">
 <ChatWindow requirements={data.requirements} />

@@ -40,12 +40,6 @@
 		"hired": "Palkattu",
 		"candidates": "Ehdokkaat"
 	},
-	"payment": {
-		"startFee": "Aloitusmaksu",
-		"successFee": "Onnistumismaksu",
-		"activateHunt": "Aktivoi haku",
-		"completePayment": "Suorita maksu"
-	},
 	"statistics": {
 		"huntConversionFunnel": "Hakukonversiosuppilo",
 		"totalHuntables": "Kokonaismäärä",

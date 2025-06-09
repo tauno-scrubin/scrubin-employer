@@ -136,7 +136,9 @@
 			"paused": "Pysäytetty",
 			"completed": "Valmis",
 			"cancelled": "Peruutettu"
-		}
+		},
+		"startFee": "Aloitusmaksu",
+		"successFee": "Onnistumismaksu"
 	},
 	"dashboard": {
 		"huntsList": {
@@ -508,7 +510,7 @@
 			"title": "Aloita {{amount}} {{currency}}",
 			"withFee": "Aloita rekrytointi {{amount}} {{currency}} aloitusmaksulla",
 			"withoutFee": "Aloita rekrytointi heti ilman ennakkomaksuja tai sitoumuksia",
-			"payWhenSuccessful": "Maksat vain kun rekrytointi onnistuu"
+			"payWhenSuccessful": "Maksa onnistumismaksuja vain onnistuneesta rekrytoinnista"
 		},
 		"availablePlans": {
 			"title": "Saatavilla olevat suunnitelmat",
@@ -517,7 +519,7 @@
 			"startPlan": "Aloita suunnitelma",
 			"successFees": "Onnistumismaksut",
 			"vatLabel": "(+{{percentage}}% ALV)",
-			"successFeeNotice": "Onnistumismaksu maksetaan kuukausittaisissa erissä, kun molemmat osapuolet vahvistavat, että ehdokas on aloittanut työskentelyn, ja se jatkuu 12 kuukauden sitoumusjakson ajan"
+			"successFeeNotice": "Onnistumismaksu maksetaan kuukausittaisissa erissä, kun molemmat osapuolet vahvistavat, että ehdokas on aloittanut työskentelyn, ja se jatkuu niin kauan kuin ehdokas työskentelee siellä"
 		},
 		"customSolutions": {
 			"title": "MUKAUTETUT RATKAISUT",

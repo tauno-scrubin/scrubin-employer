@@ -40,12 +40,6 @@
 		"hired": "Tööle võetud",
 		"candidates": "Kandidaadid"
 	},
-	"payment": {
-		"startFee": "Alustamistasu",
-		"successFee": "Edutasu",
-		"activateHunt": "Aktiveeri otsing",
-		"completePayment": "Lõpeta makse"
-	},
 	"statistics": {
 		"huntConversionFunnel": "Sihtotsingu Konversiooni Lehter",
 		"totalHuntables": "Potentsiaalseid kandidaate kokku",

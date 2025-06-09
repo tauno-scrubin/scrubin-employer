@@ -39,12 +39,6 @@
 		"offersMade": "Gemachte Angebote",
 		"hired": "Eingestellt"
 	},
-	"payment": {
-		"startFee": "Startgebühr",
-		"successFee": "Erfolgsgebühr",
-		"activateHunt": "Suche aktivieren",
-		"completePayment": "Zahlung abschließen"
-	},
 	"statistics": {
 		"huntConversionFunnel": "Such-Konversionstrichter",
 		"totalHuntables": "Gesamtzahl der Suchbaren",

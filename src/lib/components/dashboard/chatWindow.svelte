@@ -22,8 +22,6 @@
 	let companyActivePlans = $state<CompanyPlanSummary[]>([]);
 	onMount(async () => {
 		companyActivePlans = await scrubinClient.company.getActivePlans();
-		console.log(companyActivePlans);
-		console.log(requirements);
 		availableCurrencies = await scrubinClient.company.getCurrencies();
 		availableCountries = await scrubinClient.company.getCountries();
 	});
@@ -258,8 +256,6 @@
 				selectedPlanType
 			);
 			payableHuntId = response.huntId;
-
-			console.log(response);
 
 			// Check if payment needed
 			if (response.planType === 'success_fee' && response.startFee.amount > 0) {

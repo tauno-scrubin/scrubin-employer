@@ -136,7 +136,9 @@
 			"paused": "En pause",
 			"completed": "Terminé",
 			"cancelled": "Annulé"
-		}
+		},
+		"startFee": "Frais initiaux",
+		"successFee": "Prime de succès"
 	},
 	"dashboard": {
 		"huntsList": {
@@ -508,7 +510,7 @@
 			"title": "Commencez avec {{amount}} {{currency}}",
 			"withFee": "Commencez le recrutement avec des frais initiaux de {{amount}} {{currency}}",
 			"withoutFee": "Commencez le recrutement immédiatement sans frais initiaux ni engagements",
-			"payWhenSuccessful": "Ne payez que lorsque vous embauchez avec succès"
+			"payWhenSuccessful": "Payez les frais de succès uniquement en cas d'embauche réussie"
 		},
 		"availablePlans": {
 			"title": "Plans disponibles",
@@ -517,7 +519,7 @@
 			"startPlan": "Démarrer le plan",
 			"successFees": "Frais de succès",
 			"vatLabel": "(+{{percentage}}% TVA)",
-			"successFeeNotice": "Les frais de succès sont payés en versements mensuels lorsque les deux parties confirment que le candidat a commencé à travailler et se poursuivent pendant une période d'engagement de 12 mois"
+			"successFeeNotice": "Les frais de succès sont payés en versements mensuels lorsque les deux parties confirment que le candidat a commencé à travailler et se poursuivent tant que le candidat y travaille"
 		},
 		"customSolutions": {
 			"title": "SOLUTIONS PERSONNALISÉES",

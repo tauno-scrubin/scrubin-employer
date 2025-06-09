@@ -136,7 +136,9 @@
 			"paused": "Pausado",
 			"completed": "Completado",
 			"cancelled": "Cancelado"
-		}
+		},
+		"startFee": "Tarifa Inicial",
+		"successFee": "Tarifa de Éxito"
 	},
 	"dashboard": {
 		"huntsList": {
@@ -506,7 +508,7 @@
 			"title": "Comience con {{amount}} {{currency}}",
 			"withFee": "Comience a reclutar con una tarifa inicial de {{amount}} {{currency}}",
 			"withoutFee": "Comience a reclutar inmediatamente sin costos iniciales ni compromisos",
-			"payWhenSuccessful": "Solo pague cuando contrate con éxito"
+			"payWhenSuccessful": "Pague tarifas de éxito solo en contratación exitosa"
 		},
 		"availablePlans": {
 			"title": "Planes disponibles",
@@ -515,7 +517,7 @@
 			"startPlan": "Iniciar plan",
 			"successFees": "Tarifas de éxito",
 			"vatLabel": "(+{{percentage}}% IVA)",
-			"successFeeNotice": "La tarifa de éxito se paga en cuotas mensuales cuando ambas partes confirman que el candidato ha comenzado a trabajar y continúa durante un período de compromiso de 12 meses"
+			"successFeeNotice": "La tarifa de éxito se paga en cuotas mensuales cuando ambas partes confirman que el candidato ha comenzado a trabajar y continúa mientras el candidato trabaje allí"
 		},
 		"customSolutions": {
 			"title": "SOLUCIONES PERSONALIZADAS",

@@ -39,12 +39,6 @@
 		"offersMade": "Offres faites",
 		"hired": "Embauché"
 	},
-	"payment": {
-		"startFee": "Frais initiaux",
-		"successFee": "Prime de succès",
-		"activateHunt": "Activer la recherche",
-		"completePayment": "Finaliser le paiement"
-	},
 	"statistics": {
 		"huntConversionFunnel": "Entonnoir de conversion de recherche",
 		"totalHuntables": "Total des recherchables",
