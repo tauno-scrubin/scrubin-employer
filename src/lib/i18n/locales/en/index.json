@@ -504,7 +504,8 @@
 			"doctorsTitle": "Doctors",
 			"otherProfessionalsTitle": "Other Healthcare Professionals",
 			"startFee": "Start fee",
-			"successFee": "Success fee"
+			"successFee": "Success fee",
+			"perHiredCandidate": "(per hired candidate)"
 		},
 		"startingFee": {
 			"title": "Start with {{amount}} {{currency}}",
@@ -519,7 +520,7 @@
 			"startPlan": "Start Plan",
 			"successFees": "Success Fees",
 			"vatLabel": "(+{{percentage}}% VAT)",
-			"successFeeNotice": "Success fee is paid in monthly installments when both parties confirm the candidate has started working and continues as long as the candidate works there"
+			"successFeeNotice": "Success fee is paid in monthly installments for every successful candidate when both parties confirm the candidate has started working and continues as long as the candidate works there"
 		},
 		"customSolutions": {
 			"title": "CUSTOM SOLUTIONS",

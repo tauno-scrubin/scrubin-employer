@@ -502,7 +502,8 @@
 			"doctorsTitle": "Arstid",
 			"otherProfessionalsTitle": "Teised tervishoiutöötajad",
 			"startFee": "Alustustasu",
-			"successFee": "Edukustasu"
+			"successFee": "Edukustasu",
+			"perHiredCandidate": "(värvatud kandidaadi kohta)"
 		},
 		"startingFee": {
 			"title": "Alusta {{amount}} {{currency}}",
@@ -517,7 +518,7 @@
 			"startPlan": "Alusta paketti",
 			"successFees": "Edukustasud",
 			"vatLabel": "(+{{percentage}}% KM)",
-			"successFeeNotice": "Edukustasu makstakse igakuiste osamaksetena, kui mõlemad osapooled kinnitavad, et kandidaat on alustanud tööd, ja jätkub seni, kuni kandidaat seal töötab"
+			"successFeeNotice": "Edukustasu makstakse igakuiste osamaksetena iga eduka kandidaadi eest, kui mõlemad osapooled kinnitavad, et kandidaat on alustanud tööd, ja jätkub seni, kuni kandidaat seal töötab"
 		},
 		"customSolutions": {
 			"title": "KOHANDATUD LAHENDUSED",

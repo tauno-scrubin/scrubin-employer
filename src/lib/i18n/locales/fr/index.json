@@ -504,7 +504,8 @@
 			"doctorsTitle": "Médecins",
 			"otherProfessionalsTitle": "Autres professionnels de santé",
 			"startFee": "Frais de démarrage",
-			"successFee": "Frais de succès"
+			"successFee": "Frais de succès",
+			"perHiredCandidate": "(par candidat embauché)"
 		},
 		"startingFee": {
 			"title": "Commencez avec {{amount}} {{currency}}",
@@ -519,7 +520,7 @@
 			"startPlan": "Démarrer le plan",
 			"successFees": "Frais de succès",
 			"vatLabel": "(+{{percentage}}% TVA)",
-			"successFeeNotice": "Les frais de succès sont payés en versements mensuels lorsque les deux parties confirment que le candidat a commencé à travailler et se poursuivent tant que le candidat y travaille"
+			"successFeeNotice": "Les frais de succès sont payés en versements mensuels pour chaque candidat embauché avec succès lorsque les deux parties confirment que le candidat a commencé à travailler et se poursuivent tant que le candidat y travaille"
 		},
 		"customSolutions": {
 			"title": "SOLUTIONS PERSONNALISÉES",

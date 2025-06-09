@@ -502,7 +502,8 @@
 			"doctorsTitle": "Médicos",
 			"otherProfessionalsTitle": "Otros profesionales sanitarios",
 			"startFee": "Tarifa inicial",
-			"successFee": "Tarifa de éxito"
+			"successFee": "Tarifa de éxito",
+			"perHiredCandidate": "(por candidato contratado)"
 		},
 		"startingFee": {
 			"title": "Comience con {{amount}} {{currency}}",
@@ -517,7 +518,7 @@
 			"startPlan": "Iniciar plan",
 			"successFees": "Tarifas de éxito",
 			"vatLabel": "(+{{percentage}}% IVA)",
-			"successFeeNotice": "La tarifa de éxito se paga en cuotas mensuales cuando ambas partes confirman que el candidato ha comenzado a trabajar y continúa mientras el candidato trabaje allí"
+			"successFeeNotice": "La tarifa de éxito se paga en cuotas mensuales por cada candidato exitoso cuando ambas partes confirman que el candidato ha comenzado a trabajar y continúa mientras el candidato trabaje allí"
 		},
 		"customSolutions": {
 			"title": "SOLUCIONES PERSONALIZADAS",

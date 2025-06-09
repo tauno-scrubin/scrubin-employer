@@ -134,312 +134,385 @@
 	};
 </script>
 
-<div class="mx-auto max-w-3xl px-4 py-8">
+<div class="mx-auto max-w-4xl px-4 py-8">
 	{#if error}
 		<div class="mb-6 rounded-md border border-destructive bg-destructive/10 p-4 text-destructive">
 			{error}
 		</div>
 	{/if}
 
+	<!-- Page Header -->
 	<div class="mb-8">
-		<h2 class="text-xl font-bold">{$t('pricing.title')}</h2>
-		<p class="mt-1 text-muted-foreground">
+		<h1 class="text-2xl font-bold">{$t('pricing.title')}</h1>
+		<p class="mt-2 text-lg text-muted-foreground">
 			{$t('pricing.subtitle')}
 		</p>
+
+		<!-- Key Pricing Info Banner -->
+		{#if activePlans.length < 1 && $currentUserCompany?.countryIso !== 'EST' && startingFee !== undefined}
+			<div class="mt-6 rounded-lg border border-primary/20 bg-primary/5 p-6">
+				<div class="flex items-center">
+					<Sparkles class="mr-3 h-6 w-6 text-primary" />
+					<div>
+						<h2 class="text-lg font-semibold text-primary">
+							{#if startingFee > 0}
+								{$t('pricing.startingFee.title', {
+									amount: startingFee?.toString(),
+									currency: getCurrencySymbol(currency)
+								})}
+							{:else}
+								No starting fee required
+							{/if}
+						</h2>
+						<p class="text-sm text-muted-foreground">
+							{#if startingFee > 0}
+								{$t('pricing.startingFee.withFee', {
+									amount: startingFee?.toString(),
+									currency: getCurrencySymbol(currency)
+								})}
+							{:else}
+								{$t('pricing.startingFee.withoutFee')}
+							{/if}
+						</p>
+					</div>
+				</div>
+			</div>
+		{/if}
 	</div>
 
-	<!-- Active Plans Section -->
-	{#if activePlans.length > 0}
-		<div transition:fade class="mb-8">
-			<h3 class="mb-4 text-lg font-semibold">{$t('pricing.activePlans.title')}</h3>
-			<div class="space-y-4">
-				{#each activePlans as plan}
-					<div class="rounded-lg border border-green-500 bg-green-50/30 p-6 shadow-sm">
-						<div class="mb-4 flex items-start justify-between">
-							<div>
-								<div class="flex items-center">
-									<BadgeCheck class="mr-2 h-5 w-5 text-primary" />
-									<h3 class="text-lg font-semibold">
-										{plan.planType.replace('_', ' ').toUpperCase()}
-									</h3>
-								</div>
-								<p class="mt-1 text-sm text-muted-foreground">
-									{$t('pricing.activePlans.activeSince')}
-									{new Date(plan.dateStarted).toLocaleDateString()}
-								</p>
-
-								{#if planDetails.find((d) => d.id === plan.id)}
-									{@const pd = planDetails.find((d) => d.id === plan.id)!}
-									{#if pd.customPlanDescription}
-										<div class="mt-3 p-1">
-											<div class="mb-1 flex items-center">
-												<Sparkles class="mr-2 h-4 w-4 text-primary/70" />
-												<h4 class="text-sm font-medium text-primary/80">
-													{$t('pricing.activePlans.customPlanDetails')}
-												</h4>
-											</div>
-											<div class="flex items-start pl-6">
-												<p class="text-sm text-muted-foreground">
-													{pd.customPlanDescription}
-												</p>
-											</div>
-										</div>
-									{/if}
-
-									{#if pd.pricingGeneral && pd.pricingGeneral.amount > 0}
-										<p class="mt-2 text-sm">
-											{$t('pricing.activePlans.generalFee')}: {pd.pricingGeneral.amount}
-											{getCurrencySymbol(pd.pricingGeneral.currency)}
-										</p>
-									{/if}
-
-									{#if pd.pricingSuccess}
-										<details class="mt-2">
-											<summary class="cursor-pointer text-sm font-medium"
-												>{$t('pricing.activePlans.viewSuccessFees')}</summary
-											>
-											<div class="mt-2 space-y-2 pl-4 text-sm">
-												<div>
-													<p class="font-medium">{$t('pricing.activePlans.doctorsTitle')}:</p>
-													<div class="pl-2">
-														<p>
-															{$t('pricing.activePlans.startFee')}: {pd.pricingSuccess.doctor
-																.startFee.amount}
-															{getCurrencySymbol(pd.pricingSuccess.doctor.startFee.currency)}
-														</p>
-														<p>
-															{$t('pricing.activePlans.successFee')}: {pd.pricingSuccess.doctor
-																.successFee.amount}
-															{getCurrencySymbol(pd.pricingSuccess.doctor.successFee.currency)}
-														</p>
-													</div>
-												</div>
-												<div>
-													<p class="font-medium">
-														{$t('pricing.activePlans.otherProfessionalsTitle')}:
-													</p>
-													<div class="pl-2">
-														<p>
-															{$t('pricing.activePlans.startFee')}: {pd.pricingSuccess.other
-																.startFee.amount}
-															{getCurrencySymbol(pd.pricingSuccess.other.startFee.currency)}
-														</p>
-														<p>
-															{$t('pricing.activePlans.successFee')}: {pd.pricingSuccess.other
-																.successFee.amount}
-															{getCurrencySymbol(pd.pricingSuccess.other.successFee.currency)}
-														</p>
-													</div>
-												</div>
-											</div>
-										</details>
-
-										<div class="mt-3 text-sm text-muted-foreground">
-											<div class="flex items-start">
-												<InfoIcon class="mr-2 mt-0.5 h-5 w-5 text-primary" />
-												<span>{$t('pricing.availablePlans.successFeeNotice')}</span>
-											</div>
-										</div>
-
-									{/if}
-								{/if}
-							</div>
-							<Button variant="outline" size="sm" onclick={() => handleEndPlan(plan.id)}>
-								{$t('pricing.activePlans.endPlan')}
-							</Button>
-						</div>
-					</div>
-				{/each}
-			</div>
-		</div>
-	{/if}
-
-	{#if activePlans.length < 1 && $currentUserCompany?.countryIso !== 'EST'}
-		<div class="mb-10 rounded-lg border border-border p-6">
-			<div class="mb-3 flex items-center">
-				<Sparkles class="mr-2 h-6 w-6 text-primary" />
-				<h1 class="text-lg font-bold text-primary">
-					{$t('pricing.startingFee.title', {
-						amount: startingFee?.toString(),
-						currency: getCurrencySymbol(currency)
-					})}
-				</h1>
-			</div>
-			{#if startingFee > 0}
-				<p class="mb-4 text-base">
-					{$t('pricing.startingFee.withFee', {
-						amount: startingFee?.toString(),
-						currency: getCurrencySymbol(currency)
-					})}
-				</p>
-			{:else}
-				<p class="mb-4 text-base">
-					{$t('pricing.startingFee.withoutFee')}
-				</p>
-			{/if}
-			<div class="flex items-center text-sm text-neutral-500">
-				<span>{$t('pricing.startingFee.payWhenSuccessful')}</span>
-				<ArrowRight class="ml-2 h-4 w-4" />
-			</div>
-		</div>
-	{/if}
-
-	<!-- Available Plans Section -->
 	{#if isLoading}
 		<div class="my-8 flex justify-center">
 			<div class="h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
 		</div>
-	{:else if availablePlans.filter((plan) => !activePlans.find((activePlan) => activePlan.planType === plan.planType)).length > 0}
-		<div class="mb-8 space-y-6">
-			<h3 class="text-lg font-semibold">{$t('pricing.availablePlans.title')}</h3>
-			{#each availablePlans.filter((plan) => !activePlans.find((activePlan) => activePlan.planType === plan.planType)) as plan}
-				<div class="rounded-lg border border-border p-6">
-					<div class="mb-4 flex items-start justify-between">
-						<div>
-							<h3 class="text-lg font-semibold">{plan.planType.replace('_', ' ').toUpperCase()}</h3>
-							{#if plan.pricingGeneral && plan.pricingGeneral.amount > 0}
-								<p class="mt-1 text-sm text-muted-foreground">
-									{$t('pricing.availablePlans.generalFee')}: {plan.pricingGeneral.amount || 0}
-									{getCurrencySymbol(plan.pricingGeneral.currency)}
-								</p>
-							{:else}
-								<p class="mt-1 text-sm text-muted-foreground">
-									{$t('pricing.availablePlans.noGeneralFee')}
-								</p>
+	{:else}
+		<!-- Current Plan Status -->
+		{#if activePlans.length > 0}
+			<section class="mb-10">
+				<h2 class="mb-6 text-xl font-semibold">{$t('pricing.activePlans.title')}</h2>
+				<div class="space-y-6">
+					{#each activePlans as plan}
+						<div transition:fade class="rounded-lg border border-green-400 p-6 shadow-sm">
+							<div class="mb-4 flex items-start justify-between">
+								<div class="flex-1">
+									<div class="flex items-center">
+										<BadgeCheck class="mr-2 h-5 w-5 text-green-600" />
+										<h3 class="text-lg font-semibold">
+											{plan.planType.replace('_', ' ').toUpperCase()}
+										</h3>
+									</div>
+									<p class="mt-1 text-sm text-muted-foreground">
+										{$t('pricing.activePlans.activeSince')}
+										{new Date(plan.dateStarted).toLocaleDateString()}
+									</p>
+
+									{#if planDetails.find((d) => d.id === plan.id)}
+										{@const pd = planDetails.find((d) => d.id === plan.id)!}
+
+										<!-- Custom Plan Description -->
+										{#if pd.customPlanDescription}
+											<div class="mt-4 rounded-md bg-primary/5 p-4">
+												<div class="mb-2 flex items-center">
+													<Sparkles class="mr-2 h-4 w-4 text-primary" />
+													<h4 class="text-sm font-medium text-primary">
+														{$t('pricing.activePlans.customPlanDetails')}
+													</h4>
+												</div>
+												<p class="text-sm text-muted-foreground">
+													{pd.customPlanDescription}
+												</p>
+											</div>
+										{/if}
+
+										<!-- General Fee -->
+										{#if pd.pricingGeneral && pd.pricingGeneral.amount > 0}
+											<div class="mt-3">
+												<p class="text-sm">
+													<span class="font-medium">{$t('pricing.activePlans.generalFee')}:</span>
+													{pd.pricingGeneral.amount}
+													{getCurrencySymbol(pd.pricingGeneral.currency)}
+												</p>
+											</div>
+										{/if}
+
+										<!-- Success Fees -->
+										{#if pd.pricingSuccess}
+											<details class="mt-4">
+												<summary class="cursor-pointer text-sm font-medium text-primary"
+													>{$t('pricing.activePlans.viewSuccessFees')}</summary
+												>
+												<div class="mt-3 grid grid-cols-1 gap-4 md:grid-cols-2">
+													<div class="rounded-md bg-muted/50 p-4">
+														<div class="mb-3 flex items-center">
+															<Stethoscope class="mr-2 h-4 w-4 text-primary" />
+															<span class="font-medium"
+																>{$t('pricing.activePlans.doctorsTitle')}</span
+															>
+														</div>
+														<div class="space-y-3 text-sm">
+															<div class="flex items-start justify-between">
+																<span class="text-muted-foreground"
+																	>{$t('pricing.activePlans.startFee')}:</span
+																>
+																<div class="text-right">
+																	<div class="font-medium">
+																		{pd.pricingSuccess.doctor.startFee.amount}
+																		{getCurrencySymbol(pd.pricingSuccess.doctor.startFee.currency)}
+																	</div>
+																</div>
+															</div>
+															<div class="flex items-start justify-between">
+																<span class="text-muted-foreground"
+																	>{$t('pricing.activePlans.successFee')}:</span
+																>
+																<div class="text-right">
+																	<div class="font-medium">
+																		{pd.pricingSuccess.doctor.successFee.amount}
+																		{getCurrencySymbol(
+																			pd.pricingSuccess.doctor.successFee.currency
+																		)}
+																	</div>
+																	<div class="mt-1 text-xs text-muted-foreground">
+																		{$t('pricing.activePlans.perHiredCandidate')}
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+
+													<div class="rounded-md bg-muted/50 p-4">
+														<div class="mb-3 flex items-center">
+															<Users class="mr-2 h-4 w-4 text-primary" />
+															<span class="font-medium"
+																>{$t('pricing.activePlans.otherProfessionalsTitle')}</span
+															>
+														</div>
+														<div class="space-y-3 text-sm">
+															<div class="flex items-start justify-between">
+																<span class="text-muted-foreground"
+																	>{$t('pricing.activePlans.startFee')}:</span
+																>
+																<div class="text-right">
+																	<div class="font-medium">
+																		{pd.pricingSuccess.other.startFee.amount}
+																		{getCurrencySymbol(pd.pricingSuccess.other.startFee.currency)}
+																	</div>
+																</div>
+															</div>
+															<div class="flex items-start justify-between">
+																<span class="text-muted-foreground"
+																	>{$t('pricing.activePlans.successFee')}:</span
+																>
+																<div class="text-right">
+																	<div class="font-medium">
+																		{pd.pricingSuccess.other.successFee.amount}
+																		{getCurrencySymbol(pd.pricingSuccess.other.successFee.currency)}
+																	</div>
+																	<div class="mt-1 text-xs text-muted-foreground">
+																		{$t('pricing.activePlans.perHiredCandidate')}
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+
+												<div class="mt-4 flex items-start rounded-md bg-blue-50/50 p-3">
+													<InfoIcon class="mr-2 mt-0.5 h-4 w-4 text-blue-600" />
+													<p class="text-sm text-blue-700">
+														{$t('pricing.availablePlans.successFeeNotice')}
+													</p>
+												</div>
+											</details>
+										{/if}
+									{/if}
+								</div>
+								<Button variant="outline" size="sm" onclick={() => handleEndPlan(plan.id)}>
+									{$t('pricing.activePlans.endPlan')}
+								</Button>
+							</div>
+						</div>
+					{/each}
+				</div>
+			</section>
+		{/if}
+
+		<!-- Available Plans Section -->
+		{#if availablePlans.filter((plan) => !activePlans.find((activePlan) => activePlan.planType === plan.planType)).length > 0}
+			<section class="mb-10">
+				<h2 class="mb-6 text-xl font-semibold">{$t('pricing.availablePlans.title')}</h2>
+				<div class="space-y-6">
+					{#each availablePlans.filter((plan) => !activePlans.find((activePlan) => activePlan.planType === plan.planType)) as plan}
+						<div class="rounded-lg border border-border p-6">
+							<div class="mb-6 flex items-start justify-between">
+								<div class="flex-1">
+									<h3 class="text-lg font-semibold">
+										{plan.planType.replace('_', ' ').toUpperCase()}
+									</h3>
+									{#if plan.pricingGeneral && plan.pricingGeneral.amount > 0}
+										<p class="mt-1 text-sm text-muted-foreground">
+											{$t('pricing.availablePlans.generalFee')}: {plan.pricingGeneral.amount || 0}
+											{getCurrencySymbol(plan.pricingGeneral.currency)}
+										</p>
+									{:else}
+										<p class="mt-1 text-sm text-muted-foreground">
+											{$t('pricing.availablePlans.noGeneralFee')}
+										</p>
+									{/if}
+								</div>
+								<Button onclick={() => handleStartPlan(plan.planType)} class="ml-4">
+									{$t('pricing.availablePlans.startPlan')}
+								</Button>
+							</div>
+
+							{#if plan.pricingSuccess}
+								<div class="border-t pt-4">
+									<h4 class="mb-4 text-sm font-medium">
+										{$t('pricing.availablePlans.successFees')}
+									</h4>
+									<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+										<div class="rounded-md bg-muted/50 p-4">
+											<div class="mb-3 flex items-center">
+												<Stethoscope class="mr-2 h-4 w-4 text-primary" />
+												<span class="font-medium">{$t('pricing.activePlans.doctorsTitle')}</span>
+											</div>
+											<div class="space-y-3 text-sm">
+												<div class="flex items-start justify-between">
+													<span class="text-muted-foreground"
+														>{$t('pricing.activePlans.startFee')}:</span
+													>
+													<div class="text-right">
+														<div class="font-medium">
+															{plan.pricingSuccess.doctor.startFee.amount}
+															{getCurrencySymbol(plan.pricingSuccess.doctor.startFee.currency)}
+														</div>
+														{#if plan.pricingSuccess?.doctor?.startFee?.vatAmount && plan.pricingSuccess.doctor.startFee.vatAmount > 0}
+															<div class="mt-1 text-xs text-muted-foreground">
+																{$t('pricing.availablePlans.vatLabel', {
+																	percentage:
+																		plan.pricingSuccess.doctor.startFee.vatPercentage?.toString() ||
+																		'0'
+																})}
+															</div>
+														{/if}
+													</div>
+												</div>
+												<div class="flex items-start justify-between">
+													<span class="text-muted-foreground"
+														>{$t('pricing.activePlans.successFee')}:</span
+													>
+													<div class="text-right">
+														<div class="font-medium">
+															{plan.pricingSuccess.doctor.successFee.amount}
+															{getCurrencySymbol(plan.pricingSuccess.doctor.successFee.currency)}
+														</div>
+														{#if plan.pricingSuccess?.doctor?.successFee?.vatAmount && plan.pricingSuccess.doctor.successFee.vatAmount > 0}
+															<div class="mt-1 text-xs text-muted-foreground">
+																{$t('pricing.availablePlans.vatLabel', {
+																	percentage:
+																		plan.pricingSuccess.doctor.successFee.vatPercentage?.toString() ||
+																		'0'
+																})}
+															</div>
+														{/if}
+														<div class="mt-1 text-xs text-muted-foreground">
+															{$t('pricing.activePlans.perHiredCandidate')}
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+
+										<div class="rounded-md bg-muted/50 p-4">
+											<div class="mb-3 flex items-center">
+												<Users class="mr-2 h-4 w-4 text-primary" />
+												<span class="font-medium"
+													>{$t('pricing.activePlans.otherProfessionalsTitle')}</span
+												>
+											</div>
+											<div class="space-y-3 text-sm">
+												<div class="flex items-start justify-between">
+													<span class="text-muted-foreground"
+														>{$t('pricing.activePlans.startFee')}:</span
+													>
+													<div class="text-right">
+														<div class="font-medium">
+															{plan.pricingSuccess.other.startFee.amount}
+															{getCurrencySymbol(plan.pricingSuccess.other.startFee.currency)}
+														</div>
+														{#if plan.pricingSuccess?.other?.startFee?.vatAmount && plan.pricingSuccess.other.startFee.vatAmount > 0}
+															<div class="mt-1 text-xs text-muted-foreground">
+																{$t('pricing.availablePlans.vatLabel', {
+																	percentage:
+																		plan.pricingSuccess.other.startFee.vatPercentage?.toString() ||
+																		'0'
+																})}
+															</div>
+														{/if}
+													</div>
+												</div>
+												<div class="flex items-start justify-between">
+													<span class="text-muted-foreground"
+														>{$t('pricing.activePlans.successFee')}:</span
+													>
+													<div class="text-right">
+														<div class="font-medium">
+															{plan.pricingSuccess.other.successFee.amount}
+															{getCurrencySymbol(plan.pricingSuccess.other.successFee.currency)}
+														</div>
+														{#if plan.pricingSuccess?.other?.successFee?.vatAmount && plan.pricingSuccess.other.successFee.vatAmount > 0}
+															<div class="mt-1 text-xs text-muted-foreground">
+																{$t('pricing.availablePlans.vatLabel', {
+																	percentage:
+																		plan.pricingSuccess.other.successFee.vatPercentage?.toString() ||
+																		'0'
+																})}
+															</div>
+														{/if}
+														<div class="mt-1 text-xs text-muted-foreground">
+															{$t('pricing.activePlans.perHiredCandidate')}
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+
+									<div class="mt-4 flex items-start rounded-md bg-blue-50/50 p-3">
+										<InfoIcon class="mr-2 mt-0.5 h-4 w-4 text-blue-600" />
+										<p class="text-sm text-blue-700">
+											{$t('pricing.availablePlans.successFeeNotice')}
+										</p>
+									</div>
+								</div>
 							{/if}
 						</div>
-						<Button onclick={() => handleStartPlan(plan.planType)}
-							>{$t('pricing.availablePlans.startPlan')}</Button
-						>
-					</div>
-
-					{#if plan.pricingSuccess}
-						<div class="mt-4">
-							<h4 class="mb-2 text-sm font-medium">{$t('pricing.availablePlans.successFees')}</h4>
-							<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-								<div class="rounded-md bg-muted/50 p-4">
-									<div class="mb-2 flex items-center">
-										<Stethoscope class="mr-2 h-4 w-4 text-primary" />
-										<span class="font-medium">{$t('pricing.activePlans.doctorsTitle')}</span>
-									</div>
-									<div class="space-y-1 text-sm">
-										<div class="flex justify-between">
-											<span>{$t('pricing.activePlans.startFee')}:</span>
-											<span>
-												{#if plan.pricingSuccess?.doctor?.startFee?.vatAmount && plan.pricingSuccess.doctor.startFee.vatAmount > 0}
-													{plan.pricingSuccess.doctor.startFee.amount}
-													{getCurrencySymbol(plan.pricingSuccess.doctor.startFee.currency)}
-													<span class="text-xs text-muted-foreground">
-														{$t('pricing.availablePlans.vatLabel', {
-															percentage:
-																plan.pricingSuccess.doctor.startFee.vatPercentage?.toString() || '0'
-														})}
-													</span>
-												{:else}
-													{plan.pricingSuccess.doctor.startFee.amount}
-													{getCurrencySymbol(plan.pricingSuccess.doctor.startFee.currency)}
-												{/if}
-											</span>
-										</div>
-										<div class="flex justify-between">
-											<span>{$t('pricing.activePlans.successFee')}:</span>
-											<span>
-												{#if plan.pricingSuccess?.doctor?.successFee?.vatAmount && plan.pricingSuccess.doctor.successFee.vatAmount > 0}
-													{plan.pricingSuccess.doctor.successFee.amount}
-													{getCurrencySymbol(plan.pricingSuccess.doctor.successFee.currency)}
-													<span class="text-xs text-muted-foreground">
-														{$t('pricing.availablePlans.vatLabel', {
-															percentage:
-																plan.pricingSuccess.doctor.successFee.vatPercentage?.toString() ||
-																'0'
-														})}
-													</span>
-												{:else}
-													{plan.pricingSuccess.doctor.successFee.amount}
-													{getCurrencySymbol(plan.pricingSuccess.doctor.successFee.currency)}
-												{/if}
-											</span>
-										</div>
-									</div>
-								</div>
-
-								<div class="rounded-md bg-muted/50 p-4">
-									<div class="mb-2 flex items-center">
-										<Users class="mr-2 h-4 w-4 text-primary" />
-										<span class="font-medium"
-											>{$t('pricing.activePlans.otherProfessionalsTitle')}</span
-										>
-									</div>
-									<div class="space-y-1 text-sm">
-										<div class="flex justify-between">
-											<span>{$t('pricing.activePlans.startFee')}:</span>
-											<span>
-												{#if plan.pricingSuccess?.other?.startFee?.vatAmount && plan.pricingSuccess.other.startFee.vatAmount > 0}
-													{plan.pricingSuccess.other.startFee.amount}
-													{getCurrencySymbol(plan.pricingSuccess.other.startFee.currency)}
-													<span class="text-xs text-muted-foreground">
-														{$t('pricing.availablePlans.vatLabel', {
-															percentage:
-																plan.pricingSuccess.other.startFee.vatPercentage?.toString() || '0'
-														})}
-													</span>
-												{:else}
-													{plan.pricingSuccess.other.startFee.amount}
-													{getCurrencySymbol(plan.pricingSuccess.other.startFee.currency)}
-												{/if}
-											</span>
-										</div>
-										<div class="flex justify-between">
-											<span>{$t('pricing.activePlans.successFee')}:</span>
-											<span>
-												{#if plan.pricingSuccess?.other?.successFee?.vatAmount && plan.pricingSuccess.other.successFee.vatAmount > 0}
-													{plan.pricingSuccess.other.successFee.amount}
-													{getCurrencySymbol(plan.pricingSuccess.other.successFee.currency)}
-													<span class="text-xs text-muted-foreground">
-														{$t('pricing.availablePlans.vatLabel', {
-															percentage:
-																plan.pricingSuccess.other.successFee.vatPercentage?.toString() ||
-																'0'
-														})}
-													</span>
-												{:else}
-													{plan.pricingSuccess.other.successFee.amount}
-													{getCurrencySymbol(plan.pricingSuccess.other.successFee.currency)}
-												{/if}
-											</span>
-										</div>
-									</div>
-								</div>
-							</div>
-							<div class="mt-3 text-sm text-muted-foreground">
-								<div class="flex items-start">
-									<InfoIcon class="mr-2 mt-0.5 h-5 w-5 text-primary" />
-									<span>{$t('pricing.availablePlans.successFeeNotice')}</span>
-								</div>
-							</div>
-						</div>
-					{/if}
+					{/each}
 				</div>
-			{/each}
+			</section>
+		{/if}
 
-			<div class="rounded-lg border border-border p-6">
-				<div class="mb-4 flex items-start justify-between">
-					<div>
-						<h3 class="text-lg font-semibold">{$t('pricing.customSolutions.title')}</h3>
-						<p class="mt-1 text-sm text-muted-foreground">
+		<!-- Custom Solutions Section -->
+		<section>
+			<div
+				class="rounded-lg border border-border bg-gradient-to-r from-primary/5 to-primary/10 p-6"
+			>
+				<div class="flex items-start justify-between">
+					<div class="flex-1">
+						<h2 class="text-lg font-semibold">{$t('pricing.customSolutions.title')}</h2>
+						<p class="mt-2 text-muted-foreground">
 							{$t('pricing.customSolutions.description')}
 						</p>
 					</div>
 					<Button
 						onclick={openContactDialog}
 						variant="default"
-						class="bg-primary hover:bg-primary/90"
+						class="ml-4 bg-primary hover:bg-primary/90"
 					>
 						{$t('pricing.customSolutions.contactUs')}
 					</Button>
 				</div>
 			</div>
-		</div>
+		</section>
 	{/if}
 </div>
 

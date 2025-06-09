@@ -504,7 +504,8 @@
 			"doctorsTitle": "Ärzte",
 			"otherProfessionalsTitle": "Andere Gesundheitsfachkräfte",
 			"startFee": "Startgebühr",
-			"successFee": "Erfolgsgebühr"
+			"successFee": "Erfolgsgebühr",
+			"perHiredCandidate": "(pro eingestelltem Kandidaten)"
 		},
 		"startingFee": {
 			"title": "Starten Sie mit {{amount}} {{currency}}",
@@ -519,7 +520,7 @@
 			"startPlan": "Plan starten",
 			"successFees": "Erfolgsgebühren",
 			"vatLabel": "(+{{percentage}}% MwSt.)",
-			"successFeeNotice": "Die Erfolgsgebühr wird in monatlichen Raten gezahlt, wenn beide Parteien bestätigen, dass der Kandidat mit der Arbeit begonnen hat, und setzt sich fort, solange der Kandidat dort arbeitet"
+			"successFeeNotice": "Die Erfolgsgebühr wird in monatlichen Raten für jeden erfolgreich eingestellten Kandidaten gezahlt, wenn beide Parteien bestätigen, dass der Kandidat mit der Arbeit begonnen hat, und setzt sich fort, solange der Kandidat dort arbeitet"
 		},
 		"customSolutions": {
 			"title": "INDIVIDUELLE LÖSUNGEN",
