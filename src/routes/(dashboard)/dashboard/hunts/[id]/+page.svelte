@@ -396,6 +396,11 @@
 								</div>
 							{/if}
 						</div>
+						{#if hunt.successFee?.amount > 0}
+							<p class="mt-4 text-xs text-muted-foreground">
+								{$t('pricing.availablePlans.successFeeNotice')}
+							</p>
+						{/if}
 					</div>
 				{/if}
 

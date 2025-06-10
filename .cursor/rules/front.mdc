@@ -1,0 +1,184 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# SvelteKit 5 + TypeScript Development Rules
+
+## Code Style and Structure
+- Write concise, technical TypeScript code with accurate examples for SvelteKit 5
+- Use functional and reactive programming patterns; avoid classes where possible
+- Prefer iteration and modularization over code duplication
+- Use descriptive variable names with auxiliary verbs (e.g., `isLoading`, `hasError`, `canSubmit`)
+- File Structure: Exported component first, subcomponents, helpers, static content, types
+
+## Naming Conventions
+- **Directories**: lowercase with dashes (e.g., `components/auth-wizard`, `routes/user-profile`)
+- **Components**: PascalCase (e.g., `AuthWizard.svelte`, `UserProfile.svelte`)
+- **Files**: kebab-case for utilities, camelCase for stores (e.g., `api-client.ts`, `userStore.ts`)
+- **Variables**: camelCase with descriptive prefixes (`is`, `has`, `can`, `should`)
+
+## TypeScript Usage
+- Use TypeScript for all code; avoid `any` type
+- Prefer interfaces over type aliases for object shapes
+- Use type aliases for unions, primitives, and computed types
+- Avoid enums; use const objects with `as const` assertion
+- Define component props with TypeScript interfaces
+- Use generic types for reusable components and utilities
+
+```typescript
+interface ButtonProps {
+  variant?: 'primary' | 'secondary' | 'ghost';
+  size?: 'sm' | 'md' | 'lg';
+  disabled?: boolean;
+  onclick?: () => void;
+}
+```
+
+## Svelte 5 Specific Patterns
+- **Runes**: Use `$state()`, `$derived()`, `$effect()` for reactivity instead of legacy reactive statements
+- **Props**: Use `$props()` rune for component props
+- **Event Handlers**: Use `onclick` attribute syntax, not `on:click` directives
+- **Stores**: Continue using Svelte stores for cross-component state
+- **Legacy Reactivity**: Avoid `$:` reactive statements in Svelte 5; use runes instead
+
+```svelte
+<script lang="ts">
+  let count = $state(0);
+  let doubled = $derived(count * 2);
+  
+  $effect(() => {
+    console.log(`Count is now ${count}`);
+  });
+</script>
+```
+
+## UI and Styling
+- Use **shadcn-svelte** components with Tailwind CSS for styling
+- Follow shadcn compound-component patterns (e.g., `<Card><CardHeader><CardTitle>`)
+- Ensure responsive design with Tailwind utilities (`sm:`, `md:`, `lg:`, `xl:`)
+- Use consistent spacing scale (4px grid: `p-1`, `p-2`, `p-4`, etc.)
+- Implement proper dark mode support with `class="dark"` strategy
+- Use semantic color classes (`text-foreground`, `bg-background`, `border-border`)
+
+## Performance Optimization
+- Use Svelte 5 runes for efficient reactivity instead of legacy patterns
+- Implement lazy loading with dynamic imports for routes and large components
+- Use Svelte stores for shared state across components
+- Optimize images with responsive sizing and modern formats
+- Implement proper loading states and skeleton screens
+- Use `$lib` aliases for internal imports
+
+```typescript
+// Good: Lazy route loading
+const UserProfile = lazy(() => import('$lib/components/UserProfile.svelte'));
+```
+
+## SvelteKit Routing & Data Loading
+- **Pages**: Use `+page.svelte` for page components
+- **Layouts**: Use `+layout.svelte` for shared layouts
+- **Data Loading**: Use `+page.ts`/`+layout.ts` for universal data fetching
+- **Server Logic**: Use `+page.server.ts` for server-only operations
+- **Type Safety**: Generate types with `PageData`, `LayoutData` interfaces
+- **Error Handling**: Implement `+error.svelte` for custom error pages
+
+```typescript
+// +page.ts
+export async function load({ fetch, params }) {
+  const response = await fetch(`/api/users/${params.id}`);
+  if (!response.ok) throw error(404, 'User not found');
+  
+  return {
+    user: await response.json()
+  };
+}
+```
+
+## Form Handling and Validation
+- Use SvelteKit's progressive enhancement with `use:enhance`
+- Implement client-side validation with proper TypeScript types
+- Use Zod or similar for schema validation on both client and server
+- Provide immediate feedback for form validation errors
+- Handle loading states during form submission
+
+```svelte
+<script lang="ts">
+  import { enhance } from '$app/forms';
+  let isSubmitting = $state(false);
+</script>
+
+<form method="POST" use:enhance={() => {
+  isSubmitting = true;
+  return async ({ update }) => {
+    await update();
+    isSubmitting = false;
+  };
+}}>
+```
+
+## Error Handling and Loading States
+- Implement comprehensive error boundaries with `+error.svelte`
+- Use consistent loading state patterns across components
+- Provide meaningful error messages to users
+- Log errors appropriately for debugging
+- Handle network failures gracefully with retry mechanisms
+
+## Accessibility (a11y)
+- Use semantic HTML elements (`<button>`, `<nav>`, `<main>`, `<section>`)
+- Implement proper ARIA labels and descriptions
+- Ensure keyboard navigation works for all interactive elements
+- Maintain proper color contrast ratios (WCAG AA compliance)
+- Use `eslint-plugin-svelte` with a11y rules enabled
+- Test with screen readers and keyboard-only navigation
+
+## Security Considerations
+- Sanitize user inputs and use proper escaping
+- Implement CSRF protection for forms
+- Use proper Content Security Policy (CSP) headers
+- Validate data on both client and server sides
+- Use environment variables for sensitive configuration
+- Implement proper authentication and authorization patterns
+
+## File Organization
+```
+src/
+├── lib/
+│   ├── components/     # Reusable components
+│   ├── stores/         # Svelte stores
+│   ├── utils/          # Utility functions
+│   ├── types/          # TypeScript types
+│   └── api/            # API client code
+├── routes/             # SvelteKit routes
+├── app.html            # App shell
+└── app.d.ts            # Global types
+```
+
+## Import Standards
+- Use `$lib` for internal imports
+- Group imports: external packages, internal modules, relative imports
+- Use dynamic imports for code splitting large components
+- Prefer named exports over default exports for utilities
+
+```typescript
+// Good import organization
+import { writable } from 'svelte/store';
+import { Button } from '$lib/components/ui/button';
+import { validateEmail } from '$lib/utils/validation';
+import type { User } from '$lib/types/user';
+```
+
+## State Management
+- Use Svelte stores for shared state across routes/components
+- Use context API for component tree state sharing
+- Implement proper store typing with TypeScript
+- Keep stores focused and single-purpose
+- Use derived stores for computed state
+
+```typescript
+// userStore.ts
+import { writable, derived } from 'svelte/store';
+import type { User } from '$lib/types/user';
+
+export const user = writable<User | null>(null);
+export const isAuthenticated = derived(user, ($user) => $user !== null);
+```
