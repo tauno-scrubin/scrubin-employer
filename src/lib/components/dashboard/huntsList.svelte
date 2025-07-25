@@ -25,7 +25,6 @@
 		isLoading = true;
 		try {
 			const response = await scrubinClient.hunt.getHunts();
-			console.log(response);
 			hunts = response.items;
 			// Sort hunts: ACTIVE first, then by date (newest first)
 			hunts.sort((a, b) => {

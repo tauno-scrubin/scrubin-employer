@@ -1,5 +1,7 @@
 // scrubin.ts
 import { PUBLIC_ORIGIN } from '$env/static/public';
+import { decodeToken } from '@/utils/tokenUtil';
+import { redirect } from '@sveltejs/kit';
 
 // ─── INTERFACES ───────────────────────────────────────────────────────────────
 
@@ -9,9 +11,10 @@ export interface AuthResponse {
 	expiresAt: string;
 }
 
-interface JwtPayload {
+export interface JwtPayload {
 	sub: number;
 	subType: string;
+	status: string;
 	type: string;
 	iat: number;
 	exp: number;
@@ -41,24 +44,6 @@ export interface UpdatePortalUser {
 export interface UpdatePortalUserPassword {
 	oldPassword: string;
 	newPassword: string;
-}
-
-export interface SignupPayload {
-	email: string;
-	firstName: string;
-	lastName: string;
-	phone: string;
-	type: string;
-	password: string;
-}
-
-export interface SignupCompanyPayload {
-	email: string;
-	firstName: string;
-	lastName: string;
-	phone: string;
-	companyName: string;
-	country: string;
 }
 
 // Company interface as provided by the endpoints
@@ -479,21 +464,29 @@ class AuthStore {
 		if (typeof document === 'undefined') {
 			return this.refreshToken;
 		}
-		return JSON.parse(this.getCookie('scrubin_auth') || '{}').refresh;
+		try {
+			return JSON.parse(this.getCookie('scrubin_auth') || '{}').refresh || null;
+		} catch {
+			return null;
+		}
 	}
 
 	get token(): string | null {
 		if (typeof document === 'undefined') {
 			return this.accessToken;
 		}
-		return JSON.parse(this.getCookie('scrubin_auth') || '{}').jwt;
+		try {
+			return JSON.parse(this.getCookie('scrubin_auth') || '{}').jwt || null;
+		} catch {
+			return null;
+		}
 	}
 
 	get isValid(): boolean {
 		const token = this.token;
 		if (!token) return false;
 		try {
-			const payload = this.decodeToken(token);
+			const payload = decodeToken(token);
 			const expired = new Date(payload.exp * 1000) < new Date();
 			return !expired;
 		} catch {
@@ -501,29 +494,17 @@ class AuthStore {
 		}
 	}
 
-	get model(): any {
+	get model(): JwtPayload | null {
 		const token = this.token;
 		if (!token) return null;
-		return this.decodeToken(token);
+		return decodeToken(token);
 	}
 
 	get verified(): boolean {
-		return this.model?.verified || false;
+		return this.model?.status === 'active' || this.model?.status === 'pending' || false;
 	}
 
-	private decodeToken(token: string): JwtPayload {
-		const base64Url = token.split('.')[1];
-		const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-		const jsonPayload = decodeURIComponent(
-			atob(base64)
-				.split('')
-				.map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-				.join('')
-		);
-		return JSON.parse(jsonPayload);
-	}
-
-	private getCookie(name: string): string | null {
+	public getCookie(name: string): string | null {
 		if (typeof document === 'undefined') return null;
 		const value = `; ${document.cookie}`;
 		const parts = value.split(`; ${name}=`);
@@ -531,11 +512,35 @@ class AuthStore {
 		return null;
 	}
 
+	private setCookie(value: string): void {
+		if (typeof document !== 'undefined') {
+			// Use PUBLIC_ORIGIN to determine if we're in localhost or production
+			const isLocalhost = PUBLIC_ORIGIN.includes('localhost');
+
+			// Clear any existing cookies with different domains first
+			document.cookie = 'scrubin_auth=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+			if (!isLocalhost) {
+				document.cookie =
+					'scrubin_auth=; path=/; domain=scrubin.io; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+				document.cookie =
+					'scrubin_auth=; path=/; domain=.scrubin.io; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+			}
+
+			// Set the new cookie with appropriate domain
+			if (isLocalhost) {
+				// For localhost, don't set a domain (defaults to current hostname)
+				document.cookie = `scrubin_auth=${value}; path=/; SameSite=Strict`;
+			} else {
+				// For production, use .scrubin.io domain
+				document.cookie = `scrubin_auth=${value}; path=/; domain=.scrubin.io; SameSite=Strict`;
+			}
+		}
+	}
+
 	async refresh(baseUrl: string): Promise<boolean> {
 		if (!this.rToken) {
 			throw new Error('No refresh token available');
 		}
-		console.log('refreshing token');
 
 		const response = await fetch(`${baseUrl}/api/v1/auth/refresh`, {
 			method: 'POST',
@@ -559,18 +564,39 @@ class AuthStore {
 		this.refreshToken = null;
 		this.accessToken = null;
 		if (typeof document !== 'undefined') {
-			document.cookie = 'scrubin_auth=; path=/; SameSite=Strict';
+			const isLocalhost = PUBLIC_ORIGIN.includes('localhost');
+
+			// Clear cookies from all possible domains
+			document.cookie = 'scrubin_auth=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+
+			if (!isLocalhost) {
+				document.cookie =
+					'scrubin_auth=; path=/; domain=scrubin.io; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+				document.cookie =
+					'scrubin_auth=; path=/; domain=.scrubin.io; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+			}
 		}
+	}
+
+	private getDomain(): string {
+		// Use PUBLIC_ORIGIN environment variable to determine domain setting
+		// - localhost (dev): no domain = cookie works for current hostname
+		// - production domains: .scrubin.io = cookie works for all subdomains
+		const isLocalhost = PUBLIC_ORIGIN.includes('localhost');
+		return isLocalhost ? '' : '.scrubin.io';
 	}
 
 	exportToCookie(options: { secure?: boolean; httpOnly?: boolean; domain?: string } = {}): string {
 		const refreshToken = this.refreshToken || this.rToken;
 		const jwtAccess = this.accessToken || this.token;
 
+		// Determine domain: use provided domain, or auto-detect based on environment
+		const domain = options.domain || this.getDomain();
+
 		const cookieOptions = [
 			`scrubin_auth=${JSON.stringify({ jwt: jwtAccess, refresh: refreshToken })}`,
 			`path=/`,
-			options.domain ? `domain=${options.domain}` : null,
+			domain ? `domain=${domain}` : null,
 			options.secure ? 'Secure' : null,
 			options.httpOnly ? 'HttpOnly' : null,
 			'SameSite=Strict'
@@ -587,11 +613,16 @@ class AuthStore {
 		for (const cookie of cookies) {
 			const [name, value] = cookie.trim().split('=');
 			if (name === 'scrubin_auth') {
-				const { jwt, refresh } = JSON.parse(value);
-				this.accessToken = jwt;
-				this.refreshToken = refresh;
-				if (typeof document !== 'undefined') {
-					document.cookie = `scrubin_auth=${JSON.stringify({ jwt, refresh })}; path=/; SameSite=Strict`;
+				try {
+					const authValue = value
+						? JSON.parse(decodeURIComponent(value))
+						: { jwt: null, refresh: null };
+					const { jwt, refresh } = authValue;
+					this.accessToken = jwt;
+					this.refreshToken = refresh;
+					this.setCookie(JSON.stringify({ jwt, refresh }));
+				} catch (error) {
+					console.warn('Failed to parse auth cookie:', error);
 				}
 			}
 		}
@@ -599,16 +630,12 @@ class AuthStore {
 
 	setRefreshToken(token: string): void {
 		this.refreshToken = token;
-		if (typeof document !== 'undefined') {
-			document.cookie = `scrubin_auth=${JSON.stringify({ jwt: this.accessToken, refresh: token })}; path=/; SameSite=Strict`;
-		}
+		this.setCookie(JSON.stringify({ jwt: this.accessToken, refresh: token }));
 	}
 
 	setAccessToken(token: string): void {
 		this.accessToken = token;
-		if (typeof document !== 'undefined') {
-			document.cookie = `scrubin_auth=${JSON.stringify({ jwt: token, refresh: this.refreshToken })}; path=/; SameSite=Strict`;
-		}
+		this.setCookie(JSON.stringify({ jwt: token, refresh: this.refreshToken }));
 	}
 }
 
@@ -623,7 +650,7 @@ class BaseResource {
 	protected async request<T>(
 		method: string,
 		url: string,
-		data?: any,
+		data?: unknown,
 		expectNoContent?: boolean
 	): Promise<T | void> {
 		await this.client.ensureAuth();
@@ -678,7 +705,7 @@ class BaseResource {
 		}
 	}
 
-	async get<T = any>(params?: Record<string, any>): Promise<T> {
+	async get<T = unknown>(params?: Record<string, string>): Promise<T> {
 		const url = new URL(this.path, this.client.baseUrl);
 		if (params) {
 			url.search = new URLSearchParams(params).toString();
@@ -686,7 +713,7 @@ class BaseResource {
 		return this.request<T>('GET', url.toString()) as Promise<T>;
 	}
 
-	async getOne<T = any>(id: string | number): Promise<T> {
+	async getOne<T = unknown>(id: string | number): Promise<T> {
 		const url = new URL(`${this.path}/${id}`, this.client.baseUrl);
 		return this.request<T>('GET', url.toString()) as Promise<T>;
 	}
@@ -812,200 +839,305 @@ class CompanyResource extends BaseResource {
 
 // Hunt endpoints
 class HuntResource extends BaseResource {
-  constructor(client: ScrubinClient) {
-    super(client, '/api/v1/hunt');
-  }
-
-  // GET /api/v1/hunt/worker-lookups
-  async getWorkerLookups(): Promise<WorkerLookupsResponse> {
-    const url = new URL(`${this.path}/worker-lookups`, this.client.baseUrl);
-    return this.request<WorkerLookupsResponse>('GET', url.toString()) as Promise<WorkerLookupsResponse>;
-  }
-
-  // POST /api/v1/hunt/worker-lookups/analyze
-  async analyzeWorkerLookups(description: string): Promise<AnalyzeResponse> {
-    const url = new URL(`${this.path}/worker-lookups/analyze`, this.client.baseUrl);
-    return this.request<AnalyzeResponse>('POST', url.toString(), { description }) as Promise<AnalyzeResponse>;
-  }
-
-  // POST /api/v1/hunt/requirements/analyze
-  async createJobRequirements(workerLookupId: number, favoriteCandidateIds: string[]): Promise<Requirements> {
-    const url = new URL(`${this.path}/requirements/create`, this.client.baseUrl);
-    return this.request<Requirements>('POST', url.toString(), { workerLookupId, favoriteCandidateIds }) as Promise<Requirements>;
-  }
-
-  // PUT /api/v1/hunt/requirements/{id}/analyze
-  async updateRequirements(id: number, textInput: string): Promise<RequirementsWithInstructions> {
-    const url = new URL(`${this.path}/requirements/${id}/analyze`, this.client.baseUrl);
-    return this.request<RequirementsWithInstructions>('PUT', url.toString(), { textInput }) as Promise<RequirementsWithInstructions>;
-  }
-
-  // PUT /api/v1/hunt/requirements/{id}/activate
-  async activateRequirements(id: number): Promise<ActivateHuntResponse> {
-    const url = new URL(`${this.path}/requirements/${id}/activate-hunt`, this.client.baseUrl);
-    return this.request<ActivateHuntResponse>('POST', url.toString()) as Promise<ActivateHuntResponse>;
-  }
-
-  async getAnalyzeResult(id: number): Promise<Requirements['requirements']> {
-    const url = new URL(`${this.path}/requirements/${id}/analyze-result`, this.client.baseUrl);
-    return this.request<Requirements['requirements']>('GET', url.toString()) as Promise<Requirements['requirements']>;
-  }
-
-  async getAllRequirements(): Promise<AllRequirementsResponse> {
-    const url = new URL(`${this.path}/requirements`, this.client.baseUrl);
-    return this.request<AllRequirementsResponse>('GET', url.toString()) as Promise<AllRequirementsResponse>;
-  }
-
-  async getRequirements(id: number): Promise<Requirements['requirements']> {
-    const url = new URL(`${this.path}/requirements/${id}`, this.client.baseUrl);
-    return this.request<Requirements['requirements']>('GET', url.toString()) as Promise<Requirements['requirements']>;
-  }
-
-  // GET /api/v1/hunts
-  async getHunts(page: number = 0, size: number = 20): Promise<HuntsResponse> {
-    const url = new URL('/api/v1/hunts', this.client.baseUrl);
-    url.search = new URLSearchParams({ page: page.toString(), size: size.toString() }).toString();
-    return this.request<HuntsResponse>('GET', url.toString()) as Promise<HuntsResponse>;
-  }
-
-  // GET /api/v1/hunts/{id}
-  async getHuntById(id: number): Promise<HuntDetail> {
-    const url = new URL(`/api/v1/hunts/${id}`, this.client.baseUrl);
-    return this.request<HuntDetail>('GET', url.toString()) as Promise<HuntDetail>;
-  }
-
-  // GET /api/v1/hunts/{id}/stats
-  async getHuntStats(id: number): Promise<HuntStats> {
-    const url = new URL(`/api/v1/hunts/${id}/stats`, this.client.baseUrl);
-    return this.request<HuntStats>('GET', url.toString()) as Promise<HuntStats>;
-  }
-
-  // GET /api/v1/hunts/{id}/candidates
-  async getHuntCandidates(id: number, page: number = 0, size: number = 20): Promise<HuntCandidatesResponse> {
-    const url = new URL(`/api/v1/hunts/${id}/candidates`, this.client.baseUrl);
-    url.search = new URLSearchParams({ page: page.toString(), size: size.toString() }).toString();
-    return this.request<HuntCandidatesResponse>('GET', url.toString()) as Promise<HuntCandidatesResponse>;
-  }
-
-  // POST /api/v1/hunt/requirements/{id}/create-hunt
-  async createHuntFromRequirements(id: number, planType: PlanType): Promise<HuntDetail> {
-    const url = new URL(`${this.path}/requirements/${id}/create-hunt`, this.client.baseUrl);
-    return this.request<HuntDetail>('POST', url.toString(), { planType }) as Promise<HuntDetail>;
-  }
-
-  // POST /api/v1/hunts/{id}/payment-intent
-  async createPaymentIntent(id: number): Promise<PaymentIntent> {
-    const url = new URL(`/api/v1/hunts/${id}/payment-intent`, this.client.baseUrl);
-    return this.request<PaymentIntent>('POST', url.toString()) as Promise<PaymentIntent>;
-  }
-
-  // POST /api/v1/hunts/{id}/activate
-  async activateHunt(id: number, paymentIntentId: string, paymentMethodId: string): Promise<HuntPaymentResponse> {
-    const url = new URL(`/api/v1/hunts/${id}/activate`, this.client.baseUrl);
-    return this.request<HuntPaymentResponse>('POST', url.toString(), {
-      paymentIntentId,
-      paymentMethodId
-    }) as Promise<HuntPaymentResponse>;
-  }
-
-  // GET /api/v1/landing/worker-lookups/{lookupId}/huntable/{id}
-  async getHuntableDetails(lookupId: string, id: string): Promise<HuntableDetails> {
-    const url = new URL(`/api/v1/hunt/worker-lookups/${lookupId}/huntable/${id}`, this.client.baseUrl);
-    return this.request<HuntableDetails>('GET', url.toString()) as Promise<HuntableDetails>;
-  }
-
-  // GET /api/v1/hunts/{id}/interested-candidates
-  async getInterestedCandidates(id: number): Promise<InterestedCandidate[]> {
-    const url = new URL(`/api/v1/hunts/${id}/interested-candidates`, this.client.baseUrl);
-    return this.request<InterestedCandidate[]>('GET', url.toString()) as Promise<InterestedCandidate[]>;
-  }
-
-  // GET /api/v1/hunts/{id}/interested-candidates/{candidateId}
-  async getInterestedCandidateDetails(id: number, candidateId: number): Promise<InterestedCandidateDetails> {
-    const url = new URL(`/api/v1/hunts/${id}/interested-candidates/${candidateId}`, this.client.baseUrl);
-    return this.request<InterestedCandidateDetails>('GET', url.toString()) as Promise<InterestedCandidateDetails>;
-  }
-
-	async markInterestedCandidateStatusToCompanyOfferMade(id: number, candidateId: number): Promise<InterestedCandidateStatusResponse> {
-		const url = new URL(`/api/v1/hunts/${id}/interested-candidates/${candidateId}/offer-made`, this.client.baseUrl);
-		return this.request<InterestedCandidateStatusResponse>('POST', url.toString()) as Promise<InterestedCandidateStatusResponse>;
+	constructor(client: ScrubinClient) {
+		super(client, '/api/v1/hunt');
 	}
 
-	async markInterestedCandidateStatusToHired(id: number, candidateId: number): Promise<InterestedCandidateStatusResponse> {
-		const url = new URL(`/api/v1/hunts/${id}/interested-candidates/${candidateId}/hired`, this.client.baseUrl);
-		return this.request<InterestedCandidateStatusResponse>('POST', url.toString()) as Promise<InterestedCandidateStatusResponse>;
+	// GET /api/v1/hunt/worker-lookups
+	async getWorkerLookups(): Promise<WorkerLookupsResponse> {
+		const url = new URL(`${this.path}/worker-lookups`, this.client.baseUrl);
+		return this.request<WorkerLookupsResponse>(
+			'GET',
+			url.toString()
+		) as Promise<WorkerLookupsResponse>;
 	}
 
-	async markInterestedCandidateStatusToDeclined(id: number, candidateId: number): Promise<InterestedCandidateStatusResponse> {
-		const url = new URL(`/api/v1/hunts/${id}/interested-candidates/${candidateId}/decline`, this.client.baseUrl);
-		return this.request<InterestedCandidateStatusResponse>('POST', url.toString()) as Promise<InterestedCandidateStatusResponse>;
+	// POST /api/v1/hunt/worker-lookups/analyze
+	async analyzeWorkerLookups(description: string): Promise<AnalyzeResponse> {
+		const url = new URL(`${this.path}/worker-lookups/analyze`, this.client.baseUrl);
+		return this.request<AnalyzeResponse>('POST', url.toString(), {
+			description
+		}) as Promise<AnalyzeResponse>;
 	}
 
-  // PUT /api/v1/hunts/{id}/interested-candidates/{candidateId}/notes
-  async updateInterestedCandidateNotes(id: number, candidateId: number, notes: string): Promise<void> {
-    const url = new URL(`/api/v1/hunts/${id}/interested-candidates/${candidateId}/notes`, this.client.baseUrl);
-    return this.request<void>('PUT', url.toString(), { notes }, true) as Promise<void>;
-  }
+	// POST /api/v1/hunt/requirements/analyze
+	async createJobRequirements(
+		workerLookupId: number,
+		favoriteCandidateIds: string[]
+	): Promise<Requirements> {
+		const url = new URL(`${this.path}/requirements/create`, this.client.baseUrl);
+		return this.request<Requirements>('POST', url.toString(), {
+			workerLookupId,
+			favoriteCandidateIds
+		}) as Promise<Requirements>;
+	}
 
-  // GET /api/v1/hunts/{id}/interested-candidates/{candidateId}/chat
-  async getInterestedCandidateChat(id: number, candidateId: number): Promise<ChatMessage[]> {
-    const url = new URL(`/api/v1/hunts/${id}/interested-candidates/${candidateId}/chat`, this.client.baseUrl);
-    return this.request<ChatMessage[]>('GET', url.toString()) as Promise<ChatMessage[]>;
-  }
+	// PUT /api/v1/hunt/requirements/{id}/analyze
+	async updateRequirements(id: number, textInput: string): Promise<RequirementsWithInstructions> {
+		const url = new URL(`${this.path}/requirements/${id}/analyze`, this.client.baseUrl);
+		return this.request<RequirementsWithInstructions>('PUT', url.toString(), {
+			textInput
+		}) as Promise<RequirementsWithInstructions>;
+	}
 
-  // POST /api/v1/hunts/{id}/interested-candidates/{candidateId}/chat
-  async createInterestedCandidateMessage(id: number, candidateId: number, message: string): Promise<ChatMessage[]> {
-    const url = new URL(`/api/v1/hunts/${id}/interested-candidates/${candidateId}/chat`, this.client.baseUrl);
-    return this.request<ChatMessage[]>('POST', url.toString(), { message }) as Promise<ChatMessage[]>;
-  }
+	// PUT /api/v1/hunt/requirements/{id}/activate
+	async activateRequirements(id: number): Promise<ActivateHuntResponse> {
+		const url = new URL(`${this.path}/requirements/${id}/activate-hunt`, this.client.baseUrl);
+		return this.request<ActivateHuntResponse>(
+			'POST',
+			url.toString()
+		) as Promise<ActivateHuntResponse>;
+	}
 
-  // GET /api/v1/hunts/{id}/context-questions
-  async getHuntContextQuestions(id: number): Promise<ContextQuestion[]> {
-    const url = new URL(`/api/v1/hunts/${id}/context-questions`, this.client.baseUrl);
-    return this.request<ContextQuestion[]>('GET', url.toString()) as Promise<ContextQuestion[]>;
-  }
+	async getAnalyzeResult(id: number): Promise<Requirements['requirements']> {
+		const url = new URL(`${this.path}/requirements/${id}/analyze-result`, this.client.baseUrl);
+		return this.request<Requirements['requirements']>('GET', url.toString()) as Promise<
+			Requirements['requirements']
+		>;
+	}
 
-  // POST /api/v1/hunts/{id}/context-questions/{questionId}
-  async answerHuntContextQuestion(id: number, questionId: number, answer: string): Promise<ContextQuestion> {
-    const url = new URL(`/api/v1/hunts/${id}/context-questions/${questionId}`, this.client.baseUrl);
-    return this.request<ContextQuestion>('POST', url.toString(), { answer }) as Promise<ContextQuestion>;
-  }
+	async getAllRequirements(): Promise<AllRequirementsResponse> {
+		const url = new URL(`${this.path}/requirements`, this.client.baseUrl);
+		return this.request<AllRequirementsResponse>(
+			'GET',
+			url.toString()
+		) as Promise<AllRequirementsResponse>;
+	}
 
-  // POST /api/v2/hunts/{id}/activate
-  async activateHuntV2(id: number): Promise<Hunt> {
-    const url = new URL(`/api/v2/hunts/${id}/activate`, this.client.baseUrl);
-    return this.request<Hunt>('POST', url.toString()) as Promise<Hunt>;
-  }
+	async getRequirements(id: number): Promise<Requirements['requirements']> {
+		const url = new URL(`${this.path}/requirements/${id}`, this.client.baseUrl);
+		return this.request<Requirements['requirements']>('GET', url.toString()) as Promise<
+			Requirements['requirements']
+		>;
+	}
 
-  // POST /api/v1/hunts/{id}/complete
-  async completeHunt(id: number): Promise<Hunt> {
-    const url = new URL(`/api/v1/hunts/${id}/complete`, this.client.baseUrl);
-    return this.request<Hunt>('POST', url.toString()) as Promise<Hunt>;
-  }
+	// GET /api/v1/hunts
+	async getHunts(page: number = 0, size: number = 20): Promise<HuntsResponse> {
+		const url = new URL('/api/v1/hunts', this.client.baseUrl);
+		url.search = new URLSearchParams({ page: page.toString(), size: size.toString() }).toString();
+		return this.request<HuntsResponse>('GET', url.toString()) as Promise<HuntsResponse>;
+	}
 
-  // POST /api/v1/hunts/{id}/cancel
-  async cancelHunt(id: number): Promise<Hunt> {
-    const url = new URL(`/api/v1/hunts/${id}/cancel`, this.client.baseUrl);
-    return this.request<Hunt>('POST', url.toString()) as Promise<Hunt>;
-  }
+	// GET /api/v1/hunts/{id}
+	async getHuntById(id: number): Promise<HuntDetail> {
+		const url = new URL(`/api/v1/hunts/${id}`, this.client.baseUrl);
+		return this.request<HuntDetail>('GET', url.toString()) as Promise<HuntDetail>;
+	}
 
-  async updateRequirementFields(id: number, data: {
-    jobTitle?: string,
-    jobRequiredQualifications?: string,
-    jobRequiredWorkExperience?: number,
-    jobDescription?: string,
-    country?: string,
-    stateProvinceRegion?: string[],
-    city?: string,
-    address?: string,
-    salaryAmountStart?: number,
-    salaryAmountEnd?: number,
-    salaryCurrency?: string,
-    cityBorough?: string[]
-  }): Promise<Requirements['requirements']> {
-    const url = new URL(`${this.path}/requirements/${id}`, this.client.baseUrl);
-    return this.request<Requirements['requirements']>('PATCH', url.toString(), data) as Promise<Requirements['requirements']>;
-  }
+	// GET /api/v1/hunts/{id}/stats
+	async getHuntStats(id: number): Promise<HuntStats> {
+		const url = new URL(`/api/v1/hunts/${id}/stats`, this.client.baseUrl);
+		return this.request<HuntStats>('GET', url.toString()) as Promise<HuntStats>;
+	}
+
+	// GET /api/v1/hunts/{id}/candidates
+	async getHuntCandidates(
+		id: number,
+		page: number = 0,
+		size: number = 20
+	): Promise<HuntCandidatesResponse> {
+		const url = new URL(`/api/v1/hunts/${id}/candidates`, this.client.baseUrl);
+		url.search = new URLSearchParams({ page: page.toString(), size: size.toString() }).toString();
+		return this.request<HuntCandidatesResponse>(
+			'GET',
+			url.toString()
+		) as Promise<HuntCandidatesResponse>;
+	}
+
+	// POST /api/v1/hunt/requirements/{id}/create-hunt
+	async createHuntFromRequirements(id: number, planType: PlanType): Promise<HuntDetail> {
+		const url = new URL(`${this.path}/requirements/${id}/create-hunt`, this.client.baseUrl);
+		return this.request<HuntDetail>('POST', url.toString(), { planType }) as Promise<HuntDetail>;
+	}
+
+	// POST /api/v1/hunts/{id}/payment-intent
+	async createPaymentIntent(id: number): Promise<PaymentIntent> {
+		const url = new URL(`/api/v1/hunts/${id}/payment-intent`, this.client.baseUrl);
+		return this.request<PaymentIntent>('POST', url.toString()) as Promise<PaymentIntent>;
+	}
+
+	// POST /api/v1/hunts/{id}/activate
+	async activateHunt(
+		id: number,
+		paymentIntentId: string,
+		paymentMethodId: string
+	): Promise<HuntPaymentResponse> {
+		const url = new URL(`/api/v1/hunts/${id}/activate`, this.client.baseUrl);
+		return this.request<HuntPaymentResponse>('POST', url.toString(), {
+			paymentIntentId,
+			paymentMethodId
+		}) as Promise<HuntPaymentResponse>;
+	}
+
+	// GET /api/v1/landing/worker-lookups/{lookupId}/huntable/{id}
+	async getHuntableDetails(lookupId: string, id: string): Promise<HuntableDetails> {
+		const url = new URL(
+			`/api/v1/hunt/worker-lookups/${lookupId}/huntable/${id}`,
+			this.client.baseUrl
+		);
+		return this.request<HuntableDetails>('GET', url.toString()) as Promise<HuntableDetails>;
+	}
+
+	// GET /api/v1/hunts/{id}/interested-candidates
+	async getInterestedCandidates(id: number): Promise<InterestedCandidate[]> {
+		const url = new URL(`/api/v1/hunts/${id}/interested-candidates`, this.client.baseUrl);
+		return this.request<InterestedCandidate[]>('GET', url.toString()) as Promise<
+			InterestedCandidate[]
+		>;
+	}
+
+	// GET /api/v1/hunts/{id}/interested-candidates/{candidateId}
+	async getInterestedCandidateDetails(
+		id: number,
+		candidateId: number
+	): Promise<InterestedCandidateDetails> {
+		const url = new URL(
+			`/api/v1/hunts/${id}/interested-candidates/${candidateId}`,
+			this.client.baseUrl
+		);
+		return this.request<InterestedCandidateDetails>(
+			'GET',
+			url.toString()
+		) as Promise<InterestedCandidateDetails>;
+	}
+
+	async markInterestedCandidateStatusToCompanyOfferMade(
+		id: number,
+		candidateId: number
+	): Promise<InterestedCandidateStatusResponse> {
+		const url = new URL(
+			`/api/v1/hunts/${id}/interested-candidates/${candidateId}/offer-made`,
+			this.client.baseUrl
+		);
+		return this.request<InterestedCandidateStatusResponse>(
+			'POST',
+			url.toString()
+		) as Promise<InterestedCandidateStatusResponse>;
+	}
+
+	async markInterestedCandidateStatusToHired(
+		id: number,
+		candidateId: number
+	): Promise<InterestedCandidateStatusResponse> {
+		const url = new URL(
+			`/api/v1/hunts/${id}/interested-candidates/${candidateId}/hired`,
+			this.client.baseUrl
+		);
+		return this.request<InterestedCandidateStatusResponse>(
+			'POST',
+			url.toString()
+		) as Promise<InterestedCandidateStatusResponse>;
+	}
+
+	async markInterestedCandidateStatusToDeclined(
+		id: number,
+		candidateId: number
+	): Promise<InterestedCandidateStatusResponse> {
+		const url = new URL(
+			`/api/v1/hunts/${id}/interested-candidates/${candidateId}/decline`,
+			this.client.baseUrl
+		);
+		return this.request<InterestedCandidateStatusResponse>(
+			'POST',
+			url.toString()
+		) as Promise<InterestedCandidateStatusResponse>;
+	}
+
+	// PUT /api/v1/hunts/{id}/interested-candidates/{candidateId}/notes
+	async updateInterestedCandidateNotes(
+		id: number,
+		candidateId: number,
+		notes: string
+	): Promise<void> {
+		const url = new URL(
+			`/api/v1/hunts/${id}/interested-candidates/${candidateId}/notes`,
+			this.client.baseUrl
+		);
+		return this.request<void>('PUT', url.toString(), { notes }, true) as Promise<void>;
+	}
+
+	// GET /api/v1/hunts/{id}/interested-candidates/{candidateId}/chat
+	async getInterestedCandidateChat(id: number, candidateId: number): Promise<ChatMessage[]> {
+		const url = new URL(
+			`/api/v1/hunts/${id}/interested-candidates/${candidateId}/chat`,
+			this.client.baseUrl
+		);
+		return this.request<ChatMessage[]>('GET', url.toString()) as Promise<ChatMessage[]>;
+	}
+
+	// POST /api/v1/hunts/{id}/interested-candidates/{candidateId}/chat
+	async createInterestedCandidateMessage(
+		id: number,
+		candidateId: number,
+		message: string
+	): Promise<ChatMessage[]> {
+		const url = new URL(
+			`/api/v1/hunts/${id}/interested-candidates/${candidateId}/chat`,
+			this.client.baseUrl
+		);
+		return this.request<ChatMessage[]>('POST', url.toString(), { message }) as Promise<
+			ChatMessage[]
+		>;
+	}
+
+	// GET /api/v1/hunts/{id}/context-questions
+	async getHuntContextQuestions(id: number): Promise<ContextQuestion[]> {
+		const url = new URL(`/api/v1/hunts/${id}/context-questions`, this.client.baseUrl);
+		return this.request<ContextQuestion[]>('GET', url.toString()) as Promise<ContextQuestion[]>;
+	}
+
+	// POST /api/v1/hunts/{id}/context-questions/{questionId}
+	async answerHuntContextQuestion(
+		id: number,
+		questionId: number,
+		answer: string
+	): Promise<ContextQuestion> {
+		const url = new URL(`/api/v1/hunts/${id}/context-questions/${questionId}`, this.client.baseUrl);
+		return this.request<ContextQuestion>('POST', url.toString(), {
+			answer
+		}) as Promise<ContextQuestion>;
+	}
+
+	// POST /api/v2/hunts/{id}/activate
+	async activateHuntV2(id: number): Promise<Hunt> {
+		const url = new URL(`/api/v2/hunts/${id}/activate`, this.client.baseUrl);
+		return this.request<Hunt>('POST', url.toString()) as Promise<Hunt>;
+	}
+
+	// POST /api/v1/hunts/{id}/complete
+	async completeHunt(id: number): Promise<Hunt> {
+		const url = new URL(`/api/v1/hunts/${id}/complete`, this.client.baseUrl);
+		return this.request<Hunt>('POST', url.toString()) as Promise<Hunt>;
+	}
+
+	// POST /api/v1/hunts/{id}/cancel
+	async cancelHunt(id: number): Promise<Hunt> {
+		const url = new URL(`/api/v1/hunts/${id}/cancel`, this.client.baseUrl);
+		return this.request<Hunt>('POST', url.toString()) as Promise<Hunt>;
+	}
+
+	async updateRequirementFields(
+		id: number,
+		data: {
+			jobTitle?: string;
+			jobRequiredQualifications?: string;
+			jobRequiredWorkExperience?: number;
+			jobDescription?: string;
+			country?: string;
+			stateProvinceRegion?: string[];
+			city?: string;
+			address?: string;
+			salaryAmountStart?: number;
+			salaryAmountEnd?: number;
+			salaryCurrency?: string;
+			cityBorough?: string[];
+		}
+	): Promise<Requirements['requirements']> {
+		const url = new URL(`${this.path}/requirements/${id}`, this.client.baseUrl);
+		return this.request<Requirements['requirements']>('PATCH', url.toString(), data) as Promise<
+			Requirements['requirements']
+		>;
+	}
 }
 
 // ─── CLIENT CLASS ─────────────────────────────────────────────────────────────
@@ -1021,6 +1153,28 @@ export class ScrubinClient {
 		this.portal = new PortalResource(this);
 		this.company = new CompanyResource(this);
 		this.hunt = new HuntResource(this);
+
+		this.cleanupDuplicateCookies();
+	}
+
+	private cleanupDuplicateCookies(): void {
+		if (typeof document === 'undefined') return;
+
+		// Get current auth cookie value before cleanup
+		const currentAuth = this.authStore.getCookie('scrubin_auth');
+
+		if (currentAuth) {
+			try {
+				const authData = JSON.parse(decodeURIComponent(currentAuth));
+				// Clear all cookies and set with consistent domain
+				this.authStore.clear();
+				this.authStore.setRefreshToken(authData.refresh);
+				this.authStore.setAccessToken(authData.jwt);
+			} catch (error) {
+				console.warn('Failed to cleanup duplicate cookies:', error);
+				this.authStore.clear();
+			}
+		}
 	}
 
 	public async ensureAuth(): Promise<boolean> {
@@ -1042,57 +1196,29 @@ export class ScrubinClient {
 			}
 		};
 
+		if (this.authStore.token) {
+			const payload = decodeToken(this.authStore.token);
+			if (payload.subType !== 'company') {
+				if (typeof window === 'undefined') {
+					throw redirect(307, 'https://auth.scrubin.io/');
+				} else {
+					window.location.href = 'https://auth.scrubin.io/';
+					return false;
+				}
+			}
+		}
+
 		// If token is invalid or about to expire, refresh it
 		if (!this.authStore.isValid || shouldRefresh()) {
 			try {
 				await this.authStore.refresh(this.baseUrl);
 			} catch (error) {
-				console.error('Token refresh failed:', error);
+				console.error('Token refresh failed', error);
 				return false;
 			}
 		}
 
 		return !!this.authStore.token;
-	}
-
-	async authWithPassword(email: string, password: string): Promise<AuthResponse> {
-		const headers: Record<string, string> = {
-			Origin: PUBLIC_ORIGIN,
-			'Content-Type': 'application/json',
-			Accept: '*/*'
-		};
-
-		try {
-			const response = await fetch(`${this.baseUrl}/api/v1/auth/login/password`, {
-				method: 'POST',
-				headers,
-				body: JSON.stringify({ email, password })
-			});
-
-			if (!response.ok) {
-				const contentType = response.headers.get('content-type');
-				if (contentType && contentType.includes('application/json')) {
-					const errorData = await response.json();
-					throw new Error(errorData.message || 'Authentication failed');
-				} else {
-					throw new Error('Authentication failed - invalid response format');
-				}
-			}
-			const data: AuthResponse = await response.json();
-			this.authStore.setRefreshToken(data.refresh_token);
-			this.authStore.setAccessToken(data.access_token);
-
-			if (typeof document !== 'undefined') {
-				document.cookie = `scrubin_auth=${JSON.stringify({ jwt: data.access_token, refresh: data.refresh_token })}; path=/; SameSite=Strict`;
-			}
-
-			return data;
-		} catch (error) {
-			if (error instanceof Error) {
-				throw error;
-			}
-			throw new Error('Authentication failed');
-		}
 	}
 
 	async authWithToken(token: string): Promise<AuthResponse> {
@@ -1121,12 +1247,9 @@ export class ScrubinClient {
 			}
 
 			const data: AuthResponse = await response.json();
+
 			this.authStore.setRefreshToken(data.refresh_token);
 			this.authStore.setAccessToken(data.access_token);
-
-			if (typeof document !== 'undefined') {
-				document.cookie = `scrubin_auth=${JSON.stringify({ jwt: data.access_token, refresh: data.refresh_token })}; path=/; SameSite=Strict`;
-			}
 
 			return data;
 		} catch (error) {
@@ -1136,121 +1259,4 @@ export class ScrubinClient {
 			throw new Error('Token authentication failed');
 		}
 	}
-
-	async signupWithPassword(payload: SignupPayload): Promise<AuthResponse> {
-		const headers: Record<string, string> = {
-			Origin: PUBLIC_ORIGIN,
-			'Content-Type': 'application/json',
-			Accept: '*/*'
-		};
-
-		try {
-			const response = await fetch(`${this.baseUrl}/api/v1/auth/signup/password`, {
-				method: 'POST',
-				headers,
-				body: JSON.stringify(payload)
-			});
-
-			if (!response.ok) {
-				const contentType = response.headers.get('content-type');
-				if (contentType && contentType.includes('application/json')) {
-					const errorData = await response.json();
-					throw new Error(errorData.message || 'Signup failed');
-				} else {
-					throw new Error('Signup failed - invalid response format');
-				}
-			}
-
-			const data: AuthResponse = await response.json();
-			this.authStore.setRefreshToken(data.refresh_token);
-			this.authStore.setAccessToken(data.access_token);
-
-			if (typeof document !== 'undefined') {
-				document.cookie = `scrubin_auth=${JSON.stringify({ jwt: data.access_token, refresh: data.refresh_token })}; path=/; SameSite=Strict`;
-			}
-
-			return data;
-		} catch (error) {
-			if (error instanceof Error) {
-				throw error;
-			}
-			throw new Error('Signup failed');
-		}
-	}
-
-	async signupCompanyWithEmail(payload: SignupCompanyPayload): Promise<AuthResponse> {
-		const headers: Record<string, string> = {
-			Origin: PUBLIC_ORIGIN,
-			'Content-Type': 'application/json',
-			Accept: '*/*'
-		};
-
-		try {
-			const response = await fetch(`${this.baseUrl}/api/v1/auth/signup/email/company`, {
-				method: 'POST',
-				headers,
-				body: JSON.stringify(payload)
-			});
-
-			if (!response.ok) {
-				console.log(response);
-				const contentType = response.headers.get('content-type');
-				if (contentType && contentType.includes('application/json')) {
-					const errorData = await response.json();
-					throw new Error(errorData.message || 'Company signup failed');
-				} else {
-					throw new Error('Company signup failed - invalid response format');
-				}
-			}
-
-			const data: AuthResponse = await response.json();
-			this.authStore.setRefreshToken(data.refresh_token);
-			this.authStore.setAccessToken(data.access_token);
-
-			if (typeof document !== 'undefined') {
-				document.cookie = `scrubin_auth=${JSON.stringify({ jwt: data.access_token, refresh: data.refresh_token })}; path=/; SameSite=Strict`;
-			}
-
-			return data;
-		} catch (error) {
-			if (error instanceof Error) {
-				throw error;
-			}
-			throw new Error('Company signup failed');
-		}
-	}
-
-	async requestPasswordReset(email: string): Promise<void> {
-		await fetch(`${this.baseUrl}/api/v1/auth/forgot-password`, {
-			method: 'POST',
-			headers: {
-				Origin: PUBLIC_ORIGIN,
-				'Content-Type': 'application/json',
-				Accept: '*/*'
-			},
-			body: JSON.stringify({ email })
-		});
-	}
-
-	async setNewPassword(token: string, newPassword: string): Promise<void> {
-		await fetch(`${this.baseUrl}/api/v1/auth/reset-password`, {
-			method: 'POST',
-			headers: {
-				Origin: PUBLIC_ORIGIN,
-				'Content-Type': 'application/json',
-				Accept: '*/*'
-			},
-			body: JSON.stringify({ token, newPassword })
-		});
-	}
 }
-
-// ─── EXAMPLE USAGE ─────────────────────────────────────────────────────────────
-// const scrubin = new ScrubinClient('https://api.test.scrubin.io');
-// await scrubin.authWithPassword('email', 'password');
-// const user = await scrubin.portal.getUser();
-// const workerLookups = await scrubin.hunt.getWorkerLookups();
-// const analyzeResult = await scrubin.hunt.analyzeWorkerLookups("Some description");
-// const reqAnalyze = await scrubin.hunt.analyzeRequirements(1, "Job requirements text");
-// const updatedReq = await scrubin.hunt.updateRequirements(1, 1, "Updated job requirements");
-// const companyProfile = await scrubin.company.getCompany();

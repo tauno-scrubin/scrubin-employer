@@ -12,6 +12,7 @@
 	let searchHistory: WorkerLookup[] = $state([]);
 	let isSearchActive = $state(false);
 
+
 	async function loadSearchHistory() {
 		isLoading = true;
 		try {
@@ -35,7 +36,6 @@
 	onMount(() => {
 		loadSearchHistory();
 	});
-
 </script>
 
 <SEO

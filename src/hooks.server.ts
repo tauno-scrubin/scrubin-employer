@@ -1,6 +1,6 @@
 import { PUBLIC_API_URL } from '$env/static/public';
 import { ScrubinClient } from '@/scrubinClient';
-import type { Handle } from '@sveltejs/kit';
+import { redirect, type Handle } from '@sveltejs/kit';
 import { sequence } from '@sveltejs/kit/hooks';
 
 const allowedHeaders = ['retry-after', 'content-type', 'set-cookie', 'access-control-allow-origin'];
@@ -21,27 +21,37 @@ const handleLang: Handle = async ({ event, resolve }) => {
 // Original API handler
 const handleAPI: Handle = async ({ event, resolve }) => {
 	event.locals.scrubinClient = new ScrubinClient(PUBLIC_API_URL);
-	event.locals.scrubinClient.authStore.loadFromCookie(event.request.headers.get('cookie') || '');
 
-	const token = event.url.searchParams.get('token');
-	if (token) {
-		await event.locals.scrubinClient.authWithToken(token);
-	}
+	// Check if URL contains token parameter
+	const urlToken = event.url.searchParams.get('token');
 
-	try {
-		if (await event.locals.scrubinClient.ensureAuth()) {
-			event.locals.user = await event.locals.scrubinClient.portal.getUser();
-			event.locals.company = await event.locals.scrubinClient.company.getCompany();
-		} else {
-			event.locals.user = undefined;
-			event.locals.company = undefined;
-			event.locals.scrubinClient.authStore.clear();
-		}
-	} catch (error) {
+	if (urlToken) {
+		// Clear authStore and let frontend handle token validation
+		event.locals.scrubinClient.authStore.clear();
 		event.locals.user = undefined;
 		event.locals.company = undefined;
-		event.locals.scrubinClient.authStore.clear();
-		console.error(error);
+	} else {
+		// Normal authentication flow
+		event.locals.scrubinClient.authStore.loadFromCookie(event.request.headers.get('cookie') || '');
+
+		try {
+			if (
+				event.locals.scrubinClient.authStore.token &&
+				(await event.locals.scrubinClient.ensureAuth())
+			) {
+				event.locals.user = await event.locals.scrubinClient.portal.getUser();
+				event.locals.company = await event.locals.scrubinClient.company.getCompany();
+			} else {
+				event.locals.user = undefined;
+				event.locals.company = undefined;
+				event.locals.scrubinClient.authStore.clear();
+			}
+		} catch (error) {
+			console.error(error);
+			event.locals.user = undefined;
+			event.locals.company = undefined;
+			throw redirect(307, 'https://auth.scrubin.io/');
+		}
 	}
 
 	const response = await resolve(event, {

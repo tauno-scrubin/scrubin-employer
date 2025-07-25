@@ -108,7 +108,7 @@
 <div class="space-y-6">
 	<!-- Search Input Card -->
 	{#if !requirements}
-		<div class="group/search mb-8 rounded-md bg-blue-50 p-8">
+		<div class="group/search mb-8 rounded-md bg-gradient-to-br from-blue-50 to-blue-100/50 p-8">
 			<div class="mb-2 flex flex-col items-start gap-4">
 				<div class="text-blue-600">
 					<Sparkle
