@@ -1,14 +1,11 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
 	import * as Avatar from '$lib/components/ui/avatar/index.js';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import { useSidebar } from '$lib/components/ui/sidebar/index.js';
-	import { locale, t } from '$lib/i18n';
-	import { availableLanguages } from '$lib/i18n/config';
-	import { changeLanguage } from '$lib/utils/languageUtils';
+	import { t } from '$lib/i18n';
+	import { scrubinClient } from '@/scrubinClient/client';
 	import ChevronsUpDown from 'lucide-svelte/icons/chevrons-up-down';
-	import Globe from 'lucide-svelte/icons/globe';
 	import LogOut from 'lucide-svelte/icons/log-out';
 
 	let {
@@ -24,7 +21,8 @@
 	const sidebar = useSidebar();
 
 	function handleLogout() {
-		goto('/logout');
+		scrubinClient.authStore.clear();
+		window.location.href = 'https://auth.scrubin.io/';
 	}
 </script>
 
