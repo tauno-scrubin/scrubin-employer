@@ -336,7 +336,8 @@
 				"interested": "Intéressé",
 				"offer_made": "Offre faite",
 				"hired": "Embauché",
-				"declined": "Refusé"
+				"declined": "Refusé",
+				"accepted": "Accepté"
 			}
 		},
 		"questionsInHunt": {
@@ -526,6 +527,34 @@
 			"title": "SOLUTIONS PERSONNALISÉES",
 			"description": "Besoin de quelque chose de spécifique ? Ou avez-vous besoin de remplaçants ou de placements à court terme ? Contactez-nous pour des packages de recrutement sur mesure avec des avantages premium et des tarifs compétitifs",
 			"contactUs": "Contactez-nous"
+		},
+		"page": {
+			"title": "Recrutement Médical Personnalisé",
+			"subtitle": "Solutions sur mesure pour vos besoins en personnel de santé avec des prix flexibles et un support dédié",
+			"features": {
+				"customPricing": {
+					"title": "Tarification Personnalisée",
+					"description": "Modèles flexibles basés sur votre volume et vos besoins"
+				},
+				"healthcareSpecialisation": {
+					"title": "Spécialisation Médicale",
+					"description": "Spécialistes dans toutes les disciplines médicales"
+				},
+				"dedicatedSupport": {
+					"title": "Support Dédié",
+					"description": "Gestionnaire de compte personnel et assistance prioritaire"
+				},
+				"competitiveRates": {
+					"title": "Tarifs Compétitifs",
+					"description": "Solutions rentables dans votre budget"
+				}
+			},
+			"getStarted": {
+				"title": "Commencer Aujourd'hui",
+				"scheduleDemo": "Planifier une Démo",
+				"sendMessage": "Envoyer un Message",
+				"or": "ou"
+			}
 		},
 		"contactForm": {
 			"title": "Contactez-nous",

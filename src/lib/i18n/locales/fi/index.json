@@ -336,7 +336,8 @@
 				"interested": "Kiinnostunut",
 				"offer_made": "Tarjous tehty",
 				"hired": "Palkattu",
-				"declined": "Hylätty"
+				"declined": "Hylätty",
+				"accepted": "Hyväksytty"
 			}
 		},
 		"questionsInHunt": {
@@ -526,6 +527,34 @@
 			"title": "MUKAUTETUT RATKAISUT",
 			"description": "Tarvitsetko jotain erityistä? Tai tarvitsetko sijaisia tai lyhytaikaisia työpaikkoja? Ota yhteyttä saadaksesi räätälöityjä rekrytointipaketteja premium-eduilla ja kilpailukykyisillä hinnoilla",
 			"contactUs": "Ota yhteyttä"
+		},
+		"page": {
+			"title": "Mukautettu Terveydenhuollon Rekrytointi",
+			"subtitle": "Räätälöidyt ratkaisut terveydenhuollon henkilöstötarpeisiinne joustavilla hinnoilla ja omistetulla tuella",
+			"features": {
+				"customPricing": {
+					"title": "Mukautettu Hinnoittelu",
+					"description": "Joustavat mallit perustuen määrääsi ja tarpeisiisi"
+				},
+				"healthcareSpecialisation": {
+					"title": "Terveydenhuollon Erikoistuminen",
+					"description": "Asiantuntijoita kaikista terveydenhuollon aloista"
+				},
+				"dedicatedSupport": {
+					"title": "Omistettu Tuki",
+					"description": "Henkilökohtainen asiakasvastaava ja ensisijainen apu"
+				},
+				"competitiveRates": {
+					"title": "Kilpailukykyiset Hinnat",
+					"description": "Kustannustehokkaat ratkaisut budjetissasi"
+				}
+			},
+			"getStarted": {
+				"title": "Aloita Tänään",
+				"scheduleDemo": "Varaa Demo",
+				"sendMessage": "Lähetä Viesti",
+				"or": "tai"
+			}
 		},
 		"contactForm": {
 			"title": "Ota yhteyttä",

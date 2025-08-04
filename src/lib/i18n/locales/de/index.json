@@ -336,7 +336,8 @@
 				"interested": "Interessiert",
 				"offer_made": "Angebot gemacht",
 				"hired": "Eingestellt",
-				"declined": "Abgelehnt"
+				"declined": "Abgelehnt",
+				"accepted": "Angenommen"
 			}
 		},
 		"questionsInHunt": {
@@ -526,6 +527,34 @@
 			"title": "INDIVIDUELLE LÖSUNGEN",
 			"description": "Benötigen Sie etwas Spezifisches? Oder benötigen Sie Vertretungen oder kurzfristige Einsätze? Kontaktieren Sie uns für maßgeschneiderte Rekrutierungspakete mit Premium-Vorteilen und wettbewerbsfähigen Preisen",
 			"contactUs": "Kontaktieren Sie uns"
+		},
+		"page": {
+			"title": "Individuelle Gesundheitsrekrutierung",
+			"subtitle": "Maßgeschneiderte Lösungen für Ihre Personalanforderungen im Gesundheitswesen mit flexiblen Preisen und engagierter Betreuung",
+			"features": {
+				"customPricing": {
+					"title": "Individuelle Preisgestaltung",
+					"description": "Flexible Modelle basierend auf Ihrem Volumen und Ihren Bedürfnissen"
+				},
+				"healthcareSpecialisation": {
+					"title": "Gesundheitsspezialisierung",
+					"description": "Spezialisten aus allen Gesundheitsdisziplinen"
+				},
+				"dedicatedSupport": {
+					"title": "Engagierte Betreuung",
+					"description": "Persönlicher Account Manager und prioritäre Unterstützung"
+				},
+				"competitiveRates": {
+					"title": "Wettbewerbsfähige Preise",
+					"description": "Kosteneffektive Lösungen innerhalb Ihres Budgets"
+				}
+			},
+			"getStarted": {
+				"title": "Heute beginnen",
+				"scheduleDemo": "Demo planen",
+				"sendMessage": "Nachricht senden",
+				"or": "oder"
+			}
 		},
 		"contactForm": {
 			"title": "Kontaktieren Sie uns",

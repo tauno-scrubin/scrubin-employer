@@ -336,7 +336,8 @@
 				"interested": "Interested",
 				"offer_made": "Offer Made",
 				"hired": "Hired",
-				"declined": "Declined"
+				"declined": "Declined",
+				"accepted": "Accepted"
 			}
 		},
 		"questionsInHunt": {
@@ -526,6 +527,34 @@
 			"title": "CUSTOM SOLUTIONS",
 			"description": "Need something specific? Or do you need locum or short-term placements? Contact us for tailored recruitment packages with premium benefits and competitive rates",
 			"contactUs": "Contact Us"
+		},
+		"page": {
+			"title": "Custom Healthcare Recruitment",
+			"subtitle": "Tailored solutions for your healthcare staffing needs with flexible pricing and dedicated support",
+			"features": {
+				"customPricing": {
+					"title": "Custom Pricing",
+					"description": "Flexible models based on your volume and needs"
+				},
+				"healthcareSpecialisation": {
+					"title": "Healthcare Specialisation",
+					"description": "Specialists across all healthcare disciplines"
+				},
+				"dedicatedSupport": {
+					"title": "Dedicated Support",
+					"description": "Personal account manager and priority assistance"
+				},
+				"competitiveRates": {
+					"title": "Competitive Rates",
+					"description": "Cost-effective solutions within your budget"
+				}
+			},
+			"getStarted": {
+				"title": "Get Started Today",
+				"scheduleDemo": "Schedule Demo",
+				"sendMessage": "Send Message",
+				"or": "or"
+			}
 		},
 		"contactForm": {
 			"title": "Contact Us",

@@ -128,7 +128,7 @@
 	type="website"
 /> -->
 
-<div class="space-y-6">
+<div class="space-y-6 max-w-screen-xl mx-auto w-full">
 	<div class="flex items-center justify-between">
 		<h2 class="text-3xl font-bold tracking-tight">{$t('settings.title')}</h2>
 	</div>
