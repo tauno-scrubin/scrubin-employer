@@ -124,6 +124,7 @@ export type PlanType = 'success_fee' | 'enterprise' | 'ad_subscription' | 'gener
 
 export interface Requirements {
 	allowedPlanOptions: PlanType[];
+	activePlans: PlanType[];
 	requirements: {
 		id: number;
 
