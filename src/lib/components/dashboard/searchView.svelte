@@ -128,7 +128,7 @@
 				>
 					<Textarea
 						bind:value={searchText}
-						maxlength={500}
+						maxlength={5000}
 						onfocus={() => (inputFocused = true)}
 						onblur={() => !searchText && (inputFocused = false)}
 						placeholder={$t('dashboard.searchView.searchPlaceholder')}
@@ -140,7 +140,7 @@
 							transition:slide={{ delay: 100, duration: 200 }}
 							class="flex w-full items-end justify-between gap-2"
 						>
-							<span class="text-xs text-gray-400">{searchText.length}/500</span>
+							<span class="text-xs text-gray-400">{searchText.length}/5000</span>
 							<div class="flex items-center gap-2">
 								<Button
 									type="submit"

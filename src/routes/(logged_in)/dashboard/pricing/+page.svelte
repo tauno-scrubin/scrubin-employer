@@ -1,23 +1,22 @@
 <script lang="ts">
+	import { getCurrencySymbol } from '$lib/components/payment/payments';
 	import { Button } from '$lib/components/ui/button';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import { Label } from '$lib/components/ui/label';
 	import { Textarea } from '$lib/components/ui/textarea';
-	import { Input } from '$lib/components/ui/input';
 	import { t } from '$lib/i18n';
 	import { scrubinClient } from '@/scrubinClient/client.js';
-	import { getCurrencySymbol } from '$lib/components/payment/payments';
-	import type { CompanyPlanSummary, CompanyPlanDetails } from '@/scrubinClient/index.js';
+	import type { CompanyPlanDetails, CompanyPlanSummary } from '@/scrubinClient/index.js';
 	import {
+		BadgeCheck,
 		Calendar,
+		CheckCircle,
+		InfoIcon,
 		MessageSquare,
 		Send,
-		CheckCircle,
-		BadgeCheck,
 		Sparkles,
 		Stethoscope,
-		Users,
-		InfoIcon
+		Users
 	} from 'lucide-svelte';
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
@@ -97,16 +96,23 @@
 	};
 </script>
 
-<div class="mx-auto max-w-4xl px-4 py-8 sm:px-6 sm:py-16">
-	<!-- Hero Section -->
-	<div class="mb-8 text-center sm:mb-16">
-		<h1 class="mb-4 text-3xl font-bold text-foreground sm:mb-6 sm:text-4xl lg:text-5xl">
-			{$t('pricing.page.title')}
-		</h1>
-		<p class="mx-auto max-w-2xl px-4 text-lg leading-relaxed text-muted-foreground sm:text-xl">
-			{$t('pricing.page.subtitle')}
-		</p>
+<div class="mx-auto w-full max-w-screen-xl space-y-6">
+	<div class="flex items-center justify-between">
+		<h2 class="text-3xl font-bold tracking-tight">{$t('pricing.page.title')}</h2>
 	</div>
+	<p class="text-lg leading-relaxed text-muted-foreground sm:text-xl">
+		{$t('pricing.page.subtitle')}
+	</p>
+	<!-- <div class="mx-auto max-w-4xl px-4 py-8 sm:px-6 sm:py-16"> -->
+	<!-- Hero Section -->
+	<!-- <div class="mb-8 sm:mb-16"> -->
+	<!-- <h1 class="mb-4 text-3xl font-bold text-foreground sm:mb-6">
+			<!-- {$t('pricing.page.title')} -->
+	<!-- </h1> -->
+	<!-- <p class="text-lg leading-relaxed text-muted-foreground sm:text-xl"> -->
+	<!-- {$t('pricing.page.subtitle')} -->
+	<!-- </p> -->
+	<!-- </div> -->
 
 	{#if error}
 		<div
@@ -300,9 +306,10 @@
 		{/if}
 
 		<!-- Main Content - Only show when no active plans -->
+
 		{#if activePlans.length === 0}
 			<div
-				class="rounded-2xl border border-border/50 bg-white p-6 shadow-sm sm:rounded-3xl sm:p-8 lg:p-12"
+				class="max-w-4xl rounded-2xl border border-border/50 bg-white p-6 shadow-sm sm:rounded-3xl sm:p-8 lg:p-12"
 			>
 				<!-- Features -->
 				<div class="mb-8 grid grid-cols-1 gap-6 sm:mb-12 sm:grid-cols-2 sm:gap-8">
