@@ -532,21 +532,21 @@
 			"title": "Custom Healthcare Recruitment",
 			"subtitle": "Tailored solutions for your healthcare staffing needs with flexible pricing and dedicated support",
 			"features": {
-				"customPricing": {
-					"title": "Custom Pricing",
-					"description": "Flexible models based on your volume and needs"
+				"feature1": {
+					"title": "The Largest Healthcare Worker Database in Europe",
+					"description": "Access to tens of thousands of healthcare professionals - from general nurses to specialized doctors. We cover all fields and experience levels your organization may need."
 				},
-				"healthcareSpecialisation": {
-					"title": "Healthcare Specialisation",
-					"description": "Specialists across all healthcare disciplines"
+				"feature2": {
+					"title": "Data-Driven Approach",
+					"description": "Our AI-powered recruitment agent analyzes candidates' job preferences, past behavior, psychological profiles, and statistical data to understand each professional’s desires and patterns."
 				},
-				"dedicatedSupport": {
-					"title": "Dedicated Support",
-					"description": "Personal account manager and priority assistance"
+				"feature3": {
+					"title": "AI-Powered Recruitment Agent Working Around the Clock",
+					"description": "A smart AI agent searches for candidates who meet your criteria, holds initial conversations at times that suit them, and schedules meetings or video calls between you and the candidates – all automatically, 24/7."
 				},
-				"competitiveRates": {
-					"title": "Competitive Rates",
-					"description": "Cost-effective solutions within your budget"
+				"feature4": {
+					"title": "A Smart Investment That Increases Your Revenue",
+					"description": "Investing in our software means faster access to suitable doctors and healthcare professionals – which leads to more filled positions, higher service capacity, and revenue growth. Our solutions are designed to make your recruitment efforts deliver measurable business results."
 				}
 			},
 			"getStarted": {

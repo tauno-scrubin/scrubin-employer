@@ -528,23 +528,23 @@
 		},
 		"page": {
 			"title": "Küsi personaalset pakkumist",
-			"subtitle": "Isikupärastatud personalilahendused teie tervishoiuasutusele - paindlik hinnastus ja personaalne tugi. Värbamis- ja turunduslahendused, mis on kohandatud just teie organisatsiooni vajadustele.",
+			"subtitle": "Iga organisatsioon on unikaalne - seetõttu pakume värbamis- ja turunduslahendusi, mis on täpselt kohandatud teie vajaduste ja eesmärkide järgi.",
 			"features": {
-				"customPricing": {
-					"title": "Kohandatud hinnastamine",
-					"description": "Paindlikud hinnamudelid vastavalt teie vajadustele ja töömahtudele"
+				"feature1": {
+					"title": "Suurim tervishoiutöötajate andmebaas Euroopas",
+					"description": "Ligipääs kümnetele tuhandetele tervishoiuspetsialistidele – alates üldõdedest kuni eriarstideni. Katame kõik valdkonnad ja kogemustasemed, mida teie organisatsioon vajab."
 				},
-				"healthcareSpecialisation": {
-					"title": "Spetsialiseerumine tervishoiule",
-					"description": "Eksperdid kõikidest tervishoiuvaldkondadest - õendusest arstideni"
+				"feature2": {
+					"title": "Andmepõhine lähenemine",
+					"description": "Meie tehisintellektil põhinev värbamisagent analüüsib kandidaatide töösoove, varasemat käitumist, psühholoogilist profiili ning statistilisi andmeid, et mõista iga spetsialisti soove ja mustreid."
 				},
-				"dedicatedSupport": {
-					"title": "Personaalne tugi",
-					"description": "Teie isiklik kontohaldur ja eelisjärjekorras klienditugi"
+				"feature3": {
+					"title": "AI-põhine värbamisagent, kes töötab ööpäevaringselt",
+					"description": "Nutikas AI-agent otsib teie tingimustele sobilikke kandidaate, peab esmased läbirääkimised neile sobivatel aegadel ning lepib kokku kohtumised või videokõned teie ja kandidaatide vahel - kõik automaatselt, 24/7."
 				},
-				"competitiveRates": {
-					"title": "Konkurentsivõimeline hinnatase",
-					"description": "Kuluefektiivsed lahendused, mis püsivad teie eelarve piires"
+				"feature4": {
+					"title": "Tark investeering, mis kasvatab teie käivet",
+					"description": "Investeering meie tarkvarasse tähendab kiiremat ligipääsu sobivatele arstidele ja tervishoiuspetsialistidele – see omakorda tähendab rohkem täidetud töökohti, suuremat teenindusvõimekust ja kasvu teie käibes. Meie lahendused on loodud selleks, et teie värbamistegevus tooks mõõdetavat ärilist tulu."
 				}
 			},
 			"getStarted": {

@@ -530,21 +530,21 @@
 			"title": "Reclutamiento Sanitario Personalizado",
 			"subtitle": "Soluciones personalizadas para sus necesidades de personal sanitario con precios flexibles y soporte dedicado",
 			"features": {
-				"customPricing": {
-					"title": "Precios Personalizados",
-					"description": "Modelos flexibles basados en su volumen y necesidades"
+				"feature1": {
+					"title": "La mayor base de datos de profesionales sanitarios de Europa",
+					"description": "Acceso a decenas de miles de profesionales sanitarios – desde enfermeros generales hasta médicos especialistas. Cubrimos todas las áreas y niveles de experiencia que su organización pueda necesitar."
 				},
-				"healthcareSpecialisation": {
-					"title": "Especialización Sanitaria",
-					"description": "Especialistas en todas las disciplinas sanitarias"
+				"feature2": {
+					"title": "Enfoque basado en datos",
+					"description": "Nuestro agente de reclutamiento impulsado por IA analiza las preferencias laborales, el comportamiento anterior, el perfil psicológico y los datos estadísticos de los candidatos para comprender sus deseos y patrones."
 				},
-				"dedicatedSupport": {
-					"title": "Soporte Dedicado",
-					"description": "Gestor de cuenta personal y asistencia prioritaria"
+				"feature3": {
+					"title": "Agente de reclutamiento con IA que trabaja 24/7",
+					"description": "Un agente inteligente con IA busca candidatos que cumplan sus requisitos, mantiene conversaciones iniciales en horarios adecuados para ellos y organiza automáticamente reuniones o videollamadas entre usted y los candidatos – todo ello 24/7."
 				},
-				"competitiveRates": {
-					"title": "Tarifas Competitivas",
-					"description": "Soluciones rentables dentro de su presupuesto"
+				"feature4": {
+					"title": "Una inversión inteligente que impulsa sus ingresos",
+					"description": "Invertir en nuestro software significa acceder más rápido a médicos y especialistas adecuados – lo que se traduce en más puestos cubiertos, mayor capacidad de servicio y crecimiento en los ingresos. Nuestras soluciones están diseñadas para que su reclutamiento genere beneficios comerciales medibles."
 				}
 			},
 			"getStarted": {

@@ -100,20 +100,9 @@
 	<div class="flex items-center justify-between">
 		<h2 class="text-3xl font-bold tracking-tight">{$t('pricing.page.title')}</h2>
 	</div>
-	<p class="text-lg leading-relaxed text-muted-foreground sm:text-xl">
+	<p class="text-base text-muted-foreground">
 		{$t('pricing.page.subtitle')}
 	</p>
-	<!-- <div class="mx-auto max-w-4xl px-4 py-8 sm:px-6 sm:py-16"> -->
-	<!-- Hero Section -->
-	<!-- <div class="mb-8 sm:mb-16"> -->
-	<!-- <h1 class="mb-4 text-3xl font-bold text-foreground sm:mb-6">
-			<!-- {$t('pricing.page.title')} -->
-	<!-- </h1> -->
-	<!-- <p class="text-lg leading-relaxed text-muted-foreground sm:text-xl"> -->
-	<!-- {$t('pricing.page.subtitle')} -->
-	<!-- </p> -->
-	<!-- </div> -->
-
 	{#if error}
 		<div
 			class="mb-6 rounded-lg border border-destructive bg-destructive/10 p-4 text-sm text-destructive sm:mb-8"
@@ -309,7 +298,7 @@
 
 		{#if activePlans.length === 0}
 			<div
-				class="max-w-4xl rounded-2xl border border-border/50 bg-white p-6 shadow-sm sm:rounded-3xl sm:p-8 lg:p-12"
+				class="max-w-5xl rounded-2xl border border-border/50 bg-white p-6 shadow-sm sm:rounded-3xl sm:p-8 lg:p-12"
 			>
 				<!-- Features -->
 				<div class="mb-8 grid grid-cols-1 gap-6 sm:mb-12 sm:grid-cols-2 sm:gap-8">
@@ -317,11 +306,11 @@
 						<div class="mb-2 flex items-center space-x-3">
 							<CheckCircle class="h-4 w-4 flex-shrink-0 text-green-600 sm:h-5 sm:w-5" />
 							<h3 class="text-sm font-medium text-foreground sm:text-base">
-								{$t('pricing.page.features.customPricing.title')}
+								{$t('pricing.page.features.feature1.title')}
 							</h3>
 						</div>
 						<p class="pl-7 text-xs text-muted-foreground sm:pl-8 sm:text-sm">
-							{$t('pricing.page.features.customPricing.description')}
+							{$t('pricing.page.features.feature1.description')}
 						</p>
 					</div>
 
@@ -329,11 +318,11 @@
 						<div class="mb-2 flex items-center space-x-3">
 							<CheckCircle class="h-4 w-4 flex-shrink-0 text-green-600 sm:h-5 sm:w-5" />
 							<h3 class="text-sm font-medium text-foreground sm:text-base">
-								{$t('pricing.page.features.healthcareSpecialisation.title')}
+								{$t('pricing.page.features.feature2.title')}
 							</h3>
 						</div>
 						<p class="pl-7 text-xs text-muted-foreground sm:pl-8 sm:text-sm">
-							{$t('pricing.page.features.healthcareSpecialisation.description')}
+							{$t('pricing.page.features.feature2.description')}
 						</p>
 					</div>
 
@@ -341,11 +330,11 @@
 						<div class="mb-2 flex items-center space-x-3">
 							<CheckCircle class="h-4 w-4 flex-shrink-0 text-green-600 sm:h-5 sm:w-5" />
 							<h3 class="text-sm font-medium text-foreground sm:text-base">
-								{$t('pricing.page.features.dedicatedSupport.title')}
+								{$t('pricing.page.features.feature3.title')}
 							</h3>
 						</div>
 						<p class="pl-7 text-xs text-muted-foreground sm:pl-8 sm:text-sm">
-							{$t('pricing.page.features.dedicatedSupport.description')}
+							{$t('pricing.page.features.feature3.description')}
 						</p>
 					</div>
 
@@ -353,11 +342,11 @@
 						<div class="mb-2 flex items-center space-x-3">
 							<CheckCircle class="h-4 w-4 flex-shrink-0 text-green-600 sm:h-5 sm:w-5" />
 							<h3 class="text-sm font-medium text-foreground sm:text-base">
-								{$t('pricing.page.features.competitiveRates.title')}
+								{$t('pricing.page.features.feature4.title')}
 							</h3>
 						</div>
 						<p class="pl-7 text-xs text-muted-foreground sm:pl-8 sm:text-sm">
-							{$t('pricing.page.features.competitiveRates.description')}
+							{$t('pricing.page.features.feature4.description')}
 						</p>
 					</div>
 				</div>

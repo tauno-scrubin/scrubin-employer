@@ -532,21 +532,21 @@
 			"title": "Mukautettu Terveydenhuollon Rekrytointi",
 			"subtitle": "Räätälöidyt ratkaisut terveydenhuollon henkilöstötarpeisiinne joustavilla hinnoilla ja omistetulla tuella",
 			"features": {
-				"customPricing": {
-					"title": "Mukautettu Hinnoittelu",
-					"description": "Joustavat mallit perustuen määrääsi ja tarpeisiisi"
+				"feature1": {
+					"title": "Euroopan suurin terveydenhuollon ammattilaisten tietokanta",
+					"description": "Pääsy kymmeniin tuhansiin terveydenhuollon ammattilaisiin – perushoitajista erikoislääkäreihin. Katamme kaikki alat ja kokemustasot, joita organisaatiosi tarvitsee."
 				},
-				"healthcareSpecialisation": {
-					"title": "Terveydenhuollon Erikoistuminen",
-					"description": "Asiantuntijoita kaikista terveydenhuollon aloista"
+				"feature2": {
+					"title": "Tietopohjainen lähestymistapa",
+					"description": "Tekoälyyn perustuva rekrytointibottimme analysoi ehdokkaiden työtoiveita, aiempaa käyttäytymistä, psykologista profiilia ja tilastotietoja ymmärtääkseen kunkin asiantuntijan tarpeet ja toimintamallit."
 				},
-				"dedicatedSupport": {
-					"title": "Omistettu Tuki",
-					"description": "Henkilökohtainen asiakasvastaava ja ensisijainen apu"
+				"feature3": {
+					"title": "Tekoälypohjainen rekrytointibotti, joka toimii ympäri vuorokauden",
+					"description": "Älykäs tekoälyagentti etsii vaatimuksiinne sopivia ehdokkaita, käy alustavat keskustelut heidän aikatauluihinsa sopivasti ja järjestää automaattisesti tapaamiset tai videopuhelut teidän ja ehdokkaiden välillä – kaikki 24/7."
 				},
-				"competitiveRates": {
-					"title": "Kilpailukykyiset Hinnat",
-					"description": "Kustannustehokkaat ratkaisut budjetissasi"
+				"feature4": {
+					"title": "Älykäs investointi, joka kasvattaa liikevaihtoasi",
+					"description": "Investointi ohjelmistoomme tarkoittaa nopeampaa pääsyä sopiviin lääkäreihin ja terveydenhuollon asiantuntijoihin – mikä puolestaan merkitsee enemmän täytettyjä työpaikkoja, suurempaa palvelukapasiteettia ja liikevaihdon kasvua. Ratkaisumme on suunniteltu tuomaan rekrytoinnillesi mitattavaa liiketoimintahyötyä."
 				}
 			},
 			"getStarted": {

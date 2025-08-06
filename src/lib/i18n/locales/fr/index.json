@@ -532,19 +532,19 @@
 			"title": "Recrutement Médical Personnalisé",
 			"subtitle": "Solutions sur mesure pour vos besoins en personnel de santé avec des prix flexibles et un support dédié",
 			"features": {
-				"customPricing": {
+				"feature1": {
 					"title": "Tarification Personnalisée",
 					"description": "Modèles flexibles basés sur votre volume et vos besoins"
 				},
-				"healthcareSpecialisation": {
+				"feature2": {
 					"title": "Spécialisation Médicale",
 					"description": "Spécialistes dans toutes les disciplines médicales"
 				},
-				"dedicatedSupport": {
+				"feature3": {
 					"title": "Support Dédié",
 					"description": "Gestionnaire de compte personnel et assistance prioritaire"
 				},
-				"competitiveRates": {
+				"feature4": {
 					"title": "Tarifs Compétitifs",
 					"description": "Solutions rentables dans votre budget"
 				}
