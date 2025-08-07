@@ -195,6 +195,127 @@ export interface RequirementsWithInstructions extends Requirements {
 	huntInstructions?: HuntInstructions;
 }
 
+// New interfaces for progressive requirements chat
+export enum ProgressiveRequirementsChatMessageRole {
+	USER = 'user',
+	ASSISTANT = 'assistant'
+}
+
+export enum ProgressiveRequirementsChatMessageSuggestedAction {
+	CONTINUE_CHAT = 'continue_chat',
+	REVIEW_REQUIREMENTS = 'review_requirements',
+	READY_TO_ACTIVATE = 'ready_to_activate'
+}
+
+export interface AddressDto {
+	address: string;
+	stateProvinceRegion: string[];
+	city: string;
+	cityBorough: string[];
+}
+
+export interface HuntInstructionsDto {
+	preferredCountriesToSearch?: string[];
+	onlyCountriesToSearch?: string[];
+	companyContext?: string;
+}
+
+export interface SalaryDto {
+	amountStart: number;
+	amountEnd: number;
+	currency: string;
+	type: string;
+	amountText?: string;
+	salaryExtra?: string;
+}
+
+export interface ExtrasDto {
+	accommodationCompensationType?: string;
+	accommodationCompensation: boolean;
+	drivingLicenceRequired: boolean;
+	personalCarRequired: boolean;
+	transportCompensationType?: string;
+	transportCompensation: boolean;
+}
+
+export interface JobRequirementDto {
+	id: number;
+	jobTitle?: string;
+	professions?: string[];
+	professionsV2: number[];
+	specialization?: string;
+	specializationV2: number;
+	jobRequiredQualifications?: string;
+	jobRequiredWorkExperience: number;
+	jobRequiredLanguages?: string[];
+	jobDescription?: string;
+	country?: string;
+	numberOfCandidates: number;
+	address: AddressDto;
+	workTimeType?: string[];
+	salary?: SalaryDto;
+	extras?: ExtrasDto;
+	huntInstructions: HuntInstructionsDto;
+	createdDateTime: Date;
+	modifiedDateTime: Date;
+}
+
+export interface ProgressiveRequirementsChatRequest {
+	message: string;
+	chatSessionId?: string;
+	jobRequirementsId?: number;
+}
+
+export interface ProgressiveRequirementsChatResponse {
+	jobRequirements: JobRequirementDto;
+	agentMessage: string;
+	nextQuestion?: string;
+	isComplete: boolean;
+	completionPercentage: number;
+	missingRequiredFields: string[];
+	suggestedAction: ProgressiveRequirementsChatMessageSuggestedAction;
+	chatSessionId: string;
+	potentialCandidates?: Candidate[];
+	potentialReach?: number;
+}
+
+// New interfaces for the updated chat API
+export interface RequirementsChatRequest {
+	message: string;
+	chatSessionId?: string;
+}
+
+export interface RequirementsChatResponse {
+	chatSessionId: string;
+	workingOnItResponseMessage: string;
+}
+
+export interface ChatMessage {
+	role: string;
+	message: string;
+	createdDateTime: string;
+}
+
+export interface ChatMessagesResponse {
+	items: ChatMessage[];
+	total: number;
+	page: number;
+	size: number;
+	totalPages: number;
+}
+
+export interface ChatSessionResponse {
+	sessionId: string;
+	jobRequirementId: number;
+	currentRequirements: JobRequirementDto;
+	completionPercentage: number;
+	isComplete: boolean;
+	isActive: boolean;
+	createdDateTime: string;
+	modifiedDateTime: string;
+	chatMessages: ChatMessagesResponse;
+}
+
 // New interfaces for the hunts endpoints
 export interface Hunt {
 	huntId: number;
@@ -1135,9 +1256,32 @@ class HuntResource extends BaseResource {
 		}
 	): Promise<Requirements['requirements']> {
 		const url = new URL(`${this.path}/requirements/${id}`, this.client.baseUrl);
-		return this.request<Requirements['requirements']>('PATCH', url.toString(), data) as Promise<
+		return this.request<Requirements['requirements']>('PUT', url.toString(), data) as Promise<
 			Requirements['requirements']
 		>;
+	}
+
+	async requirementsChat(data: RequirementsChatRequest): Promise<ChatSessionResponse> {
+		const url = new URL(`/api/v3/hunt/requirements/chat`, this.client.baseUrl);
+		return this.request<ChatSessionResponse>(
+			'POST',
+			url.toString(),
+			data
+		) as Promise<ChatSessionResponse>;
+	}
+
+	async getChatSession(
+		sessionId: string,
+		page: number = 0,
+		size: number = 20
+	): Promise<ChatSessionResponse> {
+		const url = new URL(
+			`/api/v2/hunt/requirements/chat/sessions/${sessionId}`,
+			this.client.baseUrl
+		);
+		url.searchParams.set('page', page.toString());
+		url.searchParams.set('size', size.toString());
+		return this.request<ChatSessionResponse>('GET', url.toString()) as Promise<ChatSessionResponse>;
 	}
 }
 

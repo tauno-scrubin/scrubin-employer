@@ -1,8 +1,9 @@
 <script lang="ts">
+	import { page } from '$app/state';
 	import SEO from '$lib/components/SEO.svelte';
-	import HuntsList from "@/components/dashboard/huntsList.svelte";
-	import SearchHistory from "@/components/dashboard/searchHistory.svelte";
-	import SearchView from "@/components/dashboard/searchView.svelte";
+	import HuntsList from '@/components/dashboard/huntsList.svelte';
+	import SearchHistory from '@/components/dashboard/searchHistory.svelte';
+	import SearchView from '@/components/dashboard/searchView.svelte';
 	import type { WorkerLookup } from '@/scrubinClient';
 	import { scrubinClient } from '@/scrubinClient/client';
 	import { onMount } from 'svelte';
@@ -11,7 +12,12 @@
 	let isLoading = $state(false);
 	let searchHistory: WorkerLookup[] = $state([]);
 	let isSearchActive = $state(false);
+	let chatSearch = $state(false);
 
+	$effect(() => {
+		const urlParams = new URLSearchParams(page.url.search);
+		chatSearch = urlParams.get('chat') === 'true';
+	});
 
 	async function loadSearchHistory() {
 		isLoading = true;
@@ -38,35 +44,27 @@
 	});
 </script>
 
-<SEO
-	title='Employer | Scrubin'
-	description=''
-	type="website"
-/>
-  
-<div class="space-y-2 max-w-screen-xl mx-auto w-full">
+<SEO title="Employer | Scrubin" description="" type="website" />
 
+<div class="mx-auto w-full max-w-screen-xl space-y-2">
 	<!-- Search View -->
-	<SearchView 
+	<SearchView
 		redirect={true}
-		bind:this={searchViewComponent} 
+		chatSearch={true}
+		bind:this={searchViewComponent}
 		onSearchComplete={handleSearchComplete}
 		onNewSearch={handleNewSearch}
 	/>
 
-
 	{#if !isSearchActive}
-	<div class="grid grid-cols-6 gap-4">
-		<div class="col-span-4">
-			<HuntsList/>
-		</div>
-		
-		<div class="col-span-2 border-l pl-4 border-opacity-50">
-			
-			<SearchHistory/>
-		</div>
-	</div>
-	{/if}
+		<div class="grid grid-cols-6 gap-4">
+			<div class="col-span-4">
+				<HuntsList />
+			</div>
 
-	
+			<div class="col-span-2 border-l border-opacity-50 pl-4">
+				<SearchHistory />
+			</div>
+		</div>
+	{/if}
 </div>

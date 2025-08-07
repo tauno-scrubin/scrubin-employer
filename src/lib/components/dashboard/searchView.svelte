@@ -15,11 +15,13 @@
 
 	let {
 		redirect = false,
+		chatSearch = false,
 		onSearchWorkers = undefined,
 		onSearchComplete = () => {},
 		onNewSearch = () => {}
 	}: {
 		redirect?: boolean;
+		chatSearch?: boolean;
 		onSearchWorkers?: (searchText: string) => void;
 		onSearchComplete?: () => void;
 		onNewSearch?: () => void;
@@ -37,6 +39,10 @@
 	let selectedWorkers: Record<string, boolean> = $state({});
 
 	export async function searchWorkers(inputText?: string) {
+		if (chatSearch) {
+			goto('/dashboard/requirements/?search=' + searchText);
+			return;
+		}
 		if (redirect) {
 			goto('/dashboard/search?search=' + searchText);
 			return;

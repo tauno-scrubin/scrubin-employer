@@ -21,6 +21,7 @@
 		"@sveltejs/adapter-node": "^5.2.12",
 		"@sveltejs/kit": "^2.16.0",
 		"@sveltejs/vite-plugin-svelte": "^5.0.0",
+		"@types/showdown": "^2.0.6",
 		"autoprefixer": "^10.4.20",
 		"bits-ui": "^1.3.4",
 		"clsx": "^2.1.1",
@@ -52,6 +53,7 @@
 	"dependencies": {
 		"@stripe/stripe-js": "^5.7.0",
 		"lottie-web": "^5.12.2",
+		"showdown": "^2.1.0",
 		"stripe": "^17.7.0",
 		"sveltekit-i18n": "^2.4.2"
 	}
