@@ -40,7 +40,7 @@
 
 	export async function searchWorkers(inputText?: string) {
 		if (chatSearch) {
-			goto('/dashboard/requirements/?search=' + searchText);
+			goto('/dashboard/requirements?search=' + searchText);
 			return;
 		}
 		if (redirect) {

@@ -50,7 +50,7 @@
 	<!-- Search View -->
 	<SearchView
 		redirect={true}
-		chatSearch={true}
+		chatSearch={chatSearch}
 		bind:this={searchViewComponent}
 		onSearchComplete={handleSearchComplete}
 		onNewSearch={handleNewSearch}
