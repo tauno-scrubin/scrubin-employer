@@ -218,6 +218,7 @@ export interface HuntInstructionsDto {
 	preferredCountriesToSearch?: string[];
 	onlyCountriesToSearch?: string[];
 	companyContext?: string;
+	hiringContext?: string;
 }
 
 export interface SalaryDto {
@@ -1256,7 +1257,7 @@ class HuntResource extends BaseResource {
 		}
 	): Promise<Requirements['requirements']> {
 		const url = new URL(`${this.path}/requirements/${id}`, this.client.baseUrl);
-		return this.request<Requirements['requirements']>('PUT', url.toString(), data) as Promise<
+		return this.request<Requirements['requirements']>('PATCH', url.toString(), data) as Promise<
 			Requirements['requirements']
 		>;
 	}

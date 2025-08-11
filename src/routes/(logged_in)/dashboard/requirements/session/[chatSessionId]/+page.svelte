@@ -22,6 +22,7 @@
 	import { goto } from '$app/navigation';
 	import { visible } from '$lib/components/dashboard/overlay';
 	import { Input } from '$lib/components/ui/input';
+	import { Separator } from '$lib/components/ui/separator';
 	import DropdownComponent from '$lib/components/dropdownComponent.svelte';
 	import { onMount, tick } from 'svelte';
 
@@ -269,6 +270,20 @@
 		goto('/dashboard/progressive-chat-test');
 	}
 
+	function getTargetCountries(
+		req: JobRequirementDto | null
+	): { label: string; countries: string[] } | null {
+		if (!req?.huntInstructions) return null;
+		const { onlyCountriesToSearch, preferredCountriesToSearch } = req.huntInstructions;
+		if (onlyCountriesToSearch && onlyCountriesToSearch.length > 0) {
+			return { label: 'Target countries', countries: onlyCountriesToSearch };
+		}
+		if (preferredCountriesToSearch && preferredCountriesToSearch.length > 0) {
+			return { label: 'Preferred countries', countries: preferredCountriesToSearch };
+		}
+		return null;
+	}
+
 	// Effect to update edit values when jobRequirements change
 	$effect(() => {
 		if (jobRequirements) {
@@ -377,18 +392,18 @@
 		isEditing = Object.values(editableFields).some((value) => value);
 	}
 
-	// Function to scroll chat to bottom
 	async function scrollToBottom() {
 		await tick();
-		if (chatContainer) {
-			chatContainer.scrollTop = chatContainer.scrollHeight;
-			// Force a second scroll to ensure it works
-			setTimeout(() => {
-				if (chatContainer) {
-					chatContainer.scrollTop = chatContainer.scrollHeight;
-				}
-			}, 10);
-		}
+		if (!chatContainer) return;
+
+		chatContainer.scrollTop = chatContainer.scrollHeight;
+
+		// Second scroll after paint
+		requestAnimationFrame(() => {
+			if (chatContainer) {
+				chatContainer.scrollTop = chatContainer.scrollHeight;
+			}
+		});
 	}
 
 	// Auto-scroll when messages change
@@ -402,7 +417,9 @@
 
 	// Auto-scroll when sending state changes (for AI thinking indicator)
 	$effect(() => {
+		console.log('isSending', isSending);
 		if (isSending) {
+			console.log('isSending', isSending);
 			setTimeout(() => {
 				scrollToBottom();
 			}, 100);
@@ -465,140 +482,109 @@
 <div class="flex h-screen gap-6 p-6">
 	<!-- Chat Section -->
 	<div class="flex w-2/5 flex-col">
-		<!-- Chat Header -->
-		<div class="mb-4 flex items-center justify-between rounded-lg border bg-white p-4 shadow-sm">
-			<div class="flex items-center gap-3">
-				<Button onclick={goBack} variant="outline" size="sm" class="flex items-center gap-2">
-					<ChevronLeft class="h-4 w-4" />
-					Back
-				</Button>
-				<div class="flex h-10 w-10 items-center justify-center rounded-full bg-blue-50">
-					<Sparkle class="h-5 w-5 text-blue-600" />
-				</div>
-				<div>
-					<h2 class="text-lg font-semibold text-gray-900">Requirements Assistant</h2>
-					<p class="text-sm text-gray-500">Let's build your job requirements together</p>
+		<!-- Chat Header + Messages combined -->
+		<div class="flex flex-1 flex-col overflow-hidden rounded-lg border bg-white shadow-sm">
+			<div class="flex items-center justify-between p-4">
+				<div class="flex items-center gap-3">
+					<Button onclick={goBack} variant="outline" size="sm" class="flex items-center gap-2">
+						<ChevronLeft class="h-4 w-4" />
+					</Button>
+					<div class="flex h-10 w-10 items-center justify-center rounded-full bg-blue-50">
+						<Sparkle class="h-5 w-5 text-blue-600" />
+					</div>
+					<div>
+						<h2 class="text-lg font-semibold text-gray-900">Requirements Assistant</h2>
+						<p class="text-sm text-gray-500">Let's build your job requirements together</p>
+					</div>
 				</div>
 			</div>
-		</div>
 
-		<!-- Activation Actions -->
-		{#if isComplete && jobRequirements}
-			<div class="mb-4 rounded-lg border bg-white p-4 shadow-sm">
-				{#if companyActivePlans && companyActivePlans.some((plan) => plan.planActive)}
-					<Button
-						onclick={activateRequirements}
-						disabled={isActivating}
-						variant="default"
-						size="sm"
-						class="w-full"
-					>
-						{#if isActivating}
-							<Loader2 class="mr-2 h-3 w-3 animate-spin" />
-							Activating...
-						{:else}
-							<Check class="mr-2 h-3 w-3" />
-							Activate Hunt
-						{/if}
-					</Button>
+			<Separator />
+
+			<!-- Chat Messages -->
+			<div bind:this={chatContainer} class="flex-1 space-y-4 overflow-y-auto p-4">
+				{#if messages.length === 0}
+					<div class="flex h-full items-center justify-center">
+						<div class="text-center">
+							<Sparkle class="mx-auto h-12 w-12 text-gray-300" />
+							<p class="mt-2 text-sm text-gray-500">AI is processing your request...</p>
+						</div>
+					</div>
 				{:else}
-					<div class="flex items-center gap-2 rounded bg-amber-50 p-3 text-sm text-amber-600">
-						<AlertCircle class="h-4 w-4" />
-						<p>Please activate a plan in the Pricing section to continue</p>
+					{#each messages as message, index}
+						<div
+							class="flex {message.role === 'user' ? 'justify-end' : 'justify-start'}"
+							transition:slide={{ delay: 100, duration: 200 }}
+						>
+							<div
+								class="max-w-[85%] rounded-lg px-3 py-2 {message.role === 'user'
+									? 'bg-blue-600 text-white'
+									: 'bg-gray-100 text-gray-900'}"
+							>
+								<p class="text-sm">{message.content}</p>
+								<p class="mt-1 text-xs opacity-70">{message.timestamp.toLocaleTimeString()}</p>
+							</div>
+						</div>
+					{/each}
+				{/if}
+
+				{#if isSending}
+					<div class="flex justify-start" transition:slide={{ delay: 100, duration: 200 }}>
+						<div class="flex items-center gap-2 rounded-lg bg-gray-100 px-3 py-2">
+							<Loader2 class="h-4 w-4 animate-spin text-gray-500" />
+							<span class="text-sm text-gray-500">AI is thinking...</span>
+						</div>
 					</div>
 				{/if}
 			</div>
-		{/if}
+			<Separator />
 
-		<!-- Chat Messages -->
-		<div
-			bind:this={chatContainer}
-			class="flex-1 space-y-4 overflow-y-auto rounded-lg border bg-white p-4 shadow-sm"
-		>
-			{#if messages.length === 0}
-				<div class="flex h-full items-center justify-center">
-					<div class="text-center">
-						<Sparkle class="mx-auto h-12 w-12 text-gray-300" />
-						<p class="mt-2 text-sm text-gray-500">AI is processing your request...</p>
-					</div>
-				</div>
-			{:else}
-				{#each messages as message, index}
-					<div
-						class="flex {message.role === 'user' ? 'justify-end' : 'justify-start'}"
-						transition:slide={{ delay: 100, duration: 200 }}
-					>
-						<div
-							class="max-w-[85%] rounded-lg px-3 py-2 {message.role === 'user'
-								? 'bg-blue-600 text-white'
-								: 'bg-gray-100 text-gray-900'}"
-						>
-							<p class="text-sm">{message.content}</p>
-							<p class="mt-1 text-xs opacity-70">
-								{message.timestamp.toLocaleTimeString()}
-							</p>
-						</div>
-					</div>
-				{/each}
-			{/if}
-
-			{#if isSending}
-				<div class="flex justify-start" transition:slide={{ delay: 100, duration: 200 }}>
-					<div class="flex items-center gap-2 rounded-lg bg-gray-100 px-3 py-2">
-						<Loader2 class="h-4 w-4 animate-spin text-gray-500" />
-						<span class="text-sm text-gray-500">AI is thinking...</span>
-					</div>
-				</div>
-			{/if}
-		</div>
-
-		<!-- Chat Input -->
-		<div class="mt-4 rounded-lg border bg-white p-4 shadow-sm">
-			<form
-				onsubmit={(e) => {
-					e.preventDefault();
-					sendMessage(currentMessage);
-				}}
-				class="flex gap-3"
-			>
-				<Textarea
-					bind:value={currentMessage}
-					placeholder="Type your message here... (Press Enter to send)"
-					class="flex-1 resize-none border-0 bg-transparent p-0 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
-					rows={1}
-					onkeydown={(e) => {
-						if (e.key === 'Enter' && !e.shiftKey) {
-							e.preventDefault();
-							if (currentMessage.trim() && !isSending) {
-								sendMessage(currentMessage);
-								// Force scroll after Enter key
-								setTimeout(() => {
-									scrollToBottom();
-								}, 10);
-							}
-						}
+			<!-- Chat Input -->
+			<div class="border-t p-4">
+				<form
+					onsubmit={(e) => {
+						e.preventDefault();
+						sendMessage(currentMessage);
 					}}
-				/>
-				<Button
-					type="submit"
-					disabled={!currentMessage.trim() || isSending}
-					variant="default"
-					size="sm"
-					class="h-10 w-10 rounded-full p-0"
-					onclick={() => {
-						// Force scroll after button click
-						setTimeout(() => {
-							scrollToBottom();
-						}, 10);
-					}}
+					class="flex gap-3"
 				>
-					{#if isSending}
-						<Loader2 class="h-4 w-4 animate-spin" />
-					{:else}
-						<Send class="h-4 w-4" />
-					{/if}
-				</Button>
-			</form>
+					<Textarea
+						bind:value={currentMessage}
+						placeholder="Type your message here... (Press Enter to send)"
+						class="flex-1 resize-none border-0 bg-transparent p-0 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
+						rows={1}
+						onkeydown={(e) => {
+							if (e.key === 'Enter' && !e.shiftKey) {
+								e.preventDefault();
+								if (currentMessage.trim() && !isSending) {
+									sendMessage(currentMessage);
+									setTimeout(() => {
+										scrollToBottom();
+									}, 10);
+								}
+							}
+						}}
+					/>
+					<Button
+						type="submit"
+						disabled={!currentMessage.trim() || isSending}
+						variant="default"
+						size="sm"
+						class="h-10 w-10 rounded-full p-0"
+						onclick={() => {
+							setTimeout(() => {
+								scrollToBottom();
+							}, 10);
+						}}
+					>
+						{#if isSending}
+							<Loader2 class="h-4 w-4 animate-spin" />
+						{:else}
+							<Send class="h-4 w-4" />
+						{/if}
+					</Button>
+				</form>
+			</div>
 		</div>
 	</div>
 
@@ -627,139 +613,119 @@
 					<h3 class="text-xl font-medium">Job Requirements</h3>
 				</div>
 
-				<div class="space-y-3">
-					<div class="grid grid-cols-1 gap-4 border-b pb-3 text-sm">
-						<div
-							class="group grid w-full grid-cols-[150px_1fr] items-start rounded p-1 pl-0 transition-colors duration-200 hover:bg-gray-50"
-						>
-							<h4 class="font-semibold">Job Title</h4>
-
-							{#if editableFields.jobTitle}
-								<div class="flex w-full gap-2">
-									<Input
-										type="text"
-										value={editValues.jobTitle}
-										onchange={(e) => {
-											editValues.jobTitle = e.currentTarget.value;
-										}}
-										class="flex-1"
-									/>
-									<Button
-										size="icon"
-										variant="default"
-										onclick={() => saveField('jobTitle')}
-										disabled={isSaving}
-									>
-										{#if isSaving}
-											<Loader2 class="h-4 w-4 animate-spin" />
-										{:else}
-											<Check class="h-4 w-4" />
-										{/if}
-									</Button>
-									<Button size="icon" variant="outline" onclick={() => cancelEditing('jobTitle')}>
-										<X class="h-4 w-4" />
-									</Button>
-								</div>
-							{:else}
-								<div class="flex items-center gap-2">
-									<p class={jobRequirements.jobTitle ? 'text-gray-900' : 'text-gray-500'}>
-										{jobRequirements.jobTitle || 'Not specified'}
-									</p>
-									<button
-										class="opacity-0 transition-opacity duration-200 group-hover:opacity-100"
-										onclick={() => startEditing('jobTitle')}
-									>
-										<Pen class="h-3.5 w-3.5 text-gray-400 hover:text-primary" />
-									</button>
-								</div>
-							{/if}
+				{#if isComplete && jobRequirements}
+					{#if companyActivePlans && companyActivePlans.some((plan) => plan.planActive)}
+						<div class="mb-4">
+							<Button
+								onclick={activateRequirements}
+								disabled={isActivating}
+								variant="default"
+								size="sm"
+								class="w-full"
+							>
+								{#if isActivating}
+									<Loader2 class="mr-2 h-4 w-4 animate-spin" />
+									Activating...
+								{:else}
+									<Check class="mr-2 h-4 w-4" />
+									Activate Hunt
+								{/if}
+							</Button>
 						</div>
-
+					{:else}
 						<div
-							class="group grid w-full grid-cols-[150px_1fr] items-start rounded p-1 pl-0 transition-colors duration-200 hover:bg-gray-50"
+							class="mb-4 flex items-center gap-2 rounded bg-amber-50 p-3 text-sm text-amber-600"
 						>
-							<h4 class="font-semibold">Job Description</h4>
-
-							{#if editableFields.jobDescription}
-								<div class="flex w-full flex-col gap-2">
-									<textarea
-										value={editValues.jobDescription}
-										onchange={(e) => {
-											editValues.jobDescription = e.currentTarget.value;
-										}}
-										class="min-h-[100px] w-full rounded-md border p-2 text-sm"
-									></textarea>
-									<div class="flex justify-end gap-2">
-										<Button
-											size="sm"
-											variant="default"
-											onclick={() => saveField('jobDescription')}
-											disabled={isSaving}
-										>
-											{#if isSaving}
-												<Loader2 class="mr-2 h-4 w-4 animate-spin" />
-												Saving
-											{:else}
-												<Check class="mr-2 h-4 w-4" />
-												Save
-											{/if}
-										</Button>
-										<Button
-											size="sm"
-											variant="outline"
-											onclick={() => cancelEditing('jobDescription')}
-										>
-											<X class="mr-2 h-4 w-4" />
-											Cancel
-										</Button>
-									</div>
-								</div>
-							{:else}
-								<div class="flex items-start gap-2">
-									<div
-										class={jobRequirements.jobDescription ? 'prose text-gray-900' : 'text-gray-500'}
-									>
-										{@html markdownToHtml(jobRequirements.jobDescription || 'Not specified')}
-									</div>
-									<button
-										class="mt-0.5 opacity-0 transition-opacity duration-200 group-hover:opacity-100"
-										onclick={() => startEditing('jobDescription')}
-									>
-										<Pen class="h-3.5 w-3.5 text-gray-400 hover:text-primary" />
-									</button>
-								</div>
-							{/if}
+							<AlertCircle class="h-4 w-4" />
+							<p>Please activate a plan in the Pricing section to continue</p>
 						</div>
+					{/if}
+				{/if}
 
-						<!-- Professions field (non-editable) -->
-						<div class="grid w-full grid-cols-[150px_1fr] items-start">
-							<h4 class="font-semibold">Professions</h4>
-							<div class="flex flex-row flex-wrap gap-2">
+				<div class="space-y-3 text-sm">
+					<!-- Title (editable) -->
+					<div class="group">
+						{#if editableFields.jobTitle}
+							<div class="flex w-full gap-2">
+								<Input
+									type="text"
+									value={editValues.jobTitle}
+									onchange={(e) => {
+										editValues.jobTitle = e.currentTarget.value;
+									}}
+									class="flex-1"
+								/>
+								<Button
+									size="icon"
+									variant="default"
+									onclick={() => saveField('jobTitle')}
+									disabled={isSaving}
+								>
+									{#if isSaving}
+										<Loader2 class="h-4 w-4 animate-spin" />
+									{:else}
+										<Check class="h-4 w-4" />
+									{/if}
+								</Button>
+								<Button size="icon" variant="outline" onclick={() => cancelEditing('jobTitle')}>
+									<X class="h-4 w-4" />
+								</Button>
+							</div>
+						{:else}
+							<div class="flex items-center gap-2">
+								<p
+									class={jobRequirements.jobTitle
+										? 'text-lg font-semibold text-gray-900'
+										: 'text-lg text-gray-500'}
+								>
+									{jobRequirements.jobTitle || 'Untitled role'}
+								</p>
+								<button
+									class="opacity-0 transition-opacity duration-200 group-hover:opacity-100"
+									onclick={() => startEditing('jobTitle')}
+								>
+									<Pen class="h-3.5 w-3.5 text-gray-400 hover:text-primary" />
+								</button>
+							</div>
+						{/if}
+					</div>
+
+					<!-- Header meta grid -->
+					<div class="mt-2 grid grid-cols-1 gap-3 sm:grid-cols-2">
+						<!-- Professions -->
+						<div class="group rounded p-2 hover:bg-gray-50">
+							<p class="text-[11px] uppercase tracking-wide text-muted-foreground">Professions</p>
+							<div class="mt-1 flex flex-row flex-wrap gap-2">
 								{#each jobRequirements.professions || [] as profession}
 									<span class="rounded bg-gray-100 px-2 py-0.5 text-xs text-gray-700"
 										>{profession}</span
 									>
 								{/each}
+								{#if !jobRequirements.professions || jobRequirements.professions.length === 0}
+									<span class="text-gray-500">Not specified</span>
+								{/if}
 							</div>
 						</div>
-					</div>
 
-					<div class="grid grid-cols-1 gap-4 text-sm">
-						<!-- Specialization (non-editable) -->
-						<div class="grid w-full grid-cols-[150px_1fr] items-start">
-							<h4 class="font-semibold">Specialization</h4>
-							<p class={jobRequirements.specialization ? 'text-gray-900' : 'text-gray-500'}>
+						<!-- Specialization -->
+						<div class="rounded p-2 hover:bg-gray-50">
+							<p class="text-[11px] uppercase tracking-wide text-muted-foreground">
+								Specialization
+							</p>
+							<p
+								class={jobRequirements.specialization ? 'mt-1 text-gray-900' : 'mt-1 text-gray-500'}
+							>
 								{jobRequirements.specialization || 'Not specified'}
 							</p>
 						</div>
 
-						<div
-							class="group grid w-full grid-cols-[150px_1fr] items-start rounded p-1 pl-0 transition-colors duration-200 hover:bg-gray-50"
-						>
-							<h4 class="font-semibold">Work Experience</h4>
-
+						<!-- Work experience -->
+						<div class="group rounded p-2 hover:bg-gray-50">
+							<p class="text-[11px] uppercase tracking-wide text-muted-foreground">
+								Work experience
+							</p>
 							{#if editableFields.jobRequiredWorkExperience}
-								<div class="flex w-full gap-2">
+								<div class="mt-1 flex w-full gap-2">
 									<Input
 										type="number"
 										value={editValues.jobRequiredWorkExperience}
@@ -790,7 +756,7 @@
 									</Button>
 								</div>
 							{:else}
-								<div class="flex items-center gap-2">
+								<div class="mt-1 flex items-center gap-2">
 									<p
 										class={jobRequirements.jobRequiredWorkExperience
 											? 'text-gray-900'
@@ -808,13 +774,11 @@
 							{/if}
 						</div>
 
-						<div
-							class="group grid w-full grid-cols-[150px_1fr] items-start rounded p-1 pl-0 transition-colors duration-200 hover:bg-gray-50"
-						>
-							<h4 class="font-semibold">Location</h4>
-
+						<!-- Location -->
+						<div class="group rounded p-2 hover:bg-gray-50">
+							<p class="text-[11px] uppercase tracking-wide text-muted-foreground">Location</p>
 							{#if editableFields.country || editableFields.city || editableFields.stateProvinceRegion}
-								<div class="flex w-full flex-col gap-2">
+								<div class="mt-1 flex w-full flex-col gap-2">
 									<div class="grid grid-cols-1 gap-2 md:grid-cols-3">
 										<DropdownComponent
 											options={availableCountries}
@@ -874,15 +838,14 @@
 									</div>
 								</div>
 							{:else}
-								<div class="flex items-center gap-2">
+								<div class="mt-1 flex items-center gap-2">
 									<p
 										class={jobRequirements.address?.city ||
 										jobRequirements.address?.stateProvinceRegion
 											? 'text-gray-900'
 											: 'text-gray-500'}
 									>
-										{jobRequirements.country},
-										{jobRequirements.address?.city || ''}
+										{jobRequirements.country}, {jobRequirements.address?.city || ''}
 										{jobRequirements.address?.stateProvinceRegion
 											? Array.isArray(jobRequirements.address.stateProvinceRegion)
 												? jobRequirements.address.stateProvinceRegion.join(', ')
@@ -903,24 +866,26 @@
 							{/if}
 						</div>
 
-						<div class="grid w-full grid-cols-[150px_1fr] items-start">
-							<h4 class="font-semibold text-gray-900">Languages</h4>
-							<div class="flex flex-wrap gap-1">
+						<!-- Languages -->
+						<div class="rounded p-2 hover:bg-gray-50">
+							<p class="text-[11px] uppercase tracking-wide text-muted-foreground">Languages</p>
+							<div class="mt-1 flex flex-wrap gap-1">
 								{#each jobRequirements.jobRequiredLanguages || [] as language}
 									<span class="rounded bg-gray-100 px-2 py-0.5 text-xs text-gray-700"
 										>{language}</span
 									>
 								{/each}
+								{#if !jobRequirements.jobRequiredLanguages || jobRequirements.jobRequiredLanguages.length === 0}
+									<span class="text-gray-500">Not specified</span>
+								{/if}
 							</div>
 						</div>
 
-						<div
-							class="group grid w-full grid-cols-[150px_1fr] items-start rounded p-1 pl-0 transition-colors duration-200 hover:bg-gray-50"
-						>
-							<h4 class="font-semibold">Salary</h4>
-
+						<!-- Salary -->
+						<div class="group rounded p-2 hover:bg-gray-50">
+							<p class="text-[11px] uppercase tracking-wide text-muted-foreground">Salary</p>
 							{#if editableFields.salaryStart || editableFields.salaryEnd || editableFields.salaryCurrency}
-								<div class="flex w-full flex-col gap-2">
+								<div class="mt-1 flex w-full flex-col gap-2">
 									<div class="grid grid-cols-1 gap-2 md:grid-cols-3">
 										<Input
 											type="number"
@@ -940,7 +905,6 @@
 											}}
 											min="0"
 										/>
-
 										<DropdownComponent
 											options={availableCurrencies}
 											value={editValues.salaryCurrency}
@@ -983,7 +947,7 @@
 									</div>
 								</div>
 							{:else}
-								<div class="flex items-center gap-2">
+								<div class="mt-1 flex items-center gap-2">
 									<p
 										class={jobRequirements.salary?.amountStart || jobRequirements.salary?.amountEnd
 											? 'text-gray-900'
@@ -1022,12 +986,81 @@
 								</div>
 							{/if}
 						</div>
+
+						<!-- Target countries from huntInstructions -->
+						{#if getTargetCountries(jobRequirements)}
+							<div class="rounded p-2 hover:bg-gray-50">
+								<p class="text-[11px] uppercase tracking-wide text-muted-foreground">
+									{getTargetCountries(jobRequirements)?.label}
+								</p>
+								<div class="mt-1 flex flex-wrap gap-1">
+									{#each getTargetCountries(jobRequirements)?.countries || [] as c}
+										<span class="rounded bg-gray-100 px-2 py-0.5 text-xs text-gray-700">{c}</span>
+									{/each}
+								</div>
+							</div>
+						{/if}
 					</div>
 
-					<div class="mt-4 border-t pt-3">
-						<h4 class="mb-4 text-xl font-medium">Required Qualifications</h4>
+					<!-- Details section -->
+					<div class="mt-6 space-y-6 border-t pt-4">
+						<!-- Description (not side-by-side) -->
+						<div class="group">
+							<h4 class="mb-2 text-base font-medium">Job Description</h4>
+							{#if editableFields.jobDescription}
+								<div class="flex w-full flex-col gap-2">
+									<textarea
+										value={editValues.jobDescription}
+										onchange={(e) => {
+											editValues.jobDescription = e.currentTarget.value;
+										}}
+										class="min-h-[100px] w-full rounded-md border p-2 text-sm"
+									></textarea>
+									<div class="flex justify-end gap-2">
+										<Button
+											size="sm"
+											variant="default"
+											onclick={() => saveField('jobDescription')}
+											disabled={isSaving}
+										>
+											{#if isSaving}
+												<Loader2 class="mr-2 h-4 w-4 animate-spin" />
+												Saving
+											{:else}
+												<Check class="mr-2 h-4 w-4" />
+												Save
+											{/if}
+										</Button>
+										<Button
+											size="sm"
+											variant="outline"
+											onclick={() => cancelEditing('jobDescription')}
+										>
+											<X class="mr-2 h-4 w-4" />
+											Cancel
+										</Button>
+									</div>
+								</div>
+							{:else}
+								<div class="flex items-start gap-2">
+									<div
+										class={jobRequirements.jobDescription ? 'prose text-gray-900' : 'text-gray-500'}
+									>
+										{@html markdownToHtml(jobRequirements.jobDescription || 'Not specified')}
+									</div>
+									<button
+										class="mt-0.5 opacity-0 transition-opacity duration-200 group-hover:opacity-100"
+										onclick={() => startEditing('jobDescription')}
+									>
+										<Pen class="h-3.5 w-3.5 text-gray-400 hover:text-primary" />
+									</button>
+								</div>
+							{/if}
+						</div>
 
-						<div class="group rounded p-1 transition-colors duration-200 hover:bg-gray-50">
+						<!-- Qualifications (not side-by-side) -->
+						<div class="group">
+							<h4 class="mb-2 text-base font-medium">Required Qualifications</h4>
 							{#if editableFields.jobRequiredQualifications}
 								<div class="flex w-full flex-col gap-2">
 									<textarea
@@ -1063,23 +1096,38 @@
 									</div>
 								</div>
 							{:else}
-								<div class="flex items-start gap-2">
-									<div
-										class="{jobRequirements.jobRequiredQualifications
-											? 'text-gray-900'
-											: 'text-gray-500'} text-sm"
-										style="white-space: pre-line;"
-									>
-										{jobRequirements.jobRequiredQualifications || 'Not specified'}
-									</div>
-									<button
-										class="mt-0.5 opacity-0 transition-opacity duration-200 group-hover:opacity-100"
-										onclick={() => startEditing('jobRequiredQualifications')}
-									>
-										<Pen class="h-3.5 w-3.5 text-gray-400 hover:text-primary" />
-									</button>
+								<div
+									class="text-sm {jobRequirements.jobRequiredQualifications
+										? 'text-gray-900'
+										: 'text-gray-500'}"
+									style="white-space: pre-line;"
+								>
+									{jobRequirements.jobRequiredQualifications || 'Not specified'}
 								</div>
 							{/if}
+						</div>
+
+						<!-- Company & Hiring context for offer message background -->
+						<div>
+							<h4 class="mb-2 text-base font-medium">Company context</h4>
+							<p
+								class={jobRequirements.huntInstructions?.companyContext
+									? 'whitespace-pre-line text-sm text-gray-900'
+									: 'text-sm text-gray-500'}
+							>
+								{jobRequirements.huntInstructions?.companyContext || 'Not provided'}
+							</p>
+						</div>
+
+						<div>
+							<h4 class="mb-2 text-base font-medium">Hiring context</h4>
+							<p
+								class={jobRequirements.huntInstructions?.hiringContext
+									? 'whitespace-pre-line text-sm text-gray-900'
+									: 'text-sm text-gray-500'}
+							>
+								{jobRequirements.huntInstructions?.hiringContext || 'Not provided'}
+							</p>
 						</div>
 					</div>
 				</div>
