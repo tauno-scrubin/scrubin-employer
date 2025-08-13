@@ -423,7 +423,6 @@
 						isComplete={true}
 						potentialReach={data.stats.totalHuntables}
 						completionPercentage={100}
-						showActivate={false}
 					/>
 				</div>
 

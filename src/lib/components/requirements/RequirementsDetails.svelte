@@ -27,7 +27,6 @@
 		completionPercentage = $bindable(0),
 		isComplete = $bindable(false),
 		potentialReach = $bindable<number | null>(null),
-		showActivate = $bindable(false),
 		hunt = $bindable<HuntDetail | null>(null)
 	} = $props();
 
@@ -38,6 +37,7 @@
 	let availableSpecialties = $state<CodeNamePair[]>([]);
 	let availableLanguages = $state<CodeNamePair[]>([]);
 	let availableSalaryPeriods = $state<CodeNamePair[]>([]);
+	let showActivate = $state(false);
 
 	let editableFields = $state({
 		jobTitle: false,
@@ -104,6 +104,12 @@
 		availableLanguages = languages;
 		availableSalaryPeriods = salaryPeriods;
 		companyActivePlans = plans;
+	});
+
+	$effect(() => {
+		const hasActivePlan = companyActivePlans.some((p) => p.planActive);
+		const isHuntNotActive = !hunt?.status || hunt.status !== 'ACTIVE';
+		showActivate = hasActivePlan && isComplete && isHuntNotActive;
 	});
 
 	$effect(() => {
@@ -291,31 +297,56 @@
 		</div>
 
 		{#if isComplete && !(hunt && hunt.status === 'ACTIVE')}
-			<Alert
-				variant="success"
-				class="mb-3 flex items-center justify-between gap-3 rounded-md border-green-200 bg-green-50 px-3 py-2 text-green-700"
-			>
-				<div class="flex items-center gap-2">
-					<Check class="h-4 w-4" />
-					<div>
-						<AlertTitle class="m-0 text-sm font-medium">Ready to activate</AlertTitle>
-						<AlertDescription class="m-0 text-xs"
-							>All required fields are complete.</AlertDescription
-						>
+			{#if companyActivePlans.some((p) => p.planActive)}
+				<Alert
+					variant="success"
+					class="mb-3 flex items-center justify-between gap-3 rounded-md border-green-200 bg-green-50 px-3 py-2 text-green-700"
+				>
+					<div class="flex items-center gap-2">
+						<Check class="h-4 w-4" />
+						<div>
+							<AlertTitle class="m-0 text-sm font-medium">Ready to activate</AlertTitle>
+							<AlertDescription class="m-0 text-xs"
+								>All required fields are complete.</AlertDescription
+							>
+						</div>
 					</div>
-				</div>
-				{#if showActivate}
+					{#if showActivate}
+						<Button
+							onclick={activateRequirements}
+							variant="default"
+							size="sm"
+							class="gap-2 rounded-md shadow-sm"
+						>
+							<Check class="h-4 w-4" />
+							<span>Activate Hunt</span>
+						</Button>
+					{/if}
+				</Alert>
+			{:else}
+				<Alert
+					variant="default"
+					class="mb-3 flex items-center justify-between gap-3 rounded-md border-yellow-200 bg-yellow-50 px-3 py-2 text-yellow-700"
+				>
+					<div class="flex items-center gap-2">
+						<AlertCircle class="h-4 w-4" />
+						<div>
+							<AlertTitle class="m-0 text-sm font-medium">Plan required</AlertTitle>
+							<AlertDescription class="m-0 text-xs"
+								>You must first activate a plan in the Pricing tab to start your hunt.</AlertDescription
+							>
+						</div>
+					</div>
 					<Button
-						onclick={activateRequirements}
-						variant="default"
+						onclick={() => (window.location.href = '/dashboard/pricing')}
+						variant="outline"
 						size="sm"
 						class="gap-2 rounded-md shadow-sm"
 					>
-						<Check class="h-4 w-4" />
-						<span>Activate Hunt</span>
+						<span>Go to Pricing</span>
 					</Button>
-				{/if}
-			</Alert>
+				</Alert>
+			{/if}
 		{/if}
 
 		<div class="flex-1 overflow-y-auto">

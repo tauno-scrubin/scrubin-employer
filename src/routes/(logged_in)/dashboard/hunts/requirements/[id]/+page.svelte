@@ -78,7 +78,6 @@
 				bind:isComplete
 				bind:potentialReach
 				bind:completionPercentage
-				showActivate={true}
 			/>
 		</div>
 	</div>
