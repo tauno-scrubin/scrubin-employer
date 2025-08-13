@@ -8,6 +8,7 @@
 	import { goto } from '$app/navigation';
 	import { formatStatus, getStatusColor } from '../payment/payments';
 	import { t } from '$lib/i18n';
+	import { visible } from '@/components/dashboard/overlay';
 
 	let {
 		onViewHunt
@@ -48,6 +49,17 @@
 			drafts = response.items;
 		} catch (error) {
 			console.error('Error loading drafts:', error);
+		}
+	}
+
+	async function navigateToRequirement(requirementId: number) {
+		try {
+			visible.set(true);
+			goto(`/dashboard/hunts/requirements/${requirementId}`);
+		} catch (error) {
+			console.error('Error loading requirement reach:', error);
+		} finally {
+			visible.set(false);
 		}
 	}
 
@@ -179,7 +191,7 @@
 	{:else}
 		{#each getDisplayedDrafts() as draft}
 			<Card.Root
-				onclick={() => goto(`/dashboard/hunts/requirements/${draft.id}`)}
+				onclick={() => navigateToRequirement(draft.id)}
 				class="h-full cursor-pointer border bg-white shadow-sm transition-all hover:shadow-md"
 			>
 				<Card.Content class="flex h-full flex-col p-4">

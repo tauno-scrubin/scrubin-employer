@@ -7,6 +7,7 @@
 	import { ArrowRight, Clock, Loader2, Search } from 'lucide-svelte';
 	import { onMount } from 'svelte';
 	import Button from '../ui/button/button.svelte';
+	import { visible } from '@/components/dashboard/overlay';
 
 	let isLoading = $state(false);
 	let searchHistory: WorkerLookup[] = $state([]);
@@ -29,8 +30,22 @@
 		displayLimit = searchHistory.length;
 	}
 
-	function handleRerunSearch(searchText: string) {
-		goto('/dashboard/search?search=' + searchText);
+	async function handleRerunSearch(searchText: string) {
+		try {
+			isLoading = true;
+			visible.set(true);
+			const result = await scrubinClient.hunt.requirementsChat({
+				message: searchText
+			});
+
+			goto(`/dashboard/hunts/requirements/${result.jobRequirementId}`);
+		} catch (error) {
+			console.error('Error searching requirements:', error);
+		} finally {
+			visible.set(false);
+			isLoading = false;
+		}
+		
 	}
 
 	function formatDate(dateString: string) {

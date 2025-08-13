@@ -328,6 +328,10 @@ export interface ChatSessionResponse {
 	chatMessages: ChatMessagesResponse;
 }
 
+export interface RequirementsReach {
+	potentialReach: number;
+}
+
 // New interfaces for the hunts endpoints
 export interface Hunt {
 	huntId: number;
@@ -1028,6 +1032,20 @@ class HuntResource extends BaseResource {
 		return this.request<Requirements['requirements']>('GET', url.toString()) as Promise<
 			Requirements['requirements']
 		>;
+	}
+
+	async getRequirementChatResult(id: number): Promise<ChatSessionResponse> {
+		const url = new URL(`/api/v3/hunt/requirements/${id}`, this.client.baseUrl);
+		url.search = new URLSearchParams({ page: '0', size: '50' }).toString();
+		return this.request<ChatSessionResponse>('GET', url.toString()) as Promise<ChatSessionResponse>;
+	}
+
+	async getRequirementReach(id: number): Promise<RequirementsReach> {
+		const url = new URL(`${this.path}/requirements/${id}/reach`, this.client.baseUrl);
+		return this.request<RequirementsReach>(
+			'GET',
+			url.toString()
+		) as Promise<RequirementsReach>;
 	}
 
 	async getAllRequirements(): Promise<AllRequirementsResponse> {

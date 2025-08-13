@@ -1,4 +1,10 @@
 <script lang="ts">
+	function formatStateProvinceRegion(value: string | string[] | undefined): string {
+		if (!value) return '';
+		return Array.isArray(value) ? value.join(', ') : String(value);
+	}
+	import RequirementsChat from '$lib/components/requirements/RequirementsChat.svelte';
+	import RequirementsDetails from '$lib/components/requirements/RequirementsDetails.svelte';
 	import { page } from '$app/state';
 	import PaymentDialog from '$lib/components/payment/paymentDialog.svelte';
 	import * as Avatar from '$lib/components/ui/avatar';
@@ -16,6 +22,7 @@
 	import { Input } from '$lib/components/ui/input';
 	import {
 		ArrowLeft,
+		Briefcase,
 		Currency,
 		DollarSign,
 		FileText,
@@ -26,7 +33,9 @@
 		Pencil,
 		Phone,
 		Save,
-		Sparkle
+		Search,
+		Sparkle,
+		Users
 	} from 'lucide-svelte';
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
@@ -216,8 +225,9 @@
 	// Define tabs for better organization
 	const tabs = [
 		{ id: 'details', label: 'Job Details', icon: FileText },
-		{ id: 'qualifications', label: 'Qualifications', icon: GraduationCap },
-		{ id: 'location', label: 'Location', icon: MapPin }
+		{ id: 'statistics', label: 'Statistics', icon: FileText },
+		{ id: 'questions', label: 'Questions', icon: FileText },
+		{ id: 'agent_chat', label: 'Agent chat', icon: FileText }
 	];
 
 	let activeTab = $state('details');
@@ -300,7 +310,7 @@
 
 		<div>
 			<h1 class="text-2xl font-bold tracking-tight">{hunt.requirements.jobTitle}</h1>
-			{#if hunt.requirements.address}
+			<!-- {#if hunt.requirements.address}
 				<p class="text-sm text-muted-foreground">
 					{#if hunt.requirements.address.city}
 						{hunt.requirements.address.city},
@@ -309,7 +319,7 @@
 						{hunt.requirements.address.stateProvinceRegion}
 					{/if}
 				</p>
-			{/if}
+			{/if} -->
 		</div>
 	</div>
 	<!-- Status badge at the top -->
@@ -318,6 +328,7 @@
 			<Tabs.Trigger value="details">{$t('hunt.details')}</Tabs.Trigger>
 			<Tabs.Trigger value="statistics">{$t('hunt.statistics')}</Tabs.Trigger>
 			<Tabs.Trigger value="questions">{$t('hunt.questions')}</Tabs.Trigger>
+			<!-- <Tabs.Trigger value="agent_chat">Agent chat</Tabs.Trigger> -->
 		</Tabs.List>
 		<Tabs.Content value="details">
 			<div class="flex flex-col gap-4 rounded-md bg-blue-50/80 p-4">
@@ -404,318 +415,329 @@
 					</div>
 				{/if}
 
+				<!-- Use reusable RequirementsDetails component -->
 				<div class="rounded-md bg-white p-4 shadow-sm">
-					<div class="mb-4 flex items-center justify-between">
-						<h2 class="text-xl font-medium">{$t('hunt.jobRequirements')}</h2>
-						<Button
-							variant={isEditMode ? 'default' : 'outline'}
-							size="sm"
-							onclick={isEditMode ? saveManualEdits : toggleEditMode}
-							class="flex items-center gap-2"
-						>
-							{#if isEditMode}
-								{#if isSaving}
-									<Loader2 class="h-4 w-4 animate-spin" />
-									{$t('dashboard.chatWindow.saving')}
-								{:else}
-									<Save class="h-4 w-4" />
-									{$t('dashboard.chatWindow.save')}
-								{/if}
-							{:else}
-								<Pencil class="h-4 w-4" />
-								{$t('common.edit')}
-							{/if}
-						</Button>
-					</div>
-					<div class="space-y-3">
-						<div class="grid grid-cols-1 gap-4 border-b pb-3 text-sm">
-							<div class="grid w-full grid-cols-[150px_1fr] items-start">
-								<h4 class="font-semibold">{$t('hunt.jobTitle')}</h4>
+					<RequirementsDetails
+						requirements={hunt.requirements}
+						{hunt}
+						isComplete={true}
+						potentialReach={data.stats.totalHuntables}
+						completionPercentage={100}
+						showActivate={false}
+					/>
+				</div>
+
+				{#if false}
+					<div class="rounded-md bg-white p-4 shadow-sm">
+						<div class="mb-4 flex items-center justify-between">
+							<h2 class="text-xl font-medium">{$t('hunt.jobRequirements')}</h2>
+							<Button
+								variant={isEditMode ? 'default' : 'outline'}
+								size="sm"
+								onclick={isEditMode ? saveManualEdits : toggleEditMode}
+								class="flex items-center gap-2"
+							>
 								{#if isEditMode}
-									<Input
-										type="text"
-										value={editableRequirements.jobTitle}
-										onchange={(e) => {
-											editableRequirements.jobTitle = e.currentTarget.value;
-										}}
-										class="transition-all duration-200 focus:ring-primary/30"
-									/>
+									{#if isSaving}
+										<Loader2 class="h-4 w-4 animate-spin" />
+										{$t('dashboard.chatWindow.saving')}
+									{:else}
+										<Save class="h-4 w-4" />
+										{$t('dashboard.chatWindow.save')}
+									{/if}
 								{:else}
-									<p class={hunt.requirements.jobTitle ? 'text-gray-900' : 'text-gray-500'}>
-										{hunt.requirements.jobTitle || $t('hunt.notSpecified')}
-									</p>
+									<Pencil class="h-4 w-4" />
+									{$t('common.edit')}
 								{/if}
+							</Button>
+						</div>
+						<div class="space-y-3">
+							<div class="grid grid-cols-1 gap-4 border-b pb-3 text-sm">
+								<div class="grid w-full grid-cols-[150px_1fr] items-start">
+									<h4 class="font-semibold">{$t('hunt.jobTitle')}</h4>
+									{#if isEditMode}
+										<Input
+											type="text"
+											value={editableRequirements.jobTitle}
+											onchange={(e) => {
+												editableRequirements.jobTitle = e.currentTarget.value;
+											}}
+											class="transition-all duration-200 focus:ring-primary/30"
+										/>
+									{:else}
+										<p class={hunt.requirements.jobTitle ? 'text-gray-900' : 'text-gray-500'}>
+											{hunt.requirements.jobTitle || $t('hunt.notSpecified')}
+										</p>
+									{/if}
+								</div>
+
+								<div class="grid w-full grid-cols-[150px_1fr] items-start">
+									<h4 class="font-semibold">{$t('hunt.jobDescription')}</h4>
+									{#if isEditMode}
+										<textarea
+											value={editableRequirements.jobDescription}
+											onchange={(e) => {
+												editableRequirements.jobDescription = e.currentTarget.value;
+											}}
+											class="min-h-[100px] w-full rounded-md border p-2 text-sm transition-all duration-200 focus:border-primary/50 focus:ring-primary/30"
+										></textarea>
+									{:else}
+										<p class={hunt.requirements.jobDescription ? 'text-gray-900' : 'text-gray-500'}>
+											{hunt.requirements.jobDescription || $t('hunt.notSpecified')}
+										</p>
+									{/if}
+								</div>
+
+								<div class="grid w-full grid-cols-[150px_1fr] items-start">
+									<h4 class="font-semibold">{$t('hunt.professions')}</h4>
+									<div class="flex flex-row flex-wrap gap-2">
+										{#each hunt.requirements.professions || [] as profession}
+											<span class="rounded bg-gray-100 px-2 py-0.5 text-xs text-gray-700"
+												>{profession}</span
+											>
+										{/each}
+									</div>
+								</div>
 							</div>
 
-							<div class="grid w-full grid-cols-[150px_1fr] items-start">
-								<h4 class="font-semibold">{$t('hunt.jobDescription')}</h4>
+							<div class="grid grid-cols-1 gap-4 text-sm">
+								<div class="grid w-full grid-cols-[150px_1fr] items-start">
+									<h4 class="font-semibold">{$t('hunt.specialization')}</h4>
+									<p class={hunt.requirements.specialization ? 'text-gray-900' : 'text-gray-500'}>
+										{hunt.requirements.specialization || $t('hunt.notSpecified')}
+									</p>
+								</div>
+
+								<div class="grid w-full grid-cols-[150px_1fr] items-start">
+									<h4 class="font-semibold">{$t('hunt.workExperience')}</h4>
+									{#if isEditMode}
+										<Input
+											type="number"
+											min="0"
+											value={editableRequirements.jobRequiredWorkExperience}
+											onchange={(e) => {
+												editableRequirements.jobRequiredWorkExperience =
+													parseInt(e.currentTarget.value) || 0;
+											}}
+											class="w-20 transition-all duration-200 focus:ring-primary/30"
+										/>
+									{:else}
+										<p
+											class={hunt.requirements.jobRequiredWorkExperience
+												? 'text-gray-900'
+												: 'text-gray-500'}
+										>
+											{hunt.requirements.jobRequiredWorkExperience || 0}
+											{$t('hunt.years')}
+										</p>
+									{/if}
+								</div>
+
+								<div class="grid w-full grid-cols-[150px_1fr] items-start">
+									<h4 class="font-semibold">{$t('hunt.location')}</h4>
+									{#if isEditMode}
+										<div class="flex flex-col gap-2">
+											<DropdownComponent
+												options={availableCountries}
+												value={editableRequirements.country}
+												justString={true}
+												onValueChange={(value) => {
+													editableRequirements.country = value;
+												}}
+												placeholder="Country"
+												optionKey="code"
+												labelKey="name"
+											/>
+
+											<Input
+												type="text"
+												placeholder="City"
+												value={editableRequirements.city}
+												onchange={(e) => {
+													editableRequirements.city = e.currentTarget.value;
+												}}
+												class="transition-all duration-200 focus:ring-primary/30"
+											/>
+											<Input
+												type="text"
+												placeholder="State/Province/Region"
+												value={typeof editableRequirements.stateProvinceRegion === 'string'
+													? editableRequirements.stateProvinceRegion
+													: editableRequirements.stateProvinceRegion[0] || ''}
+												onchange={(e) => {
+													editableRequirements.stateProvinceRegion = e.currentTarget.value;
+												}}
+												class="transition-all duration-200 focus:ring-primary/30"
+											/>
+										</div>
+									{:else}
+										<p
+											class={hunt.requirements.address?.city ||
+											hunt.requirements.address?.stateProvinceRegion
+												? 'text-gray-900'
+												: 'text-gray-500'}
+										>
+											{hunt.requirements.country},
+											{hunt.requirements.address?.city || ''}
+											{formatStateProvinceRegion(hunt.requirements.address?.stateProvinceRegion)}
+										</p>
+									{/if}
+								</div>
+
+								<div class="grid w-full grid-cols-[150px_1fr] items-start">
+									<h4 class="font-semibold">{$t('hunt.workTime')}</h4>
+									<p class={hunt.requirements.workTimeType ? 'text-gray-900' : 'text-gray-500'}>
+										{hunt.requirements.workTimeType?.join(', ') || $t('hunt.notSpecified')}
+									</p>
+								</div>
+
+								<div class="grid w-full grid-cols-[150px_1fr] items-start">
+									<h4 class="font-semibold text-gray-900">{$t('hunt.languages')}</h4>
+									<div class="flex flex-wrap gap-1">
+										{#each hunt.requirements.jobRequiredLanguages || [] as language}
+											<span class="rounded bg-gray-100 px-2 py-0.5 text-xs text-gray-700"
+												>{language}</span
+											>
+										{/each}
+									</div>
+								</div>
+
+								<div class="grid w-full grid-cols-[150px_1fr] items-start">
+									<h4 class="font-semibold">{$t('hunt.salary')}</h4>
+									{#if isEditMode}
+										<div class="flex items-center gap-2">
+											<Input
+												type="number"
+												placeholder="Start"
+												value={editableRequirements.salaryStart}
+												onchange={(e) => {
+													editableRequirements.salaryStart = parseFloat(e.currentTarget.value) || 0;
+												}}
+												class="w-24 transition-all duration-200 focus:ring-primary/30"
+											/>
+											<span>-</span>
+											<Input
+												type="number"
+												placeholder="End"
+												value={editableRequirements.salaryEnd}
+												onchange={(e) => {
+													editableRequirements.salaryEnd = parseFloat(e.currentTarget.value) || 0;
+												}}
+												class="w-24 transition-all duration-200 focus:ring-primary/30"
+											/>
+
+											<DropdownComponent
+												options={availableCurrencies}
+												value={editableRequirements.salaryCurrency}
+												showLabelInBrackets={true}
+												onValueChange={(value) => {
+													editableRequirements.salaryCurrency = value;
+												}}
+												placeholder="Currency"
+												optionKey="code"
+												labelKey="name"
+											/>
+										</div>
+									{:else}
+										<p
+											class={hunt.requirements.salary?.amountStart ||
+											hunt.requirements.salary?.amountEnd
+												? 'text-gray-900'
+												: 'text-gray-500'}
+										>
+											{#if hunt.requirements.salary?.amountStart && hunt.requirements.salary?.amountEnd}
+												{hunt.requirements.salary.amountStart} - {hunt.requirements.salary
+													.amountEnd}
+												{hunt.requirements.salary.currency || ''} ({hunt.requirements.salary.type ||
+													''})
+											{:else}
+												{hunt.requirements.salary?.amountText || $t('hunt.notSpecified')}
+											{/if}
+										</p>
+									{/if}
+								</div>
+							</div>
+
+							<div class="mt-4 border-t pt-3">
+								<h4 class="mb-4 text-xl font-medium">{$t('hunt.requiredQualifications')}</h4>
 								{#if isEditMode}
 									<textarea
-										value={editableRequirements.jobDescription}
+										value={editableRequirements.jobRequiredQualifications}
 										onchange={(e) => {
-											editableRequirements.jobDescription = e.currentTarget.value;
+											editableRequirements.jobRequiredQualifications = e.currentTarget.value;
 										}}
 										class="min-h-[100px] w-full rounded-md border p-2 text-sm transition-all duration-200 focus:border-primary/50 focus:ring-primary/30"
 									></textarea>
 								{:else}
-									<p class={hunt.requirements.jobDescription ? 'text-gray-900' : 'text-gray-500'}>
-										{hunt.requirements.jobDescription || $t('hunt.notSpecified')}
+									<p
+										class="{hunt.requirements.jobRequiredQualifications
+											? 'text-gray-900'
+											: 'text-gray-500'} text-sm"
+									>
+										{hunt.requirements.jobRequiredQualifications || $t('hunt.notSpecified')}
 									</p>
 								{/if}
 							</div>
 
-							<div class="grid w-full grid-cols-[150px_1fr] items-start">
-								<h4 class="font-semibold">{$t('hunt.professions')}</h4>
-								<div class="flex flex-row flex-wrap gap-2">
-									{#each hunt.requirements.professions || [] as profession}
-										<span class="rounded bg-gray-100 px-2 py-0.5 text-xs text-gray-700"
-											>{profession}</span
-										>
-									{/each}
-								</div>
-							</div>
-						</div>
-
-						<div class="grid grid-cols-1 gap-4 text-sm">
-							<div class="grid w-full grid-cols-[150px_1fr] items-start">
-								<h4 class="font-semibold">{$t('hunt.specialization')}</h4>
-								<p class={hunt.requirements.specialization ? 'text-gray-900' : 'text-gray-500'}>
-									{hunt.requirements.specialization || $t('hunt.notSpecified')}
-								</p>
-							</div>
-
-							<div class="grid w-full grid-cols-[150px_1fr] items-start">
-								<h4 class="font-semibold">{$t('hunt.workExperience')}</h4>
-								{#if isEditMode}
-									<Input
-										type="number"
-										min="0"
-										value={editableRequirements.jobRequiredWorkExperience}
-										onchange={(e) => {
-											editableRequirements.jobRequiredWorkExperience =
-												parseInt(e.currentTarget.value) || 0;
-										}}
-										class="w-20 transition-all duration-200 focus:ring-primary/30"
-									/>
-								{:else}
-									<p
-										class={hunt.requirements.jobRequiredWorkExperience
-											? 'text-gray-900'
-											: 'text-gray-500'}
-									>
-										{hunt.requirements.jobRequiredWorkExperience || 0}
-										{$t('hunt.years')}
-									</p>
-								{/if}
-							</div>
-
-							<div class="grid w-full grid-cols-[150px_1fr] items-start">
-								<h4 class="font-semibold">{$t('hunt.location')}</h4>
-								{#if isEditMode}
-									<div class="flex flex-col gap-2">
-										<DropdownComponent
-											options={availableCountries}
-											value={editableRequirements.country}
-											justString={true}
-											onValueChange={(value) => {
-												editableRequirements.country = value;
-											}}
-											placeholder="Country"
-											optionKey="code"
-											labelKey="name"
-										/>
-
-										<Input
-											type="text"
-											placeholder="City"
-											value={editableRequirements.city}
-											onchange={(e) => {
-												editableRequirements.city = e.currentTarget.value;
-											}}
-											class="transition-all duration-200 focus:ring-primary/30"
-										/>
-										<Input
-											type="text"
-											placeholder="State/Province/Region"
-											value={typeof editableRequirements.stateProvinceRegion === 'string'
-												? editableRequirements.stateProvinceRegion
-												: editableRequirements.stateProvinceRegion[0] || ''}
-											onchange={(e) => {
-												editableRequirements.stateProvinceRegion = e.currentTarget.value;
-											}}
-											class="transition-all duration-200 focus:ring-primary/30"
-										/>
-									</div>
-								{:else}
-									<p
-										class={hunt.requirements.address?.city ||
-										hunt.requirements.address?.stateProvinceRegion
-											? 'text-gray-900'
-											: 'text-gray-500'}
-									>
-										{hunt.requirements.country},
-										{hunt.requirements.address?.city || ''}
-										{hunt.requirements.address?.stateProvinceRegion
-											? Array.isArray(hunt.requirements.address.stateProvinceRegion)
-												? hunt.requirements.address.stateProvinceRegion.join(', ')
-												: hunt.requirements.address.stateProvinceRegion
-											: ''}
-									</p>
-								{/if}
-							</div>
-
-							<div class="grid w-full grid-cols-[150px_1fr] items-start">
-								<h4 class="font-semibold">{$t('hunt.workTime')}</h4>
-								<p class={hunt.requirements.workTimeType ? 'text-gray-900' : 'text-gray-500'}>
-									{hunt.requirements.workTimeType?.join(', ') || $t('hunt.notSpecified')}
-								</p>
-							</div>
-
-							<div class="grid w-full grid-cols-[150px_1fr] items-start">
-								<h4 class="font-semibold text-gray-900">{$t('hunt.languages')}</h4>
-								<div class="flex flex-wrap gap-1">
-									{#each hunt.requirements.jobRequiredLanguages || [] as language}
-										<span class="rounded bg-gray-100 px-2 py-0.5 text-xs text-gray-700"
-											>{language}</span
-										>
-									{/each}
-								</div>
-							</div>
-
-							<div class="grid w-full grid-cols-[150px_1fr] items-start">
-								<h4 class="font-semibold">{$t('hunt.salary')}</h4>
-								{#if isEditMode}
-									<div class="flex items-center gap-2">
-										<Input
-											type="number"
-											placeholder="Start"
-											value={editableRequirements.salaryStart}
-											onchange={(e) => {
-												editableRequirements.salaryStart = parseFloat(e.currentTarget.value) || 0;
-											}}
-											class="w-24 transition-all duration-200 focus:ring-primary/30"
-										/>
-										<span>-</span>
-										<Input
-											type="number"
-											placeholder="End"
-											value={editableRequirements.salaryEnd}
-											onchange={(e) => {
-												editableRequirements.salaryEnd = parseFloat(e.currentTarget.value) || 0;
-											}}
-											class="w-24 transition-all duration-200 focus:ring-primary/30"
-										/>
-
-										<DropdownComponent
-											options={availableCurrencies}
-											value={editableRequirements.salaryCurrency}
-											showLabelInBrackets={true}
-											onValueChange={(value) => {
-												editableRequirements.salaryCurrency = value;
-											}}
-											placeholder="Currency"
-											optionKey="code"
-											labelKey="name"
-										/>
-									</div>
-								{:else}
-									<p
-										class={hunt.requirements.salary?.amountStart ||
-										hunt.requirements.salary?.amountEnd
-											? 'text-gray-900'
-											: 'text-gray-500'}
-									>
-										{#if hunt.requirements.salary?.amountStart && hunt.requirements.salary?.amountEnd}
-											{hunt.requirements.salary.amountStart} - {hunt.requirements.salary.amountEnd}
-											{hunt.requirements.salary.currency || ''} ({hunt.requirements.salary.type ||
-												''})
-										{:else}
-											{hunt.requirements.salary?.amountText || $t('hunt.notSpecified')}
-										{/if}
-									</p>
-								{/if}
-							</div>
-						</div>
-
-						<div class="mt-4 border-t pt-3">
-							<h4 class="mb-4 text-xl font-medium">{$t('hunt.requiredQualifications')}</h4>
-							{#if isEditMode}
-								<textarea
-									value={editableRequirements.jobRequiredQualifications}
-									onchange={(e) => {
-										editableRequirements.jobRequiredQualifications = e.currentTarget.value;
-									}}
-									class="min-h-[100px] w-full rounded-md border p-2 text-sm transition-all duration-200 focus:border-primary/50 focus:ring-primary/30"
-								></textarea>
-							{:else}
-								<p
-									class="{hunt.requirements.jobRequiredQualifications
-										? 'text-gray-900'
-										: 'text-gray-500'} text-sm"
-								>
-									{hunt.requirements.jobRequiredQualifications || $t('hunt.notSpecified')}
-								</p>
-							{/if}
-						</div>
-
-						<div class="border-t pt-3">
-							<h4 class="mb-4 text-xl font-medium">{$t('hunt.additionalRequirements')}</h4>
-							<div class="mt-1 grid grid-cols-1 gap-2 text-sm">
-								<div class="grid w-full grid-cols-[150px_1fr] items-start">
-									<h4 class="font-semibold">{$t('hunt.drivingLicense')}</h4>
-									<p
-										class={hunt.requirements.extras?.drivingLicenceRequired
-											? 'text-gray-900'
-											: 'text-gray-500'}
-									>
-										{hunt.requirements.extras?.drivingLicenceRequired
-											? $t('hunt.required')
-											: $t('hunt.notRequired')}
-									</p>
-								</div>
-
-								<div class="grid w-full grid-cols-[150px_1fr] items-start">
-									<h4 class="font-semibold">{$t('hunt.personalCar')}</h4>
-									<p
-										class={hunt.requirements.extras?.personalCarRequired
-											? 'text-gray-900'
-											: 'text-gray-500'}
-									>
-										{hunt.requirements.extras?.personalCarRequired
-											? $t('hunt.required')
-											: $t('hunt.notRequired')}
-									</p>
-								</div>
-
-								{#if hunt.requirements.extras?.accommodationCompensationType}
+							<div class="border-t pt-3">
+								<h4 class="mb-4 text-xl font-medium">{$t('hunt.additionalRequirements')}</h4>
+								<div class="mt-1 grid grid-cols-1 gap-2 text-sm">
 									<div class="grid w-full grid-cols-[150px_1fr] items-start">
-										<h4 class="font-semibold">{$t('hunt.accommodation')}</h4>
+										<h4 class="font-semibold">{$t('hunt.drivingLicense')}</h4>
 										<p
-											class={hunt.requirements.extras?.accommodationCompensationType
+											class={hunt.requirements.extras?.drivingLicenceRequired
 												? 'text-gray-900'
 												: 'text-gray-500'}
 										>
-											{hunt.requirements.extras?.accommodationCompensationType}
+											{hunt.requirements.extras?.drivingLicenceRequired
+												? $t('hunt.required')
+												: $t('hunt.notRequired')}
 										</p>
 									</div>
-								{/if}
 
-								{#if hunt.requirements.extras?.transportCompensationType}
 									<div class="grid w-full grid-cols-[150px_1fr] items-start">
-										<h4 class="font-semibold">{$t('hunt.transport')}</h4>
+										<h4 class="font-semibold">{$t('hunt.personalCar')}</h4>
 										<p
-											class={hunt.requirements.extras?.transportCompensationType
+											class={hunt.requirements.extras?.personalCarRequired
 												? 'text-gray-900'
 												: 'text-gray-500'}
 										>
-											{hunt.requirements.extras?.transportCompensationType}
+											{hunt.requirements.extras?.personalCarRequired
+												? $t('hunt.required')
+												: $t('hunt.notRequired')}
 										</p>
 									</div>
-								{/if}
+
+									{#if hunt.requirements.extras?.accommodationCompensationType}
+										<div class="grid w-full grid-cols-[150px_1fr] items-start">
+											<h4 class="font-semibold">{$t('hunt.accommodation')}</h4>
+											<p
+												class={hunt.requirements.extras?.accommodationCompensationType
+													? 'text-gray-900'
+													: 'text-gray-500'}
+											>
+												{hunt.requirements.extras?.accommodationCompensationType}
+											</p>
+										</div>
+									{/if}
+
+									{#if hunt.requirements.extras?.transportCompensationType}
+										<div class="grid w-full grid-cols-[150px_1fr] items-start">
+											<h4 class="font-semibold">{$t('hunt.transport')}</h4>
+											<p
+												class={hunt.requirements.extras?.transportCompensationType
+													? 'text-gray-900'
+													: 'text-gray-500'}
+											>
+												{hunt.requirements.extras?.transportCompensationType}
+											</p>
+										</div>
+									{/if}
+								</div>
 							</div>
 						</div>
 					</div>
-				</div>
+				{/if}
 			</div>
 		</Tabs.Content>
 		<Tabs.Content value="statistics">
@@ -750,13 +772,75 @@
 								<div class="h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
 							</div>
 						{:else if interestedCandidates.length === 0}
-							<div class="flex flex-col gap-2">
-								<p class="text-lg font-semibold text-gray-900">
-									{$t('statistics.noInterestedCandidates')}
-								</p>
-								<p class="text-sm text-gray-500">
-									{$t('statistics.noInterestedCandidatesDesc')}
-								</p>
+							<div class="flex flex-col items-center gap-6 py-8">
+								<!-- Animated search icon with pulsing effect -->
+								<div class="relative">
+									<!-- Outer pulsing ring -->
+									<div class="absolute inset-0 animate-pulse rounded-full bg-slate-200/40"></div>
+									<div
+										class="absolute inset-2 animate-pulse rounded-full bg-slate-300/30"
+										style="animation-delay: 0.5s;"
+									></div>
+
+									<!-- Main search icon container -->
+									<div
+										class="relative flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-slate-400 to-slate-500 shadow-lg"
+									>
+										<Sparkle
+											fill="currentColor"
+											strokeWidth="1"
+											class="h-8 w-8 animate-[spin_4s_linear_infinite] text-white"
+										/>
+									</div>
+
+									<!-- Floating recruitment icons -->
+									<div
+										class="absolute -right-2 -top-2 flex h-6 w-6 animate-bounce items-center justify-center rounded-full bg-emerald-400"
+										style="animation-delay: 0.2s;"
+									>
+										<Users class="h-3 w-3 text-white" />
+									</div>
+									<div
+										class="absolute -bottom-1 -left-1 flex h-5 w-5 animate-bounce items-center justify-center rounded-full bg-amber-400"
+										style="animation-delay: 0.7s;"
+									>
+										<Users class="h-2.5 w-2.5 text-white" />
+									</div>
+									<div
+										class="absolute -left-2 -top-1 flex h-5 w-5 animate-bounce items-center justify-center rounded-full bg-blue-400"
+										style="animation-delay: 1.2s;"
+									>
+										<Mail class="h-2.5 w-2.5 text-white" />
+									</div>
+									<div
+										class="absolute -bottom-2 -right-1 flex h-4 w-4 animate-bounce items-center justify-center rounded-full bg-purple-400"
+										style="animation-delay: 1.5s;"
+									>
+										<Phone class="h-2 w-2 text-white" />
+									</div>
+									<div
+										class="absolute -right-4 top-2 flex h-4 w-4 animate-bounce items-center justify-center rounded-full bg-teal-400"
+										style="animation-delay: 0.9s;"
+									>
+										<GraduationCap class="h-2 w-2 text-white" />
+									</div>
+									<div
+										class="absolute -bottom-3 left-2 flex h-4 w-4 animate-bounce items-center justify-center rounded-full bg-rose-400"
+										style="animation-delay: 1.8s;"
+									>
+										<Briefcase class="h-2 w-2 text-white" />
+									</div>
+								</div>
+
+								<!-- Text content -->
+								<div class="space-y-2 text-center">
+									<h3 class="text-xl font-semibold text-gray-900">
+										{$t('statistics.noInterestedCandidates')}
+									</h3>
+									<p class="max-w-md text-sm text-gray-500">
+										{$t('statistics.noInterestedCandidatesDesc')}
+									</p>
+								</div>
 							</div>
 						{:else}
 							<div class="grid gap-4">
@@ -843,6 +927,13 @@
 						{$t('questions.contextQuestionsDesc')}
 					</p>
 					<QuestionsInHunt huntId={hunt.huntId} />
+				</div>
+			</div>
+		</Tabs.Content>
+		<Tabs.Content value="agent_chat">
+			<div class="rounded-md bg-blue-50/80 p-4">
+				<div class="rounded-md bg-white p-4 shadow-sm">
+					<RequirementsChat chatSessionId={null} />
 				</div>
 			</div>
 		</Tabs.Content>

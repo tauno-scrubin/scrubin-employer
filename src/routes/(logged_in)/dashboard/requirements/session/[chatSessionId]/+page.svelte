@@ -219,11 +219,6 @@
 
 			messages = chatMessages;
 			await scrollToBottom();
-
-			// If complete, show success message
-			if (isComplete) {
-				toast.success('Requirements building completed!');
-			}
 		} catch (error) {
 			console.error('Error sending message:', error);
 			toast.error('Failed to send message. Please try again.');
