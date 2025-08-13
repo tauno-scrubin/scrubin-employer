@@ -1,5 +1,6 @@
 // scrubin.ts
 import { PUBLIC_ORIGIN } from '$env/static/public';
+import type { CodeNamePair } from '@/scrubinClient/models';
 import { decodeToken } from '@/utils/tokenUtil';
 import { redirect } from '@sveltejs/kit';
 
@@ -226,6 +227,7 @@ export interface SalaryDto {
 	amountEnd: number;
 	currency: string;
 	type: string;
+	typeV2: string;
 	amountText?: string;
 	salaryExtra?: string;
 }
@@ -251,12 +253,20 @@ export interface JobRequirementDto {
 	jobRequiredLanguages?: string[];
 	jobDescription?: string;
 	country?: string;
+	countryIso?: string;
 	numberOfCandidates: number;
 	address: AddressDto;
 	workTimeType?: string[];
+	workTimeTypeV2?: string[];
 	salary?: SalaryDto;
 	extras?: ExtrasDto;
-	huntInstructions: HuntInstructionsDto;
+	// Flat fields (v2) replacing huntInstructions nested object
+	countriesPreferredToSearch?: string[];
+	countriesOnlyToSearch?: string[];
+	companyContext?: string;
+	hiringContext?: string;
+	// Backward compat (may be removed in future)
+	huntInstructions?: HuntInstructionsDto;
 	createdDateTime: Date;
 	modifiedDateTime: Date;
 }
@@ -312,6 +322,7 @@ export interface ChatSessionResponse {
 	completionPercentage: number;
 	isComplete: boolean;
 	isActive: boolean;
+	potentialTotalCandidateReach: number;
 	createdDateTime: string;
 	modifiedDateTime: string;
 	chatMessages: ChatMessagesResponse;
@@ -1073,6 +1084,12 @@ class HuntResource extends BaseResource {
 		return this.request<HuntDetail>('POST', url.toString(), { planType }) as Promise<HuntDetail>;
 	}
 
+	// POST /api/v1/hunt/requirements/{id}/create-hunt
+	async createHuntAndActivateFromRequirements(id: number, planType: PlanType): Promise<HuntDetail> {
+		const url = new URL(`${this.path}/requirements/${id}/activate`, this.client.baseUrl);
+		return this.request<HuntDetail>('POST', url.toString(), { planType }) as Promise<HuntDetail>;
+	}
+
 	// POST /api/v1/hunts/{id}/payment-intent
 	async createPaymentIntent(id: number): Promise<PaymentIntent> {
 		const url = new URL(`/api/v1/hunts/${id}/payment-intent`, this.client.baseUrl);
@@ -1253,7 +1270,18 @@ class HuntResource extends BaseResource {
 			salaryAmountStart?: number;
 			salaryAmountEnd?: number;
 			salaryCurrency?: string;
+			salaryType?: string;
+			salaryTypeV2?: string;
 			cityBorough?: string[];
+			// Extended manual-editable fields
+			professions?: number[];
+			specialization?: number;
+			jobRequiredLanguages?: string[];
+			// Flat target countries and context fields
+			countriesPreferredToSearch?: string[];
+			countriesOnlyToSearch?: string[];
+			companyContext?: string;
+			hiringContext?: string;
 		}
 	): Promise<Requirements['requirements']> {
 		const url = new URL(`${this.path}/requirements/${id}`, this.client.baseUrl);
@@ -1286,6 +1314,147 @@ class HuntResource extends BaseResource {
 	}
 }
 
+class DataResource extends BaseResource {
+	private cacheExpiry = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+
+	constructor(client: ScrubinClient) {
+		super(client, '/api/v1/data');
+	}
+
+	private getCacheKey(endpoint: string, language?: string): string {
+		return `scrubin_data_${endpoint}_${language || 'en'}`;
+	}
+
+	private getCachedData<T>(cacheKey: string): T | null {
+		if (typeof window === 'undefined') return null;
+
+		try {
+			const cached = localStorage.getItem(cacheKey);
+			if (!cached) return null;
+
+			const { data, timestamp } = JSON.parse(cached);
+
+			// Check if cache is expired
+			if (Date.now() - timestamp > this.cacheExpiry) {
+				localStorage.removeItem(cacheKey);
+				return null;
+			}
+
+			return data;
+		} catch (error) {
+			console.warn('Error reading cache:', error);
+			return null;
+		}
+	}
+
+	private setCachedData<T>(cacheKey: string, data: T): void {
+		if (typeof window === 'undefined') return;
+
+		try {
+			const cacheEntry = {
+				data,
+				timestamp: Date.now()
+			};
+			localStorage.setItem(cacheKey, JSON.stringify(cacheEntry));
+		} catch (error) {
+			console.warn('Error setting cache:', error);
+		}
+	}
+
+	private async requestWithLanguageAndCache<T>(endpoint: string, language?: string): Promise<T> {
+		const cacheKey = this.getCacheKey(endpoint, language);
+
+		const cached = this.getCachedData<T>(cacheKey);
+		if (cached) {
+			return cached;
+		}
+		await this.client.ensureAuth();
+
+		const headers: Record<string, string> = {
+			'Content-Type': 'application/json',
+			Authorization: `Bearer ${this.client.authStore.token}`,
+			Origin: PUBLIC_ORIGIN,
+			'Accept-Language': language || 'en'
+		};
+
+		const url = new URL(endpoint, this.client.baseUrl);
+
+		try {
+			const response = await fetch(url.toString(), {
+				method: 'GET',
+				headers,
+				credentials: 'include'
+			});
+
+			if (!response.ok) {
+				throw new Error(`Request failed with status ${response.status}`);
+			}
+
+			const data = await response.json();
+
+			// Cache the result
+			this.setCachedData(cacheKey, data);
+
+			return data;
+		} catch (error) {
+			if (error instanceof Error) {
+				throw new Error(`${error.message}`);
+			}
+			throw error;
+		}
+	}
+
+	// Public method to clear all data cache
+	public clearCache(): void {
+		if (typeof window === 'undefined') return;
+
+		const keysToRemove: string[] = [];
+		for (let i = 0; i < localStorage.length; i++) {
+			const key = localStorage.key(i);
+			if (key && key.startsWith('scrubin_data_')) {
+				keysToRemove.push(key);
+			}
+		}
+
+		keysToRemove.forEach((key) => localStorage.removeItem(key));
+		console.log('Cleared data cache');
+	}
+
+	async getCountries(language?: string): Promise<CodeNamePair[]> {
+		return this.requestWithLanguageAndCache<CodeNamePair[]>('/api/v2/data/countries', language);
+	}
+
+	async getProfessions(language?: string): Promise<CodeNamePair[]> {
+		return this.requestWithLanguageAndCache<CodeNamePair[]>(`${this.path}/professions`, language);
+	}
+
+	async getSpecialties(language?: string): Promise<CodeNamePair[]> {
+		return this.requestWithLanguageAndCache<CodeNamePair[]>(`${this.path}/specialties`, language);
+	}
+
+	async getLanguages(language?: string): Promise<CodeNamePair[]> {
+		return this.requestWithLanguageAndCache<CodeNamePair[]>(`${this.path}/languages`, language);
+	}
+
+	async getOfferRejectReasons(language?: string): Promise<CodeNamePair[]> {
+		return this.requestWithLanguageAndCache<CodeNamePair[]>(
+			`${this.path}/offer-reject-reasons`,
+			language
+		);
+	}
+
+	async getSalaryPeriods(language?: string): Promise<CodeNamePair[]> {
+		return this.requestWithLanguageAndCache<CodeNamePair[]>(
+			`${this.path}/salary-periods`,
+			language
+		);
+	}
+
+	async getCurrencies(language?: string): Promise<CodeNamePair[]> {
+		return this.requestWithLanguageAndCache<CodeNamePair[]>(`${this.path}/currencies`, language);
+	}
+}
+
 // ─── CLIENT CLASS ─────────────────────────────────────────────────────────────
 
 export class ScrubinClient {
@@ -1293,12 +1462,14 @@ export class ScrubinClient {
 	public portal: PortalResource;
 	public company: CompanyResource;
 	public hunt: HuntResource;
+	public data: DataResource;
 
 	constructor(public baseUrl: string) {
 		this.authStore = new AuthStore();
 		this.portal = new PortalResource(this);
 		this.company = new CompanyResource(this);
 		this.hunt = new HuntResource(this);
+		this.data = new DataResource(this);
 
 		this.cleanupDuplicateCookies();
 	}

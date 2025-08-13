@@ -1,30 +1,36 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
+	import { visible } from '$lib/components/dashboard/overlay';
+	import DropdownComponent from '$lib/components/dropdownComponent.svelte';
+	import { Alert, AlertDescription, AlertTitle } from '$lib/components/ui/alert';
 	import { Button } from '$lib/components/ui/button';
-	import type { JobRequirementDto, CompanyPlanSummary, PlanType, Currency } from '@/scrubinClient';
+	import { Combobox } from '$lib/components/ui/combobox';
+	import { ComboboxMulti } from '$lib/components/ui/combobox-multi';
+	import { Input } from '$lib/components/ui/input';
+	import { Separator } from '$lib/components/ui/separator';
+	import Textarea from '$lib/components/ui/textarea/textarea.svelte';
+	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
+	import { locale } from '$lib/i18n';
+	import type { CompanyPlanSummary, JobRequirementDto, PlanType } from '@/scrubinClient';
 	import { scrubinClient } from '@/scrubinClient/client';
-	import showdown from 'showdown';
-	import { t } from '$lib/i18n';
+	import type { CodeNamePair } from '@/scrubinClient/models';
 	import {
 		AlertCircle,
 		Check,
 		ChevronLeft,
+		Info,
 		Loader2,
+		Pen,
 		Send,
 		Sparkle,
 		Users,
-		Pen,
 		X
 	} from 'lucide-svelte';
-
-	import { toast } from 'svelte-sonner';
-	import { slide } from 'svelte/transition';
-	import Textarea from '$lib/components/ui/textarea/textarea.svelte';
-	import { goto } from '$app/navigation';
-	import { visible } from '$lib/components/dashboard/overlay';
-	import { Input } from '$lib/components/ui/input';
-	import { Separator } from '$lib/components/ui/separator';
-	import DropdownComponent from '$lib/components/dropdownComponent.svelte';
+	import showdown from 'showdown';
 	import { onMount, tick } from 'svelte';
+	import { toast } from 'svelte-sonner';
+	import { get } from 'svelte/store';
+	import { slide } from 'svelte/transition';
 
 	let {
 		data
@@ -44,21 +50,20 @@
 	let isComplete = $state(false);
 	let isActivating = $state(false);
 
-	let converter = new showdown.Converter();
-
 	// Requirements state
 	let jobRequirements: JobRequirementDto | null = $state(null);
-	let completionPercentage = $state(0);
 	let missingRequiredFields: string[] = $state([]);
-	let potentialCandidates: any[] = $state([]);
 	let potentialReach: number | null = $state(null);
+	let completionPercentage = $state(0);
 
 	// Plan selection state
 	let companyActivePlans = $state<CompanyPlanSummary[]>([]);
-	let selectedPlanType = $state<PlanType | null>(null);
-	let showPlanActivationMessage = $state(false);
-	let availableCurrencies = $state<Currency[]>([]);
-	let availableCountries = $state<string[]>([]);
+	let availableCurrencies = $state<CodeNamePair[]>([]);
+	let availableCountries = $state<CodeNamePair[]>([]);
+	let availableProfessions = $state<CodeNamePair[]>([]);
+	let availableSpecialties = $state<CodeNamePair[]>([]);
+	let availableLanguages = $state<CodeNamePair[]>([]);
+	let availableSalaryPeriods = $state<CodeNamePair[]>([]);
 
 	// Editable fields state
 	let editableFields = $state({
@@ -69,10 +74,18 @@
 		salaryStart: false,
 		salaryEnd: false,
 		salaryCurrency: false,
+		salaryType: false,
 		country: false,
 		city: false,
 		address: false,
-		stateProvinceRegion: false
+		stateProvinceRegion: false,
+		professions: false,
+		specialization: false,
+		jobRequiredLanguages: false,
+		targetPreferredCountries: false,
+		targetOnlyCountries: false,
+		companyContext: false,
+		hiringContext: false
 	});
 
 	let editValues = $state({
@@ -84,19 +97,47 @@
 		salaryEnd: 0,
 		address: '',
 		salaryCurrency: '',
+		salaryType: '',
 		country: '',
 		city: '',
-		stateProvinceRegion: '' as string | string[]
+		stateProvinceRegion: '' as string | string[],
+		professionsV2: [] as number[],
+		specializationV2: undefined as number | undefined,
+		jobRequiredLanguages: [] as string[],
+		huntPreferredCountries: [] as string[],
+		huntOnlyCountries: [] as string[],
+		companyContext: '',
+		hiringContext: ''
 	});
 
 	let isEditing = $state(false);
 	let isSaving = $state(false);
 	let chatContainer: HTMLElement;
+	// removed global edit/save; using per-field edit/save
+
+	function editTargetCountries() {
+		editableFields.targetOnlyCountries = true;
+		editableFields.targetPreferredCountries = true;
+	}
 
 	onMount(async () => {
 		companyActivePlans = await scrubinClient.company.getActivePlans();
-		availableCurrencies = await scrubinClient.company.getCurrencies();
-		availableCountries = await scrubinClient.company.getCountries();
+		const lang = get(locale);
+		const [countries, currencies, professions, specialties, languages, salaryPeriods] =
+			await Promise.all([
+				scrubinClient.data.getCountries(lang),
+				scrubinClient.data.getCurrencies(lang),
+				scrubinClient.data.getProfessions(lang),
+				scrubinClient.data.getSpecialties(lang),
+				scrubinClient.data.getLanguages(lang),
+				scrubinClient.data.getSalaryPeriods(lang)
+			]);
+		availableCountries = countries;
+		availableCurrencies = currencies;
+		availableProfessions = professions;
+		availableSpecialties = specialties;
+		availableLanguages = languages;
+		availableSalaryPeriods = salaryPeriods;
 
 		// Load initial session data
 		await loadSessionData();
@@ -115,6 +156,10 @@
 			jobRequirements = sessionResponse.currentRequirements;
 			completionPercentage = sessionResponse.completionPercentage;
 			isComplete = sessionResponse.isComplete;
+			potentialReach =
+				sessionResponse.potentialTotalCandidateReach !== undefined
+					? sessionResponse.potentialTotalCandidateReach
+					: null;
 
 			// Update messages with the actual chat history, sorted by date (oldest first)
 			const chatMessages = sessionResponse.chatMessages.items
@@ -127,11 +172,6 @@
 
 			messages = chatMessages;
 			await scrollToBottom();
-
-			// If complete, show success message
-			if (isComplete) {
-				toast.success('Requirements building completed!');
-			}
 		} catch (error) {
 			console.error('Error loading session data:', error);
 			toast.error('Failed to load chat session. Please try again.');
@@ -163,6 +203,10 @@
 			jobRequirements = sessionResponse.currentRequirements;
 			completionPercentage = sessionResponse.completionPercentage;
 			isComplete = sessionResponse.isComplete;
+			potentialReach =
+				sessionResponse.potentialTotalCandidateReach !== undefined
+					? sessionResponse.potentialTotalCandidateReach
+					: null;
 
 			// Update messages with the actual chat history, sorted by date (oldest first)
 			const chatMessages = sessionResponse.chatMessages.items
@@ -198,37 +242,6 @@
 		}
 	}
 
-	function selectPlan(planType: PlanType) {
-		selectedPlanType = planType;
-
-		// Check if plan is active
-		if (
-			companyActivePlans &&
-			!companyActivePlans.some(
-				(plan: CompanyPlanSummary) => plan.planType === planType && plan.planActive
-			)
-		) {
-			showPlanActivationMessage = true;
-		} else {
-			showPlanActivationMessage = false;
-		}
-	}
-
-	function canBeActivated(
-		activePlans: CompanyPlanSummary[],
-		selectedPlan: PlanType | null,
-		isActivatingNow: boolean
-	): boolean {
-		if (isActivatingNow) return false;
-		if (!selectedPlan) return false;
-
-		const isPlanActive = activePlans.some(
-			(plan: CompanyPlanSummary) => plan.planType === selectedPlan && plan.planActive
-		);
-
-		return isPlanActive;
-	}
-
 	async function activateRequirements() {
 		if (!jobRequirements?.id) return;
 
@@ -243,7 +256,7 @@
 				return;
 			}
 
-			const result = await scrubinClient.hunt.createHuntFromRequirements(
+			const result = await scrubinClient.hunt.createHuntAndActivateFromRequirements(
 				jobRequirements.id,
 				activePlan.planType as PlanType
 			);
@@ -270,20 +283,6 @@
 		goto('/dashboard/progressive-chat-test');
 	}
 
-	function getTargetCountries(
-		req: JobRequirementDto | null
-	): { label: string; countries: string[] } | null {
-		if (!req?.huntInstructions) return null;
-		const { onlyCountriesToSearch, preferredCountriesToSearch } = req.huntInstructions;
-		if (onlyCountriesToSearch && onlyCountriesToSearch.length > 0) {
-			return { label: 'Target countries', countries: onlyCountriesToSearch };
-		}
-		if (preferredCountriesToSearch && preferredCountriesToSearch.length > 0) {
-			return { label: 'Preferred countries', countries: preferredCountriesToSearch };
-		}
-		return null;
-	}
-
 	// Effect to update edit values when jobRequirements change
 	$effect(() => {
 		if (jobRequirements) {
@@ -295,10 +294,26 @@
 				salaryStart: jobRequirements.salary?.amountStart || 0,
 				salaryEnd: jobRequirements.salary?.amountEnd || 0,
 				salaryCurrency: jobRequirements.salary?.currency || '',
+				salaryType: jobRequirements.salary?.typeV2 || jobRequirements.salary?.type || '',
 				country: jobRequirements.country || '',
 				address: jobRequirements.address?.address || '',
 				city: jobRequirements.address?.city || '',
-				stateProvinceRegion: jobRequirements.address?.stateProvinceRegion || []
+				stateProvinceRegion: jobRequirements.address?.stateProvinceRegion || [],
+				professionsV2: jobRequirements.professionsV2 || [],
+				specializationV2: jobRequirements.specializationV2 || undefined,
+				jobRequiredLanguages: jobRequirements.jobRequiredLanguages || [],
+				huntPreferredCountries:
+					jobRequirements.countriesPreferredToSearch ||
+					jobRequirements.huntInstructions?.preferredCountriesToSearch ||
+					[],
+				huntOnlyCountries:
+					jobRequirements.countriesOnlyToSearch ||
+					jobRequirements.huntInstructions?.onlyCountriesToSearch ||
+					[],
+				companyContext:
+					jobRequirements.companyContext || jobRequirements.huntInstructions?.companyContext || '',
+				hiringContext:
+					jobRequirements.hiringContext || jobRequirements.huntInstructions?.hiringContext || ''
 			};
 		}
 	});
@@ -308,7 +323,12 @@
 		isSaving = true;
 		try {
 			let updateData: any = {};
-			if (field === 'salaryStart' || field === 'salaryEnd' || field === 'salaryCurrency') {
+			if (
+				field === 'salaryStart' ||
+				field === 'salaryEnd' ||
+				field === 'salaryCurrency' ||
+				field === 'salaryType'
+			) {
 				// group under salary
 				updateData = {
 					salaryAmountStart: editValues.salaryStart
@@ -319,7 +339,10 @@
 						: jobRequirements.salary?.amountEnd,
 					salaryCurrency: editValues.salaryCurrency
 						? editValues.salaryCurrency
-						: jobRequirements.salary?.currency
+						: jobRequirements.salary?.currency,
+					salaryType: editValues.salaryType
+						? editValues.salaryType
+						: jobRequirements.salary?.typeV2 || jobRequirements.salary?.type
 				};
 			} else if (field === 'country' || field === 'city' || field === 'stateProvinceRegion') {
 				// group under address & country
@@ -329,16 +352,28 @@
 					city: editValues.city,
 					stateProvinceRegion: editValues.stateProvinceRegion
 				};
+			} else if (field === 'professions') {
+				updateData = { professions: editValues.professionsV2 };
+			} else if (field === 'specialization') {
+				updateData = { specialization: editValues.specializationV2 };
+			} else if (field === 'jobRequiredLanguages') {
+				updateData = { jobRequiredLanguages: editValues.jobRequiredLanguages };
+			} else if (field === 'targetPreferredCountries' || field === 'targetOnlyCountries') {
+				updateData = {
+					countriesPreferredToSearch: editValues.huntPreferredCountries,
+					countriesOnlyToSearch: editValues.huntOnlyCountries
+				};
+			} else if (field === 'companyContext' || field === 'hiringContext') {
+				updateData = {
+					companyContext: editValues.companyContext,
+					hiringContext: editValues.hiringContext
+				};
 			} else {
-				updateData = { [field]: editValues[field] };
+				updateData = { [field]: (editValues as any)[field] };
 			}
 
-			// Note: This would need to be implemented in the API
-			// const updatedRequirements = await scrubinClient.hunt.updateRequirementFields(
-			// 	jobRequirements.id,
-			// 	updateData
-			// );
-			// jobRequirements = updatedRequirements;
+			await scrubinClient.hunt.updateRequirementFields(jobRequirements.id, updateData);
+			await loadSessionData();
 
 			Object.keys(editableFields).forEach((key) => {
 				editableFields[key as keyof typeof editableFields] = false;
@@ -378,11 +413,23 @@
 			if (field === 'salaryEnd') editValues.salaryEnd = jobRequirements.salary?.amountEnd || 0;
 			if (field === 'salaryCurrency')
 				editValues.salaryCurrency = jobRequirements.salary?.currency || '';
+			if (field === 'salaryType') editValues.salaryType = jobRequirements.salary?.type || '';
 			if (field === 'country') editValues.country = jobRequirements.country || '';
 			if (field === 'address') editValues.address = jobRequirements.address?.address || '';
 			if (field === 'city') editValues.city = jobRequirements.address?.city || '';
 			if (field === 'stateProvinceRegion')
 				editValues.stateProvinceRegion = jobRequirements.address?.stateProvinceRegion || [];
+			if (field === 'professions') editValues.professionsV2 = jobRequirements.professionsV2 || [];
+			if (field === 'specialization')
+				editValues.specializationV2 = jobRequirements.specializationV2 || undefined;
+			if (field === 'jobRequiredLanguages')
+				editValues.jobRequiredLanguages = jobRequirements.jobRequiredLanguages || [];
+			if (field === 'targetPreferredCountries' || field === 'targetOnlyCountries') {
+				editValues.huntPreferredCountries =
+					jobRequirements.huntInstructions?.preferredCountriesToSearch || [];
+				editValues.huntOnlyCountries =
+					jobRequirements.huntInstructions?.onlyCountriesToSearch || [];
+			}
 		}
 
 		// Close edit mode
@@ -417,9 +464,7 @@
 
 	// Auto-scroll when sending state changes (for AI thinking indicator)
 	$effect(() => {
-		console.log('isSending', isSending);
 		if (isSending) {
-			console.log('isSending', isSending);
 			setTimeout(() => {
 				scrollToBottom();
 			}, 100);
@@ -443,39 +488,6 @@
 			flavor: 'github'
 		});
 		return converter.makeHtml(markdown);
-		// 		console.log(markdown);
-		// 		const converter = new showdown.Converter({
-		// 			ghCompatibleHeaderId: true,
-		// 			tables: true,
-		// 			simplifiedAutoLink: true,
-		// 			strikethrough: true,
-		// 			tasklists: true,
-		// 			smoothLivePreview: true,
-		// 			emoji: true,
-		// 			openLinksInNewWindow: true,
-		// 			ghCodeBlocks: true,
-		// 			requireSpaceBeforeHeadingText: true,
-		// 			backslashEscapesHTMLTags: true,
-		// 			underline: true,
-		// 			simpleLineBreaks: true
-		// });
-		return converter.makeHtml(markdown);
-		return (
-			markdown
-				// Bold text
-				.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-				// Italic text
-				.replace(/\*(.*?)\*/g, '<em>$1</em>')
-				// Headers
-				.replace(/^### (.*$)/gim, '<h3>$1</h3>')
-				.replace(/^## (.*$)/gim, '<h2>$1</h2>')
-				.replace(/^# (.*$)/gim, '<h1>$1</h1>')
-				// Lists
-				.replace(/^\* (.*$)/gim, '<li>$1</li>')
-				.replace(/^- (.*$)/gim, '<li>$1</li>')
-				// Line breaks
-				.replace(/\n/g, '<br>')
-		);
 	}
 </script>
 
@@ -484,7 +496,7 @@
 	<div class="flex w-2/5 flex-col">
 		<!-- Chat Header + Messages combined -->
 		<div class="flex flex-1 flex-col overflow-hidden rounded-lg border bg-white shadow-sm">
-			<div class="flex items-center justify-between p-4">
+			<div class="flex items-center justify-between p-4 shadow-sm">
 				<div class="flex items-center gap-3">
 					<Button onclick={goBack} variant="outline" size="sm" class="flex items-center gap-2">
 						<ChevronLeft class="h-4 w-4" />
@@ -608,39 +620,67 @@
 		<!-- Job Requirements Card -->
 		{#if jobRequirements}
 			<div class="flex-1 overflow-y-auto rounded-lg border bg-white p-4 shadow-sm">
-				<div class="mb-4 flex items-center gap-3">
-					<Sparkle fill="currentColor" strokeWidth="1" class="h-8 w-8 rotate-45 text-blue-500" />
-					<h3 class="text-xl font-medium">Job Requirements</h3>
+				<div class="mb-4 flex items-center justify-between gap-3">
+					<div class="flex items-center gap-3">
+						<Sparkle fill="currentColor" strokeWidth="1" class="h-8 w-8 rotate-45 text-blue-500" />
+						<h3 class="text-xl font-medium">Job Requirements</h3>
+						{#if potentialReach !== null}
+							<Tooltip.Root>
+								<Tooltip.Trigger>
+									<span
+										class="inline-flex cursor-default items-center gap-1 rounded-full border border-blue-200 bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700"
+									>
+										<Users class="h-3 w-3" />
+										{potentialReach.toLocaleString()}
+									</span>
+								</Tooltip.Trigger>
+								<Tooltip.Content side="top">Potential candidate reach</Tooltip.Content>
+							</Tooltip.Root>
+						{/if}
+					</div>
+					<div class="flex items-center gap-2"></div>
 				</div>
 
-				{#if isComplete && jobRequirements}
-					{#if companyActivePlans && companyActivePlans.some((plan) => plan.planActive)}
-						<div class="mb-4">
+				{#if isComplete}
+					<Alert
+						variant="success"
+						class="mb-3 flex items-center justify-between gap-3 rounded-md border-green-200 bg-green-50 px-3 py-2 text-green-700"
+					>
+						<div class="flex items-center gap-2">
+							<Check class="h-4 w-4" />
+							<div>
+								<AlertTitle class="m-0 text-sm font-medium">Ready to activate</AlertTitle>
+								<AlertDescription class="m-0 text-xs"
+									>All required fields are complete.</AlertDescription
+								>
+							</div>
+						</div>
+						{#if companyActivePlans && companyActivePlans.some((p) => p.planActive)}
 							<Button
 								onclick={activateRequirements}
 								disabled={isActivating}
 								variant="default"
 								size="sm"
-								class="w-full"
+								class="gap-2 rounded-md shadow-sm"
 							>
 								{#if isActivating}
-									<Loader2 class="mr-2 h-4 w-4 animate-spin" />
-									Activating...
+									<Loader2 class="h-4 w-4 animate-spin" />
+									<span>Activating…</span>
 								{:else}
-									<Check class="mr-2 h-4 w-4" />
-									Activate Hunt
+									<Check class="h-4 w-4" />
+									<span>Activate Hunt</span>
 								{/if}
 							</Button>
-						</div>
-					{:else}
-						<div
-							class="mb-4 flex items-center gap-2 rounded bg-amber-50 p-3 text-sm text-amber-600"
-						>
-							<AlertCircle class="h-4 w-4" />
-							<p>Please activate a plan in the Pricing section to continue</p>
-						</div>
-					{/if}
+						{:else}
+							<span
+								class="rounded border border-amber-200 bg-amber-50 px-2 py-1 text-xs text-amber-700"
+								>Activate a plan to proceed</span
+							>
+						{/if}
+					</Alert>
 				{/if}
+
+				{#if false}{/if}
 
 				<div class="space-y-3 text-sm">
 					<!-- Title (editable) -->
@@ -695,28 +735,121 @@
 						<!-- Professions -->
 						<div class="group rounded p-2 hover:bg-gray-50">
 							<p class="text-[11px] uppercase tracking-wide text-muted-foreground">Professions</p>
-							<div class="mt-1 flex flex-row flex-wrap gap-2">
-								{#each jobRequirements.professions || [] as profession}
-									<span class="rounded bg-gray-100 px-2 py-0.5 text-xs text-gray-700"
-										>{profession}</span
+							{#if editableFields.professions}
+								<div class="mt-1 space-y-2">
+									<ComboboxMulti
+										items={availableProfessions.map((p) => ({ value: p.code, label: p.name }))}
+										values={editValues.professionsV2.map(String)}
+										onValuesChange={(vals) =>
+											(editValues.professionsV2 = vals.map((v) => Number(v)))}
+										placeholder="Select professions"
+										searchPlaceholder="Search profession..."
+										emptyText="No results"
+										class="w-full"
+									/>
+									<div class="flex justify-end gap-2">
+										<Button
+											size="icon"
+											variant="default"
+											onclick={() => saveField('professions')}
+											disabled={isSaving}
+										>
+											{#if isSaving}
+												<Loader2 class="h-4 w-4 animate-spin" />
+											{:else}
+												<Check class="h-4 w-4" />
+											{/if}
+										</Button>
+										<Button
+											size="icon"
+											variant="outline"
+											onclick={() => cancelEditing('professions')}
+										>
+											<X class="h-4 w-4" />
+										</Button>
+									</div>
+								</div>
+							{:else}
+								<div class="mt-1 flex flex-row flex-wrap items-center gap-2">
+									{#if jobRequirements.professionsV2 && jobRequirements.professionsV2.length > 0}
+										{#each jobRequirements.professionsV2 as profId}
+											<span class="rounded bg-gray-100 px-2 py-0.5 text-xs text-gray-700">
+												{availableProfessions.find((p) => Number(p.code) === profId)?.name ??
+													profId}
+											</span>
+										{/each}
+									{:else}
+										<span class="text-gray-500">Not specified</span>
+									{/if}
+									<button
+										class="opacity-0 transition-opacity duration-200 group-hover:opacity-100"
+										onclick={() => startEditing('professions')}
 									>
-								{/each}
-								{#if !jobRequirements.professions || jobRequirements.professions.length === 0}
-									<span class="text-gray-500">Not specified</span>
-								{/if}
-							</div>
+										<Pen class="h-3.5 w-3.5 text-gray-400 hover:text-primary" />
+									</button>
+								</div>
+							{/if}
 						</div>
 
 						<!-- Specialization -->
-						<div class="rounded p-2 hover:bg-gray-50">
+						<div class="group rounded p-2 hover:bg-gray-50">
 							<p class="text-[11px] uppercase tracking-wide text-muted-foreground">
 								Specialization
 							</p>
-							<p
-								class={jobRequirements.specialization ? 'mt-1 text-gray-900' : 'mt-1 text-gray-500'}
-							>
-								{jobRequirements.specialization || 'Not specified'}
-							</p>
+							{#if editableFields.specialization}
+								<div class="mt-1 space-y-2">
+									<Combobox
+										items={availableSpecialties.map((s) => ({ value: s.code, label: s.name }))}
+										value={editValues.specializationV2 !== undefined
+											? String(editValues.specializationV2)
+											: undefined}
+										onValueChange={(v) => {
+											editValues.specializationV2 = v ? Number(v) : undefined;
+										}}
+										placeholder="Select specialization"
+										searchPlaceholder="Search specialization..."
+										emptyText="No results"
+										class="w-full"
+									/>
+									<div class="flex justify-end gap-2">
+										<Button
+											size="icon"
+											variant="default"
+											onclick={() => saveField('specialization')}
+											disabled={isSaving}
+										>
+											{#if isSaving}
+												<Loader2 class="h-4 w-4 animate-spin" />
+											{:else}
+												<Check class="h-4 w-4" />
+											{/if}
+										</Button>
+										<Button
+											size="icon"
+											variant="outline"
+											onclick={() => cancelEditing('specialization')}
+										>
+											<X class="h-4 w-4" />
+										</Button>
+									</div>
+								</div>
+							{:else}
+								<div class="mt-1 flex items-center gap-2">
+									<p class={jobRequirements.specialization ? 'text-gray-900' : 'text-gray-500'}>
+										{availableSpecialties.find(
+											(s) => s.code === jobRequirements?.specializationV2?.toString()
+										)?.name ||
+											jobRequirements.specialization ||
+											'Not specified'}
+									</p>
+									<button
+										class="opacity-0 transition-opacity duration-200 group-hover:opacity-100"
+										onclick={() => startEditing('specialization')}
+									>
+										<Pen class="h-3.5 w-3.5 text-gray-400 hover:text-primary" />
+									</button>
+								</div>
+							{/if}
 						</div>
 
 						<!-- Work experience -->
@@ -780,16 +913,13 @@
 							{#if editableFields.country || editableFields.city || editableFields.stateProvinceRegion}
 								<div class="mt-1 flex w-full flex-col gap-2">
 									<div class="grid grid-cols-1 gap-2 md:grid-cols-3">
-										<DropdownComponent
-											options={availableCountries}
-											value={editValues.country}
-											justString={true}
-											onValueChange={(value) => {
-												editValues.country = value;
-											}}
-											placeholder="Country"
-											optionKey="code"
-											labelKey="name"
+										<Combobox
+											items={availableCountries.map((c) => ({ value: c.code, label: c.name }))}
+											bind:value={editValues.country}
+											placeholder={'Country'}
+											searchPlaceholder={'Search country...'}
+											emptyText={'No results'}
+											class="w-full"
 										/>
 										<Input
 											type="text"
@@ -810,21 +940,19 @@
 									</div>
 									<div class="flex justify-end gap-2">
 										<Button
-											size="sm"
+											size="icon"
 											variant="default"
 											onclick={() => saveField('country')}
 											disabled={isSaving}
 										>
 											{#if isSaving}
-												<Loader2 class="mr-2 h-4 w-4 animate-spin" />
-												Saving
+												<Loader2 class="h-4 w-4 animate-spin" />
 											{:else}
-												<Check class="mr-2 h-4 w-4" />
-												Save
+												<Check class="h-4 w-4" />
 											{/if}
 										</Button>
 										<Button
-											size="sm"
+											size="icon"
 											variant="outline"
 											onclick={() => {
 												cancelEditing('country');
@@ -832,8 +960,7 @@
 												cancelEditing('stateProvinceRegion');
 											}}
 										>
-											<X class="mr-2 h-4 w-4" />
-											Cancel
+											<X class="h-4 w-4" />
 										</Button>
 									</div>
 								</div>
@@ -845,7 +972,8 @@
 											? 'text-gray-900'
 											: 'text-gray-500'}
 									>
-										{jobRequirements.country}, {jobRequirements.address?.city || ''}
+										{availableCountries.find((c) => c.code === jobRequirements?.countryIso)?.name ||
+											jobRequirements.country}, {jobRequirements.address?.city || ''}
 										{jobRequirements.address?.stateProvinceRegion
 											? Array.isArray(jobRequirements.address.stateProvinceRegion)
 												? jobRequirements.address.stateProvinceRegion.join(', ')
@@ -867,24 +995,66 @@
 						</div>
 
 						<!-- Languages -->
-						<div class="rounded p-2 hover:bg-gray-50">
+						<div class="group rounded p-2 hover:bg-gray-50">
 							<p class="text-[11px] uppercase tracking-wide text-muted-foreground">Languages</p>
-							<div class="mt-1 flex flex-wrap gap-1">
-								{#each jobRequirements.jobRequiredLanguages || [] as language}
-									<span class="rounded bg-gray-100 px-2 py-0.5 text-xs text-gray-700"
-										>{language}</span
+							{#if editableFields.jobRequiredLanguages}
+								<div class="mt-1 space-y-2">
+									<ComboboxMulti
+										items={availableLanguages.map((l) => ({ value: l.code, label: l.name }))}
+										values={editValues.jobRequiredLanguages as string[]}
+										onValuesChange={(vals) => (editValues.jobRequiredLanguages = vals)}
+										placeholder="Select languages"
+										searchPlaceholder="Search language..."
+										emptyText="No results"
+										class="w-full"
+									/>
+									<div class="flex justify-end gap-2">
+										<Button
+											size="icon"
+											variant="default"
+											onclick={() => saveField('jobRequiredLanguages')}
+											disabled={isSaving}
+										>
+											{#if isSaving}
+												<Loader2 class="h-4 w-4 animate-spin" />
+											{:else}
+												<Check class="h-4 w-4" />
+											{/if}
+										</Button>
+
+										<Button
+											size="icon"
+											variant="outline"
+											onclick={() => cancelEditing('jobRequiredLanguages')}
+										>
+											<X class="h-4 w-4" />
+										</Button>
+									</div>
+								</div>
+							{:else}
+								<div class="mt-1 flex flex-wrap items-center gap-2">
+									{#each jobRequirements.jobRequiredLanguages || [] as language}
+										<span class="rounded bg-gray-100 px-2 py-0.5 text-xs text-gray-700"
+											>{availableLanguages.find((l) => l.code === language)?.name || language}</span
+										>
+									{/each}
+									{#if !jobRequirements.jobRequiredLanguages || jobRequirements.jobRequiredLanguages.length === 0}
+										<span class="text-gray-500">Not specified</span>
+									{/if}
+									<button
+										class="opacity-0 transition-opacity duration-200 group-hover:opacity-100"
+										onclick={() => startEditing('jobRequiredLanguages')}
 									>
-								{/each}
-								{#if !jobRequirements.jobRequiredLanguages || jobRequirements.jobRequiredLanguages.length === 0}
-									<span class="text-gray-500">Not specified</span>
-								{/if}
-							</div>
+										<Pen class="h-3.5 w-3.5 text-gray-400 hover:text-primary" />
+									</button>
+								</div>
+							{/if}
 						</div>
 
 						<!-- Salary -->
 						<div class="group rounded p-2 hover:bg-gray-50">
 							<p class="text-[11px] uppercase tracking-wide text-muted-foreground">Salary</p>
-							{#if editableFields.salaryStart || editableFields.salaryEnd || editableFields.salaryCurrency}
+							{#if editableFields.salaryStart || editableFields.salaryEnd || editableFields.salaryCurrency || editableFields.salaryType}
 								<div class="mt-1 flex w-full flex-col gap-2">
 									<div class="grid grid-cols-1 gap-2 md:grid-cols-3">
 										<Input
@@ -917,32 +1087,41 @@
 											labelKey="name"
 										/>
 									</div>
+									<div>
+										<DropdownComponent
+											options={availableSalaryPeriods}
+											value={editValues.salaryType}
+											onValueChange={(value) => (editValues.salaryType = value)}
+											placeholder="Salary period"
+											optionKey="code"
+											labelKey="name"
+											class="w-full"
+										/>
+									</div>
 									<div class="flex justify-end gap-2">
 										<Button
-											size="sm"
+											size="icon"
 											variant="default"
 											onclick={() => saveField('salaryStart')}
 											disabled={isSaving}
 										>
 											{#if isSaving}
-												<Loader2 class="mr-2 h-4 w-4 animate-spin" />
-												Saving
+												<Loader2 class="h-4 w-4 animate-spin" />
 											{:else}
-												<Check class="mr-2 h-4 w-4" />
-												Save
+												<Check class="h-4 w-4" />
 											{/if}
 										</Button>
 										<Button
-											size="sm"
+											size="icon"
 											variant="outline"
 											onclick={() => {
 												cancelEditing('salaryStart');
 												cancelEditing('salaryEnd');
 												cancelEditing('salaryCurrency');
+												cancelEditing('salaryType');
 											}}
 										>
-											<X class="mr-2 h-4 w-4" />
-											Cancel
+											<X class="h-4 w-4" />
 										</Button>
 									</div>
 								</div>
@@ -961,12 +1140,21 @@
 												jobRequirements.salary.amountEnd,
 												jobRequirements.salary.currency
 											)}
-											{jobRequirements.salary.type ? `(${jobRequirements.salary.type})` : ''}
+											{availableSalaryPeriods.find(
+												(p) => p.code === jobRequirements?.salary?.typeV2
+											)?.name
+												? `(${availableSalaryPeriods.find((p) => p.code === jobRequirements?.salary?.typeV2)?.name})`
+												: ''}
 										{:else if jobRequirements.salary?.amountStart && !jobRequirements.salary?.amountEnd}
 											{formatCurrency(
 												jobRequirements.salary.amountStart,
 												jobRequirements.salary.currency
 											)}
+											{availableSalaryPeriods.find(
+												(p) => p.code === jobRequirements?.salary?.typeV2
+											)?.name
+												? `(${availableSalaryPeriods.find((p) => p.code === jobRequirements?.salary?.typeV2)?.name})`
+												: ''}
 										{:else if jobRequirements.salary?.amountText}
 											{jobRequirements.salary.amountText}
 										{:else}
@@ -979,6 +1167,7 @@
 											startEditing('salaryStart');
 											startEditing('salaryEnd');
 											startEditing('salaryCurrency');
+											startEditing('salaryType');
 										}}
 									>
 										<Pen class="h-3.5 w-3.5 text-gray-400 hover:text-primary" />
@@ -987,19 +1176,142 @@
 							{/if}
 						</div>
 
-						<!-- Target countries from huntInstructions -->
-						{#if getTargetCountries(jobRequirements)}
-							<div class="rounded p-2 hover:bg-gray-50">
+						<!-- Target countries -->
+						<div class="group rounded p-2 hover:bg-gray-50">
+							<div class="flex items-center justify-between">
 								<p class="text-[11px] uppercase tracking-wide text-muted-foreground">
-									{getTargetCountries(jobRequirements)?.label}
+									Target countries
 								</p>
-								<div class="mt-1 flex flex-wrap gap-1">
-									{#each getTargetCountries(jobRequirements)?.countries || [] as c}
-										<span class="rounded bg-gray-100 px-2 py-0.5 text-xs text-gray-700">{c}</span>
-									{/each}
-								</div>
+								{#if !editableFields.targetOnlyCountries && !editableFields.targetPreferredCountries}
+									<button
+										class="opacity-0 transition-opacity duration-200 group-hover:opacity-100"
+										onclick={editTargetCountries}
+									>
+										<Pen class="h-3.5 w-3.5 text-gray-400 hover:text-primary" />
+									</button>
+								{/if}
 							</div>
-						{/if}
+							<!-- Only countries -->
+							<div class="mt-2">
+								<div class="flex items-center justify-between">
+									<div class="flex items-center gap-1.5">
+										<p class="text-xs text-muted-foreground">Only</p>
+										<Tooltip.Root>
+											<Tooltip.Trigger>
+												<button
+													type="button"
+													aria-label="Only countries info"
+													title="Only countries info"
+													class="inline-flex h-5 w-5 items-center justify-center rounded-full border border-gray-200 bg-gray-50 text-gray-600 transition-colors hover:border-gray-300 hover:bg-gray-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 focus-visible:ring-offset-2"
+												>
+													<Info class="h-3 w-3" />
+												</button>
+											</Tooltip.Trigger>
+											<Tooltip.Content side="top"
+												>Limit search only to these countries' healthcare workers.</Tooltip.Content
+											>
+										</Tooltip.Root>
+									</div>
+								</div>
+
+								{#if editableFields.targetOnlyCountries}
+									<div class="mt-1 space-y-2">
+										<ComboboxMulti
+											items={availableCountries.map((c) => ({ value: c.code, label: c.name }))}
+											values={editValues.huntOnlyCountries}
+											onValuesChange={(vals) => (editValues.huntOnlyCountries = vals)}
+											placeholder="Select only countries"
+											searchPlaceholder="Search country..."
+											emptyText="No results"
+											class="w-full"
+										/>
+									</div>
+								{:else}
+									<div class="mt-1 flex flex-wrap gap-1">
+										{#each jobRequirements.countriesOnlyToSearch || jobRequirements.huntInstructions?.onlyCountriesToSearch || [] as c}
+											<span class="rounded bg-gray-100 px-2 py-0.5 text-xs text-gray-700"
+												>{availableCountries.find((country) => country.code === c)?.name || c}</span
+											>
+										{/each}
+										{#if (!jobRequirements.countriesOnlyToSearch || jobRequirements.countriesOnlyToSearch.length === 0) && (!jobRequirements.huntInstructions?.onlyCountriesToSearch || jobRequirements.huntInstructions.onlyCountriesToSearch.length === 0)}
+											<span class="text-gray-500">Not specified</span>
+										{/if}
+									</div>
+								{/if}
+							</div>
+							<!-- Preferred countries -->
+							<div class="mt-4">
+								<div class="flex items-center justify-between">
+									<div class="flex items-center gap-1.5">
+										<p class="text-xs text-muted-foreground">Preferred</p>
+										<Tooltip.Root>
+											<Tooltip.Trigger>
+												<button
+													type="button"
+													aria-label="Preferred countries info"
+													title="Preferred countries info"
+													class="inline-flex h-5 w-5 items-center justify-center rounded-full border border-gray-200 bg-gray-50 text-gray-600 transition-colors hover:border-gray-300 hover:bg-gray-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 focus-visible:ring-offset-2"
+												>
+													<Info class="h-3 w-3" />
+												</button>
+											</Tooltip.Trigger>
+											<Tooltip.Content side="top"
+												>Score those healthcare professionals higher and start with them.</Tooltip.Content
+											>
+										</Tooltip.Root>
+									</div>
+								</div>
+
+								{#if editableFields.targetPreferredCountries}
+									<div class="mt-1 space-y-2">
+										<ComboboxMulti
+											items={availableCountries.map((c) => ({ value: c.code, label: c.name }))}
+											values={editValues.huntPreferredCountries}
+											onValuesChange={(vals) => (editValues.huntPreferredCountries = vals)}
+											placeholder="Select preferred countries"
+											searchPlaceholder="Search country..."
+											emptyText="No results"
+											class="w-full"
+										/>
+										<div class="flex justify-end gap-2">
+											<Button
+												size="icon"
+												variant="default"
+												onclick={() => saveField('targetPreferredCountries')}
+												disabled={isSaving}
+											>
+												{#if isSaving}
+													<Loader2 class="h-4 w-4 animate-spin" />
+												{:else}
+													<Check class="h-4 w-4" />
+												{/if}
+											</Button>
+											<Button
+												size="icon"
+												variant="outline"
+												onclick={() => {
+													cancelEditing('targetOnlyCountries');
+													cancelEditing('targetPreferredCountries');
+												}}
+											>
+												<X class="h-4 w-4" />
+											</Button>
+										</div>
+									</div>
+								{:else}
+									<div class="mt-1 flex flex-wrap gap-1">
+										{#each jobRequirements.countriesPreferredToSearch || jobRequirements.huntInstructions?.preferredCountriesToSearch || [] as c}
+											<span class="rounded bg-gray-100 px-2 py-0.5 text-xs text-gray-700"
+												>{availableCountries.find((country) => country.code === c)?.name || c}</span
+											>
+										{/each}
+										{#if (!jobRequirements.countriesPreferredToSearch || jobRequirements.countriesPreferredToSearch.length === 0) && (!jobRequirements.huntInstructions?.preferredCountriesToSearch || jobRequirements.huntInstructions.preferredCountriesToSearch.length === 0)}
+											<span class="text-gray-500">Not specified</span>
+										{/if}
+									</div>
+								{/if}
+							</div>
+						</div>
 					</div>
 
 					<!-- Details section -->
@@ -1018,26 +1330,23 @@
 									></textarea>
 									<div class="flex justify-end gap-2">
 										<Button
-											size="sm"
+											size="icon"
 											variant="default"
 											onclick={() => saveField('jobDescription')}
 											disabled={isSaving}
 										>
 											{#if isSaving}
-												<Loader2 class="mr-2 h-4 w-4 animate-spin" />
-												Saving
+												<Loader2 class="h-4 w-4 animate-spin" />
 											{:else}
-												<Check class="mr-2 h-4 w-4" />
-												Save
+												<Check class="h-4 w-4" />
 											{/if}
 										</Button>
 										<Button
-											size="sm"
+											size="icon"
 											variant="outline"
 											onclick={() => cancelEditing('jobDescription')}
 										>
-											<X class="mr-2 h-4 w-4" />
-											Cancel
+											<X class="h-4 w-4" />
 										</Button>
 									</div>
 								</div>
@@ -1072,62 +1381,191 @@
 									></textarea>
 									<div class="flex justify-end gap-2">
 										<Button
-											size="sm"
+											size="icon"
 											variant="default"
 											onclick={() => saveField('jobRequiredQualifications')}
 											disabled={isSaving}
 										>
 											{#if isSaving}
-												<Loader2 class="mr-2 h-4 w-4 animate-spin" />
-												Saving
+												<Loader2 class="h-4 w-4 animate-spin" />
 											{:else}
-												<Check class="mr-2 h-4 w-4" />
-												Save
+												<Check class="h-4 w-4" />
 											{/if}
 										</Button>
 										<Button
-											size="sm"
+											size="icon"
 											variant="outline"
 											onclick={() => cancelEditing('jobRequiredQualifications')}
 										>
-											<X class="mr-2 h-4 w-4" />
-											Cancel
+											<X class="h-4 w-4" />
 										</Button>
 									</div>
 								</div>
 							{:else}
-								<div
-									class="text-sm {jobRequirements.jobRequiredQualifications
-										? 'text-gray-900'
-										: 'text-gray-500'}"
-									style="white-space: pre-line;"
-								>
-									{jobRequirements.jobRequiredQualifications || 'Not specified'}
+								<div class="flex items-start gap-2">
+									<div
+										class="text-sm {jobRequirements.jobRequiredQualifications
+											? 'text-gray-900'
+											: 'text-gray-500'}"
+										style="white-space: pre-line;"
+									>
+										{jobRequirements.jobRequiredQualifications || 'Not specified'}
+									</div>
+									<button
+										class="mt-0.5 opacity-0 transition-opacity duration-200 group-hover:opacity-100"
+										onclick={() => startEditing('jobRequiredQualifications')}
+									>
+										<Pen class="h-3.5 w-3.5 text-gray-400 hover:text-primary" />
+									</button>
 								</div>
 							{/if}
 						</div>
 
 						<!-- Company & Hiring context for offer message background -->
-						<div>
-							<h4 class="mb-2 text-base font-medium">Company context</h4>
-							<p
-								class={jobRequirements.huntInstructions?.companyContext
-									? 'whitespace-pre-line text-sm text-gray-900'
-									: 'text-sm text-gray-500'}
-							>
-								{jobRequirements.huntInstructions?.companyContext || 'Not provided'}
-							</p>
+						<div class="group">
+							<div class="mb-2 flex items-center gap-2">
+								<h4 class="text-base font-medium">Company context</h4>
+								<Tooltip.Root>
+									<Tooltip.Trigger>
+										<button
+											type="button"
+											aria-label="Company context info"
+											title="Company context info"
+											class="inline-flex h-5 w-5 items-center justify-center rounded-full border border-gray-200 bg-gray-50 text-gray-600 transition-colors hover:border-gray-300 hover:bg-gray-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 focus-visible:ring-offset-2"
+										>
+											<Info class="h-3 w-3" />
+										</button>
+									</Tooltip.Trigger>
+									<Tooltip.Content side="top"
+										>This is context for making offers and understanding company details. Private
+										field (not shown to candidates).</Tooltip.Content
+									>
+								</Tooltip.Root>
+							</div>
+							{#if editableFields.companyContext}
+								<div class="flex w-full flex-col gap-2">
+									<textarea
+										value={editValues.companyContext}
+										onchange={(e: Event & { currentTarget: HTMLTextAreaElement }) => {
+											editValues.companyContext = e.currentTarget.value;
+										}}
+										class="min-h-[80px] w-full rounded-md border p-2 text-sm"
+									></textarea>
+									<div class="flex justify-end gap-2">
+										<Button
+											size="icon"
+											variant="default"
+											onclick={() => saveField('companyContext')}
+											disabled={isSaving}
+										>
+											{#if isSaving}
+												<Loader2 class="h-4 w-4 animate-spin" />
+											{:else}
+												<Check class="h-4 w-4" />
+											{/if}
+										</Button>
+										<Button
+											size="icon"
+											variant="outline"
+											onclick={() => cancelEditing('companyContext')}
+										>
+											<X class="h-4 w-4" />
+										</Button>
+									</div>
+								</div>
+							{:else}
+								<div class="flex items-start gap-2">
+									<p
+										class={jobRequirements.companyContext ||
+										jobRequirements.huntInstructions?.companyContext
+											? 'whitespace-pre-line text-sm text-gray-900'
+											: 'text-sm text-gray-500'}
+									>
+										{jobRequirements.companyContext ||
+											jobRequirements.huntInstructions?.companyContext ||
+											'Not provided'}
+									</p>
+									<button
+										class="mt-0.5 opacity-0 transition-opacity duration-200 group-hover:opacity-100"
+										onclick={() => startEditing('companyContext')}
+									>
+										<Pen class="h-3.5 w-3.5 text-gray-400 hover:text-primary" />
+									</button>
+								</div>
+							{/if}
 						</div>
 
-						<div>
-							<h4 class="mb-2 text-base font-medium">Hiring context</h4>
-							<p
-								class={jobRequirements.huntInstructions?.hiringContext
-									? 'whitespace-pre-line text-sm text-gray-900'
-									: 'text-sm text-gray-500'}
-							>
-								{jobRequirements.huntInstructions?.hiringContext || 'Not provided'}
-							</p>
+						<div class="group">
+							<div class="mb-2 flex items-center gap-2">
+								<h4 class="text-base font-medium">Hiring context</h4>
+								<Tooltip.Root>
+									<Tooltip.Trigger>
+										<button
+											type="button"
+											aria-label="Hiring context info"
+											title="Hiring context info"
+											class="inline-flex h-5 w-5 items-center justify-center rounded-full border border-gray-200 bg-gray-50 text-gray-600 transition-colors hover:border-gray-300 hover:bg-gray-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 focus-visible:ring-offset-2"
+										>
+											<Info class="h-3 w-3" />
+										</button>
+									</Tooltip.Trigger>
+									<Tooltip.Content side="top"
+										>Special conditions that cannot be inserted elsewhere, such as special bonuses
+										and constraints. Private field (not shown to candidates).</Tooltip.Content
+									>
+								</Tooltip.Root>
+							</div>
+							{#if editableFields.hiringContext}
+								<div class="flex w-full flex-col gap-2">
+									<textarea
+										value={editValues.hiringContext}
+										onchange={(e: Event & { currentTarget: HTMLTextAreaElement }) => {
+											editValues.hiringContext = e.currentTarget.value;
+										}}
+										class="min-h-[80px] w-full rounded-md border p-2 text-sm"
+									></textarea>
+									<div class="flex justify-end gap-2">
+										<Button
+											size="icon"
+											variant="default"
+											onclick={() => saveField('hiringContext')}
+											disabled={isSaving}
+										>
+											{#if isSaving}
+												<Loader2 class="h-4 w-4 animate-spin" />
+											{:else}
+												<Check class="h-4 w-4" />
+											{/if}
+										</Button>
+										<Button
+											size="icon"
+											variant="outline"
+											onclick={() => cancelEditing('hiringContext')}
+										>
+											<X class="h-4 w-4" />
+										</Button>
+									</div>
+								</div>
+							{:else}
+								<div class="flex items-start gap-2">
+									<p
+										class={jobRequirements.hiringContext ||
+										jobRequirements.huntInstructions?.hiringContext
+											? 'whitespace-pre-line text-sm text-gray-900'
+											: 'text-sm text-gray-500'}
+									>
+										{jobRequirements.hiringContext ||
+											jobRequirements.huntInstructions?.hiringContext ||
+											'Not provided'}
+									</p>
+									<button
+										class="mt-0.5 opacity-0 transition-opacity duration-200 group-hover:opacity-100"
+										onclick={() => startEditing('hiringContext')}
+									>
+										<Pen class="h-3.5 w-3.5 text-gray-400 hover:text-primary" />
+									</button>
+								</div>
+							{/if}
 						</div>
 					</div>
 				</div>
@@ -1135,19 +1573,6 @@
 		{/if}
 
 		<!-- Potential Reach Card -->
-		{#if potentialReach !== null}
-			<div class="rounded-lg border bg-white p-4 shadow-sm">
-				<div class="flex items-center gap-3">
-					<div class="flex h-10 w-10 items-center justify-center rounded-full bg-green-50">
-						<Users class="h-5 w-5 text-green-600" />
-					</div>
-					<div>
-						<p class="text-sm font-medium text-gray-900">Potential Reach</p>
-						<p class="text-2xl font-bold text-green-600">{potentialReach.toLocaleString()}</p>
-						<p class="text-xs text-gray-500">candidates available</p>
-					</div>
-				</div>
-			</div>
-		{/if}
+		{#if false}{/if}
 	</div>
 </div>
