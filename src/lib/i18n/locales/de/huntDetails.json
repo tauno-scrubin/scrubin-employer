@@ -39,6 +39,66 @@
 		"offersMade": "Gemachte Angebote",
 		"hired": "Eingestellt"
 	},
+	"requirementsDetails": {
+		"potentialReach": "Potentielle Kandidatenreichweite",
+		"readyToActivate": {
+			"title": "Bereit zur Aktivierung",
+			"description": "Alle erforderlichen Felder sind ausgefüllt.",
+			"button": "Suche aktivieren"
+		},
+		"planRequired": {
+			"title": "Plan erforderlich",
+			"description": "Sie müssen zuerst einen Plan im Preise-Tab aktivieren, um Ihre Suche zu starten.",
+			"button": "Zu Preisen gehen"
+		},
+		"fields": {
+			"targetCountries": "Zielländer",
+			"only": "Nur",
+			"preferred": "Bevorzugt",
+			"companyContext": "Unternehmenskontext",
+			"hiringContext": "Einstellungskontext"
+		},
+		"placeholders": {
+			"selectProfessions": "Berufe auswählen",
+			"searchProfession": "Beruf suchen...",
+			"selectSpecialization": "Spezialisierung auswählen",
+			"searchSpecialization": "Spezialisierung suchen...",
+			"selectLanguages": "Sprachen auswählen",
+			"searchLanguage": "Sprache suchen...",
+			"selectOnlyCountries": "Nur Länder auswählen",
+			"searchCountry": "Land suchen...",
+			"selectPreferredCountries": "Bevorzugte Länder auswählen",
+			"city": "Stadt",
+			"regionStateProvince": "Region/Bundesland/Provinz",
+			"from": "Von",
+			"to": "Bis",
+			"currency": "Währung",
+			"salaryPeriod": "Gehaltszeitraum"
+		},
+		"tooltips": {
+			"onlyCountriesInfo": "Nur Länder Info",
+			"onlyCountriesDescription": "Suche nur auf Gesundheitspersonal aus diesen Ländern beschränken.",
+			"preferredCountriesInfo": "Bevorzugte Länder Info",
+			"preferredCountriesDescription": "Diese Gesundheitsfachkräfte höher bewerten und mit ihnen beginnen."
+		},
+		"labels": {
+			"untitledRole": "Unbenannte Rolle",
+			"notProvided": "Nicht bereitgestellt",
+			"noResults": "Keine Ergebnisse"
+		}
+	},
+	"requirementsChat": {
+		"title": "Anforderungsassistent",
+		"subtitle": "Lassen Sie uns gemeinsam Ihre Jobanforderungen erstellen",
+		"processing": "KI verarbeitet Ihre Anfrage...",
+		"thinking": "KI denkt nach...",
+		"placeholder": "Geben Sie hier Ihre Nachricht ein... (Drücken Sie Enter zum Senden)",
+		"errorMessage": "Entschuldigung, es ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.",
+		"errors": {
+			"loadSession": "Chat-Sitzung konnte nicht geladen werden.",
+			"sendMessage": "Nachricht konnte nicht gesendet werden. Bitte versuchen Sie es erneut."
+		}
+	},
 	"statistics": {
 		"huntConversionFunnel": "Such-Konversionstrichter",
 		"totalHuntables": "Gesamtzahl der Suchbaren",

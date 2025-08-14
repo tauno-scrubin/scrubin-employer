@@ -40,6 +40,66 @@
 		"hired": "Palkattu",
 		"candidates": "Ehdokkaat"
 	},
+	"requirementsDetails": {
+		"potentialReach": "Mahdollinen ehdokkaiden saavutettavuus",
+		"readyToActivate": {
+			"title": "Valmis aktivoitavaksi",
+			"description": "Kaikki vaaditut kentät on täytetty.",
+			"button": "Aktivoi haku"
+		},
+		"planRequired": {
+			"title": "Suunnitelma vaaditaan",
+			"description": "Sinun täytyy ensin aktivoida suunnitelma Hinnat-välilehdellä aloittaaksesi haun.",
+			"button": "Siirry Hintoihin"
+		},
+		"fields": {
+			"targetCountries": "Kohdemaat",
+			"only": "Vain",
+			"preferred": "Suositeltu",
+			"companyContext": "Yrityksen konteksti",
+			"hiringContext": "Palkkauksen konteksti"
+		},
+		"placeholders": {
+			"selectProfessions": "Valitse ammatit",
+			"searchProfession": "Etsi ammattia...",
+			"selectSpecialization": "Valitse erikoistuminen",
+			"searchSpecialization": "Etsi erikoistumista...",
+			"selectLanguages": "Valitse kielet",
+			"searchLanguage": "Etsi kieltä...",
+			"selectOnlyCountries": "Valitse vain maat",
+			"searchCountry": "Etsi maata...",
+			"selectPreferredCountries": "Valitse suositellut maat",
+			"city": "Kaupunki",
+			"regionStateProvince": "Alue/Osavaltio/Provinssi",
+			"from": "Alkaen",
+			"to": "Asti",
+			"currency": "Valuutta",
+			"salaryPeriod": "Palkan ajanjakso"
+		},
+		"tooltips": {
+			"onlyCountriesInfo": "Vain maiden tietoja",
+			"onlyCountriesDescription": "Rajoita haku vain näiden maiden terveydenhuoltotyöntekijöihin.",
+			"preferredCountriesInfo": "Suositeltujen maiden tietoja",
+			"preferredCountriesDescription": "Arvostele näitä terveydenhuoltotyöntekijöitä korkeammalle ja aloita heidän kanssaan."
+		},
+		"labels": {
+			"untitledRole": "Nimeämätön rooli",
+			"notProvided": "Ei annettu",
+			"noResults": "Ei tuloksia"
+		}
+	},
+	"requirementsChat": {
+		"title": "Vaatimusten avustaja",
+		"subtitle": "Rakennetaan yhdessä työvaatimuksesi",
+		"processing": "Tekoäly käsittelee pyyntöäsi...",
+		"thinking": "Tekoäly ajattelee...",
+		"placeholder": "Kirjoita viestisi tähän... (Paina Enter lähettääksesi)",
+		"errorMessage": "Pahoittelut, tapahtui virhe. Yritä uudelleen.",
+		"errors": {
+			"loadSession": "Keskustelusessiota ei voitu ladata.",
+			"sendMessage": "Viestiä ei voitu lähettää. Yritä uudelleen."
+		}
+	},
 	"statistics": {
 		"huntConversionFunnel": "Hakukonversiosuppilo",
 		"totalHuntables": "Kokonaismäärä",

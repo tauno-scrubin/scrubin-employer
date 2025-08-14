@@ -49,51 +49,6 @@
 		"save": "Tallenna",
 		"cancel": "Peruuta"
 	},
-	"auth": {
-		"login": {
-			"title": "Syötä kirjautumistietosi päästäksesi tilillesi",
-			"emailLabel": "Sähköpostiosoite",
-			"emailPlaceholder": "nimi@esimerkki.com",
-			"passwordLabel": "Salasana",
-			"forgotPassword": "Unohditko salasanan?",
-			"passwordPlaceholder": "••••••••",
-			"noAccount": "Eikö sinulla ole tiliä?",
-			"signUp": "Rekisteröidy"
-		},
-		"resetPassword": {
-			"forgotPassword": "Unohditko salasanan?",
-			"title": "Nollaa salasana",
-			"description": "Lähetämme sähköpostiisi linkin salasanan nollaamiseksi.",
-			"emailLabel": "Sähköposti",
-			"emailPlaceholder": "nimi@esimerkki.com"
-		},
-		"employer": "Työnantaja",
-		"wrapper": {
-			"or": "tai",
-			"login": "kirjaudu sisään"
-		},
-		"signUp": {
-			"title": "Syötä tietosi rekisteröityäksesi",
-			"emailLabel": "Sähköpostiosoite",
-			"emailPlaceholder": "nimi@esimerkki.com",
-			"firstNameLabel": "Etunimi",
-			"firstNamePlaceholder": "Matti",
-			"lastNameLabel": "Sukunimi",
-			"lastNamePlaceholder": "Meikäläinen",
-			"phoneLabel": "Puhelinnumero",
-			"phonePlaceholder": "+358501234567",
-			"companyNameLabel": "Yrityksen nimi",
-			"companyNamePlaceholder": "Yritys Oy",
-			"countryLabel": "Maa",
-			"countryPlaceholder": "Valitse maa",
-			"agreement": "Luomalla tilin hyväksyt",
-			"termsOfService": "käyttöehdot",
-			"and": "ja",
-			"privacyPolicy": "tietosuojakäytännön",
-			"haveAccount": "Onko sinulla jo tili?",
-			"signIn": "Kirjaudu sisään"
-		}
-	},
 	"account": {
 		"pendingActivation": "Tilin aktivointi odottaa",
 		"scheduleCall": "Varaa lyhyt puhelu tiimimme kanssa aktivoidaksesi tilisi.",

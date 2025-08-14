@@ -8,6 +8,7 @@
 	import { slide } from 'svelte/transition';
 	import type { ChatSessionResponse, JobRequirementDto } from '@/scrubinClient';
 	import { scrubinClient } from '@/scrubinClient/client';
+	import { t } from '$lib/i18n';
 
 	let {
 		chatSessionId = $bindable<string | undefined>(undefined),
@@ -45,7 +46,7 @@
 			}
 		} catch (error) {
 			console.error('Error initializing chat session:', error);
-			toast.error('Failed to load chat session.');
+			toast.error($t('requirementsChat.errors.loadSession'));
 		}
 	}
 
@@ -87,12 +88,12 @@
 			await scrollToBottom();
 		} catch (error) {
 			console.error('Error sending message:', error);
-			toast.error('Failed to send message. Please try again.');
+			toast.error($t('requirementsChat.errors.sendMessage'));
 			messages = [
 				...messages,
 				{
 					role: 'assistant',
-					content: 'Sorry, I encountered an error. Please try again.',
+					content: $t('requirementsChat.errorMessage'),
 					timestamp: new Date()
 				}
 			];
@@ -134,8 +135,8 @@
 					<Sparkle class="h-5 w-5 text-blue-600" />
 				</div>
 				<div>
-					<h2 class="text-lg font-semibold text-gray-900">Requirements Assistant</h2>
-					<p class="text-sm text-gray-500">Let's build your job requirements together</p>
+					<h2 class="text-lg font-semibold text-gray-900">{$t('requirementsChat.title')}</h2>
+					<p class="text-sm text-gray-500">{$t('requirementsChat.subtitle')}</p>
 				</div>
 			</div>
 		</div>
@@ -148,7 +149,7 @@
 					<div class="flex items-center justify-center py-16">
 						<div class="text-center">
 							<Sparkle class="mx-auto h-12 w-12 text-gray-300" />
-							<p class="mt-2 text-sm text-gray-500">AI is processing your request...</p>
+							<p class="mt-2 text-sm text-gray-500">{$t('requirementsChat.processing')}</p>
 						</div>
 					</div>
 				{:else}
@@ -172,7 +173,7 @@
 					<div class="flex justify-start" transition:slide={{ delay: 100, duration: 200 }}>
 						<div class="flex items-center gap-2 rounded-lg bg-gray-100 px-3 py-2">
 							<Loader2 class="h-4 w-4 animate-spin text-gray-500" />
-							<span class="text-sm text-gray-500">AI is thinking...</span>
+							<span class="text-sm text-gray-500">{$t('requirementsChat.thinking')}</span>
 						</div>
 					</div>
 				{/if}
@@ -190,7 +191,7 @@
 			>
 				<Textarea
 					bind:value={currentMessage}
-					placeholder="Type your message here... (Press Enter to send)"
+					placeholder={$t('requirementsChat.placeholder')}
 					class="max-h-32 min-h-[44px] w-full resize-none overflow-y-auto border-0 bg-transparent p-0 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
 					rows={3}
 					onkeydown={(e) => {

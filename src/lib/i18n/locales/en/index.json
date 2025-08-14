@@ -49,51 +49,6 @@
 		"save": "Save",
 		"cancel": "Cancel"
 	},
-	"auth": {
-		"login": {
-			"title": "Enter your credentials to access your account",
-			"emailLabel": "Email address",
-			"emailPlaceholder": "name@example.com",
-			"passwordLabel": "Password",
-			"forgotPassword": "Forgot password?",
-			"passwordPlaceholder": "••••••••",
-			"noAccount": "Don't have an account?",
-			"signUp": "Sign up"
-		},
-		"resetPassword": {
-			"forgotPassword": "Forgot password?",
-			"title": "Reset password",
-			"description": "We'll send you an email with a link to reset your password.",
-			"emailLabel": "Email",
-			"emailPlaceholder": "name@example.com"
-		},
-		"employer": "Employer",
-		"wrapper": {
-			"or": "or",
-			"login": "login"
-		},
-		"signUp": {
-			"title": "Enter your details to sign up",
-			"emailLabel": "Email address",
-			"emailPlaceholder": "name@example.com",
-			"firstNameLabel": "First name",
-			"firstNamePlaceholder": "John",
-			"lastNameLabel": "Last name",
-			"lastNamePlaceholder": "Doe",
-			"phoneLabel": "Phone number",
-			"phonePlaceholder": "+1234567890",
-			"companyNameLabel": "Company name",
-			"companyNamePlaceholder": "Acme Inc.",
-			"countryLabel": "Country",
-			"countryPlaceholder": "Select a country",
-			"agreement": "By creating an account, you agree to our",
-			"termsOfService": "Terms of Service",
-			"and": "and",
-			"privacyPolicy": "Privacy Policy",
-			"haveAccount": "Already have an account?",
-			"signIn": "Sign in"
-		}
-	},
 	"account": {
 		"pendingActivation": "Account Pending Activation",
 		"scheduleCall": "Schedule a quick call with our team to activate your account.",

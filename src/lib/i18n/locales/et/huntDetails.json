@@ -15,10 +15,10 @@
 			"cancelled": "Tühistatud"
 		},
 		"createdOn": "Loodud",
-		"jobRequirements": "Töö Nõuded",
+		"jobRequirements": "Töö nõuded",
 		"jobTitle": "Ametinimetus",
 		"jobDescription": "Töö kirjeldus",
-		"professions": "Ametid",
+		"professions": "Erialad",
 		"specialization": "Spetsialiseerumine",
 		"workExperience": "Töökogemus",
 		"years": "aastat",
@@ -39,6 +39,66 @@
 		"offersMade": "Tehtud pakkumised",
 		"hired": "Tööle võetud",
 		"candidates": "Kandidaadid"
+	},
+	"requirementsDetails": {
+		"potentialReach": "Potentsiaalne kandidaatide ulatus",
+		"readyToActivate": {
+			"title": "Valmis aktiveerimiseks",
+			"description": "Kõik nõutud väljad on täidetud.",
+			"button": "Aktiveeri otsing"
+		},
+		"planRequired": {
+			"title": "Planeerimine nõutav",
+			"description": "Peate esmalt aktiveerima plaani Hinnad vahekaardil, et alustada otsingut.",
+			"button": "Mine Hinnadesse"
+		},
+		"fields": {
+			"targetCountries": "Sihtriigid",
+			"only": "Ainult",
+			"preferred": "Eelistatud",
+			"companyContext": "Ettevõtte kontekst",
+			"hiringContext": "Palkamise kontekst"
+		},
+		"placeholders": {
+			"selectProfessions": "Vali eriala",
+			"searchProfession": "Otsi eriala...",
+			"selectSpecialization": "Vali spetsialiseerumine",
+			"searchSpecialization": "Otsi spetsialiseerumist...",
+			"selectLanguages": "Vali keeled",
+			"searchLanguage": "Otsi keelt...",
+			"selectOnlyCountries": "Vali ainult riigid",
+			"searchCountry": "Otsi riiki...",
+			"selectPreferredCountries": "Vali eelistatud riigid",
+			"city": "Linn",
+			"regionStateProvince": "Piirkond/Maakond/Provints",
+			"from": "Alates",
+			"to": "Kuni",
+			"currency": "Valuuta",
+			"salaryPeriod": "Palgaperiood"
+		},
+		"tooltips": {
+			"onlyCountriesInfo": "Ainult riikide info",
+			"onlyCountriesDescription": "Piira otsing ainult nende riikide tervishoiutöötajatele.",
+			"preferredCountriesInfo": "Eelistatud riikide info",
+			"preferredCountriesDescription": "Hinda neid tervishoiutöötajaid kõrgemalt ja alusta nendega."
+		},
+		"labels": {
+			"untitledRole": "Pealkirjata roll",
+			"notProvided": "Ei ole esitatud",
+			"noResults": "Tulemusi pole"
+		}
+	},
+	"requirementsChat": {
+		"title": "Värbamise agent",
+		"subtitle": "Loome koos teiega parimad tingimused",
+		"processing": "Töötleme teie päringut...",
+		"thinking": "Agent mõtleb...",
+		"placeholder": "Kirjutage oma sõnum siia... (Vajutage Enter saatmiseks)",
+		"errorMessage": "Vabandust, esines viga. Palun proovige uuesti.",
+		"errors": {
+			"loadSession": "Vestluse seanssi ei õnnestunud laadida.",
+			"sendMessage": "Sõnumi saatmine ebaõnnestus. Palun proovige uuesti."
+		}
 	},
 	"statistics": {
 		"huntConversionFunnel": "Sihtotsingu Konversiooni Lehter",

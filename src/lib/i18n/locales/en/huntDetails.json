@@ -36,6 +36,66 @@
 		"notRequired": "Not required",
 		"title": "Hunt"
 	},
+	"requirementsDetails": {
+		"potentialReach": "Potential candidate reach",
+		"readyToActivate": {
+			"title": "Ready to activate",
+			"description": "All required fields are complete.",
+			"button": "Activate Hunt"
+		},
+		"planRequired": {
+			"title": "Plan required",
+			"description": "You must first activate a plan in the Pricing tab to start your hunt.",
+			"button": "Go to Pricing"
+		},
+		"fields": {
+			"targetCountries": "Target countries",
+			"only": "Only",
+			"preferred": "Preferred",
+			"companyContext": "Company context",
+			"hiringContext": "Hiring context"
+		},
+		"placeholders": {
+			"selectProfessions": "Select professions",
+			"searchProfession": "Search profession...",
+			"selectSpecialization": "Select specialization",
+			"searchSpecialization": "Search specialization...",
+			"selectLanguages": "Select languages",
+			"searchLanguage": "Search language...",
+			"selectOnlyCountries": "Select only countries",
+			"searchCountry": "Search country...",
+			"selectPreferredCountries": "Select preferred countries",
+			"city": "City",
+			"regionStateProvince": "Region/State/Province",
+			"from": "From",
+			"to": "To",
+			"currency": "Currency",
+			"salaryPeriod": "Salary period"
+		},
+		"tooltips": {
+			"onlyCountriesInfo": "Only countries info",
+			"onlyCountriesDescription": "Limit search only to these countries' healthcare workers.",
+			"preferredCountriesInfo": "Preferred countries info",
+			"preferredCountriesDescription": "Score those healthcare professionals higher and start with them."
+		},
+		"labels": {
+			"untitledRole": "Untitled role",
+			"notProvided": "Not provided",
+			"noResults": "No results"
+		}
+	},
+	"requirementsChat": {
+		"title": "Requirements Assistant",
+		"subtitle": "Let's build your job requirements together",
+		"processing": "AI is processing your request...",
+		"thinking": "AI is thinking...",
+		"placeholder": "Type your message here... (Press Enter to send)",
+		"errorMessage": "Sorry, I encountered an error. Please try again.",
+		"errors": {
+			"loadSession": "Failed to load chat session.",
+			"sendMessage": "Failed to send message. Please try again."
+		}
+	},
 	"statistics": {
 		"huntConversionFunnel": "Hunt Conversion Funnel",
 		"totalHuntables": "Total Huntables",

@@ -42,7 +42,7 @@ onValueChange={onValueChange}
         {value}
     {:else}
         {value ? options.find(option => option[optionKey] === value)?.[labelKey] : placeholder}
-        {showLabelInBrackets ? '(' + options.find(option => option[optionKey] === value)?.[optionKey] + ')' : ''}
+        {showLabelInBrackets && value ? '(' + options.find(option => option[optionKey] === value)?.[optionKey] + ')' : ''}
     {/if}
 </Select.Trigger>
 <Select.Content>

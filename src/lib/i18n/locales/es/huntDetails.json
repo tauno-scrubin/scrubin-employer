@@ -40,6 +40,66 @@
 		"hired": "Contratado",
 		"candidates": "Candidatos"
 	},
+	"requirementsDetails": {
+		"potentialReach": "Alcance potencial de candidatos",
+		"readyToActivate": {
+			"title": "Listo para activar",
+			"description": "Todos los campos requeridos están completos.",
+			"button": "Activar búsqueda"
+		},
+		"planRequired": {
+			"title": "Plan requerido",
+			"description": "Debe activar primero un plan en la pestaña de Precios para comenzar su búsqueda.",
+			"button": "Ir a Precios"
+		},
+		"fields": {
+			"targetCountries": "Países objetivo",
+			"only": "Solo",
+			"preferred": "Preferido",
+			"companyContext": "Contexto de la empresa",
+			"hiringContext": "Contexto de contratación"
+		},
+		"placeholders": {
+			"selectProfessions": "Seleccionar profesiones",
+			"searchProfession": "Buscar profesión...",
+			"selectSpecialization": "Seleccionar especialización",
+			"searchSpecialization": "Buscar especialización...",
+			"selectLanguages": "Seleccionar idiomas",
+			"searchLanguage": "Buscar idioma...",
+			"selectOnlyCountries": "Seleccionar solo países",
+			"searchCountry": "Buscar país...",
+			"selectPreferredCountries": "Seleccionar países preferidos",
+			"city": "Ciudad",
+			"regionStateProvince": "Región/Estado/Provincia",
+			"from": "Desde",
+			"to": "Hasta",
+			"currency": "Moneda",
+			"salaryPeriod": "Período de salario"
+		},
+		"tooltips": {
+			"onlyCountriesInfo": "Información de solo países",
+			"onlyCountriesDescription": "Limitar la búsqueda solo a trabajadores sanitarios de estos países.",
+			"preferredCountriesInfo": "Información de países preferidos",
+			"preferredCountriesDescription": "Puntuar más alto a esos profesionales sanitarios y comenzar con ellos."
+		},
+		"labels": {
+			"untitledRole": "Rol sin título",
+			"notProvided": "No proporcionado",
+			"noResults": "Sin resultados"
+		}
+	},
+	"requirementsChat": {
+		"title": "Asistente de Requisitos",
+		"subtitle": "Construyamos juntos los requisitos de tu trabajo",
+		"processing": "La IA está procesando tu solicitud...",
+		"thinking": "La IA está pensando...",
+		"placeholder": "Escribe tu mensaje aquí... (Presiona Enter para enviar)",
+		"errorMessage": "Lo siento, encontré un error. Por favor, inténtalo de nuevo.",
+		"errors": {
+			"loadSession": "Error al cargar la sesión de chat.",
+			"sendMessage": "Error al enviar el mensaje. Por favor, inténtalo de nuevo."
+		}
+	},
 	"statistics": {
 		"huntConversionFunnel": "Embudo de Conversión de Búsqueda",
 		"totalHuntables": "Total de Candidatos Potenciales",

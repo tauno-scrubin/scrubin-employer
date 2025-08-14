@@ -7,7 +7,7 @@
 	import { Separator } from '$lib/components/ui/separator';
 	import DropdownComponent from '$lib/components/dropdownComponent.svelte';
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
-	import { locale } from '$lib/i18n';
+	import { locale, t } from '$lib/i18n';
 	import type {
 		CompanyPlanSummary,
 		JobRequirementDto,
@@ -200,10 +200,10 @@
 			Object.keys(editableFields).forEach(
 				(key) => (editableFields[key as keyof typeof editableFields] = false)
 			);
-			toast.success('Updated successfully');
+			toast.success($t('common.success'));
 		} catch (error) {
 			console.error(`Failed to update ${field}:`, error);
-			toast.error(`Failed to update ${field}. Please try again.`);
+			toast.error($t('common.error'));
 		} finally {
 			isSaving = false;
 		}
@@ -259,7 +259,7 @@
 		try {
 			const activePlan = companyActivePlans?.find((p) => p.planActive);
 			if (!activePlan) {
-				toast.error('No active plan found. Please activate a plan in the Pricing section.');
+				toast.error($t('requirementsDetails.planRequired.description'));
 				return;
 			}
 			const result = await scrubinClient.hunt.createHuntAndActivateFromRequirements(
@@ -269,7 +269,7 @@
 			window.location.href = `/dashboard/hunts/${result.huntId}`;
 		} catch (error) {
 			console.error('Error activating requirements:', error);
-			toast.error('Failed to activate requirements. Please try again.');
+			toast.error($t('common.error'));
 		}
 	}
 </script>
@@ -278,7 +278,7 @@
 	<div class="flex h-full flex-col overflow-hidden rounded-lg border bg-white p-4 shadow-sm">
 		<div class="mb-4 flex items-center justify-between gap-3">
 			<div class="flex items-center gap-3">
-				<h3 class="text-xl font-medium">Job Requirements</h3>
+				<h3 class="text-xl font-medium">{$t('hunt.jobRequirements')}</h3>
 				{#if potentialReach !== null && !(hunt && hunt.status === 'ACTIVE')}
 					<Tooltip.Root>
 						<Tooltip.Trigger>
@@ -289,7 +289,7 @@
 								{potentialReach?.toLocaleString?.() ?? potentialReach}
 							</span>
 						</Tooltip.Trigger>
-						<Tooltip.Content side="top">Potential candidate reach</Tooltip.Content>
+						<Tooltip.Content side="top">{$t('requirementsDetails.potentialReach')}</Tooltip.Content>
 					</Tooltip.Root>
 				{/if}
 			</div>
@@ -305,9 +305,11 @@
 					<div class="flex items-center gap-2">
 						<Check class="h-4 w-4" />
 						<div>
-							<AlertTitle class="m-0 text-sm font-medium">Ready to activate</AlertTitle>
+							<AlertTitle class="m-0 text-sm font-medium"
+								>{$t('requirementsDetails.readyToActivate.title')}</AlertTitle
+							>
 							<AlertDescription class="m-0 text-xs"
-								>All required fields are complete.</AlertDescription
+								>{$t('requirementsDetails.readyToActivate.description')}</AlertDescription
 							>
 						</div>
 					</div>
@@ -319,7 +321,7 @@
 							class="gap-2 rounded-md shadow-sm"
 						>
 							<Check class="h-4 w-4" />
-							<span>Activate Hunt</span>
+							<span>{$t('requirementsDetails.readyToActivate.button')}</span>
 						</Button>
 					{/if}
 				</Alert>
@@ -331,9 +333,11 @@
 					<div class="flex items-center gap-2">
 						<AlertCircle class="h-4 w-4" />
 						<div>
-							<AlertTitle class="m-0 text-sm font-medium">Plan required</AlertTitle>
+							<AlertTitle class="m-0 text-sm font-medium"
+								>{$t('requirementsDetails.planRequired.title')}</AlertTitle
+							>
 							<AlertDescription class="m-0 text-xs"
-								>You must first activate a plan in the Pricing tab to start your hunt.</AlertDescription
+								>{$t('requirementsDetails.planRequired.description')}</AlertDescription
 							>
 						</div>
 					</div>
@@ -343,7 +347,7 @@
 						size="sm"
 						class="gap-2 rounded-md shadow-sm"
 					>
-						<span>Go to Pricing</span>
+						<span>{$t('requirementsDetails.planRequired.button')}</span>
 					</Button>
 				</Alert>
 			{/if}
@@ -381,7 +385,7 @@
 									? 'text-lg font-semibold text-gray-900'
 									: 'text-lg text-gray-500'}
 							>
-								{requirements.jobTitle || 'Untitled role'}
+								{requirements.jobTitle || $t('requirementsDetails.labels.untitledRole')}
 							</p>
 							<button
 								class="opacity-0 transition-opacity duration-200 group-hover:opacity-100"
@@ -393,19 +397,21 @@
 				</div>
 
 				<!-- Header meta grid (subset for reuse) -->
-				<div class="mt-2 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+				<div class="mt-2 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
 					<!-- Professions -->
-					<div class="group rounded p-2 hover:bg-gray-50">
-						<p class="text-[11px] uppercase tracking-wide text-muted-foreground">Professions</p>
+					<div class="group rounded p-3 hover:bg-gray-50">
+						<p class="text-[11px] uppercase tracking-wide text-muted-foreground">
+							{$t('hunt.professions')}
+						</p>
 						{#if editableFields.professions}
 							<div class="mt-1 space-y-2">
 								<ComboboxMulti
 									items={availableProfessions.map((p) => ({ value: p.code, label: p.name }))}
 									values={editValues.professionsV2.map(String)}
 									onValuesChange={(vals) => (editValues.professionsV2 = vals.map((v) => Number(v)))}
-									placeholder="Select professions"
-									searchPlaceholder="Search profession..."
-									emptyText="No results"
+									placeholder={$t('requirementsDetails.placeholders.selectProfessions')}
+									searchPlaceholder={$t('requirementsDetails.placeholders.searchProfession')}
+									emptyText={$t('requirementsDetails.labels.noResults')}
 									class="w-full"
 								/>
 								<div class="flex justify-end gap-2">
@@ -432,7 +438,7 @@
 										</span>
 									{/each}
 								{:else}
-									<span class="text-gray-500">Not specified</span>
+									<span class="text-gray-500">{$t('hunt.notSpecified')}</span>
 								{/if}
 								<button
 									class="opacity-0 transition-opacity duration-200 group-hover:opacity-100"
@@ -444,8 +450,10 @@
 					</div>
 
 					<!-- Specialization -->
-					<div class="group rounded p-2 hover:bg-gray-50">
-						<p class="text-[11px] uppercase tracking-wide text-muted-foreground">Specialization</p>
+					<div class="group rounded p-3 hover:bg-gray-50">
+						<p class="text-[11px] uppercase tracking-wide text-muted-foreground">
+							{$t('hunt.specialization')}
+						</p>
 						{#if editableFields.specialization}
 							<div class="mt-1 space-y-2">
 								<Combobox
@@ -454,9 +462,9 @@
 										? String(editValues.specializationV2)
 										: undefined}
 									onValueChange={(v) => (editValues.specializationV2 = v ? Number(v) : undefined)}
-									placeholder="Select specialization"
-									searchPlaceholder="Search specialization..."
-									emptyText="No results"
+									placeholder={$t('requirementsDetails.placeholders.selectSpecialization')}
+									searchPlaceholder={$t('requirementsDetails.placeholders.searchSpecialization')}
+									emptyText={$t('requirementsDetails.labels.noResults')}
 									class="w-full"
 								/>
 								<div class="flex justify-end gap-2">
@@ -483,7 +491,7 @@
 										(s) => s.code === requirements?.specializationV2?.toString()
 									)?.name ||
 										requirements.specialization ||
-										'Not specified'}
+										$t('hunt.notSpecified')}
 								</p>
 								<button
 									class="opacity-0 transition-opacity duration-200 group-hover:opacity-100"
@@ -495,8 +503,10 @@
 					</div>
 
 					<!-- Work experience -->
-					<div class="group rounded p-2 hover:bg-gray-50">
-						<p class="text-[11px] uppercase tracking-wide text-muted-foreground">Work experience</p>
+					<div class="group rounded p-3 hover:bg-gray-50">
+						<p class="text-[11px] uppercase tracking-wide text-muted-foreground">
+							{$t('hunt.workExperience')}
+						</p>
 						{#if editableFields.jobRequiredWorkExperience}
 							<div class="mt-1 flex w-full gap-2">
 								<Input
@@ -528,7 +538,8 @@
 								<p
 									class={requirements.jobRequiredWorkExperience ? 'text-gray-900' : 'text-gray-500'}
 								>
-									{requirements.jobRequiredWorkExperience || 0} years
+									{requirements.jobRequiredWorkExperience || 0}
+									{$t('hunt.years')}
 								</p>
 								<button
 									class="opacity-0 transition-opacity duration-200 group-hover:opacity-100"
@@ -540,32 +551,34 @@
 					</div>
 
 					<!-- Location -->
-					<div class="group rounded p-2 hover:bg-gray-50">
-						<p class="text-[11px] uppercase tracking-wide text-muted-foreground">Location</p>
+					<div class="group rounded p-3 hover:bg-gray-50">
+						<p class="text-[11px] uppercase tracking-wide text-muted-foreground">
+							{$t('hunt.location')}
+						</p>
 						{#if editableFields.country || editableFields.city || editableFields.stateProvinceRegion}
-							<div class="mt-1 flex w-full flex-col gap-2">
-								<div class="grid grid-cols-1 gap-2 md:grid-cols-3">
-									<Combobox
-										items={availableCountries.map((c) => ({ value: c.code, label: c.name }))}
-										bind:value={editValues.country}
-										placeholder={'Country'}
-										searchPlaceholder={'Search country...'}
-										emptyText={'No results'}
-										class="w-full"
-									/>
-									<Input
-										type="text"
-										placeholder="City"
-										value={editValues.city}
-										onchange={(e) => (editValues.city = e.currentTarget.value)}
-									/>
-									<Input
-										type="text"
-										placeholder="Region/State/Province"
-										value={editValues.stateProvinceRegion}
-										onchange={(e) => (editValues.stateProvinceRegion = e.currentTarget.value)}
-									/>
-								</div>
+							<div class="mt-1 flex w-full flex-col gap-3">
+								<Combobox
+									items={availableCountries.map((c) => ({ value: c.code, label: c.name }))}
+									bind:value={editValues.country}
+									placeholder={'Country'}
+									searchPlaceholder={'Search country...'}
+									emptyText={'No results'}
+									class="w-full"
+								/>
+								<Input
+									type="text"
+									placeholder={$t('requirementsDetails.placeholders.city')}
+									value={editValues.city}
+									onchange={(e) => (editValues.city = e.currentTarget.value)}
+									class="w-full"
+								/>
+								<Input
+									type="text"
+									placeholder={$t('requirementsDetails.placeholders.regionStateProvince')}
+									value={editValues.stateProvinceRegion}
+									onchange={(e) => (editValues.stateProvinceRegion = e.currentTarget.value)}
+									class="w-full"
+								/>
 								<div class="flex justify-end gap-2">
 									<Button
 										size="icon"
@@ -615,17 +628,19 @@
 					</div>
 
 					<!-- Languages -->
-					<div class="group rounded p-2 hover:bg-gray-50">
-						<p class="text-[11px] uppercase tracking-wide text-muted-foreground">Languages</p>
+					<div class="group rounded p-3 hover:bg-gray-50">
+						<p class="text-[11px] uppercase tracking-wide text-muted-foreground">
+							{$t('hunt.languages')}
+						</p>
 						{#if editableFields.jobRequiredLanguages}
 							<div class="mt-1 space-y-2">
 								<ComboboxMulti
 									items={availableLanguages.map((l) => ({ value: l.code, label: l.name }))}
 									values={editValues.jobRequiredLanguages as string[]}
 									onValuesChange={(vals) => (editValues.jobRequiredLanguages = vals)}
-									placeholder="Select languages"
-									searchPlaceholder="Search language..."
-									emptyText="No results"
+									placeholder={$t('requirementsDetails.placeholders.selectLanguages')}
+									searchPlaceholder={$t('requirementsDetails.placeholders.searchLanguage')}
+									emptyText={$t('requirementsDetails.labels.noResults')}
 									class="w-full"
 								/>
 								<div class="flex justify-end gap-2">
@@ -654,7 +669,7 @@
 									>
 								{/each}
 								{#if !requirements.jobRequiredLanguages || requirements.jobRequiredLanguages.length === 0}
-									<span class="text-gray-500">Not specified</span>
+									<span class="text-gray-500">{$t('hunt.notSpecified')}</span>
 								{/if}
 								<button
 									class="opacity-0 transition-opacity duration-200 group-hover:opacity-100"
@@ -666,42 +681,48 @@
 					</div>
 
 					<!-- Salary -->
-					<div class="group rounded p-2 hover:bg-gray-50">
-						<p class="text-[11px] uppercase tracking-wide text-muted-foreground">Salary</p>
+					<div class="group rounded p-3 hover:bg-gray-50">
+						<p class="text-[11px] uppercase tracking-wide text-muted-foreground">
+							{$t('hunt.salary')}
+						</p>
 						{#if editableFields.salaryStart || editableFields.salaryEnd || editableFields.salaryCurrency || editableFields.salaryType}
-							<div class="mt-1 flex w-full flex-col gap-2">
-								<div class="grid grid-cols-1 gap-2 md:grid-cols-3">
+							<div class="mt-1 flex w-full flex-col gap-3">
+								<div class="flex w-full items-center gap-2">
 									<Input
 										type="number"
-										placeholder="From"
+										placeholder={$t('requirementsDetails.placeholders.from')}
 										value={editValues.salaryStart}
 										onchange={(e) =>
 											(editValues.salaryStart = parseInt(e.currentTarget.value) || 0)}
 										min="0"
+										class="flex-1"
 									/>
+									<span class="text-gray-500">-</span>
 									<Input
 										type="number"
-										placeholder="To"
+										placeholder={$t('requirementsDetails.placeholders.to')}
 										value={editValues.salaryEnd}
 										onchange={(e) => (editValues.salaryEnd = parseInt(e.currentTarget.value) || 0)}
 										min="0"
-									/>
-									<DropdownComponent
-										options={availableCurrencies}
-										value={editValues.salaryCurrency}
-										showLabelInBrackets={true}
-										onValueChange={(value) => (editValues.salaryCurrency = value)}
-										placeholder="Currency"
-										optionKey="code"
-										labelKey="name"
+										class="flex-1"
 									/>
 								</div>
+								<DropdownComponent
+									options={availableCurrencies}
+									value={editValues.salaryCurrency}
+									showLabelInBrackets={true}
+									onValueChange={(value) => (editValues.salaryCurrency = value)}
+									placeholder={$t('requirementsDetails.placeholders.currency')}
+									optionKey="code"
+									labelKey="name"
+									class="w-full"
+								/>
 								<div>
 									<DropdownComponent
 										options={availableSalaryPeriods}
 										value={editValues.salaryType}
 										onValueChange={(value) => (editValues.salaryType = value)}
-										placeholder="Salary period"
+										placeholder={$t('requirementsDetails.placeholders.salaryPeriod')}
 										optionKey="code"
 										labelKey="name"
 										class="w-full"
@@ -753,7 +774,7 @@
 									{:else if requirements.salary?.amountText}
 										{requirements.salary.amountText}
 									{:else}
-										Not specified
+										{$t('hunt.notSpecified')}
 									{/if}
 								</p>
 								<button
@@ -770,10 +791,10 @@
 					</div>
 
 					<!-- Target countries -->
-					<div class="group rounded p-2 hover:bg-gray-50">
+					<div class="group rounded p-3 hover:bg-gray-50">
 						<div class="flex items-center justify-between">
 							<p class="text-[11px] uppercase tracking-wide text-muted-foreground">
-								Target countries
+								{$t('requirementsDetails.fields.targetCountries')}
 							</p>
 							{#if !editableFields.targetOnlyCountries && !editableFields.targetPreferredCountries}
 								<button
@@ -788,20 +809,24 @@
 						<div class="mt-2">
 							<div class="flex items-center justify-between">
 								<div class="flex items-center gap-1.5">
-									<p class="text-xs text-muted-foreground">Only</p>
+									<p class="text-xs text-muted-foreground">
+										{$t('requirementsDetails.fields.only')}
+									</p>
 									<Tooltip.Root>
 										<Tooltip.Trigger>
 											<button
 												type="button"
-												aria-label="Only countries info"
-												title="Only countries info"
+												aria-label={$t('requirementsDetails.tooltips.onlyCountriesInfo')}
+												title={$t('requirementsDetails.tooltips.onlyCountriesInfo')}
 												class="inline-flex h-5 w-5 items-center justify-center rounded-full border border-gray-200 bg-gray-50 text-gray-600 transition-colors hover:border-gray-300 hover:bg-gray-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 focus-visible:ring-offset-2"
 											>
 												<Info class="h-3 w-3" />
 											</button>
 										</Tooltip.Trigger>
 										<Tooltip.Content side="top"
-											>Limit search only to these countries' healthcare workers.</Tooltip.Content
+											>{$t(
+												'requirementsDetails.tooltips.onlyCountriesDescription'
+											)}</Tooltip.Content
 										>
 									</Tooltip.Root>
 								</div>
@@ -813,9 +838,9 @@
 										items={availableCountries.map((c) => ({ value: c.code, label: c.name }))}
 										values={editValues.huntOnlyCountries}
 										onValuesChange={(vals) => (editValues.huntOnlyCountries = vals)}
-										placeholder="Select only countries"
-										searchPlaceholder="Search country..."
-										emptyText="No results"
+										placeholder={$t('requirementsDetails.placeholders.selectOnlyCountries')}
+										searchPlaceholder={$t('requirementsDetails.placeholders.searchCountry')}
+										emptyText={$t('requirementsDetails.labels.noResults')}
 										class="w-full"
 									/>
 								</div>
@@ -827,7 +852,7 @@
 										>
 									{/each}
 									{#if (!requirements.countriesOnlyToSearch || requirements.countriesOnlyToSearch.length === 0) && (!requirements.huntInstructions?.onlyCountriesToSearch || requirements.huntInstructions.onlyCountriesToSearch.length === 0)}
-										<span class="text-gray-500">Not specified</span>
+										<span class="text-gray-500">{$t('hunt.notSpecified')}</span>
 									{/if}
 								</div>
 							{/if}
@@ -835,20 +860,24 @@
 						<div class="mt-4">
 							<div class="flex items-center justify-between">
 								<div class="flex items-center gap-1.5">
-									<p class="text-xs text-muted-foreground">Preferred</p>
+									<p class="text-xs text-muted-foreground">
+										{$t('requirementsDetails.fields.preferred')}
+									</p>
 									<Tooltip.Root>
 										<Tooltip.Trigger>
 											<button
 												type="button"
-												aria-label="Preferred countries info"
-												title="Preferred countries info"
+												aria-label={$t('requirementsDetails.tooltips.preferredCountriesInfo')}
+												title={$t('requirementsDetails.tooltips.preferredCountriesInfo')}
 												class="inline-flex h-5 w-5 items-center justify-center rounded-full border border-gray-200 bg-gray-50 text-gray-600 transition-colors hover:border-gray-300 hover:bg-gray-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 focus-visible:ring-offset-2"
 											>
 												<Info class="h-3 w-3" />
 											</button>
 										</Tooltip.Trigger>
 										<Tooltip.Content side="top"
-											>Score those healthcare professionals higher and start with them.</Tooltip.Content
+											>{$t(
+												'requirementsDetails.tooltips.preferredCountriesDescription'
+											)}</Tooltip.Content
 										>
 									</Tooltip.Root>
 								</div>
@@ -860,9 +889,9 @@
 										items={availableCountries.map((c) => ({ value: c.code, label: c.name }))}
 										values={editValues.huntPreferredCountries}
 										onValuesChange={(vals) => (editValues.huntPreferredCountries = vals)}
-										placeholder="Select preferred countries"
-										searchPlaceholder="Search country..."
-										emptyText="No results"
+										placeholder={$t('requirementsDetails.placeholders.selectPreferredCountries')}
+										searchPlaceholder={$t('requirementsDetails.placeholders.searchCountry')}
+										emptyText={$t('requirementsDetails.labels.noResults')}
 										class="w-full"
 									/>
 									<div class="flex justify-end gap-2">
@@ -893,7 +922,7 @@
 										>
 									{/each}
 									{#if (!requirements.countriesPreferredToSearch || requirements.countriesPreferredToSearch.length === 0) && (!requirements.huntInstructions?.preferredCountriesToSearch || requirements.huntInstructions.preferredCountriesToSearch.length === 0)}
-										<span class="text-gray-500">Not specified</span>
+										<span class="text-gray-500">{$t('hunt.notSpecified')}</span>
 									{/if}
 								</div>
 							{/if}
@@ -905,7 +934,7 @@
 				<div class="mt-6 space-y-6 border-t pt-4">
 					<!-- Description -->
 					<div class="group">
-						<h4 class="mb-2 text-base font-medium">Job Description</h4>
+						<h4 class="mb-2 text-base font-medium">{$t('hunt.jobDescription')}</h4>
 						{#if editableFields.jobDescription}
 							<div class="flex w-full flex-col gap-2">
 								<textarea
@@ -933,7 +962,7 @@
 						{:else}
 							<div class="flex items-start gap-2">
 								<div class={requirements.jobDescription ? 'prose text-gray-900' : 'text-gray-500'}>
-									{@html markdownToHtml(requirements.jobDescription || 'Not specified')}
+									{@html markdownToHtml(requirements.jobDescription || $t('hunt.notSpecified'))}
 								</div>
 								<button
 									class="mt-0.5 opacity-0 transition-opacity duration-200 group-hover:opacity-100"
@@ -946,7 +975,7 @@
 
 					<!-- Qualifications -->
 					<div class="group">
-						<h4 class="mb-2 text-base font-medium">Required Qualifications</h4>
+						<h4 class="mb-2 text-base font-medium">{$t('hunt.requiredQualifications')}</h4>
 						{#if editableFields.jobRequiredQualifications}
 							<div class="flex w-full flex-col gap-2">
 								<textarea
@@ -980,7 +1009,7 @@
 										: 'text-gray-500'}"
 									style="white-space: pre-line;"
 								>
-									{requirements.jobRequiredQualifications || 'Not specified'}
+									{requirements.jobRequiredQualifications || $t('hunt.notSpecified')}
 								</div>
 								<button
 									class="mt-0.5 opacity-0 transition-opacity duration-200 group-hover:opacity-100"
@@ -994,7 +1023,9 @@
 					<!-- Contexts -->
 					<div class="group">
 						<div class="mb-2 flex items-center gap-2">
-							<h4 class="text-base font-medium">Company context</h4>
+							<h4 class="text-base font-medium">
+								{$t('requirementsDetails.fields.companyContext')}
+							</h4>
 						</div>
 						{#if editableFields.companyContext}
 							<div class="flex w-full flex-col gap-2">
@@ -1031,7 +1062,7 @@
 								>
 									{requirements.companyContext ||
 										requirements.huntInstructions?.companyContext ||
-										'Not provided'}
+										$t('requirementsDetails.labels.notProvided')}
 								</p>
 								<button
 									class="mt-0.5 opacity-0 transition-opacity duration-200 group-hover:opacity-100"
@@ -1044,7 +1075,9 @@
 
 					<div class="group">
 						<div class="mb-2 flex items-center gap-2">
-							<h4 class="text-base font-medium">Hiring context</h4>
+							<h4 class="text-base font-medium">
+								{$t('requirementsDetails.fields.hiringContext')}
+							</h4>
 						</div>
 						{#if editableFields.hiringContext}
 							<div class="flex w-full flex-col gap-2">
@@ -1080,7 +1113,7 @@
 								>
 									{requirements.hiringContext ||
 										requirements.huntInstructions?.hiringContext ||
-										'Not provided'}
+										$t('requirementsDetails.labels.notProvided')}
 								</p>
 								<button
 									class="mt-0.5 opacity-0 transition-opacity duration-200 group-hover:opacity-100"

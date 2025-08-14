@@ -49,51 +49,6 @@
 		"save": "Salvesta",
 		"cancel": "Tühista"
 	},
-	"auth": {
-		"login": {
-			"title": "Sisesta oma andmed kontole ligipääsemiseks",
-			"emailLabel": "E-posti aadress",
-			"emailPlaceholder": "nimi@example.com",
-			"passwordLabel": "Parool",
-			"forgotPassword": "Unustasid parooli?",
-			"passwordPlaceholder": "••••••••",
-			"noAccount": "Pole kontot?",
-			"signUp": "Registreeru"
-		},
-		"resetPassword": {
-			"forgotPassword": "Unustasid parooli?",
-			"title": "Lähtesta parool",
-			"description": "Saadame sulle e-kirja parooli lähtestamise lingiga.",
-			"emailLabel": "E-post",
-			"emailPlaceholder": "nimi@example.com"
-		},
-		"employer": "Employer",
-		"wrapper": {
-			"or": "või",
-			"login": "logi sisse"
-		},
-		"signUp": {
-			"title": "Sisesta oma andmed registreerumiseks",
-			"emailLabel": "E-posti aadress",
-			"emailPlaceholder": "nimi@example.com",
-			"firstNameLabel": "Eesnimi",
-			"firstNamePlaceholder": "Jaan",
-			"lastNameLabel": "Perekonnanimi",
-			"lastNamePlaceholder": "Tamm",
-			"phoneLabel": "Telefoninumber",
-			"phonePlaceholder": "+1234567890",
-			"companyNameLabel": "Ettevõtte nimi",
-			"companyNamePlaceholder": "Acme OÜ",
-			"countryLabel": "Riik",
-			"countryPlaceholder": "Vali riik",
-			"agreement": "Konto loomisel nõustud meie",
-			"termsOfService": "Kasutustingimustega",
-			"and": "ja",
-			"privacyPolicy": "Privaatsuspoliitikaga",
-			"haveAccount": "Juba on konto?",
-			"signIn": "Logi sisse"
-		}
-	},
 	"account": {
 		"pendingActivation": "Konto ootab aktiveerimist",
 		"scheduleCall": "Planeeri kiire kõne meie meeskonnaga konto aktiveerimiseks.",

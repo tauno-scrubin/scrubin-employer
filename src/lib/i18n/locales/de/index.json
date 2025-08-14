@@ -49,51 +49,6 @@
 		"save": "Speichern",
 		"cancel": "Abbrechen"
 	},
-	"auth": {
-		"login": {
-			"title": "Geben Sie Ihre Anmeldedaten ein, um auf Ihr Konto zuzugreifen",
-			"emailLabel": "E-Mail-Adresse",
-			"emailPlaceholder": "name@beispiel.de",
-			"passwordLabel": "Passwort",
-			"forgotPassword": "Passwort vergessen?",
-			"passwordPlaceholder": "••••••••",
-			"noAccount": "Noch kein Konto?",
-			"signUp": "Registrieren"
-		},
-		"resetPassword": {
-			"forgotPassword": "Passwort vergessen?",
-			"title": "Passwort zurücksetzen",
-			"description": "Wir senden Ihnen eine E-Mail mit einem Link zum Zurücksetzen Ihres Passworts.",
-			"emailLabel": "E-Mail",
-			"emailPlaceholder": "name@beispiel.de"
-		},
-		"employer": "Arbeitgeber",
-		"wrapper": {
-			"or": "oder",
-			"login": "anmelden"
-		},
-		"signUp": {
-			"title": "Geben Sie Ihre Daten ein, um sich zu registrieren",
-			"emailLabel": "E-Mail-Adresse",
-			"emailPlaceholder": "name@beispiel.de",
-			"firstNameLabel": "Vorname",
-			"firstNamePlaceholder": "Max",
-			"lastNameLabel": "Nachname",
-			"lastNamePlaceholder": "Mustermann",
-			"phoneLabel": "Telefonnummer",
-			"phonePlaceholder": "+491234567890",
-			"companyNameLabel": "Firmenname",
-			"companyNamePlaceholder": "Beispiel GmbH",
-			"countryLabel": "Land",
-			"countryPlaceholder": "Wählen Sie ein Land",
-			"agreement": "Durch die Erstellung eines Kontos stimmen Sie unseren",
-			"termsOfService": "Nutzungsbedingungen",
-			"and": "und",
-			"privacyPolicy": "Datenschutzrichtlinien",
-			"haveAccount": "Haben Sie bereits ein Konto?",
-			"signIn": "Anmelden"
-		}
-	},
 	"account": {
 		"pendingActivation": "Konto wartet auf Aktivierung",
 		"scheduleCall": "Vereinbaren Sie einen kurzen Anruf mit unserem Team, um Ihr Konto zu aktivieren.",

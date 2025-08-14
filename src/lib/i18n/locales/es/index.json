@@ -49,51 +49,6 @@
 		"save": "Guardar",
 		"cancel": "Cancelar"
 	},
-	"auth": {
-		"login": {
-			"title": "Ingrese sus credenciales para acceder a su cuenta",
-			"emailLabel": "Correo electrónico",
-			"emailPlaceholder": "nombre@ejemplo.com",
-			"passwordLabel": "Contraseña",
-			"forgotPassword": "¿Olvidó su contraseña?",
-			"passwordPlaceholder": "••••••••",
-			"noAccount": "¿No tiene una cuenta?",
-			"signUp": "Registrarse"
-		},
-		"resetPassword": {
-			"forgotPassword": "¿Olvidó su contraseña?",
-			"title": "Restablecer contraseña",
-			"description": "Le enviaremos un correo electrónico con un enlace para restablecer su contraseña.",
-			"emailLabel": "Correo electrónico",
-			"emailPlaceholder": "nombre@ejemplo.com"
-		},
-		"employer": "Empleador",
-		"wrapper": {
-			"or": "o",
-			"login": "iniciar sesión"
-		},
-		"signUp": {
-			"title": "Ingrese sus datos para registrarse",
-			"emailLabel": "Correo electrónico",
-			"emailPlaceholder": "nombre@ejemplo.com",
-			"firstNameLabel": "Nombre",
-			"firstNamePlaceholder": "Juan",
-			"lastNameLabel": "Apellido",
-			"lastNamePlaceholder": "Pérez",
-			"phoneLabel": "Número de teléfono",
-			"phonePlaceholder": "+1234567890",
-			"companyNameLabel": "Nombre de la empresa",
-			"companyNamePlaceholder": "Acme Inc.",
-			"countryLabel": "País",
-			"countryPlaceholder": "Seleccione un país",
-			"agreement": "Al crear una cuenta, acepta nuestros",
-			"termsOfService": "Términos de servicio",
-			"and": "y",
-			"privacyPolicy": "Política de privacidad",
-			"haveAccount": "¿Ya tiene una cuenta?",
-			"signIn": "Iniciar sesión"
-		}
-	},
 	"account": {
 		"pendingActivation": "Cuenta pendiente de activación",
 		"scheduleCall": "Programe una llamada rápida con nuestro equipo para activar su cuenta.",

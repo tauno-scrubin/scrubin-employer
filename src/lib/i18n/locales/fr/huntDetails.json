@@ -39,6 +39,66 @@
 		"offersMade": "Offres faites",
 		"hired": "Embauché"
 	},
+	"requirementsDetails": {
+		"potentialReach": "Portée potentielle des candidats",
+		"readyToActivate": {
+			"title": "Prêt à activer",
+			"description": "Tous les champs requis sont remplis.",
+			"button": "Activer la recherche"
+		},
+		"planRequired": {
+			"title": "Plan requis",
+			"description": "Vous devez d'abord activer un plan dans l'onglet Tarifs pour commencer votre recherche.",
+			"button": "Aller aux tarifs"
+		},
+		"fields": {
+			"targetCountries": "Pays cibles",
+			"only": "Seulement",
+			"preferred": "Préféré",
+			"companyContext": "Contexte de l'entreprise",
+			"hiringContext": "Contexte d'embauche"
+		},
+		"placeholders": {
+			"selectProfessions": "Sélectionner les professions",
+			"searchProfession": "Rechercher une profession...",
+			"selectSpecialization": "Sélectionner la spécialisation",
+			"searchSpecialization": "Rechercher une spécialisation...",
+			"selectLanguages": "Sélectionner les langues",
+			"searchLanguage": "Rechercher une langue...",
+			"selectOnlyCountries": "Sélectionner seulement les pays",
+			"searchCountry": "Rechercher un pays...",
+			"selectPreferredCountries": "Sélectionner les pays préférés",
+			"city": "Ville",
+			"regionStateProvince": "Région/État/Province",
+			"from": "De",
+			"to": "À",
+			"currency": "Devise",
+			"salaryPeriod": "Période de salaire"
+		},
+		"tooltips": {
+			"onlyCountriesInfo": "Informations sur les pays uniquement",
+			"onlyCountriesDescription": "Limiter la recherche uniquement aux travailleurs de la santé de ces pays.",
+			"preferredCountriesInfo": "Informations sur les pays préférés",
+			"preferredCountriesDescription": "Évaluer ces professionnels de la santé plus haut et commencer avec eux."
+		},
+		"labels": {
+			"untitledRole": "Rôle sans titre",
+			"notProvided": "Non fourni",
+			"noResults": "Aucun résultat"
+		}
+	},
+	"requirementsChat": {
+		"title": "Assistant des exigences",
+		"subtitle": "Créons ensemble vos exigences d'emploi",
+		"processing": "L'IA traite votre demande...",
+		"thinking": "L'IA réfléchit...",
+		"placeholder": "Tapez votre message ici... (Appuyez sur Entrée pour envoyer)",
+		"errorMessage": "Désolé, une erreur s'est produite. Veuillez réessayer.",
+		"errors": {
+			"loadSession": "Impossible de charger la session de chat.",
+			"sendMessage": "Impossible d'envoyer le message. Veuillez réessayer."
+		}
+	},
 	"statistics": {
 		"huntConversionFunnel": "Entonnoir de conversion de recherche",
 		"totalHuntables": "Total des recherchables",
