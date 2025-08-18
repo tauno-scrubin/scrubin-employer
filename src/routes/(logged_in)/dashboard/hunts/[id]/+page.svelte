@@ -351,7 +351,7 @@
 							</p>
 						</div>
 					</div>
-					{#if hunt.status === 'PENDING' || hunt.status === 'AWAITING_PAYMENT'}
+					<!-- {#if hunt.status === 'PENDING' || hunt.status === 'AWAITING_PAYMENT'}
 						<div class="flex items-center gap-2">
 							<Badge
 								variant="outline"
@@ -365,14 +365,14 @@
 									: $t('payment.completePayment')}
 							</Button>
 						</div>
-					{:else}
+					{:else} -->
 						<Badge
 							variant="outline"
 							class="px-3 py-1 {getStatusColor(hunt.status)} border-transparent"
 						>
 							{$t(`hunt.huntStatus.${hunt.status.toLowerCase()}`)}
 						</Badge>
-					{/if}
+					<!-- {/if} -->
 				</div>
 
 				{#if hunt.planType === 'success_fee'}

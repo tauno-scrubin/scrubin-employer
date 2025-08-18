@@ -108,8 +108,8 @@
 
 	$effect(() => {
 		const hasActivePlan = companyActivePlans.some((p) => p.planActive);
-		const isHuntNotActive = !hunt?.status || hunt.status !== 'ACTIVE';
-		showActivate = hasActivePlan && isComplete && isHuntNotActive;
+		const hasStatusToActivate = ['PENDING', 'PAUSED'].includes(hunt?.status || '');
+		showActivate = hasActivePlan && isComplete && hasStatusToActivate;
 	});
 
 	$effect(() => {
@@ -254,6 +254,7 @@
 	function markdownToHtml(markdown: string): string {
 		if (!markdown) return '';
 		const converter = new showdown.Converter({ flavor: 'github' });
+		converter.setOption('simpleLineBreaks', true);
 		return converter.makeHtml(markdown);
 	}
 
@@ -299,7 +300,7 @@
 			<div class="flex items-center gap-2"></div>
 		</div>
 
-		{#if isComplete && !(hunt && hunt.status === 'ACTIVE')}
+		{#if isComplete && !(hunt && ['ACTIVE', 'COMPLETED'].includes(hunt.status))}
 			{#if companyActivePlans.some((p) => p.planActive)}
 				<Alert
 					variant="success"
