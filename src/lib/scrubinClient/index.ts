@@ -1333,7 +1333,7 @@ class HuntResource extends BaseResource {
 }
 
 class DataResource extends BaseResource {
-	private cacheExpiry = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+	private cacheExpiry = 2 * 60 * 60 * 1000; // 2 hour in milliseconds
 
 	constructor(client: ScrubinClient) {
 		super(client, '/api/v1/data');

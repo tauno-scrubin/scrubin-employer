@@ -10,7 +10,7 @@
 			"active": "Aktiivne",
 			"pending": "Ootel",
 			"awaiting_payment": "Valmis Aktiveerimiseks",
-			"paused": "Peatatud",
+			"paused": "Pausil",
 			"completed": "Lõpetatud",
 			"cancelled": "Tühistatud"
 		},
@@ -80,7 +80,7 @@
 			"onlyCountriesInfo": "Ainult riikide info",
 			"onlyCountriesDescription": "Piira otsing ainult nende riikide tervishoiutöötajatele.",
 			"preferredCountriesInfo": "Eelistatud riikide info",
-			"preferredCountriesDescription": "Hinda neid tervishoiutöötajaid kõrgemalt ja alusta nendega."
+			"preferredCountriesDescription": "Skoorime nende riikide tervishoiutöötajaid kõrgemalt ja alustame nendega."
 		},
 		"labels": {
 			"untitledRole": "Pealkirjata roll",

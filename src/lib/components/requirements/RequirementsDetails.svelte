@@ -75,7 +75,7 @@
 		city: '',
 		stateProvinceRegion: '' as string | string[],
 		professionsV2: [] as number[],
-		specializationV2: undefined as number | undefined,
+		specializationV2: null as unknown as number | null,
 		jobRequiredLanguages: [] as string[],
 		huntPreferredCountries: [] as string[],
 		huntOnlyCountries: [] as string[],
@@ -200,6 +200,9 @@
 			Object.keys(editableFields).forEach(
 				(key) => (editableFields[key as keyof typeof editableFields] = false)
 			);
+			scrubinClient.hunt.getRequirementReach(requirements.id).then((reach) => {
+				potentialReach = reach.potentialReach;
+			});
 			toast.success($t('common.success'));
 		} catch (error) {
 			console.error(`Failed to update ${field}:`, error);
@@ -461,7 +464,7 @@
 									value={editValues.specializationV2 !== undefined
 										? String(editValues.specializationV2)
 										: undefined}
-									onValueChange={(v) => (editValues.specializationV2 = v ? Number(v) : undefined)}
+									onValueChange={(v) => (editValues.specializationV2 = v ? Number(v) : null)}
 									placeholder={$t('requirementsDetails.placeholders.selectSpecialization')}
 									searchPlaceholder={$t('requirementsDetails.placeholders.searchSpecialization')}
 									emptyText={$t('requirementsDetails.labels.noResults')}
@@ -490,7 +493,6 @@
 									{availableSpecialties.find(
 										(s) => s.code === requirements?.specializationV2?.toString()
 									)?.name ||
-										requirements.specialization ||
 										$t('hunt.notSpecified')}
 								</p>
 								<button
