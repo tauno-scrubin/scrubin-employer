@@ -38,6 +38,7 @@
 	let availableLanguages = $state<CodeNamePair[]>([]);
 	let availableSalaryPeriods = $state<CodeNamePair[]>([]);
 	let showActivate = $state(false);
+	let activationInProgress = $state(false);
 
 	let editableFields = $state({
 		jobTitle: false,
@@ -260,7 +261,9 @@
 
 	async function activateRequirements() {
 		if (!requirements?.id) return;
+		if (activationInProgress) return;
 		try {
+			activationInProgress = true;
 			const activePlan = companyActivePlans?.find((p) => p.planActive);
 			if (!activePlan) {
 				toast.error($t('requirementsDetails.planRequired.description'));
@@ -274,6 +277,8 @@
 		} catch (error) {
 			console.error('Error activating requirements:', error);
 			toast.error($t('common.error'));
+		} finally {
+			activationInProgress = false;
 		}
 	}
 </script>
@@ -323,6 +328,7 @@
 							variant="default"
 							size="sm"
 							class="gap-2 rounded-md shadow-sm"
+							disabled={activationInProgress}
 						>
 							<Check class="h-4 w-4" />
 							<span>{$t('requirementsDetails.readyToActivate.button')}</span>
