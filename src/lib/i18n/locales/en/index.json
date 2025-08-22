@@ -411,6 +411,8 @@
 			"oldPasswordPlaceholder": "Enter your old password",
 			"newPassword": "New Password",
 			"newPasswordPlaceholder": "Enter your new password",
+			"repeatPassword": "Repeat Password",
+			"repeatPasswordPlaceholder": "Repeat your new password",
 			"updatePassword": "Update Password"
 		},
 		"company": {
@@ -444,7 +446,8 @@
 			"settingsUpdated": "Settings updated successfully",
 			"passwordUpdated": "Password updated successfully",
 			"updateError": "Failed to update user settings",
-			"passwordUpdateError": "Failed to update password"
+			"passwordUpdateError": "Failed to update password",
+			"passwordsDoNotMatch": "Passwords do not match"
 		}
 	},
 	"pricing": {

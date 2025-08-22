@@ -409,6 +409,8 @@
 			"oldPasswordPlaceholder": "Sisesta oma vana parool",
 			"newPassword": "Uus parool",
 			"newPasswordPlaceholder": "Sisesta oma uus parool",
+			"repeatPassword": "Korda parooli",
+			"repeatPasswordPlaceholder": "Korda oma uus parool",
 			"updatePassword": "Uuenda parool"
 		},
 		"company": {
@@ -442,7 +444,8 @@
 			"settingsUpdated": "Seaded edukalt uuendatud",
 			"passwordUpdated": "Parool edukalt uuendatud",
 			"updateError": "Kasutaja seadete uuendamine ebaõnnestus",
-			"passwordUpdateError": "Parooli uuendamine ebaõnnestus"
+			"passwordUpdateError": "Parooli uuendamine ebaõnnestus",
+			"passwordsDoNotMatch": "Paroolid ei kattu"
 		}
 	},
 	"pricing": {

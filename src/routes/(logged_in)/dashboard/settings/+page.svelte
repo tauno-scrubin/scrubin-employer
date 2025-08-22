@@ -24,6 +24,7 @@
 
 	let oldPassword = $state('');
 	let newPassword = $state('');
+	let repeatPassword = $state('');
 
 	let isLoading = $state(true);
 	let isSaving = $state(false);
@@ -63,7 +64,8 @@
 		}
 	});
 
-	async function handleSubmit() {
+	async function handleSubmit(event: Event) {
+		event.preventDefault();
 		isSaving = true;
 		if (!user) return;
 		try {
@@ -85,16 +87,26 @@
 		}
 	}
 
-	async function handleSubmitPassword() {
+	async function handleSubmitPassword(event: Event) {
+		event.preventDefault();
+
+		// Validate that new password and repeat password match
+		if (newPassword !== repeatPassword) {
+			toast.error($t('settings.notifications.passwordsDoNotMatch'));
+			return;
+		}
+
 		isSavingPassword = true;
 		try {
 			await scrubinClient.portal.updatePassword({
-				oldPassword: oldPassword.toString(),
+				oldPassword: user?.passwordSet ? oldPassword.toString() : '',
 				newPassword: newPassword.toString()
 			});
 			toast.success($t('settings.notifications.passwordUpdated'));
 			oldPassword = '';
 			newPassword = '';
+			repeatPassword = '';
+			user = await scrubinClient.portal.getUser();
 		} catch (error) {
 			console.error('Error updating password:', error);
 			toast.error(
@@ -105,7 +117,8 @@
 		}
 	}
 
-	async function handleSubmitAdvertiser() {
+	async function handleSubmitCompany(event: Event) {
+		event.preventDefault();
 		if (!companyProfile) return;
 		isSavingCompany = true;
 		try {
@@ -128,7 +141,7 @@
 	type="website"
 /> -->
 
-<div class="space-y-6 max-w-screen-xl mx-auto w-full">
+<div class="mx-auto w-full max-w-screen-xl space-y-6">
 	<div class="flex items-center justify-between">
 		<h2 class="text-3xl font-bold tracking-tight">{$t('settings.title')}</h2>
 	</div>
@@ -146,7 +159,7 @@
 					<span class="loading loading-spinner loading-lg"></span>
 				</div>
 			{:else if user}
-				<form on:submit|preventDefault={handleSubmit} class="space-y-6">
+				<form onsubmit={handleSubmit} class="space-y-6">
 					<div class="grid gap-6 md:grid-cols-2">
 						<div class="space-y-2">
 							<Label for="firstName">{$t('settings.profile.firstName')}</Label>
@@ -235,33 +248,51 @@
 					<span class="loading loading-spinner loading-lg"></span>
 				</div>
 			{:else}
-				<form on:submit|preventDefault={handleSubmitPassword} class="space-y-6">
-					<div class="grid gap-6 md:grid-cols-2">
-						<div class="space-y-2">
-							<Label for="oldPassword">{$t('settings.password.oldPassword')}</Label>
-							<div class="relative">
-								<Asterisk class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-								<Input
-									id="oldPassword"
-									bind:value={oldPassword}
-									class="pl-9"
-									placeholder={$t('settings.password.oldPasswordPlaceholder')}
-									type="password"
-								/>
+				<form onsubmit={handleSubmitPassword} class="space-y-6">
+					<div class="space-y-6">
+						{#if user?.passwordSet}
+							<div class="space-y-2">
+								<Label for="oldPassword">{$t('settings.password.oldPassword')}</Label>
+								<div class="relative">
+									<Asterisk class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+									<Input
+										id="oldPassword"
+										bind:value={oldPassword}
+										class="pl-9"
+										placeholder={$t('settings.password.oldPasswordPlaceholder')}
+										type="password"
+									/>
+								</div>
 							</div>
-						</div>
+						{/if}
 
-						<div class="space-y-2">
-							<Label for="newPassword">{$t('settings.password.newPassword')}</Label>
-							<div class="relative">
-								<Asterisk class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-								<Input
-									id="newPassword"
-									bind:value={newPassword}
-									type="password"
-									class="pl-9"
-									placeholder={$t('settings.password.newPasswordPlaceholder')}
-								/>
+						<div class="grid gap-6 md:grid-cols-2">
+							<div class="space-y-2">
+								<Label for="newPassword">{$t('settings.password.newPassword')}</Label>
+								<div class="relative">
+									<Asterisk class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+									<Input
+										id="newPassword"
+										bind:value={newPassword}
+										type="password"
+										class="pl-9"
+										placeholder={$t('settings.password.newPasswordPlaceholder')}
+									/>
+								</div>
+							</div>
+
+							<div class="space-y-2">
+								<Label for="repeatPassword">{$t('settings.password.repeatPassword')}</Label>
+								<div class="relative">
+									<Asterisk class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+									<Input
+										id="repeatPassword"
+										bind:value={repeatPassword}
+										type="password"
+										class="pl-9"
+										placeholder={$t('settings.password.repeatPasswordPlaceholder')}
+									/>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -292,7 +323,7 @@
 					<span class="loading loading-spinner loading-lg"></span>
 				</div>
 			{:else if companyProfile}
-				<form on:submit|preventDefault={handleSubmitAdvertiser} class="space-y-6">
+				<form onsubmit={handleSubmitCompany} class="space-y-6">
 					<div class="grid gap-6 md:grid-cols-2">
 						<div class="space-y-2">
 							<Label for="brandName">{$t('settings.company.brandName')}</Label>

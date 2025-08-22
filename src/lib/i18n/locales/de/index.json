@@ -411,6 +411,8 @@
 			"oldPasswordPlaceholder": "Geben Sie Ihr altes Passwort ein",
 			"newPassword": "Neues Passwort",
 			"newPasswordPlaceholder": "Geben Sie Ihr neues Passwort ein",
+			"repeatPassword": "Passwort wiederholen",
+			"repeatPasswordPlaceholder": "Wiederholen Sie Ihr neues Passwort",
 			"updatePassword": "Passwort aktualisieren"
 		},
 		"company": {
@@ -444,7 +446,8 @@
 			"settingsUpdated": "Einstellungen erfolgreich aktualisiert",
 			"passwordUpdated": "Passwort erfolgreich aktualisiert",
 			"updateError": "Fehler beim Aktualisieren der Benutzereinstellungen",
-			"passwordUpdateError": "Fehler beim Aktualisieren des Passworts"
+			"passwordUpdateError": "Fehler beim Aktualisieren des Passworts",
+			"passwordsDoNotMatch": "Passwörter stimmen nicht überein"
 		}
 	},
 	"pricing": {
@@ -486,24 +489,24 @@
 		"page": {
 			"title": "Individuelle Gesundheitsrekrutierung",
 			"subtitle": "Maßgeschneiderte Lösungen für Ihre Personalanforderungen im Gesundheitswesen mit flexiblen Preisen und engagierter Betreuung",
-		"features": {
-			"feature1": {
-				"title": "Die größte Datenbank für Gesundheitsfachkräfte in Europa",
-				"description": "Zugriff auf Zehntausende von Gesundheitsfachkräften – von allgemeinen Pflegekräften bis hin zu Fachärzten. Wir decken alle Bereiche und Erfahrungsstufen ab, die Ihre Organisation benötigt."
+			"features": {
+				"feature1": {
+					"title": "Die größte Datenbank für Gesundheitsfachkräfte in Europa",
+					"description": "Zugriff auf Zehntausende von Gesundheitsfachkräften – von allgemeinen Pflegekräften bis hin zu Fachärzten. Wir decken alle Bereiche und Erfahrungsstufen ab, die Ihre Organisation benötigt."
+				},
+				"feature2": {
+					"title": "Datenbasierter Ansatz",
+					"description": "Unser KI-gestützter Recruiting-Agent analysiert die Jobwünsche, das frühere Verhalten, das psychologische Profil und statistische Daten der Kandidaten, um die Wünsche und Muster jedes Fachspezialisten zu verstehen."
+				},
+				"feature3": {
+					"title": "KI-gestützter Recruiting-Agent, der rund um die Uhr arbeitet",
+					"description": "Ein intelligenter KI-Agent sucht nach Kandidaten, die Ihren Anforderungen entsprechen, führt erste Gespräche zu passenden Zeiten und vereinbart automatisch Meetings oder Videoanrufe zwischen Ihnen und den Kandidaten – rund um die Uhr."
+				},
+				"feature4": {
+					"title": "Eine kluge Investition, die Ihren Umsatz steigert",
+					"description": "Die Investition in unsere Software ermöglicht einen schnelleren Zugang zu geeigneten Ärzten und Gesundheitsexperten – was mehr besetzte Stellen, höhere Servicekapazität und Umsatzwachstum bedeutet. Unsere Lösungen sind darauf ausgelegt, Ihrem Recruiting messbaren geschäftlichen Erfolg zu bringen."
+				}
 			},
-			"feature2": {
-				"title": "Datenbasierter Ansatz",
-				"description": "Unser KI-gestützter Recruiting-Agent analysiert die Jobwünsche, das frühere Verhalten, das psychologische Profil und statistische Daten der Kandidaten, um die Wünsche und Muster jedes Fachspezialisten zu verstehen."
-			},
-			"feature3": {
-				"title": "KI-gestützter Recruiting-Agent, der rund um die Uhr arbeitet",
-				"description": "Ein intelligenter KI-Agent sucht nach Kandidaten, die Ihren Anforderungen entsprechen, führt erste Gespräche zu passenden Zeiten und vereinbart automatisch Meetings oder Videoanrufe zwischen Ihnen und den Kandidaten – rund um die Uhr."
-			},
-			"feature4": {
-				"title": "Eine kluge Investition, die Ihren Umsatz steigert",
-				"description": "Die Investition in unsere Software ermöglicht einen schnelleren Zugang zu geeigneten Ärzten und Gesundheitsexperten – was mehr besetzte Stellen, höhere Servicekapazität und Umsatzwachstum bedeutet. Unsere Lösungen sind darauf ausgelegt, Ihrem Recruiting messbaren geschäftlichen Erfolg zu bringen."
-			}
-		},
 			"getStarted": {
 				"title": "Heute beginnen",
 				"scheduleDemo": "Demo planen",

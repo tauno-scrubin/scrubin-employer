@@ -411,6 +411,8 @@
 			"oldPasswordPlaceholder": "Syötä vanha salasanasi",
 			"newPassword": "Uusi salasana",
 			"newPasswordPlaceholder": "Syötä uusi salasanasi",
+			"repeatPassword": "Toista salasana",
+			"repeatPasswordPlaceholder": "Toista uusi salasanasi",
 			"updatePassword": "Päivitä salasana"
 		},
 		"company": {
@@ -444,7 +446,8 @@
 			"settingsUpdated": "Asetukset päivitetty onnistuneesti",
 			"passwordUpdated": "Salasana päivitetty onnistuneesti",
 			"updateError": "Käyttäjäasetusten päivitys epäonnistui",
-			"passwordUpdateError": "Salasanan päivitys epäonnistui"
+			"passwordUpdateError": "Salasanan päivitys epäonnistui",
+			"passwordsDoNotMatch": "Salasanat eivät täsmää"
 		}
 	},
 	"pricing": {

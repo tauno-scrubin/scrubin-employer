@@ -409,6 +409,8 @@
 			"oldPasswordPlaceholder": "Introduzca su contraseña antigua",
 			"newPassword": "Nueva contraseña",
 			"newPasswordPlaceholder": "Introduzca su nueva contraseña",
+			"repeatPassword": "Repetir contraseña",
+			"repeatPasswordPlaceholder": "Repita su nueva contraseña",
 			"updatePassword": "Actualizar contraseña"
 		},
 		"company": {
@@ -442,7 +444,8 @@
 			"settingsUpdated": "Configuración actualizada exitosamente",
 			"passwordUpdated": "Contraseña actualizada exitosamente",
 			"updateError": "Error al actualizar la configuración del usuario",
-			"passwordUpdateError": "Error al actualizar la contraseña"
+			"passwordUpdateError": "Error al actualizar la contraseña",
+			"passwordsDoNotMatch": "Las contraseñas no coinciden"
 		}
 	},
 	"pricing": {
