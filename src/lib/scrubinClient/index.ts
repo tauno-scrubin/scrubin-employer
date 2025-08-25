@@ -1320,7 +1320,7 @@ class HuntResource extends BaseResource {
 	async getChatSession(
 		sessionId: string,
 		page: number = 0,
-		size: number = 20
+		size: number = 50
 	): Promise<ChatSessionResponse> {
 		const url = new URL(
 			`/api/v2/hunt/requirements/chat/sessions/${sessionId}`,

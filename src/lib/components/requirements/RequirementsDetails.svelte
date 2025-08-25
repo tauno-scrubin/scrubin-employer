@@ -109,8 +109,8 @@
 
 	$effect(() => {
 		const hasActivePlan = companyActivePlans.some((p) => p.planActive);
-		const hasStatusToActivate = ['PENDING', 'PAUSED'].includes(hunt?.status || '');
-		showActivate = hasActivePlan && isComplete && hasStatusToActivate;
+		const hasStatusToActivate = hunt && ['PENDING', 'PAUSED'].includes(hunt.status);
+		showActivate = hasActivePlan && isComplete && (!hunt || hasStatusToActivate);
 	});
 
 	$effect(() => {
