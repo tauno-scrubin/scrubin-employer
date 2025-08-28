@@ -247,6 +247,7 @@
 				"messages": "Viestit",
 				"notes": "Muistiinpanot"
 			},
+			"pendingConfirmation": "Kiinnostunut, odotetaan päivitettyä CV:tä",
 			"interview": "Haastattelu varattu ajalle",
 			"contactInfo": "Yhteystiedot",
 			"currentStatus": "Nykyinen tila",

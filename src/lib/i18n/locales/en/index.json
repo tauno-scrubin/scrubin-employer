@@ -247,6 +247,7 @@
 				"messages": "Messages",
 				"notes": "Notes"
 			},
+			"pendingConfirmation": "Interested, waiting for updated CV",
 			"interview": "Interview booked for",
 			"contactInfo": "Contact Information",
 			"currentStatus": "Current Status",

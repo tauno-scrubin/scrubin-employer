@@ -247,6 +247,7 @@
 				"messages": "Nachrichten",
 				"notes": "Notizen"
 			},
+			"pendingConfirmation": "Interessiert, warte auf aktualisierten Lebenslauf",
 			"interview": "Vorstellungsgespräch gebucht für",
 			"contactInfo": "Kontaktinformationen",
 			"currentStatus": "Aktueller Status",

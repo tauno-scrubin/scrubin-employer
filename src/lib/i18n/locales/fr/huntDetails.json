@@ -108,7 +108,8 @@
 		"candidates": "Candidats",
 		"noInterestedCandidates": "Nous sommes à la recherche de grands talents !",
 		"noInterestedCandidatesDesc": "Pas encore de candidats intéressés, mais nous contactons des professionnels qui correspondent à vos besoins. Revenez bientôt ! Nous vous informerons dès que nous aurons des nouvelles.",
-		"interestedOn": "Intéressé le"
+		"interestedOn": "Intéressé le",
+		"showAllInterestedCandidates": "Afficher tous les candidats intéressés"
 	},
 	"questions": {
 		"contextQuestions": "Questions de contexte",

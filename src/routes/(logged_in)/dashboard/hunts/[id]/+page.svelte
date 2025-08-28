@@ -3,48 +3,45 @@
 		if (!value) return '';
 		return Array.isArray(value) ? value.join(', ') : String(value);
 	}
-	import RequirementsChat from '$lib/components/requirements/RequirementsChat.svelte';
-	import RequirementsDetails from '$lib/components/requirements/RequirementsDetails.svelte';
 	import { page } from '$app/state';
 	import PaymentDialog from '$lib/components/payment/paymentDialog.svelte';
+	import RequirementsChat from '$lib/components/requirements/RequirementsChat.svelte';
+	import RequirementsDetails from '$lib/components/requirements/RequirementsDetails.svelte';
 	import * as Avatar from '$lib/components/ui/avatar';
 	import Badge from '$lib/components/ui/badge/badge.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import * as Card from '$lib/components/ui/card/index.js';
+	import { Input } from '$lib/components/ui/input';
 	import * as Tabs from '$lib/components/ui/tabs/index.js';
 	import { t } from '$lib/i18n';
-	import type { HuntStats, InterestedCandidate } from '$lib/scrubinClient';
+	import type { Currency as Cur, HuntStats, InterestedCandidate } from '$lib/scrubinClient';
 	import { scrubinClient } from '$lib/scrubinClient/client';
 	import InterestedWorkerDialog from '@/components/dashboard/interestedWorkerDialog.svelte';
 	import QuestionsInHunt from '@/components/dashboard/questionsInHunt.svelte';
+	import DropdownComponent from '@/components/dropdownComponent.svelte';
 	import { getStatusColor } from '@/components/payment/payments.js';
 	import Separator from '@/components/ui/separator/separator.svelte';
-	import { Input } from '$lib/components/ui/input';
 	import {
 		ArrowLeft,
 		Briefcase,
-		Currency,
 		DollarSign,
 		FileText,
 		GraduationCap,
 		Loader2,
 		Mail,
-		MapPin,
 		Pencil,
 		Phone,
 		Save,
-		Search,
 		Sparkle,
 		Users
 	} from 'lucide-svelte';
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
-	import DropdownComponent from '@/components/dropdownComponent.svelte';
-	import type { Currency as Cur } from '$lib/scrubinClient';
 
 	let { data } = $props();
 	let hunt = $derived(data.hunt);
 	let interestedCandidates = $state<InterestedCandidate[]>([]);
+	let showAllInterestedCandidates = $state(false);
 	let isLoading = $state(true);
 	let showInterestedWorkerDialog = $state(false);
 	let selectedCandidateId = $state(0);
@@ -366,12 +363,12 @@
 							</Button>
 						</div>
 					{:else} -->
-						<Badge
-							variant="outline"
-							class="px-3 py-1 {getStatusColor(hunt.status)} border-transparent"
-						>
-							{$t(`hunt.huntStatus.${hunt.status.toLowerCase()}`)}
-						</Badge>
+					<Badge
+						variant="outline"
+						class="px-3 py-1 {getStatusColor(hunt.status)} border-transparent"
+					>
+						{$t(`hunt.huntStatus.${hunt.status.toLowerCase()}`)}
+					</Badge>
 					<!-- {/if} -->
 				</div>
 
@@ -765,6 +762,23 @@
 					<Separator class="mb-2" />
 					<h4 class="text-xl font-semibold text-gray-900">{$t('statistics.candidates')}</h4>
 
+					<!-- Controls for showing all interested candidates -->
+					{#if interestedCandidates.some((c) => c.dateReadyForRecruiter === null)}
+						<div class="flex items-center rounded-lg border bg-gray-50 p-4">
+							<div class="flex items-center space-x-3">
+								<input
+									type="checkbox"
+									id="showAllCandidates"
+									bind:checked={showAllInterestedCandidates}
+									class="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+								/>
+								<label for="showAllCandidates" class="text-sm font-medium text-gray-700">
+									{$t('statistics.showAllInterestedCandidates')}
+								</label>
+							</div>
+						</div>
+					{/if}
+
 					<div class="flex flex-col gap-4">
 						{#if isLoading}
 							<div class="flex items-center justify-center py-8">
@@ -843,7 +857,7 @@
 							</div>
 						{:else}
 							<div class="grid gap-4">
-								{#each interestedCandidates as candidate}
+								{#each interestedCandidates.filter((c) => showAllInterestedCandidates || c.dateReadyForRecruiter !== null) as candidate}
 									<Card.Root
 										class="cursor-pointer overflow-hidden transition-shadow hover:shadow-md"
 										onclick={() => {
@@ -869,7 +883,13 @@
 														</div>
 														<div class="flex flex-col items-end gap-2">
 															<div class="flex items-center gap-2">
-																{#if candidate.status}
+																{#if candidate.dateReadyForRecruiter === null}
+																	<span
+																		class="w-fit rounded-full bg-orange-100 px-2 py-1 text-xs font-medium text-orange-800"
+																	>
+																		{$t('dashboard.interestedWorkerDialog.pendingConfirmation')}
+																	</span>
+																{:else if candidate.status}
 																	<span
 																		class="w-fit rounded-full px-2 py-1 text-xs font-medium
 																		{candidate.status.toLowerCase() === 'interested'

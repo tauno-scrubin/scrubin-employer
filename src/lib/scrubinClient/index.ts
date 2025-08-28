@@ -462,6 +462,8 @@ export interface InterestedCandidate {
 	phone: string;
 	status: string;
 	dateInterested: string;
+	dateInterview?: string;
+	dateReadyForRecruiter?: string;
 }
 
 export interface InterestedCandidateStatusResponse {

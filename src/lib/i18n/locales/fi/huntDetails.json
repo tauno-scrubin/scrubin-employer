@@ -109,7 +109,8 @@
 		"candidates": "Ehdokkaat",
 		"noInterestedCandidates": "Etsimme parhaita osaajia!",
 		"noInterestedCandidatesDesc": "Ei kiinnostuneita ehdokkaita vielä, mutta otamme yhteyttä ammattilaisiin, jotka vastaavat tarpeitasi. Tarkista tilanne pian! Ilmoitamme sinulle heti, kun meillä on päivityksiä.",
-		"interestedOn": "Kiinnostunut"
+		"interestedOn": "Kiinnostunut",
+		"showAllInterestedCandidates": "Näytä kaikki kiinnostuneet ehdokkaat"
 	},
 	"questions": {
 		"contextQuestions": "Kontekstikysymykset",
