@@ -25,11 +25,13 @@
 	let {
 		open = $bindable(false),
 		huntId = $bindable(0),
-		candidateId = $bindable(0)
+		candidateId = $bindable(0),
+		type = $bindable('offer')
 	}: {
 		open: boolean;
 		huntId: number;
 		candidateId: number;
+		type: 'offer' | 'apply';
 	} = $props();
 
 	let worker: InterestedCandidateDetails | null = $state(null);
@@ -49,8 +51,11 @@
 		isLoading = true;
 		hasError = false;
 		try {
-			// Assuming there's an API endpoint for interested candidates
-			const response = await scrubinClient.hunt.getInterestedCandidateDetails(huntId, candidateId);
+			// Use correct API endpoint based on candidate type
+			const response =
+				type === 'apply'
+					? await scrubinClient.hunt.getInterestedApplicantDetails(huntId, candidateId)
+					: await scrubinClient.hunt.getInterestedCandidateDetails(huntId, candidateId);
 			worker = response;
 		} catch (error) {
 			console.error('Error fetching interested worker data:', error);
@@ -67,19 +72,35 @@
 		actionError = '';
 
 		try {
-			switch (action) {
-				case 'offer':
-					await scrubinClient.hunt.markInterestedCandidateStatusToCompanyOfferMade(
-						huntId,
-						candidateId
-					);
-					break;
-				case 'hired':
-					await scrubinClient.hunt.markInterestedCandidateStatusToHired(huntId, candidateId);
-					break;
-				case 'decline':
-					await scrubinClient.hunt.markInterestedCandidateStatusToDeclined(huntId, candidateId);
-					break;
+			// Use correct API endpoints based on candidate type
+			if (type === 'apply') {
+				// For applicants, only hired and decline are available
+				switch (action) {
+					case 'hired':
+						await scrubinClient.hunt.markInterestedApplicantStatusToHired(huntId, candidateId);
+						break;
+					case 'decline':
+						await scrubinClient.hunt.markInterestedApplicantStatusToDeclined(huntId, candidateId);
+						break;
+					default:
+						throw new Error(`Invalid action ${action} for applicant type`);
+				}
+			} else {
+				// For offer candidates, all actions are available
+				switch (action) {
+					case 'offer':
+						await scrubinClient.hunt.markInterestedCandidateStatusToCompanyOfferMade(
+							huntId,
+							candidateId
+						);
+						break;
+					case 'hired':
+						await scrubinClient.hunt.markInterestedCandidateStatusToHired(huntId, candidateId);
+						break;
+					case 'decline':
+						await scrubinClient.hunt.markInterestedCandidateStatusToDeclined(huntId, candidateId);
+						break;
+				}
 			}
 
 			// Reload hunt stats
@@ -307,8 +328,8 @@
 								{/if}
 
 								<div class="grid grid-cols-1 gap-3 md:grid-cols-3">
-									{#if worker && worker.status && worker.status.toLowerCase() === 'interested'}
-										<!-- Show Offer Made button only for interested candidates -->
+									{#if worker && worker.status && worker.status.toLowerCase() === 'interested' && type !== 'apply'}
+										<!-- Show Offer Made button only for interested offer candidates (not applicants) -->
 										<div class="flex flex-col gap-2">
 											<Tooltip.Root>
 												<Tooltip.Trigger>
@@ -333,8 +354,8 @@
 										</div>
 									{/if}
 
-									{#if worker && worker.status && ['interested', 'offer_made', 'declined'].includes(worker.status.toLowerCase())}
-										<!-- Show Hired button for interested, offer_made, and declined states -->
+									{#if worker && worker.status && (type === 'apply' || ['interested', 'offer_made', 'declined'].includes(worker.status.toLowerCase()))}
+										<!-- Show Hired button for applicants (all statuses) or offer candidates (interested, offer_made, declined states) -->
 										<div class="flex flex-col gap-2">
 											<Tooltip.Root>
 												<Tooltip.Trigger>
@@ -359,8 +380,8 @@
 										</div>
 									{/if}
 
-									{#if worker && worker.status && ['interested', 'offer_made'].includes(worker.status.toLowerCase())}
-										<!-- Show Decline button only for interested or offer_made statuses -->
+									{#if worker && worker.status && (type === 'apply' || ['interested', 'offer_made'].includes(worker.status.toLowerCase()))}
+										<!-- Show Decline button for applicants (all statuses) or offer candidates (interested, offer_made statuses) -->
 										<div class="flex flex-col gap-2">
 											<Tooltip.Root>
 												<Tooltip.Trigger>

@@ -456,6 +456,7 @@ export interface HuntableDetails extends Candidate {
 
 export interface InterestedCandidate {
 	candidateId: number;
+	type: 'offer' | 'apply';
 	firstName: string;
 	lastName: string;
 	email: string;
@@ -1161,6 +1162,20 @@ class HuntResource extends BaseResource {
 		) as Promise<InterestedCandidateDetails>;
 	}
 
+	async getInterestedApplicantDetails(
+		id: number,
+		candidateId: number
+	): Promise<InterestedCandidateDetails> {
+		const url = new URL(
+			`/api/v1/hunts/${id}/interested-applications/${candidateId}`,
+			this.client.baseUrl
+		);
+		return this.request<InterestedCandidateDetails>(
+			'GET',
+			url.toString()
+		) as Promise<InterestedCandidateDetails>;
+	}
+
 	async markInterestedCandidateStatusToCompanyOfferMade(
 		id: number,
 		candidateId: number
@@ -1195,6 +1210,34 @@ class HuntResource extends BaseResource {
 	): Promise<InterestedCandidateStatusResponse> {
 		const url = new URL(
 			`/api/v1/hunts/${id}/interested-candidates/${candidateId}/decline`,
+			this.client.baseUrl
+		);
+		return this.request<InterestedCandidateStatusResponse>(
+			'POST',
+			url.toString()
+		) as Promise<InterestedCandidateStatusResponse>;
+	}
+
+	async markInterestedApplicantStatusToHired(
+		id: number,
+		candidateId: number
+	): Promise<InterestedCandidateStatusResponse> {
+		const url = new URL(
+			`/api/v1/hunts/${id}/interested-applications/${candidateId}/hired`,
+			this.client.baseUrl
+		);
+		return this.request<InterestedCandidateStatusResponse>(
+			'POST',
+			url.toString()
+		) as Promise<InterestedCandidateStatusResponse>;
+	}
+
+	async markInterestedApplicantStatusToDeclined(
+		id: number,
+		candidateId: number
+	): Promise<InterestedCandidateStatusResponse> {
+		const url = new URL(
+			`/api/v1/hunts/${id}/interested-applications/${candidateId}/decline`,
 			this.client.baseUrl
 		);
 		return this.request<InterestedCandidateStatusResponse>(

@@ -45,6 +45,7 @@
 	let isLoading = $state(true);
 	let showInterestedWorkerDialog = $state(false);
 	let selectedCandidateId = $state(0);
+	let selectedCandidateType = $state<'offer' | 'apply'>('offer');
 	let availableCurrencies = $state<Cur[]>([]);
 	let availableCountries = $state<string[]>([]);
 	let paymentDialogOpen = $state(false);
@@ -287,6 +288,7 @@
 	bind:open={showInterestedWorkerDialog}
 	bind:huntId={hunt.huntId}
 	bind:candidateId={selectedCandidateId}
+	bind:type={selectedCandidateType}
 />
 
 <PaymentDialog
@@ -863,6 +865,7 @@
 										onclick={() => {
 											showInterestedWorkerDialog = true;
 											selectedCandidateId = candidate.candidateId;
+											selectedCandidateType = candidate.type;
 										}}
 									>
 										<Card.Content class="p-4">
