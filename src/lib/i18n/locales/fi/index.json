@@ -293,7 +293,9 @@
 				"offer_made": "Tarjous tehty",
 				"hired": "Palkattu",
 				"declined": "Hylätty",
-				"accepted": "Hyväksytty"
+				"accepted": "Hyväksytty",
+				"rejected": "Hylätty",
+				"applied": "Hakija"
 			}
 		},
 		"questionsInHunt": {

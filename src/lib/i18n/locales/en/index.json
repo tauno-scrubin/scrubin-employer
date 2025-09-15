@@ -293,7 +293,9 @@
 				"offer_made": "Offer Made",
 				"hired": "Hired",
 				"declined": "Declined",
-				"accepted": "Accepted"
+				"accepted": "Accepted",
+				"rejected": "Rejected",
+				"applied": "Applied"
 			}
 		},
 		"questionsInHunt": {

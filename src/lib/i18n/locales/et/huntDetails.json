@@ -110,6 +110,7 @@
 		"noInterestedCandidates": "Otsime Teile suurepäraseid talente!",
 		"noInterestedCandidatesDesc": "Huvitatud kandidaate pole veel, kuid võtame ühendust spetsialistidega, kes vastavad teie vajadustele. Vaadake varsti uuesti! Anname teile teada kohe, kui meil on uuendusi.",
 		"interestedOn": "Huvitatud kuupäeval",
+		"appliedOn": "Kandideerinud kuupäeval",
 		"showAllInterestedCandidates": "Näita kõiki huvitatud kandidaate"
 	},
 	"questions": {

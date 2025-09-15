@@ -901,7 +901,7 @@
 																				? 'bg-yellow-100 text-yellow-800'
 																				: candidate.status.toLowerCase() === 'hired'
 																					? 'bg-green-100 text-green-800'
-																					: candidate.status.toLowerCase() === 'declined'
+																					: candidate.status.toLowerCase() === 'declined' || candidate.status.toLowerCase() === 'rejected'
 																						? 'bg-red-100 text-red-800'
 																						: 'bg-gray-100 text-gray-800'}"
 																	>
@@ -911,7 +911,11 @@
 																	</span>
 																{/if}
 																<Badge variant="outline" class="text-xs">
-																	{$t('statistics.interestedOn')}
+																	{$t(
+																		candidate.type === 'apply'
+																			? 'statistics.appliedOn'
+																			: 'statistics.interestedOn'
+																	)}
 																	{formatDate(candidate.dateInterested)}
 																</Badge>
 															</div>

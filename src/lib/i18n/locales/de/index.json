@@ -293,7 +293,9 @@
 				"offer_made": "Angebot gemacht",
 				"hired": "Eingestellt",
 				"declined": "Abgelehnt",
-				"accepted": "Angenommen"
+				"accepted": "Angenommen",
+				"rejected": "Abgelehnt",
+				"applied": "Beworben"
 			}
 		},
 		"questionsInHunt": {

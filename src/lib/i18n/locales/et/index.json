@@ -293,7 +293,9 @@
 				"offer_made": "Pakkumine tehtud",
 				"hired": "Palgatud",
 				"declined": "Keeldutud",
-				"accepted": "Kinnitatud"
+				"accepted": "Kinnitatud",
+				"rejected": "Tagasi lükatud",
+				"applied": "Kandideeritud"
 			}
 		},
 		"questionsInHunt": {
