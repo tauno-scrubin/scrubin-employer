@@ -2,10 +2,24 @@
 	import { goto } from '$app/navigation';
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
-	import type { CompanyPlanSummary, PlanType, RequirementsWithInstructions, Currency } from '@/scrubinClient';
+	import type {
+		CompanyPlanSummary,
+		PlanType,
+		RequirementsWithInstructions,
+		Currency
+	} from '@/scrubinClient';
 	import { scrubinClient } from '@/scrubinClient/client';
 	import { t } from '$lib/i18n';
-	import { AlertCircle, Check, ChevronDown, ChevronLeft, Loader2, Sparkle, Pen, X } from 'lucide-svelte';
+	import {
+		AlertCircle,
+		Check,
+		ChevronDown,
+		ChevronLeft,
+		Loader2,
+		Sparkle,
+		Pen,
+		X
+	} from 'lucide-svelte';
 	import { onMount, tick } from 'svelte';
 	import { toast } from 'svelte-sonner';
 	import PaymentDialog from '../payment/paymentDialog.svelte';
@@ -299,31 +313,31 @@
 	}
 
 	let editableFields = $state({
-	jobTitle: false,
-	jobDescription: false,
-	jobRequiredQualifications: false,
-	jobRequiredWorkExperience: false,
-	salaryStart: false,
-	salaryEnd: false,
-	salaryCurrency: false,
-	country: false,
-	city: false,
-	address: false,
-	stateProvinceRegion: false
+		jobTitle: false,
+		jobDescription: false,
+		jobRequiredQualifications: false,
+		jobRequiredWorkExperience: false,
+		salaryStart: false,
+		salaryEnd: false,
+		salaryCurrency: false,
+		country: false,
+		city: false,
+		address: false,
+		stateProvinceRegion: false
 	});
 
 	let editValues = $state({
-	jobTitle: '',
-	jobDescription: '',
-	jobRequiredQualifications: '',
-	jobRequiredWorkExperience: 0,
-	salaryStart: 0,
-	salaryEnd: 0,
-	address: '',
-	salaryCurrency: requirements?.requirements.salary?.currency || '',
-	country: requirements?.requirements.country || '',
-	city: requirements?.requirements.address?.city || '',
-	stateProvinceRegion: requirements?.requirements.address?.stateProvinceRegion || []
+		jobTitle: '',
+		jobDescription: '',
+		jobRequiredQualifications: '',
+		jobRequiredWorkExperience: 0,
+		salaryStart: 0,
+		salaryEnd: 0,
+		address: '',
+		salaryCurrency: requirements?.requirements.salary?.currency || '',
+		country: requirements?.requirements.country || '',
+		city: requirements?.requirements.address?.city || '',
+		stateProvinceRegion: requirements?.requirements.address?.stateProvinceRegion || []
 	});
 
 	let isEditing = $state(false);
@@ -356,9 +370,15 @@
 			if (field === 'salaryStart' || field === 'salaryEnd' || field === 'salaryCurrency') {
 				// group under salary
 				updateData = {
-					salaryAmountStart: editValues.salaryStart  ? editValues.salaryStart : requirements.requirements.salary?.amountStart,
-					salaryAmountEnd:   editValues.salaryEnd  ? editValues.salaryEnd : requirements.requirements.salary?.amountEnd,
-					salaryCurrency:    editValues.salaryCurrency  ? editValues.salaryCurrency : requirements.requirements.salary?.currency
+					salaryAmountStart: editValues.salaryStart
+						? editValues.salaryStart
+						: requirements.requirements.salary?.amountStart,
+					salaryAmountEnd: editValues.salaryEnd
+						? editValues.salaryEnd
+						: requirements.requirements.salary?.amountEnd,
+					salaryCurrency: editValues.salaryCurrency
+						? editValues.salaryCurrency
+						: requirements.requirements.salary?.currency
 				};
 			} else if (field === 'country' || field === 'city' || field === 'stateProvinceRegion') {
 				// group under address & country
@@ -373,11 +393,11 @@
 			}
 
 			const updatedRequirements = await scrubinClient.hunt.updateRequirementFields(
-			requirements.requirements.id,
-			updateData
+				requirements.requirements.id,
+				updateData
 			);
 			requirements = { ...requirements, requirements: updatedRequirements };
-			Object.keys(editableFields).forEach(key => {
+			Object.keys(editableFields).forEach((key) => {
 				editableFields[key as keyof typeof editableFields] = false;
 			});
 			toast.success(`Updated successfully`);
@@ -387,15 +407,14 @@
 		} finally {
 			isSaving = false;
 		}
-		}
-
+	}
 
 	function startEditing(field: keyof typeof editableFields) {
 		// Close any other open edit fields
-		Object.keys(editableFields).forEach(key => {
+		Object.keys(editableFields).forEach((key) => {
 			editableFields[key as keyof typeof editableFields] = false;
 		});
-		
+
 		// Open the selected field
 		editableFields[field] = true;
 		isEditing = true;
@@ -406,9 +425,9 @@
 		editValues[field] = requirements?.requirements?.[field] || '';
 		// Close edit mode
 		editableFields[field] = false;
-		
+
 		// Check if we're still editing any field
-		isEditing = Object.values(editableFields).some(value => value);
+		isEditing = Object.values(editableFields).some((value) => value);
 	}
 </script>
 
@@ -651,22 +670,24 @@
 		{#if requirements.requirements}
 			<div class="space-y-3">
 				<div class="grid grid-cols-1 gap-4 border-b pb-3 text-sm">
-					<div 
-						class="grid w-full grid-cols-[150px_1fr] items-start transition-colors duration-200 hover:bg-gray-50 rounded p-1 pl-0 group"
+					<div
+						class="group grid w-full grid-cols-[150px_1fr] items-start rounded p-1 pl-0 transition-colors duration-200 hover:bg-gray-50"
 					>
 						<h4 class="font-semibold">{$t('dashboard.chatWindow.jobTitle')}</h4>
-						
+
 						{#if editableFields.jobTitle}
-							<div class="flex gap-2 w-full">
-								<Input 
-									type="text" 
-									value={editValues.jobTitle} 
-									onchange={(e) => { editValues.jobTitle = e.currentTarget.value; }}
+							<div class="flex w-full gap-2">
+								<Input
+									type="text"
+									value={editValues.jobTitle}
+									onchange={(e) => {
+										editValues.jobTitle = e.currentTarget.value;
+									}}
 									class="flex-1"
 								/>
-								<Button 
-									size="icon" 
-									variant="default" 
+								<Button
+									size="icon"
+									variant="default"
 									onclick={() => saveField('jobTitle')}
 									disabled={isSaving}
 								>
@@ -676,11 +697,7 @@
 										<Check class="h-4 w-4" />
 									{/if}
 								</Button>
-								<Button 
-									size="icon" 
-									variant="outline" 
-									onclick={() => cancelEditing('jobTitle')}
-								>
+								<Button size="icon" variant="outline" onclick={() => cancelEditing('jobTitle')}>
 									<X class="h-4 w-4" />
 								</Button>
 							</div>
@@ -689,8 +706,8 @@
 								<p class={requirements.requirements.jobTitle ? 'text-gray-900' : 'text-gray-500'}>
 									{requirements.requirements.jobTitle || $t('dashboard.chatWindow.notSpecified')}
 								</p>
-								<button 
-									class="opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+								<button
+									class="opacity-0 transition-opacity duration-200 group-hover:opacity-100"
 									onclick={() => startEditing('jobTitle')}
 								>
 									<Pen class="h-3.5 w-3.5 text-gray-400 hover:text-primary" />
@@ -699,50 +716,57 @@
 						{/if}
 					</div>
 
-					<div 
-						class="grid w-full grid-cols-[150px_1fr] items-start transition-colors duration-200 hover:bg-gray-50 rounded p-1 pl-0 group"
+					<div
+						class="group grid w-full grid-cols-[150px_1fr] items-start rounded p-1 pl-0 transition-colors duration-200 hover:bg-gray-50"
 					>
 						<h4 class="font-semibold">{$t('dashboard.chatWindow.jobDescription')}</h4>
-						
+
 						{#if editableFields.jobDescription}
-							<div class="flex flex-col gap-2 w-full">
-								<textarea 
-									value={editValues.jobDescription} 
-									onchange={(e) => { editValues.jobDescription = e.currentTarget.value; }}
-									class="w-full rounded-md border p-2 text-sm min-h-[100px]"
+							<div class="flex w-full flex-col gap-2">
+								<textarea
+									value={editValues.jobDescription}
+									onchange={(e) => {
+										editValues.jobDescription = e.currentTarget.value;
+									}}
+									class="min-h-[100px] w-full rounded-md border p-2 text-sm"
 								></textarea>
 								<div class="flex justify-end gap-2">
-									<Button 
-										size="sm" 
-										variant="default" 
+									<Button
+										size="sm"
+										variant="default"
 										onclick={() => saveField('jobDescription')}
 										disabled={isSaving}
 									>
 										{#if isSaving}
-											<Loader2 class="h-4 w-4 animate-spin mr-2" />
+											<Loader2 class="mr-2 h-4 w-4 animate-spin" />
 											{$t('common.saving')}
 										{:else}
-											<Check class="h-4 w-4 mr-2" />
+											<Check class="mr-2 h-4 w-4" />
 											{$t('common.save')}
 										{/if}
 									</Button>
-									<Button 
-										size="sm" 
-										variant="outline" 
+									<Button
+										size="sm"
+										variant="outline"
 										onclick={() => cancelEditing('jobDescription')}
 									>
-										<X class="h-4 w-4 mr-2" />
+										<X class="mr-2 h-4 w-4" />
 										{$t('common.cancel')}
 									</Button>
 								</div>
 							</div>
 						{:else}
 							<div class="flex items-start gap-2">
-								<p class={requirements.requirements.jobDescription ? 'text-gray-900' : 'text-gray-500'}>
-									{requirements.requirements.jobDescription || $t('dashboard.chatWindow.notSpecified')}
+								<p
+									class={requirements.requirements.jobDescription
+										? 'text-gray-900'
+										: 'text-gray-500'}
+								>
+									{requirements.requirements.jobDescription ||
+										$t('dashboard.chatWindow.notSpecified')}
 								</p>
-								<button 
-									class="opacity-0 group-hover:opacity-100 transition-opacity duration-200 mt-0.5"
+								<button
+									class="mt-0.5 opacity-0 transition-opacity duration-200 group-hover:opacity-100"
 									onclick={() => startEditing('jobDescription')}
 								>
 									<Pen class="h-3.5 w-3.5 text-gray-400 hover:text-primary" />
@@ -756,7 +780,8 @@
 						<h4 class="font-semibold">{$t('dashboard.chatWindow.professions')}</h4>
 						<div class="flex flex-row flex-wrap gap-2">
 							{#each requirements.requirements.professions || [] as profession}
-								<span class="rounded bg-gray-100 px-2 py-0.5 text-xs text-gray-700">{profession}</span
+								<span class="rounded bg-gray-100 px-2 py-0.5 text-xs text-gray-700"
+									>{profession}</span
 								>
 							{/each}
 						</div>
@@ -772,23 +797,25 @@
 						</p>
 					</div>
 
-					<div 
-						class="grid w-full grid-cols-[150px_1fr] items-start transition-colors duration-200 hover:bg-gray-50 rounded p-1 pl-0 group"
+					<div
+						class="group grid w-full grid-cols-[150px_1fr] items-start rounded p-1 pl-0 transition-colors duration-200 hover:bg-gray-50"
 					>
 						<h4 class="font-semibold">{$t('dashboard.chatWindow.workExperience')}</h4>
-						
+
 						{#if editableFields.jobRequiredWorkExperience}
-							<div class="flex gap-2 w-full">
-								<Input 
-									type="number" 
-									value={editValues.jobRequiredWorkExperience} 
-									onchange={(e) => { editValues.jobRequiredWorkExperience = parseInt(e.currentTarget.value) || 0; }}
+							<div class="flex w-full gap-2">
+								<Input
+									type="number"
+									value={editValues.jobRequiredWorkExperience}
+									onchange={(e) => {
+										editValues.jobRequiredWorkExperience = parseInt(e.currentTarget.value) || 0;
+									}}
 									class="flex-1"
 									min="0"
 								/>
-								<Button 
-									size="icon" 
-									variant="default" 
+								<Button
+									size="icon"
+									variant="default"
 									onclick={() => saveField('jobRequiredWorkExperience')}
 									disabled={isSaving}
 								>
@@ -798,9 +825,9 @@
 										<Check class="h-4 w-4" />
 									{/if}
 								</Button>
-								<Button 
-									size="icon" 
-									variant="outline" 
+								<Button
+									size="icon"
+									variant="outline"
 									onclick={() => cancelEditing('jobRequiredWorkExperience')}
 								>
 									<X class="h-4 w-4" />
@@ -808,12 +835,16 @@
 							</div>
 						{:else}
 							<div class="flex items-center gap-2">
-								<p class={requirements.requirements.jobRequiredWorkExperience ? 'text-gray-900' : 'text-gray-500'}>
+								<p
+									class={requirements.requirements.jobRequiredWorkExperience
+										? 'text-gray-900'
+										: 'text-gray-500'}
+								>
 									{requirements.requirements.jobRequiredWorkExperience || 0}
 									{$t('dashboard.chatWindow.years')}
 								</p>
-								<button 
-									class="opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+								<button
+									class="opacity-0 transition-opacity duration-200 group-hover:opacity-100"
 									onclick={() => startEditing('jobRequiredWorkExperience')}
 								>
 									<Pen class="h-3.5 w-3.5 text-gray-400 hover:text-primary" />
@@ -822,68 +853,79 @@
 						{/if}
 					</div>
 
-					<div class="grid w-full grid-cols-[150px_1fr] items-start transition-colors duration-200 hover:bg-gray-50 rounded p-1 pl-0 group">
+					<div
+						class="group grid w-full grid-cols-[150px_1fr] items-start rounded p-1 pl-0 transition-colors duration-200 hover:bg-gray-50"
+					>
 						<h4 class="font-semibold">{$t('dashboard.chatWindow.location')}</h4>
-						
+
 						{#if editableFields.country || editableFields.city || editableFields.stateProvinceRegion}
-							<div class="flex flex-col gap-2 w-full">
-								<div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+							<div class="flex w-full flex-col gap-2">
+								<div class="grid grid-cols-1 gap-2 md:grid-cols-3">
 									<DropdownComponent
-											options={availableCountries}
-											value={editValues.country}
-											justString={true}
-											onValueChange={(value) => {
-												editValues.country = value;
-											}}
-											placeholder="Country"
-											optionKey="code"
-											labelKey="name"
-										/>
-									<Input 
-										type="text" 
-										placeholder="City"
-										value={editValues.city} 
-										onchange={(e) => { editValues.city = e.currentTarget.value; }}
+										options={availableCountries}
+										value={editValues.country}
+										justString={true}
+										onValueChange={(value) => {
+											editValues.country = value;
+										}}
+										placeholder="Country"
+										optionKey="code"
+										labelKey="name"
 									/>
-									<Input 
-										type="text" 
+									<Input
+										type="text"
+										placeholder="City"
+										value={editValues.city}
+										onchange={(e) => {
+											editValues.city = e.currentTarget.value;
+										}}
+									/>
+									<Input
+										type="text"
 										placeholder="Region/State/Province"
-										value={editValues.stateProvinceRegion} 
-										onchange={(e) => { editValues.stateProvinceRegion = e.currentTarget.value; }}
+										value={editValues.stateProvinceRegion}
+										onchange={(e) => {
+											editValues.stateProvinceRegion = e.currentTarget.value;
+										}}
 									/>
 								</div>
 								<div class="flex justify-end gap-2">
-									<Button 
-										size="sm" 
-										variant="default" 
+									<Button
+										size="sm"
+										variant="default"
 										onclick={() => saveField('country')}
 										disabled={isSaving}
 									>
 										{#if isSaving}
-											<Loader2 class="h-4 w-4 animate-spin mr-2" />
+											<Loader2 class="mr-2 h-4 w-4 animate-spin" />
 											{$t('common.saving')}
 										{:else}
-											<Check class="h-4 w-4 mr-2" />
+											<Check class="mr-2 h-4 w-4" />
 											{$t('common.save')}
 										{/if}
 									</Button>
-									<Button 
-										size="sm" 
-										variant="outline" 
+									<Button
+										size="sm"
+										variant="outline"
 										onclick={() => {
 											cancelEditing('country');
 											cancelEditing('city');
 											cancelEditing('stateProvinceRegion');
 										}}
 									>
-										<X class="h-4 w-4 mr-2" />
+										<X class="mr-2 h-4 w-4" />
 										{$t('common.cancel')}
 									</Button>
 								</div>
 							</div>
 						{:else}
 							<div class="flex items-center gap-2">
-								<p class={requirements.requirements.address?.city || requirements.requirements.address?.stateProvinceRegion ? 'text-gray-900' : 'text-gray-500'}>
+								<p
+									class={requirements.requirements.address?.city ||
+									requirements.requirements.address?.stateProvinceRegion
+										? 'text-gray-900'
+										: 'text-gray-500'}
+								>
 									{requirements.requirements.country},
 									{requirements.requirements.address?.city || ''}
 									{requirements.requirements.address?.stateProvinceRegion
@@ -892,8 +934,8 @@
 											: requirements.requirements.address.stateProvinceRegion
 										: ''}
 								</p>
-								<button 
-									class="opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+								<button
+									class="opacity-0 transition-opacity duration-200 group-hover:opacity-100"
 									onclick={() => {
 										startEditing('country');
 										startEditing('city');
@@ -924,81 +966,107 @@
 						</div>
 					</div>
 
-					<div class="grid w-full grid-cols-[150px_1fr] items-start transition-colors duration-200 hover:bg-gray-50 rounded p-1 pl-0 group">
+					<div
+						class="group grid w-full grid-cols-[150px_1fr] items-start rounded p-1 pl-0 transition-colors duration-200 hover:bg-gray-50"
+					>
 						<h4 class="font-semibold">{$t('dashboard.chatWindow.salary')}</h4>
-						
+
 						{#if editableFields.salaryStart || editableFields.salaryEnd || editableFields.salaryCurrency}
-							<div class="flex flex-col gap-2 w-full">
-								<div class="grid grid-cols-1 md:grid-cols-3 gap-2">
-									<Input 
-										type="number" 
+							<div class="flex w-full flex-col gap-2">
+								<div class="grid grid-cols-1 gap-2 md:grid-cols-3">
+									<Input
+										type="number"
 										placeholder="From"
-										value={editValues.salaryStart} 
-										onchange={(e) => { editValues.salaryStart = parseInt(e.currentTarget.value) || 0; }}
+										value={editValues.salaryStart}
+										onchange={(e) => {
+											editValues.salaryStart = parseInt(e.currentTarget.value) || 0;
+										}}
 										min="0"
 									/>
-									<Input 
-										type="number" 
+									<Input
+										type="number"
 										placeholder="To"
-										value={editValues.salaryEnd} 
-										onchange={(e) => { editValues.salaryEnd = parseInt(e.currentTarget.value) || 0; }}
+										value={editValues.salaryEnd}
+										onchange={(e) => {
+											editValues.salaryEnd = parseInt(e.currentTarget.value) || 0;
+										}}
 										min="0"
 									/>
 
 									<DropdownComponent
-											options={availableCurrencies}
-											value={editValues.salaryCurrency}
-											showLabelInBrackets={true}
-											onValueChange={(value) => {
-												editValues.salaryCurrency = value;
-											}}
-											placeholder="Currency"
-											optionKey="code"
-											labelKey="name"
-										/>
-									
+										options={availableCurrencies}
+										value={editValues.salaryCurrency}
+										showLabelInBrackets={true}
+										onValueChange={(value) => {
+											editValues.salaryCurrency = value;
+										}}
+										placeholder="Currency"
+										optionKey="code"
+										labelKey="name"
+									/>
 								</div>
 								<div class="flex justify-end gap-2">
-									<Button 
-										size="sm" 
-										variant="default" 
+									<Button
+										size="sm"
+										variant="default"
 										onclick={() => saveField('salaryStart')}
 										disabled={isSaving}
 									>
 										{#if isSaving}
-											<Loader2 class="h-4 w-4 animate-spin mr-2" />
+											<Loader2 class="mr-2 h-4 w-4 animate-spin" />
 											{$t('common.saving')}
 										{:else}
-											<Check class="h-4 w-4 mr-2" />
+											<Check class="mr-2 h-4 w-4" />
 											{$t('common.save')}
 										{/if}
 									</Button>
-									<Button 
-										size="sm" 
-										variant="outline" 
+									<Button
+										size="sm"
+										variant="outline"
 										onclick={() => {
 											cancelEditing('salaryStart');
 											cancelEditing('salaryEnd');
 											cancelEditing('salaryCurrency');
 										}}
 									>
-										<X class="h-4 w-4 mr-2" />
+										<X class="mr-2 h-4 w-4" />
 										{$t('common.cancel')}
 									</Button>
 								</div>
 							</div>
 						{:else}
 							<div class="flex items-center gap-2">
-								<p class={requirements.requirements.salary?.amountStart || requirements.requirements.salary?.amountEnd ? 'text-gray-900' : 'text-gray-500'}>
-									{#if requirements.requirements.salary?.amountStart && requirements.requirements.salary?.amountEnd}
-										{requirements.requirements.salary.amountStart} - {requirements.requirements.salary.amountEnd}
-										{requirements.requirements.salary.currency || ''} ({requirements.requirements.salary.type || ''})
-									{:else}
-										{requirements.requirements.salary?.amountText || $t('dashboard.chatWindow.notSpecified')}
+								<div
+									class={requirements.requirements.salary?.amountStart ||
+									requirements.requirements.salary?.amountEnd ||
+									requirements.requirements.salary?.salaryExtra
+										? 'text-gray-900'
+										: 'text-gray-500'}
+								>
+									{#if requirements.requirements.salary?.amountStart || requirements.requirements.salary?.amountEnd}
+										<div class="mb-2">
+											{#if requirements.requirements.salary?.amountStart && requirements.requirements.salary?.amountEnd}
+												{requirements.requirements.salary.amountStart} - {requirements.requirements
+													.salary.amountEnd}
+											{:else if requirements.requirements.salary?.amountStart && !requirements.requirements.salary?.amountEnd}
+												{requirements.requirements.salary.amountStart}+
+											{/if}
+											{requirements.requirements.salary?.currency || ''} ({requirements.requirements
+												.salary?.type || ''})
+										</div>
 									{/if}
-								</p>
-								<button 
-									class="opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+									{#if requirements.requirements.salary?.salaryExtra}
+										<div class="text-sm text-gray-600">
+											{requirements.requirements.salary.salaryExtra}
+										</div>
+									{/if}
+									{#if !requirements.requirements.salary?.amountStart && !requirements.requirements.salary?.amountEnd && !requirements.requirements.salary?.salaryExtra}
+										{requirements.requirements.salary?.amountText ||
+											$t('dashboard.chatWindow.notSpecified')}
+									{/if}
+								</div>
+								<button
+									class="opacity-0 transition-opacity duration-200 group-hover:opacity-100"
 									onclick={() => {
 										startEditing('salaryStart');
 										startEditing('salaryEnd');
@@ -1016,47 +1084,54 @@
 					<h4 class="mb-4 text-xl font-medium">
 						{$t('dashboard.chatWindow.requiredQualifications')}
 					</h4>
-					
-					<div class="transition-colors duration-200 hover:bg-gray-50 rounded p-1 group">
+
+					<div class="group rounded p-1 transition-colors duration-200 hover:bg-gray-50">
 						{#if editableFields.jobRequiredQualifications}
-							<div class="flex flex-col gap-2 w-full">
-								<textarea 
-									value={editValues.jobRequiredQualifications} 
-									onchange={(e) => { editValues.jobRequiredQualifications = e.currentTarget.value; }}
-									class="w-full rounded-md border p-2 text-sm min-h-[100px]"
+							<div class="flex w-full flex-col gap-2">
+								<textarea
+									value={editValues.jobRequiredQualifications}
+									onchange={(e) => {
+										editValues.jobRequiredQualifications = e.currentTarget.value;
+									}}
+									class="min-h-[100px] w-full rounded-md border p-2 text-sm"
 								></textarea>
 								<div class="flex justify-end gap-2">
-									<Button 
-										size="sm" 
-										variant="default" 
+									<Button
+										size="sm"
+										variant="default"
 										onclick={() => saveField('jobRequiredQualifications')}
 										disabled={isSaving}
 									>
 										{#if isSaving}
-											<Loader2 class="h-4 w-4 animate-spin mr-2" />
+											<Loader2 class="mr-2 h-4 w-4 animate-spin" />
 											{$t('common.saving')}
 										{:else}
-											<Check class="h-4 w-4 mr-2" />
+											<Check class="mr-2 h-4 w-4" />
 											{$t('common.save')}
 										{/if}
 									</Button>
-									<Button 
-										size="sm" 
-										variant="outline" 
+									<Button
+										size="sm"
+										variant="outline"
 										onclick={() => cancelEditing('jobRequiredQualifications')}
 									>
-										<X class="h-4 w-4 mr-2" />
+										<X class="mr-2 h-4 w-4" />
 										{$t('common.cancel')}
 									</Button>
 								</div>
 							</div>
 						{:else}
 							<div class="flex items-start gap-2">
-								<p class="{requirements.requirements.jobRequiredQualifications ? 'text-gray-900' : 'text-gray-500'} text-sm">
-									{requirements.requirements.jobRequiredQualifications || $t('dashboard.chatWindow.notSpecified')}
+								<p
+									class="{requirements.requirements.jobRequiredQualifications
+										? 'text-gray-900'
+										: 'text-gray-500'} text-sm"
+								>
+									{requirements.requirements.jobRequiredQualifications ||
+										$t('dashboard.chatWindow.notSpecified')}
 								</p>
-								<button 
-									class="opacity-0 group-hover:opacity-100 transition-opacity duration-200 mt-0.5"
+								<button
+									class="mt-0.5 opacity-0 transition-opacity duration-200 group-hover:opacity-100"
 									onclick={() => startEditing('jobRequiredQualifications')}
 								>
 									<Pen class="h-3.5 w-3.5 text-gray-400 hover:text-primary" />
@@ -1126,8 +1201,7 @@
 						{#if requirements.huntInstructions?.onlyCountriesToSearch?.length}
 							<div class="flex flex-wrap gap-1">
 								{#each requirements.huntInstructions.onlyCountriesToSearch as country}
-									<span class="rounded bg-blue-50 px-2 py-0.5 text-xs text-blue-700"
-										>{country}</span
+									<span class="rounded bg-blue-50 px-2 py-0.5 text-xs text-blue-700">{country}</span
 									>
 								{/each}
 							</div>
@@ -1140,9 +1214,7 @@
 										>
 									{/each}
 								</div>
-								<span class="text-xs text-gray-500"
-									>{$t('dashboard.chatWindow.globalSearch')}</span
-								>
+								<span class="text-xs text-gray-500">{$t('dashboard.chatWindow.globalSearch')}</span>
 							</div>
 						{/if}
 					</div>

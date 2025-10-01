@@ -49,6 +49,7 @@
 		salaryEnd: false,
 		salaryCurrency: false,
 		salaryType: false,
+		salaryExtra: false,
 		country: false,
 		city: false,
 		address: false,
@@ -72,6 +73,7 @@
 		address: '',
 		salaryCurrency: '',
 		salaryType: '',
+		salaryExtra: '',
 		country: '',
 		city: '',
 		stateProvinceRegion: '' as string | string[],
@@ -124,6 +126,7 @@
 				salaryEnd: requirements.salary?.amountEnd || 0,
 				salaryCurrency: requirements.salary?.currency || '',
 				salaryType: requirements.salary?.typeV2 || requirements.salary?.type || '',
+				salaryExtra: requirements.salary?.salaryExtra || '',
 				country: requirements.country || '',
 				address: requirements.address?.address || '',
 				city: requirements.address?.city || '',
@@ -156,14 +159,16 @@
 				field === 'salaryStart' ||
 				field === 'salaryEnd' ||
 				field === 'salaryCurrency' ||
-				field === 'salaryType'
+				field === 'salaryType' ||
+				field === 'salaryExtra'
 			) {
 				updateData = {
 					salaryAmountStart: editValues.salaryStart || requirements.salary?.amountStart,
 					salaryAmountEnd: editValues.salaryEnd || requirements.salary?.amountEnd,
 					salaryCurrency: editValues.salaryCurrency || requirements.salary?.currency,
 					salaryType:
-						editValues.salaryType || requirements.salary?.typeV2 || requirements.salary?.type
+						editValues.salaryType || requirements.salary?.typeV2 || requirements.salary?.type,
+					salaryExtra: editValues.salaryExtra || requirements.salary?.salaryExtra
 				};
 			} else if (field === 'country' || field === 'city' || field === 'stateProvinceRegion') {
 				updateData = {
@@ -234,6 +239,7 @@
 		if (field === 'salaryCurrency') editValues.salaryCurrency = requirements.salary?.currency || '';
 		if (field === 'salaryType')
 			editValues.salaryType = requirements.salary?.typeV2 || requirements.salary?.type || '';
+		if (field === 'salaryExtra') editValues.salaryExtra = requirements.salary?.salaryExtra || '';
 		if (field === 'country') editValues.country = requirements.country || '';
 		if (field === 'address') editValues.address = requirements.address?.address || '';
 		if (field === 'city') editValues.city = requirements.address?.city || '';
@@ -257,6 +263,13 @@
 		const converter = new showdown.Converter({ flavor: 'github' });
 		converter.setOption('simpleLineBreaks', true);
 		return converter.makeHtml(markdown);
+	}
+
+	function formatNumber(num: number): string {
+		if (num >= 1000) {
+			return num.toLocaleString('en-US').replace(/,/g, ' ');
+		}
+		return num.toString();
 	}
 
 	async function activateRequirements() {
@@ -284,7 +297,9 @@
 </script>
 
 {#if requirements}
-	<div class="flex h-full flex-col overflow-hidden rounded-lg border bg-white p-4 shadow-sm">
+	<div
+		class="flex h-full w-full max-w-full flex-col overflow-hidden rounded-lg border bg-white p-4 shadow-sm"
+	>
 		<div class="mb-4 flex items-center justify-between gap-3">
 			<div class="flex items-center gap-3">
 				<h3 class="text-xl font-medium">{$t('hunt.jobRequirements')}</h3>
@@ -363,10 +378,10 @@
 			{/if}
 		{/if}
 
-		<div class="flex-1 overflow-y-auto">
-			<div class="space-y-3 text-sm">
+		<div class="flex-1 overflow-y-auto overflow-x-hidden">
+			<div class="max-w-full space-y-3 text-sm">
 				<!-- Title -->
-				<div class="group">
+				<div class="group rounded p-3 hover:bg-gray-50">
 					{#if editableFields.jobTitle}
 						<div class="flex w-full gap-2">
 							<Input
@@ -400,7 +415,7 @@
 							<button
 								class="opacity-0 transition-opacity duration-200 group-hover:opacity-100"
 								onclick={() => startEditing('jobTitle')}
-								><Pen class="h-3.5 w-3.5 text-gray-400 hover:text-primary" /></button
+								><Pen class="h-3.5 w-3.5 text-gray-600 hover:text-primary" /></button
 							>
 						</div>
 					{/if}
@@ -410,9 +425,18 @@
 				<div class="mt-2 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
 					<!-- Professions -->
 					<div class="group rounded p-3 hover:bg-gray-50">
-						<p class="text-[11px] uppercase tracking-wide text-muted-foreground">
-							{$t('hunt.professions')}
-						</p>
+						<div class="flex items-center gap-2">
+							<p class="text-[11px] uppercase tracking-wide text-muted-foreground">
+								{$t('hunt.professions')}
+							</p>
+							{#if !editableFields.professions}
+								<button
+									class="opacity-0 transition-opacity duration-200 group-hover:opacity-100"
+									onclick={() => startEditing('professions')}
+									><Pen class="h-3.5 w-3.5 text-gray-600 hover:text-primary" /></button
+								>
+							{/if}
+						</div>
 						{#if editableFields.professions}
 							<div class="mt-1 space-y-2">
 								<ComboboxMulti
@@ -450,20 +474,24 @@
 								{:else}
 									<span class="text-gray-500">{$t('hunt.notSpecified')}</span>
 								{/if}
-								<button
-									class="opacity-0 transition-opacity duration-200 group-hover:opacity-100"
-									onclick={() => startEditing('professions')}
-									><Pen class="h-3.5 w-3.5 text-gray-400 hover:text-primary" /></button
-								>
 							</div>
 						{/if}
 					</div>
 
 					<!-- Specialization -->
 					<div class="group rounded p-3 hover:bg-gray-50">
-						<p class="text-[11px] uppercase tracking-wide text-muted-foreground">
-							{$t('hunt.specialization')}
-						</p>
+						<div class="flex items-center gap-2">
+							<p class="text-[11px] uppercase tracking-wide text-muted-foreground">
+								{$t('hunt.specialization')}
+							</p>
+							{#if !editableFields.specialization}
+								<button
+									class="opacity-0 transition-opacity duration-200 group-hover:opacity-100"
+									onclick={() => startEditing('specialization')}
+									><Pen class="h-3.5 w-3.5 text-gray-600 hover:text-primary" /></button
+								>
+							{/if}
+						</div>
 						{#if editableFields.specialization}
 							<div class="mt-1 space-y-2">
 								<Combobox
@@ -499,23 +527,26 @@
 								<p class={requirements.specialization ? 'text-gray-900' : 'text-gray-500'}>
 									{availableSpecialties.find(
 										(s) => s.code === requirements?.specializationV2?.toString()
-									)?.name ||
-										$t('hunt.notSpecified')}
+									)?.name || $t('hunt.notSpecified')}
 								</p>
-								<button
-									class="opacity-0 transition-opacity duration-200 group-hover:opacity-100"
-									onclick={() => startEditing('specialization')}
-									><Pen class="h-3.5 w-3.5 text-gray-400 hover:text-primary" /></button
-								>
 							</div>
 						{/if}
 					</div>
 
 					<!-- Work experience -->
 					<div class="group rounded p-3 hover:bg-gray-50">
-						<p class="text-[11px] uppercase tracking-wide text-muted-foreground">
-							{$t('hunt.workExperience')}
-						</p>
+						<div class="flex items-center gap-2">
+							<p class="text-[11px] uppercase tracking-wide text-muted-foreground">
+								{$t('hunt.workExperience')}
+							</p>
+							{#if !editableFields.jobRequiredWorkExperience}
+								<button
+									class="opacity-0 transition-opacity duration-200 group-hover:opacity-100"
+									onclick={() => startEditing('jobRequiredWorkExperience')}
+									><Pen class="h-3.5 w-3.5 text-gray-600 hover:text-primary" /></button
+								>
+							{/if}
+						</div>
 						{#if editableFields.jobRequiredWorkExperience}
 							<div class="mt-1 flex w-full gap-2">
 								<Input
@@ -550,20 +581,27 @@
 									{requirements.jobRequiredWorkExperience || 0}
 									{$t('hunt.years')}
 								</p>
-								<button
-									class="opacity-0 transition-opacity duration-200 group-hover:opacity-100"
-									onclick={() => startEditing('jobRequiredWorkExperience')}
-									><Pen class="h-3.5 w-3.5 text-gray-400 hover:text-primary" /></button
-								>
 							</div>
 						{/if}
 					</div>
 
 					<!-- Location -->
 					<div class="group rounded p-3 hover:bg-gray-50">
-						<p class="text-[11px] uppercase tracking-wide text-muted-foreground">
-							{$t('hunt.location')}
-						</p>
+						<div class="flex items-center gap-2">
+							<p class="text-[11px] uppercase tracking-wide text-muted-foreground">
+								{$t('hunt.location')}
+							</p>
+							{#if !editableFields.country && !editableFields.city && !editableFields.stateProvinceRegion}
+								<button
+									class="opacity-0 transition-opacity duration-200 group-hover:opacity-100"
+									onclick={() => {
+										startEditing('country');
+										startEditing('city');
+										startEditing('stateProvinceRegion');
+									}}><Pen class="h-3.5 w-3.5 text-gray-600 hover:text-primary" /></button
+								>
+							{/if}
+						</div>
 						{#if editableFields.country || editableFields.city || editableFields.stateProvinceRegion}
 							<div class="mt-1 flex w-full flex-col gap-3">
 								<Combobox
@@ -624,23 +662,24 @@
 											: requirements.address.stateProvinceRegion
 										: ''}
 								</p>
-								<button
-									class="opacity-0 transition-opacity duration-200 group-hover:opacity-100"
-									onclick={() => {
-										startEditing('country');
-										startEditing('city');
-										startEditing('stateProvinceRegion');
-									}}><Pen class="h-3.5 w-3.5 text-gray-400 hover:text-primary" /></button
-								>
 							</div>
 						{/if}
 					</div>
 
 					<!-- Languages -->
 					<div class="group rounded p-3 hover:bg-gray-50">
-						<p class="text-[11px] uppercase tracking-wide text-muted-foreground">
-							{$t('hunt.languages')}
-						</p>
+						<div class="flex items-center gap-2">
+							<p class="text-[11px] uppercase tracking-wide text-muted-foreground">
+								{$t('hunt.languages')}
+							</p>
+							{#if !editableFields.jobRequiredLanguages}
+								<button
+									class="opacity-0 transition-opacity duration-200 group-hover:opacity-100"
+									onclick={() => startEditing('jobRequiredLanguages')}
+									><Pen class="h-3.5 w-3.5 text-gray-600 hover:text-primary" /></button
+								>
+							{/if}
+						</div>
 						{#if editableFields.jobRequiredLanguages}
 							<div class="mt-1 space-y-2">
 								<ComboboxMulti
@@ -680,21 +719,30 @@
 								{#if !requirements.jobRequiredLanguages || requirements.jobRequiredLanguages.length === 0}
 									<span class="text-gray-500">{$t('hunt.notSpecified')}</span>
 								{/if}
-								<button
-									class="opacity-0 transition-opacity duration-200 group-hover:opacity-100"
-									onclick={() => startEditing('jobRequiredLanguages')}
-									><Pen class="h-3.5 w-3.5 text-gray-400 hover:text-primary" /></button
-								>
 							</div>
 						{/if}
 					</div>
 
 					<!-- Salary -->
 					<div class="group rounded p-3 hover:bg-gray-50">
-						<p class="text-[11px] uppercase tracking-wide text-muted-foreground">
-							{$t('hunt.salary')}
-						</p>
-						{#if editableFields.salaryStart || editableFields.salaryEnd || editableFields.salaryCurrency || editableFields.salaryType}
+						<div class="flex items-center gap-2">
+							<p class="text-[11px] uppercase tracking-wide text-muted-foreground">
+								{$t('hunt.salary')}
+							</p>
+							{#if !editableFields.salaryStart && !editableFields.salaryEnd && !editableFields.salaryCurrency && !editableFields.salaryType && !editableFields.salaryExtra}
+								<button
+									class="opacity-0 transition-opacity duration-200 group-hover:opacity-100"
+									onclick={() => {
+										startEditing('salaryStart');
+										startEditing('salaryEnd');
+										startEditing('salaryCurrency');
+										startEditing('salaryType');
+										startEditing('salaryExtra');
+									}}><Pen class="h-3.5 w-3.5 text-gray-600 hover:text-primary" /></button
+								>
+							{/if}
+						</div>
+						{#if editableFields.salaryStart || editableFields.salaryEnd || editableFields.salaryCurrency || editableFields.salaryType || editableFields.salaryExtra}
 							<div class="mt-1 flex w-full flex-col gap-3">
 								<div class="flex w-full items-center gap-2">
 									<Input
@@ -737,6 +785,13 @@
 										class="w-full"
 									/>
 								</div>
+								<textarea
+									placeholder="Or enter custom salary description (e.g., '70% billing', 'Commission based', etc.)"
+									value={editValues.salaryExtra}
+									onchange={(e) => (editValues.salaryExtra = e.currentTarget.value)}
+									class="min-h-[80px] w-full rounded-md border p-2 text-sm"
+									rows="3"
+								></textarea>
 								<div class="flex justify-end gap-2">
 									<Button
 										size="icon"
@@ -755,53 +810,58 @@
 											cancelEditing('salaryEnd');
 											cancelEditing('salaryCurrency');
 											cancelEditing('salaryType');
+											cancelEditing('salaryExtra');
 										}}><X class="h-4 w-4" /></Button
 									>
 								</div>
 							</div>
 						{:else}
-							<div class="mt-1 flex items-center gap-2">
-								<p
-									class={requirements.salary?.amountStart || requirements.salary?.amountEnd
-										? 'text-gray-900'
-										: 'text-gray-500'}
-								>
-									{#if requirements.salary?.amountStart && requirements.salary?.amountEnd}
-										{requirements.salary.amountStart} - {requirements.salary.amountEnd}
-										{requirements.salary.currency}
-										{availableSalaryPeriods.find((p) => p.code === requirements?.salary?.typeV2)
-											?.name
-											? `(${availableSalaryPeriods.find((p) => p.code === requirements?.salary?.typeV2)?.name})`
-											: ''}
-									{:else if requirements.salary?.amountStart && !requirements.salary?.amountEnd}
-										{requirements.salary.amountStart}
-										{requirements.salary.currency}
-										{availableSalaryPeriods.find((p) => p.code === requirements?.salary?.typeV2)
-											?.name
-											? `(${availableSalaryPeriods.find((p) => p.code === requirements?.salary?.typeV2)?.name})`
-											: ''}
-									{:else if requirements.salary?.amountText}
-										{requirements.salary.amountText}
-									{:else}
-										{$t('hunt.notSpecified')}
-									{/if}
-								</p>
-								<button
-									class="opacity-0 transition-opacity duration-200 group-hover:opacity-100"
-									onclick={() => {
-										startEditing('salaryStart');
-										startEditing('salaryEnd');
-										startEditing('salaryCurrency');
-										startEditing('salaryType');
-									}}><Pen class="h-3.5 w-3.5 text-gray-400 hover:text-primary" /></button
-								>
+							<div class="mt-1 flex flex-col gap-1">
+								{#if requirements.salary?.amountStart || requirements.salary?.amountEnd}
+									<p class="text-gray-900">
+										{#if requirements.salary?.amountStart && requirements.salary?.amountEnd}
+											{formatNumber(requirements.salary.amountStart)} - {formatNumber(
+												requirements.salary.amountEnd
+											)}
+										{:else if requirements.salary?.amountStart}
+											{formatNumber(requirements.salary.amountStart)}+
+										{:else if requirements.salary?.amountEnd}
+											Up to {formatNumber(requirements.salary.amountEnd)}
+										{/if}
+
+										{#if requirements.salary?.currency}
+											<span class="ml-1 font-medium">{requirements.salary.currency}</span>
+										{/if}
+
+										{#if requirements.salary?.typeV2}
+											{@const periodName = availableSalaryPeriods.find(
+												(p) => p.code === requirements?.salary?.typeV2
+											)?.name}
+											{#if periodName}
+												<span class="ml-1 text-sm text-gray-600">({periodName})</span>
+											{/if}
+										{/if}
+									</p>
+								{/if}
+
+								{#if requirements.salary?.amountText && !requirements.salary?.salaryExtra}
+									<p class="text-gray-900">{requirements.salary.amountText}</p>
+								{/if}
+
+								{#if requirements.salary?.salaryExtra}
+									<p class="text-sm italic text-gray-600">{requirements.salary.salaryExtra}</p>
+								{/if}
+
+								{#if !requirements.salary?.amountStart && !requirements.salary?.amountEnd && !requirements.salary?.amountText && !requirements.salary?.salaryExtra}
+									<p class="text-gray-500">{$t('hunt.notSpecified')}</p>
+								{/if}
 							</div>
 						{/if}
 					</div>
 
 					<!-- Target countries -->
 					<div class="group rounded p-3 hover:bg-gray-50">
-						<div class="flex items-center justify-between">
+						<div class="flex items-center gap-2">
 							<p class="text-[11px] uppercase tracking-wide text-muted-foreground">
 								{$t('requirementsDetails.fields.targetCountries')}
 							</p>
@@ -811,7 +871,7 @@
 									onclick={() => {
 										editableFields.targetOnlyCountries = true;
 										editableFields.targetPreferredCountries = true;
-									}}><Pen class="h-3.5 w-3.5 text-gray-400 hover:text-primary" /></button
+									}}><Pen class="h-3.5 w-3.5 text-gray-600 hover:text-primary" /></button
 								>
 							{/if}
 						</div>
@@ -942,8 +1002,17 @@
 				<!-- Details section (always below header grid in this standalone component) -->
 				<div class="mt-6 space-y-6 border-t pt-4">
 					<!-- Description -->
-					<div class="group">
-						<h4 class="mb-2 text-base font-medium">{$t('hunt.jobDescription')}</h4>
+					<div class="group w-full max-w-full rounded p-3 hover:bg-gray-50">
+						<div class="mb-2 flex items-center gap-2">
+							<h4 class="text-base font-medium">{$t('hunt.jobDescription')}</h4>
+							{#if !editableFields.jobDescription}
+								<button
+									class="opacity-0 transition-opacity duration-200 group-hover:opacity-100"
+									onclick={() => startEditing('jobDescription')}
+									><Pen class="h-3.5 w-3.5 text-gray-600 hover:text-primary" /></button
+								>
+							{/if}
+						</div>
 						{#if editableFields.jobDescription}
 							<div class="flex w-full flex-col gap-2">
 								<textarea
@@ -969,22 +1038,30 @@
 								</div>
 							</div>
 						{:else}
-							<div class="flex items-start gap-2">
-								<div class={requirements.jobDescription ? 'prose text-gray-900' : 'text-gray-500'}>
+							<div
+								class="w-full max-w-full overflow-hidden {requirements.jobDescription
+									? 'prose text-gray-900'
+									: 'text-gray-500'}"
+							>
+								<div class="max-w-full overflow-x-auto whitespace-pre-wrap break-all">
 									{@html markdownToHtml(requirements.jobDescription || $t('hunt.notSpecified'))}
 								</div>
-								<button
-									class="mt-0.5 opacity-0 transition-opacity duration-200 group-hover:opacity-100"
-									onclick={() => startEditing('jobDescription')}
-									><Pen class="h-3.5 w-3.5 text-gray-400 hover:text-primary" /></button
-								>
 							</div>
 						{/if}
 					</div>
 
 					<!-- Qualifications -->
-					<div class="group">
-						<h4 class="mb-2 text-base font-medium">{$t('hunt.requiredQualifications')}</h4>
+					<div class="group w-full max-w-full rounded p-3 hover:bg-gray-50">
+						<div class="mb-2 flex items-center gap-2">
+							<h4 class="text-base font-medium">{$t('hunt.requiredQualifications')}</h4>
+							{#if !editableFields.jobRequiredQualifications}
+								<button
+									class="opacity-0 transition-opacity duration-200 group-hover:opacity-100"
+									onclick={() => startEditing('jobRequiredQualifications')}
+									><Pen class="h-3.5 w-3.5 text-gray-600 hover:text-primary" /></button
+								>
+							{/if}
+						</div>
 						{#if editableFields.jobRequiredQualifications}
 							<div class="flex w-full flex-col gap-2">
 								<textarea
@@ -1011,30 +1088,32 @@
 								</div>
 							</div>
 						{:else}
-							<div class="flex items-start gap-2">
-								<div
-									class="text-sm {requirements.jobRequiredQualifications
-										? 'text-gray-900'
-										: 'text-gray-500'}"
-									style="white-space: pre-line;"
-								>
+							<div
+								class="w-full max-w-full overflow-hidden text-sm {requirements.jobRequiredQualifications
+									? 'text-gray-900'
+									: 'text-gray-500'}"
+								style="white-space: pre-line;"
+							>
+								<div class="max-w-full overflow-x-auto break-all">
 									{requirements.jobRequiredQualifications || $t('hunt.notSpecified')}
 								</div>
-								<button
-									class="mt-0.5 opacity-0 transition-opacity duration-200 group-hover:opacity-100"
-									onclick={() => startEditing('jobRequiredQualifications')}
-									><Pen class="h-3.5 w-3.5 text-gray-400 hover:text-primary" /></button
-								>
 							</div>
 						{/if}
 					</div>
 
 					<!-- Contexts -->
-					<div class="group">
+					<div class="group w-full max-w-full rounded p-3 hover:bg-gray-50">
 						<div class="mb-2 flex items-center gap-2">
 							<h4 class="text-base font-medium">
 								{$t('requirementsDetails.fields.companyContext')}
 							</h4>
+							{#if !editableFields.companyContext}
+								<button
+									class="opacity-0 transition-opacity duration-200 group-hover:opacity-100"
+									onclick={() => startEditing('companyContext')}
+									><Pen class="h-3.5 w-3.5 text-gray-600 hover:text-primary" /></button
+								>
+							{/if}
 						</div>
 						{#if editableFields.companyContext}
 							<div class="flex w-full flex-col gap-2">
@@ -1062,31 +1141,33 @@
 								</div>
 							</div>
 						{:else}
-							<div class="flex items-start gap-2">
-								<p
-									class={requirements.companyContext ||
-									requirements.huntInstructions?.companyContext
-										? 'whitespace-pre-line text-sm text-gray-900'
-										: 'text-sm text-gray-500'}
-								>
+							<div
+								class="w-full max-w-full overflow-hidden {requirements.companyContext ||
+								requirements.huntInstructions?.companyContext
+									? 'whitespace-pre-line text-sm text-gray-900'
+									: 'text-sm text-gray-500'}"
+							>
+								<div class="max-w-full overflow-x-auto break-all">
 									{requirements.companyContext ||
 										requirements.huntInstructions?.companyContext ||
 										$t('requirementsDetails.labels.notProvided')}
-								</p>
-								<button
-									class="mt-0.5 opacity-0 transition-opacity duration-200 group-hover:opacity-100"
-									onclick={() => startEditing('companyContext')}
-									><Pen class="h-3.5 w-3.5 text-gray-400 hover:text-primary" /></button
-								>
+								</div>
 							</div>
 						{/if}
 					</div>
 
-					<div class="group">
+					<div class="group w-full max-w-full rounded p-3 hover:bg-gray-50">
 						<div class="mb-2 flex items-center gap-2">
 							<h4 class="text-base font-medium">
 								{$t('requirementsDetails.fields.hiringContext')}
 							</h4>
+							{#if !editableFields.hiringContext}
+								<button
+									class="opacity-0 transition-opacity duration-200 group-hover:opacity-100"
+									onclick={() => startEditing('hiringContext')}
+									><Pen class="h-3.5 w-3.5 text-gray-600 hover:text-primary" /></button
+								>
+							{/if}
 						</div>
 						{#if editableFields.hiringContext}
 							<div class="flex w-full flex-col gap-2">
@@ -1114,21 +1195,17 @@
 								</div>
 							</div>
 						{:else}
-							<div class="flex items-start gap-2">
-								<p
-									class={requirements.hiringContext || requirements.huntInstructions?.hiringContext
-										? 'whitespace-pre-line text-sm text-gray-900'
-										: 'text-sm text-gray-500'}
-								>
+							<div
+								class="w-full max-w-full overflow-hidden {requirements.hiringContext ||
+								requirements.huntInstructions?.hiringContext
+									? 'whitespace-pre-line text-sm text-gray-900'
+									: 'text-sm text-gray-500'}"
+							>
+								<div class="max-w-full overflow-x-auto break-all">
 									{requirements.hiringContext ||
 										requirements.huntInstructions?.hiringContext ||
 										$t('requirementsDetails.labels.notProvided')}
-								</p>
-								<button
-									class="mt-0.5 opacity-0 transition-opacity duration-200 group-hover:opacity-100"
-									onclick={() => startEditing('hiringContext')}
-									><Pen class="h-3.5 w-3.5 text-gray-400 hover:text-primary" /></button
-								>
+								</div>
 							</div>
 						{/if}
 					</div>
