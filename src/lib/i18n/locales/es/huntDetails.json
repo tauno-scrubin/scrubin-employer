@@ -35,6 +35,24 @@
 		"required": "Requerido",
 		"notRequired": "No requerido",
 		"title": "Búsqueda",
+		"completed": "Búsqueda marcada como completada",
+		"cancelled": "Búsqueda cancelada",
+		"completeDialog": {
+			"title": "Completar búsqueda",
+			"description": "Esto marcará la búsqueda como completada. Aún podrás ver las estadísticas."
+		},
+		"cancelDialog": {
+			"title": "Cancelar búsqueda",
+			"description": "¿Seguro que deseas cancelar esta búsqueda? Esta acción puede ser irreversible."
+		},
+		"actions": {
+			"complete": "Completar",
+			"cancel": "Cancelar",
+			"confirm": "Confirmar",
+			"back": "Volver",
+			"completing": "Completando",
+			"cancelling": "Cancelando"
+		},
 		"readyForCompany": "Listo para Entrevista",
 		"offersMade": "Ofertas Realizadas",
 		"hired": "Contratado",
@@ -118,6 +136,8 @@
 		"contextQuestionsDesc": "Las preguntas de los candidatos se recopilan aquí. Una vez respondidas, pasan a formar parte del contexto para respuestas impulsadas por IA en interacciones futuras."
 	},
 	"errors": {
-		"paymentIssue": "Hay un problema con el precio de esta Búsqueda, por favor contacte con soporte."
+		"paymentIssue": "Hay un problema con el precio de esta Búsqueda, por favor contacte con soporte.",
+		"huntCompleteFailed": "No se pudo completar la búsqueda. Inténtalo de nuevo.",
+		"huntCancelFailed": "No se pudo cancelar la búsqueda. Inténtalo de nuevo."
 	}
 }

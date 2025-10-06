@@ -34,7 +34,25 @@
 		"transport": "Transport",
 		"required": "Required",
 		"notRequired": "Not required",
-		"title": "Hunt"
+		"title": "Hunt",
+		"completed": "Hunt marked as completed",
+		"cancelled": "Hunt cancelled",
+		"completeDialog": {
+			"title": "Complete hunt",
+			"description": "This will mark the hunt as completed. You can still view statistics afterwards."
+		},
+		"cancelDialog": {
+			"title": "Cancel hunt",
+			"description": "Are you sure you want to cancel this hunt? This action may be irreversible."
+		},
+		"actions": {
+			"complete": "Complete",
+			"cancel": "Cancel",
+			"confirm": "Confirm",
+			"back": "Back",
+			"completing": "Completing",
+			"cancelling": "Cancelling"
+		}
 	},
 	"requirementsDetails": {
 		"potentialReach": "Potential candidate reach",
@@ -116,6 +134,8 @@
 		"contextQuestionsDesc": "Questions from candidates are collected here. Once answered, they become part of the context for AI-powered responses in future interactions."
 	},
 	"errors": {
-		"paymentIssue": "There is an issue with this Hunt pricing, please contact support."
+		"paymentIssue": "There is an issue with this Hunt pricing, please contact support.",
+		"huntCompleteFailed": "Failed to complete hunt. Please try again.",
+		"huntCancelFailed": "Failed to cancel hunt. Please try again."
 	}
 }

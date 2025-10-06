@@ -35,6 +35,24 @@
 		"required": "Erforderlich",
 		"notRequired": "Nicht erforderlich",
 		"title": "Suche",
+		"completed": "Suche als abgeschlossen markiert",
+		"cancelled": "Suche abgebrochen",
+		"completeDialog": {
+			"title": "Suche abschließen",
+			"description": "Dies markiert die Suche als abgeschlossen. Sie können die Statistiken weiterhin einsehen."
+		},
+		"cancelDialog": {
+			"title": "Suche abbrechen",
+			"description": "Sind Sie sicher, dass Sie diese Suche abbrechen möchten? Diese Aktion kann irreversibel sein."
+		},
+		"actions": {
+			"complete": "Abschließen",
+			"cancel": "Abbrechen",
+			"confirm": "Bestätigen",
+			"back": "Zurück",
+			"completing": "Wird abgeschlossen",
+			"cancelling": "Wird abgebrochen"
+		},
 		"readyForCompany": "Bereit für Vorstellungsgespräch",
 		"offersMade": "Gemachte Angebote",
 		"hired": "Eingestellt"
@@ -117,6 +135,8 @@
 		"contextQuestionsDesc": "Fragen von Kandidaten werden hier gesammelt. Sobald sie beantwortet sind, werden sie Teil des Kontexts für KI-gestützte Antworten in zukünftigen Interaktionen."
 	},
 	"errors": {
-		"paymentIssue": "Es gibt ein Problem mit der Preisgestaltung dieser Suche, bitte kontaktieren Sie den Support."
+		"paymentIssue": "Es gibt ein Problem mit der Preisgestaltung dieser Suche, bitte kontaktieren Sie den Support.",
+		"huntCompleteFailed": "Suche konnte nicht abgeschlossen werden. Bitte versuchen Sie es erneut.",
+		"huntCancelFailed": "Suche konnte nicht abgebrochen werden. Bitte versuchen Sie es erneut."
 	}
 }

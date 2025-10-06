@@ -35,6 +35,24 @@
 		"required": "Nõutav",
 		"notRequired": "Ei ole nõutav",
 		"title": "Sihtotsing",
+		"completed": "Otsing märgiti lõpetatuks",
+		"cancelled": "Otsing tühistati",
+		"completeDialog": {
+			"title": "Lõpeta otsing",
+			"description": "See märgib otsingu lõpetatuks. Saad statistikat endiselt vaadata."
+		},
+		"cancelDialog": {
+			"title": "Tühista otsing",
+			"description": "Kas soovid kindlasti selle otsingu tühistada? See tegevus võib olla pöördumatu."
+		},
+		"actions": {
+			"complete": "Lõpeta",
+			"cancel": "Katkesta",
+			"confirm": "Kinnita",
+			"back": "Tagasi",
+			"completing": "Lõpetame",
+			"cancelling": "Tühistame"
+		},
 		"readyForCompany": "Valmis intervjuuks",
 		"offersMade": "Tehtud pakkumised",
 		"hired": "Tööle võetud",
@@ -118,6 +136,8 @@
 		"contextQuestionsDesc": "Kandidaatide küsimused kogutakse siia. Pärast vastamist saavad need osaks tehisintellekti vastuste kontekstist tulevastes suhtlustes."
 	},
 	"errors": {
-		"paymentIssue": "Selle otsingu hinnastamisega on probleem, palun võtke ühendust klienditoega."
+		"paymentIssue": "Selle otsingu hinnastamisega on probleem, palun võtke ühendust klienditoega.",
+		"huntCompleteFailed": "Otsingu lõpetamine ebaõnnestus. Palun proovi uuesti.",
+		"huntCancelFailed": "Otsingu tühistamine ebaõnnestus. Palun proovi uuesti."
 	}
 }

@@ -21,6 +21,7 @@
 	import DropdownComponent from '@/components/dropdownComponent.svelte';
 	import { getStatusColor } from '@/components/payment/payments.js';
 	import Separator from '@/components/ui/separator/separator.svelte';
+	import * as Dialog from '@/components/ui/dialog/index.js';
 	import {
 		ArrowLeft,
 		Briefcase,
@@ -59,6 +60,10 @@
 	// Manual edit mode state
 	let isEditMode = $state(false);
 	let isSaving = $state(false);
+	let isCompleting = $state(false);
+	let isCancelling = $state(false);
+	let isCompleteDialogOpen = $state(false);
+	let isCancelDialogOpen = $state(false);
 	let editableRequirements = $state<{
 		jobTitle: string;
 		jobDescription: string;
@@ -157,6 +162,40 @@
 			});
 		} finally {
 			isSaving = false;
+		}
+	}
+
+	async function completeCurrentHunt() {
+		if (!hunt?.huntId) return;
+		isCompleting = true;
+		try {
+			const updated = await scrubinClient.hunt.completeHunt(hunt.huntId);
+			// Update local hunt status; avoid reassigning derived value
+			hunt.status = updated.status;
+			toast.success($t('hunt.completed'));
+		} catch (error) {
+			console.error('Failed to complete hunt:', error);
+			toast.error($t('errors.huntCompleteFailed'));
+		} finally {
+			isCompleting = false;
+			isCompleteDialogOpen = false;
+		}
+	}
+
+	async function cancelCurrentHunt() {
+		if (!hunt?.huntId) return;
+		isCancelling = true;
+		try {
+			const updated = await scrubinClient.hunt.cancelHunt(hunt.huntId);
+			// Update local hunt status; avoid reassigning derived value
+			hunt.status = updated.status;
+			toast.success($t('hunt.cancelled'));
+		} catch (error) {
+			console.error('Failed to cancel hunt:', error);
+			toast.error($t('errors.huntCancelFailed'));
+		} finally {
+			isCancelling = false;
+			isCancelDialogOpen = false;
 		}
 	}
 
@@ -365,12 +404,44 @@
 							</Button>
 						</div>
 					{:else} -->
-					<Badge
-						variant="outline"
-						class="px-3 py-1 {getStatusColor(hunt.status)} border-transparent"
-					>
-						{$t(`hunt.huntStatus.${hunt.status.toLowerCase()}`)}
-					</Badge>
+					<div class="flex items-center gap-2">
+						<Badge
+							variant="outline"
+							class="px-3 py-1 {getStatusColor(hunt.status)} border-transparent"
+						>
+							{$t(`hunt.huntStatus.${hunt.status.toLowerCase()}`)}
+						</Badge>
+						{#if hunt.status === 'ACTIVE'}
+							<Button
+								variant="outline"
+								size="sm"
+								disabled={isCompleting}
+								onclick={() => (isCompleteDialogOpen = true)}
+								class="ml-2"
+							>
+								{#if isCompleting}
+									<Loader2 class="mr-2 h-4 w-4 animate-spin" />
+									{$t('hunt.actions.completing')}
+								{:else}
+									{$t('hunt.actions.complete')}
+								{/if}
+							</Button>
+							<Button
+								variant="outline"
+								size="sm"
+								disabled={isCancelling}
+								onclick={() => (isCancelDialogOpen = true)}
+								class="ml-2 border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700"
+							>
+								{#if isCancelling}
+									<Loader2 class="mr-2 h-4 w-4 animate-spin" />
+									{$t('hunt.actions.cancelling')}
+								{:else}
+									{$t('hunt.actions.cancel')}
+								{/if}
+							</Button>
+						{/if}
+					</div>
 					<!-- {/if} -->
 				</div>
 
@@ -901,7 +972,8 @@
 																				? 'bg-yellow-100 text-yellow-800'
 																				: candidate.status.toLowerCase() === 'hired'
 																					? 'bg-green-100 text-green-800'
-																					: candidate.status.toLowerCase() === 'declined' || candidate.status.toLowerCase() === 'rejected'
+																					: candidate.status.toLowerCase() === 'declined' ||
+																						  candidate.status.toLowerCase() === 'rejected'
 																						? 'bg-red-100 text-red-800'
 																						: 'bg-gray-100 text-gray-800'}"
 																	>
@@ -964,4 +1036,59 @@
 			</div>
 		</Tabs.Content>
 	</Tabs.Root>
+
+	<!-- Complete confirmation dialog -->
+	<Dialog.Root bind:open={isCompleteDialogOpen}>
+		<Dialog.Content>
+			<Dialog.Header>
+				<Dialog.Title>{$t('hunt.completeDialog.title')}</Dialog.Title>
+				<Dialog.Description>
+					{$t('hunt.completeDialog.description')}
+				</Dialog.Description>
+			</Dialog.Header>
+			<div class="mt-4 flex justify-end gap-2">
+				<Button variant="outline" onclick={() => (isCompleteDialogOpen = false)}
+					>{$t('hunt.actions.cancel')}</Button
+				>
+				<Button variant="default" disabled={isCompleting} onclick={completeCurrentHunt}>
+					{#if isCompleting}
+						<Loader2 class="mr-2 h-4 w-4 animate-spin" />
+						{$t('hunt.actions.completing')}
+					{:else}
+						{$t('hunt.actions.confirm')}
+					{/if}
+				</Button>
+			</div>
+		</Dialog.Content>
+	</Dialog.Root>
+
+	<!-- Cancel confirmation dialog -->
+	<Dialog.Root bind:open={isCancelDialogOpen}>
+		<Dialog.Content>
+			<Dialog.Header>
+				<Dialog.Title>{$t('hunt.cancelDialog.title')}</Dialog.Title>
+				<Dialog.Description>
+					{$t('hunt.cancelDialog.description')}
+				</Dialog.Description>
+			</Dialog.Header>
+			<div class="mt-4 flex justify-end gap-2">
+				<Button variant="outline" onclick={() => (isCancelDialogOpen = false)}
+					>{$t('hunt.actions.back')}</Button
+				>
+				<Button
+					variant="outline"
+					class="border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700"
+					disabled={isCancelling}
+					onclick={cancelCurrentHunt}
+				>
+					{#if isCancelling}
+						<Loader2 class="mr-2 h-4 w-4 animate-spin" />
+						{$t('hunt.actions.cancelling')}
+					{:else}
+						{$t('hunt.actions.confirm')}
+					{/if}
+				</Button>
+			</div>
+		</Dialog.Content>
+	</Dialog.Root>
 </div>

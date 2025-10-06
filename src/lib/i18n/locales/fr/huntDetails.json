@@ -35,6 +35,24 @@
 		"required": "Requis",
 		"notRequired": "Non requis",
 		"title": "Recherche",
+		"completed": "Recherche marquée comme terminée",
+		"cancelled": "Recherche annulée",
+		"completeDialog": {
+			"title": "Terminer la recherche",
+			"description": "Cela marquera la recherche comme terminée. Vous pourrez toujours consulter les statistiques."
+		},
+		"cancelDialog": {
+			"title": "Annuler la recherche",
+			"description": "Êtes-vous sûr de vouloir annuler cette recherche ? Cette action peut être irréversible."
+		},
+		"actions": {
+			"complete": "Terminer",
+			"cancel": "Annuler",
+			"confirm": "Confirmer",
+			"back": "Retour",
+			"completing": "Finalisation",
+			"cancelling": "Annulation"
+		},
 		"readyForCompany": "Prêt pour l'entretien",
 		"offersMade": "Offres faites",
 		"hired": "Embauché"
@@ -117,6 +135,8 @@
 		"contextQuestionsDesc": "Les questions des candidats sont collectées ici. Une fois répondues, elles font partie du contexte pour les réponses alimentées par l'IA dans les interactions futures."
 	},
 	"errors": {
-		"paymentIssue": "Il y a un problème avec la tarification de cette recherche, veuillez contacter le support."
+		"paymentIssue": "Il y a un problème avec la tarification de cette recherche, veuillez contacter le support.",
+		"huntCompleteFailed": "Échec de la finalisation de la recherche. Veuillez réessayer.",
+		"huntCancelFailed": "Échec de l'annulation de la recherche. Veuillez réessayer."
 	}
 }
