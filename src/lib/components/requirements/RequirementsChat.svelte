@@ -2,11 +2,16 @@
 	import { Button } from '$lib/components/ui/button';
 	import { Separator } from '$lib/components/ui/separator';
 	import Textarea from '$lib/components/ui/textarea/textarea.svelte';
-	import { Loader2, Send, Sparkle } from 'lucide-svelte';
+	import { Loader2, Send, Sparkle, Check } from 'lucide-svelte';
 	import { onMount, tick } from 'svelte';
 	import { toast } from 'svelte-sonner';
 	import { slide } from 'svelte/transition';
-	import type { ChatSessionResponse, JobRequirementDto } from '@/scrubinClient';
+	import type {
+		ChatSessionResponse,
+		JobRequirementDto,
+		CompanyPlanSummary,
+		PlanType
+	} from '@/scrubinClient';
 	import { scrubinClient } from '@/scrubinClient/client';
 	import { t } from '$lib/i18n';
 
@@ -24,9 +29,22 @@
 	let isSending = $state(false);
 	let session: ChatSessionResponse | null = $state(null);
 	let chatContainer: HTMLElement;
+	let companyActivePlans = $state<CompanyPlanSummary[]>([]);
+	let isComplete = $state(false);
+	let showActivate = $state(false);
+	let activationInProgress = $state(false);
 
 	onMount(async () => {
-		await initializeSession();
+		await Promise.allSettled([
+			(async () => {
+				try {
+					companyActivePlans = await scrubinClient.company.getActivePlans();
+				} catch (e) {
+					console.error('Failed to load active plans', e);
+				}
+			})(),
+			initializeSession()
+		]);
 		setTimeout(() => {
 			scrollToBottom();
 		}, 200);
@@ -52,6 +70,7 @@
 
 	function updateFromSession(s: ChatSessionResponse) {
 		jobRequirements = s.currentRequirements;
+		isComplete = Boolean(s.isComplete);
 		const chatMessages = s.chatMessages.items
 			.map((m) => ({
 				role: m.role as 'user' | 'assistant',
@@ -122,6 +141,34 @@
 	$effect(() => {
 		if (currentMessage === '' && messages.length > 0) setTimeout(() => scrollToBottom(), 20);
 	});
+
+	$effect(() => {
+		const hasActivePlan = companyActivePlans.some((p) => p.planActive);
+		showActivate = hasActivePlan && isComplete;
+	});
+
+	async function activateRequirements() {
+		if (!jobRequirements?.id) return;
+		if (activationInProgress) return;
+		try {
+			activationInProgress = true;
+			const activePlan = companyActivePlans?.find((p) => p.planActive);
+			if (!activePlan) {
+				toast.error($t('requirementsDetails.planRequired.description'));
+				return;
+			}
+			const result = await scrubinClient.hunt.createHuntAndActivateFromRequirements(
+				jobRequirements.id,
+				activePlan.planType as PlanType
+			);
+			window.location.href = `/dashboard/hunts/${result.huntId}`;
+		} catch (error) {
+			console.error('Error activating requirements:', error);
+			toast.error($t('common.error'));
+		} finally {
+			activationInProgress = false;
+		}
+	}
 </script>
 
 <div
@@ -139,6 +186,18 @@
 					<p class="text-sm text-gray-500">{$t('requirementsChat.subtitle')}</p>
 				</div>
 			</div>
+			{#if showActivate}
+				<Button
+					onclick={activateRequirements}
+					variant="default"
+					size="sm"
+					class="gap-2 rounded-md shadow-sm"
+					disabled={activationInProgress}
+				>
+					<Check class="h-4 w-4" />
+					<span>{$t('requirementsDetails.readyToActivate.button')}</span>
+				</Button>
+			{/if}
 		</div>
 
 		<Separator />
