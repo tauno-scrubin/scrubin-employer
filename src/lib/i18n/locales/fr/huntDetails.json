@@ -45,13 +45,26 @@
 			"title": "Annuler la recherche",
 			"description": "Êtes-vous sûr de vouloir annuler cette recherche ? Cette action peut être irréversible."
 		},
+		"pauseDialog": {
+			"title": "Mettre la recherche en pause",
+			"description": "La mise en pause arrêtera la prospection et les automatisations. Vous pourrez reprendre plus tard."
+		},
 		"actions": {
 			"complete": "Terminer",
+			"pause": "Mettre en pause",
 			"cancel": "Annuler",
+			"actions": "Actions",
 			"confirm": "Confirmer",
 			"back": "Retour",
 			"completing": "Finalisation",
 			"cancelling": "Annulation"
+		},
+		"visibility": {
+			"title": "Visibilité : Privée",
+			"description": "Seules des offres directes sont envoyées. Rendez-la publique pour être visible par tous.",
+			"makePublic": "Rendre publique",
+			"publishSuccess": "Votre recherche est maintenant publique.",
+			"publishError": "Échec de la publication de l'annonce. Veuillez réessayer."
 		},
 		"readyForCompany": "Prêt pour l'entretien",
 		"offersMade": "Offres faites",
@@ -124,6 +137,8 @@
 		"interested": "Intéressés",
 		"readyForCompany": "Prêts pour l'entreprise",
 		"candidates": "Candidats",
+		"autoOffersNoticeTitle": "Chasse automatique",
+		"autoOffersNoticeDesc": "La chasse automatique commencera 1 heure après l'activation de la recherche.",
 		"noInterestedCandidates": "Nous sommes à la recherche de grands talents !",
 		"noInterestedCandidatesDesc": "Pas encore de candidats intéressés, mais nous contactons des professionnels qui correspondent à vos besoins. Revenez bientôt ! Nous vous informerons dès que nous aurons des nouvelles.",
 		"interestedOn": "Intéressé le",
@@ -137,6 +152,7 @@
 	"errors": {
 		"paymentIssue": "Il y a un problème avec la tarification de cette recherche, veuillez contacter le support.",
 		"huntCompleteFailed": "Échec de la finalisation de la recherche. Veuillez réessayer.",
-		"huntCancelFailed": "Échec de l'annulation de la recherche. Veuillez réessayer."
+		"huntCancelFailed": "Échec de l'annulation de la recherche. Veuillez réessayer.",
+		"huntPauseFailed": "Échec de la mise en pause de la recherche. Veuillez réessayer."
 	}
 }

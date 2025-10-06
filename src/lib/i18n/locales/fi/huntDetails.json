@@ -45,13 +45,26 @@
 			"title": "Peruuta haku",
 			"description": "Haluatko varmasti peruuttaa tämän haun? Toiminto voi olla peruuttamaton."
 		},
+		"pauseDialog": {
+			"title": "Tauota haku",
+			"description": "Tauottaminen pysäyttää yhteydenotot ja automaatiot. Voit jatkaa myöhemmin."
+		},
 		"actions": {
 			"complete": "Valmis",
+			"pause": "Tauko",
 			"cancel": "Peruuta",
+			"actions": "Toiminnot",
 			"confirm": "Vahvista",
 			"back": "Takaisin",
 			"completing": "Merkitään valmiiksi",
 			"cancelling": "Peruutetaan"
+		},
+		"visibility": {
+			"title": "Näkyvyys: Yksityinen",
+			"description": "Vain suoria tarjouksia lähetetään. Tee julkiseksi, jotta kaikki käyttäjät näkevät sen.",
+			"makePublic": "Tee julkiseksi",
+			"publishSuccess": "Haku on nyt julkinen.",
+			"publishError": "Ilmoitusta ei voitu tehdä julkiseksi. Yritä uudelleen."
 		},
 		"readyForCompany": "Valmis haastatteluun",
 		"offersMade": "Tehdyt tarjoukset",
@@ -125,6 +138,8 @@
 		"interested": "Kiinnostunut",
 		"readyForCompany": "Valmis yritykselle",
 		"candidates": "Ehdokkaat",
+		"autoOffersNoticeTitle": "Automaattinen headhunting",
+		"autoOffersNoticeDesc": "Automaattinen headhunting alkaa 1 tunnin kuluttua haun aktivoinnista.",
 		"noInterestedCandidates": "Etsimme parhaita osaajia!",
 		"noInterestedCandidatesDesc": "Ei kiinnostuneita ehdokkaita vielä, mutta otamme yhteyttä ammattilaisiin, jotka vastaavat tarpeitasi. Tarkista tilanne pian! Ilmoitamme sinulle heti, kun meillä on päivityksiä.",
 		"interestedOn": "Kiinnostunut",
@@ -138,6 +153,7 @@
 	"errors": {
 		"paymentIssue": "Tämän haun hinnoittelussa on ongelma, ota yhteyttä tukeen.",
 		"huntCompleteFailed": "Haun merkitseminen valmiiksi epäonnistui. Yritä uudelleen.",
-		"huntCancelFailed": "Haun peruutus epäonnistui. Yritä uudelleen."
+		"huntCancelFailed": "Haun peruutus epäonnistui. Yritä uudelleen.",
+		"huntPauseFailed": "Haun tauottaminen epäonnistui. Yritä uudelleen."
 	}
 }

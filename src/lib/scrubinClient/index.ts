@@ -54,6 +54,7 @@ export interface Company {
 	description: string;
 	country: string;
 	countryIso: string;
+	logoUrl: string;
 	registrationCode: string;
 	vatNumber: string;
 	languageIso: string;
@@ -355,6 +356,7 @@ export interface HuntDetail {
 	dateActivated: string;
 	dateCompleted: string | null;
 	status: string;
+	hasPublicAd: boolean;
 	totalScoredHuntables: number;
 	planType: PlanType;
 	startFee: {
@@ -589,6 +591,10 @@ export interface StartPlanRequest {
 	planType: string;
 }
 
+export interface CompanyLogo {
+	url: string;
+}
+
 // Add this interface with the other interfaces
 export interface Currency {
 	code: string;
@@ -796,12 +802,16 @@ class BaseResource {
 	): Promise<T | void> {
 		await this.client.ensureAuth();
 
-		const headers: Record<string, string> = {
-			'Content-Type': 'application/json',
-			Authorization: `Bearer ${this.client.authStore.token}`,
+		const isFormData = typeof FormData !== 'undefined' && data instanceof FormData;
 
+		const headers: Record<string, string> = {
+			Authorization: `Bearer ${this.client.authStore.token}`,
 			Origin: PUBLIC_ORIGIN
 		};
+		// Only set JSON content type when not sending FormData
+		if (!isFormData) {
+			headers['Content-Type'] = 'application/json';
+		}
 
 		if (this.client.authStore.token) {
 			headers['Cookie'] = this.client.authStore.exportToCookie();
@@ -815,7 +825,7 @@ class BaseResource {
 		};
 
 		if (data) {
-			config.body = JSON.stringify(data);
+			config.body = isFormData ? (data as FormData) : JSON.stringify(data);
 		}
 
 		try {
@@ -918,6 +928,11 @@ class CompanyResource extends BaseResource {
 	async updateCompany(data: Company): Promise<Company> {
 		const url = new URL(this.path, this.client.baseUrl);
 		return this.request<Company>('PUT', url.toString(), data) as Promise<Company>;
+	}
+
+	async uploadCompanyLogo(data: FormData): Promise<CompanyLogo> {
+		const url = new URL(`${this.path}/logo`, this.client.baseUrl);
+		return this.request<CompanyLogo>('POST', url.toString(), data) as Promise<CompanyLogo>;
 	}
 
 	async getCountries(): Promise<string[]> {
@@ -1045,10 +1060,7 @@ class HuntResource extends BaseResource {
 
 	async getRequirementReach(id: number): Promise<RequirementsReach> {
 		const url = new URL(`${this.path}/requirements/${id}/reach`, this.client.baseUrl);
-		return this.request<RequirementsReach>(
-			'GET',
-			url.toString()
-		) as Promise<RequirementsReach>;
+		return this.request<RequirementsReach>('GET', url.toString()) as Promise<RequirementsReach>;
 	}
 
 	async getAllRequirements(): Promise<AllRequirementsResponse> {
@@ -1310,6 +1322,18 @@ class HuntResource extends BaseResource {
 	// POST /api/v1/hunts/{id}/complete
 	async completeHunt(id: number): Promise<Hunt> {
 		const url = new URL(`/api/v1/hunts/${id}/complete`, this.client.baseUrl);
+		return this.request<Hunt>('POST', url.toString()) as Promise<Hunt>;
+	}
+
+	// POST /api/v1/hunts/{id}/complete
+	async pauseHunt(id: number): Promise<Hunt> {
+		const url = new URL(`/api/v1/hunts/${id}/pause`, this.client.baseUrl);
+		return this.request<Hunt>('POST', url.toString()) as Promise<Hunt>;
+	}
+
+	// POST /api/v1/hunts/{id}/convert-to-job-ad
+	async convertToJobAd(id: number): Promise<Hunt> {
+		const url = new URL(`/api/v1/hunts/${id}/convert-to-job-ad`, this.client.baseUrl);
 		return this.request<Hunt>('POST', url.toString()) as Promise<Hunt>;
 	}
 

@@ -425,6 +425,13 @@
 			"brandNamePlaceholder": "Geben Sie den Markennamen ein",
 			"description": "Beschreibung",
 			"descriptionPlaceholder": "Geben Sie die Unternehmensbeschreibung ein",
+			"logo": "Logo",
+			"openFullLogo": "Logo in voller Größe öffnen",
+			"logoInstructions": "Ziehen Sie ein Bild hierher oder klicken Sie zum Auswählen",
+			"logoHint": "PNG, JPG, WEBP oder SVG bis 5 MB",
+			"logoUnsupported": "Nicht unterstützter Dateityp",
+			"logoTooLarge": "Datei zu groß ({{size}}). Max. 5 MB.",
+			"logoUploadFailed": "Logo-Upload fehlgeschlagen",
 			"companyName": "Firmenname",
 			"companyNamePlaceholder": "Geben Sie den Firmennamen ein",
 			"registrationCode": "Registrierungscode",
@@ -444,6 +451,9 @@
 		"payment": {
 			"title": "Zahlungsmethode",
 			"expires": "Läuft ab"
+		},
+		"errors": {
+			"loadFailed": "Details konnten nicht geladen werden"
 		},
 		"notifications": {
 			"settingsUpdated": "Einstellungen erfolgreich aktualisiert",

@@ -45,13 +45,26 @@
 			"title": "Suche abbrechen",
 			"description": "Sind Sie sicher, dass Sie diese Suche abbrechen möchten? Diese Aktion kann irreversibel sein."
 		},
+		"pauseDialog": {
+			"title": "Suche pausieren",
+			"description": "Das Pausieren stoppt die Ansprache und Automatisierungen. Sie können später fortsetzen."
+		},
 		"actions": {
 			"complete": "Abschließen",
+			"pause": "Pausieren",
 			"cancel": "Abbrechen",
+			"actions": "Aktionen",
 			"confirm": "Bestätigen",
 			"back": "Zurück",
 			"completing": "Wird abgeschlossen",
 			"cancelling": "Wird abgebrochen"
+		},
+		"visibility": {
+			"title": "Sichtbarkeit: Privat",
+			"description": "Es werden nur direkte Angebote gesendet. Öffentlich machen, um für alle sichtbar zu sein.",
+			"makePublic": "Öffentlich machen",
+			"publishSuccess": "Ihre Suche ist jetzt öffentlich.",
+			"publishError": "Anzeige konnte nicht öffentlich gemacht werden. Bitte erneut versuchen."
 		},
 		"readyForCompany": "Bereit für Vorstellungsgespräch",
 		"offersMade": "Gemachte Angebote",
@@ -124,6 +137,8 @@
 		"interested": "Interessiert",
 		"readyForCompany": "Bereit für Vorstellungsgespräch",
 		"candidates": "Kandidaten",
+		"autoOffersNoticeTitle": "Automatische Headhunting",
+		"autoOffersNoticeDesc": "Automatisches Headhunting beginnt 1 Stunde nach der Aktivierung der Suche.",
 		"noInterestedCandidates": "Wir sind auf der Suche nach großartigen Talenten!",
 		"noInterestedCandidatesDesc": "Noch keine interessierten Kandidaten, aber wir kontaktieren Fachleute, die Ihren Anforderungen entsprechen. Schauen Sie bald wieder vorbei! Wir informieren Sie, sobald wir Updates haben.",
 		"interestedOn": "Interessiert am",
@@ -137,6 +152,7 @@
 	"errors": {
 		"paymentIssue": "Es gibt ein Problem mit der Preisgestaltung dieser Suche, bitte kontaktieren Sie den Support.",
 		"huntCompleteFailed": "Suche konnte nicht abgeschlossen werden. Bitte versuchen Sie es erneut.",
-		"huntCancelFailed": "Suche konnte nicht abgebrochen werden. Bitte versuchen Sie es erneut."
+		"huntCancelFailed": "Suche konnte nicht abgebrochen werden. Bitte versuchen Sie es erneut.",
+		"huntPauseFailed": "Suche konnte nicht pausiert werden. Bitte versuchen Sie es erneut."
 	}
 }

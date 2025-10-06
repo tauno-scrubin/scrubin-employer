@@ -45,13 +45,26 @@
 			"title": "Tühista otsing",
 			"description": "Kas soovid kindlasti selle otsingu tühistada? See tegevus võib olla pöördumatu."
 		},
+		"pauseDialog": {
+			"title": "Pane otsing pausile",
+			"description": "Pausil olev otsing lõpetab automaatsed väljasaatmised. Hiljem saad jätakata."
+		},
 		"actions": {
-			"complete": "Lõpeta",
-			"cancel": "Katkesta",
+			"complete": "Lõpeta otsing",
+			"pause": "Pane pausile",
+			"cancel": "Tühista otsing",
+			"actions": "Toimingud",
 			"confirm": "Kinnita",
 			"back": "Tagasi",
 			"completing": "Lõpetame",
 			"cancelling": "Tühistame"
+		},
+		"visibility": {
+			"title": "Nähtavus: Privaatne",
+			"description": "Saadame ainult otseseid pakkumisi. Muuda avalikuks, et kõik kasutajad näeksid.",
+			"makePublic": "Muuda avalikuks",
+			"publishSuccess": "Sinu otsing on nüüd avalik.",
+			"publishError": "Ei õnnestunud kuulutust avalikustada. Palun proovi uuesti."
 		},
 		"readyForCompany": "Valmis intervjuuks",
 		"offersMade": "Tehtud pakkumised",
@@ -125,6 +138,8 @@
 		"interested": "Huvitatud",
 		"readyForCompany": "Valmis intervjuuks",
 		"candidates": "Kandidaadid",
+		"autoOffersNoticeTitle": "Automaatne sihtotsing",
+		"autoOffersNoticeDesc": "Automaatne sihtotsing algab 1 tund pärast otsingu aktiveerimist.",
 		"noInterestedCandidates": "Otsime Teile suurepäraseid talente!",
 		"noInterestedCandidatesDesc": "Huvitatud kandidaate pole veel, kuid võtame ühendust spetsialistidega, kes vastavad teie vajadustele. Vaadake varsti uuesti! Anname teile teada kohe, kui meil on uuendusi.",
 		"interestedOn": "Huvitatud kuupäeval",
@@ -138,6 +153,7 @@
 	"errors": {
 		"paymentIssue": "Selle otsingu hinnastamisega on probleem, palun võtke ühendust klienditoega.",
 		"huntCompleteFailed": "Otsingu lõpetamine ebaõnnestus. Palun proovi uuesti.",
-		"huntCancelFailed": "Otsingu tühistamine ebaõnnestus. Palun proovi uuesti."
+		"huntCancelFailed": "Otsingu tühistamine ebaõnnestus. Palun proovi uuesti.",
+		"huntPauseFailed": "Otsingu peatamine ebaõnnestus. Palun proovi uuesti."
 	}
 }

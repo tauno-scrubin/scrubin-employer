@@ -22,12 +22,14 @@
 	import { getStatusColor } from '@/components/payment/payments.js';
 	import Separator from '@/components/ui/separator/separator.svelte';
 	import * as Dialog from '@/components/ui/dialog/index.js';
+	import * as DropdownMenu from '@/components/ui/dropdown-menu/index.js';
 	import {
 		ArrowLeft,
 		Briefcase,
 		DollarSign,
 		FileText,
 		GraduationCap,
+		ChevronDown,
 		Loader2,
 		Mail,
 		Pencil,
@@ -38,9 +40,13 @@
 	} from 'lucide-svelte';
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
+	import * as Alert from '$lib/components/ui/alert';
 
 	let { data } = $props();
 	let hunt = $derived(data.hunt);
+	let isRecentlyActivated = $derived(
+		hunt?.dateActivated ? Date.now() - new Date(hunt.dateActivated).getTime() < 3600000 : false
+	);
 	let interestedCandidates = $state<InterestedCandidate[]>([]);
 	let showAllInterestedCandidates = $state(false);
 	let isLoading = $state(true);
@@ -64,6 +70,9 @@
 	let isCancelling = $state(false);
 	let isCompleteDialogOpen = $state(false);
 	let isCancelDialogOpen = $state(false);
+	let isPausing = $state(false);
+	let isPauseDialogOpen = $state(false);
+	let isPublishing = $state(false);
 	let editableRequirements = $state<{
 		jobTitle: string;
 		jobDescription: string;
@@ -123,6 +132,21 @@
 				city: hunt.requirements.address?.city || '',
 				stateProvinceRegion: hunt.requirements.address?.stateProvinceRegion || ''
 			};
+		}
+	}
+
+	async function makeAdPublic() {
+		if (!hunt?.huntId) return;
+		isPublishing = true;
+		try {
+			await scrubinClient.hunt.convertToJobAd(hunt.huntId);
+			hunt.hasPublicAd = true;
+			toast.success($t('hunt.visibility.publishSuccess'));
+		} catch (error) {
+			console.error('Failed to make ad public:', error);
+			toast.error($t('hunt.visibility.publishError'));
+		} finally {
+			isPublishing = false;
 		}
 	}
 
@@ -196,6 +220,22 @@
 		} finally {
 			isCancelling = false;
 			isCancelDialogOpen = false;
+		}
+	}
+
+	async function pauseCurrentHunt() {
+		if (!hunt?.huntId) return;
+		isPausing = true;
+		try {
+			const updated = await scrubinClient.hunt.pauseHunt(hunt.huntId);
+			hunt.status = updated.status;
+			toast.success($t('hunt.paused'));
+		} catch (error) {
+			console.error('Failed to pause hunt:', error);
+			toast.error($t('errors.huntPauseFailed'));
+		} finally {
+			isPausing = false;
+			isPauseDialogOpen = false;
 		}
 	}
 
@@ -282,7 +322,6 @@
 	}
 
 	function handleActivateOrPay() {
-		console.log(hunt);
 		if (hunt.status === 'PENDING') {
 			activateHunt();
 		} else if (hunt.status === 'AWAITING_PAYMENT') {
@@ -300,7 +339,6 @@
 
 	async function activateHunt() {
 		try {
-			console.log(hunt);
 			const response = await scrubinClient.hunt.activateHuntV2(hunt.huntId);
 			if (hunt.planType === 'success_fee' && hunt.startFee?.amount > 0) {
 				chargeableAmount.amount = hunt.startFee.amount;
@@ -412,38 +450,58 @@
 							{$t(`hunt.huntStatus.${hunt.status.toLowerCase()}`)}
 						</Badge>
 						{#if hunt.status === 'ACTIVE'}
-							<Button
-								variant="outline"
-								size="sm"
-								disabled={isCompleting}
-								onclick={() => (isCompleteDialogOpen = true)}
-								class="ml-2"
-							>
-								{#if isCompleting}
-									<Loader2 class="mr-2 h-4 w-4 animate-spin" />
-									{$t('hunt.actions.completing')}
-								{:else}
-									{$t('hunt.actions.complete')}
-								{/if}
-							</Button>
-							<Button
-								variant="outline"
-								size="sm"
-								disabled={isCancelling}
-								onclick={() => (isCancelDialogOpen = true)}
-								class="ml-2 border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700"
-							>
-								{#if isCancelling}
-									<Loader2 class="mr-2 h-4 w-4 animate-spin" />
-									{$t('hunt.actions.cancelling')}
-								{:else}
-									{$t('hunt.actions.cancel')}
-								{/if}
-							</Button>
+							<DropdownMenu.Root>
+								<DropdownMenu.Trigger>
+									<Button variant="outline" size="sm" class="ml-2 inline-flex items-center gap-1">
+										{$t('hunt.actions.actions')}
+										<ChevronDown class="h-4 w-4" />
+									</Button>
+								</DropdownMenu.Trigger>
+								<DropdownMenu.Content class="w-40">
+									<DropdownMenu.Item onclick={() => (isCompleteDialogOpen = true)}>
+										{$t('hunt.actions.complete')}
+									</DropdownMenu.Item>
+									<DropdownMenu.Item onclick={() => (isPauseDialogOpen = true)}>
+										{$t('hunt.actions.pause')}
+									</DropdownMenu.Item>
+									<DropdownMenu.Separator />
+									<DropdownMenu.Item
+										class="text-red-600"
+										onclick={() => (isCancelDialogOpen = true)}
+									>
+										{$t('hunt.actions.cancel')}
+									</DropdownMenu.Item>
+								</DropdownMenu.Content>
+							</DropdownMenu.Root>
 						{/if}
 					</div>
 					<!-- {/if} -->
 				</div>
+
+				{#if hunt.status === 'ACTIVE' && !hunt.hasPublicAd}
+					<Alert.Root class="border-border bg-background text-foreground">
+						<div class="flex items-start justify-between gap-3">
+							<div>
+								<Alert.Title class="text-sm">{$t('hunt.visibility.title')}</Alert.Title>
+								<Alert.Description class="text-xs text-muted-foreground">
+									{$t('hunt.visibility.description')}
+								</Alert.Description>
+							</div>
+							<Button
+								variant="outline"
+								size="sm"
+								class="h-7 px-2"
+								disabled={isPublishing}
+								onclick={makeAdPublic}
+							>
+								{#if isPublishing}
+									<Loader2 class="mr-2 h-3.5 w-3.5 animate-spin" />
+								{/if}
+								<span class="text-xs">{$t('hunt.visibility.makePublic')}</span>
+							</Button>
+						</div>
+					</Alert.Root>
+				{/if}
 
 				{#if hunt.planType === 'success_fee'}
 					<div class="rounded-lg bg-white p-4 shadow-sm">
@@ -495,318 +553,6 @@
 						completionPercentage={100}
 					/>
 				</div>
-
-				{#if false}
-					<div class="rounded-md bg-white p-4 shadow-sm">
-						<div class="mb-4 flex items-center justify-between">
-							<h2 class="text-xl font-medium">{$t('hunt.jobRequirements')}</h2>
-							<Button
-								variant={isEditMode ? 'default' : 'outline'}
-								size="sm"
-								onclick={isEditMode ? saveManualEdits : toggleEditMode}
-								class="flex items-center gap-2"
-							>
-								{#if isEditMode}
-									{#if isSaving}
-										<Loader2 class="h-4 w-4 animate-spin" />
-										{$t('dashboard.chatWindow.saving')}
-									{:else}
-										<Save class="h-4 w-4" />
-										{$t('dashboard.chatWindow.save')}
-									{/if}
-								{:else}
-									<Pencil class="h-4 w-4" />
-									{$t('common.edit')}
-								{/if}
-							</Button>
-						</div>
-						<div class="space-y-3">
-							<div class="grid grid-cols-1 gap-4 border-b pb-3 text-sm">
-								<div class="grid w-full grid-cols-[150px_1fr] items-start">
-									<h4 class="font-semibold">{$t('hunt.jobTitle')}</h4>
-									{#if isEditMode}
-										<Input
-											type="text"
-											value={editableRequirements.jobTitle}
-											onchange={(e) => {
-												editableRequirements.jobTitle = e.currentTarget.value;
-											}}
-											class="transition-all duration-200 focus:ring-primary/30"
-										/>
-									{:else}
-										<p class={hunt.requirements.jobTitle ? 'text-gray-900' : 'text-gray-500'}>
-											{hunt.requirements.jobTitle || $t('hunt.notSpecified')}
-										</p>
-									{/if}
-								</div>
-
-								<div class="grid w-full grid-cols-[150px_1fr] items-start">
-									<h4 class="font-semibold">{$t('hunt.jobDescription')}</h4>
-									{#if isEditMode}
-										<textarea
-											value={editableRequirements.jobDescription}
-											onchange={(e) => {
-												editableRequirements.jobDescription = e.currentTarget.value;
-											}}
-											class="min-h-[100px] w-full rounded-md border p-2 text-sm transition-all duration-200 focus:border-primary/50 focus:ring-primary/30"
-										></textarea>
-									{:else}
-										<p class={hunt.requirements.jobDescription ? 'text-gray-900' : 'text-gray-500'}>
-											{hunt.requirements.jobDescription || $t('hunt.notSpecified')}
-										</p>
-									{/if}
-								</div>
-
-								<div class="grid w-full grid-cols-[150px_1fr] items-start">
-									<h4 class="font-semibold">{$t('hunt.professions')}</h4>
-									<div class="flex flex-row flex-wrap gap-2">
-										{#each hunt.requirements.professions || [] as profession}
-											<span class="rounded bg-gray-100 px-2 py-0.5 text-xs text-gray-700"
-												>{profession}</span
-											>
-										{/each}
-									</div>
-								</div>
-							</div>
-
-							<div class="grid grid-cols-1 gap-4 text-sm">
-								<div class="grid w-full grid-cols-[150px_1fr] items-start">
-									<h4 class="font-semibold">{$t('hunt.specialization')}</h4>
-									<p class={hunt.requirements.specialization ? 'text-gray-900' : 'text-gray-500'}>
-										{hunt.requirements.specialization || $t('hunt.notSpecified')}
-									</p>
-								</div>
-
-								<div class="grid w-full grid-cols-[150px_1fr] items-start">
-									<h4 class="font-semibold">{$t('hunt.workExperience')}</h4>
-									{#if isEditMode}
-										<Input
-											type="number"
-											min="0"
-											value={editableRequirements.jobRequiredWorkExperience}
-											onchange={(e) => {
-												editableRequirements.jobRequiredWorkExperience =
-													parseInt(e.currentTarget.value) || 0;
-											}}
-											class="w-20 transition-all duration-200 focus:ring-primary/30"
-										/>
-									{:else}
-										<p
-											class={hunt.requirements.jobRequiredWorkExperience
-												? 'text-gray-900'
-												: 'text-gray-500'}
-										>
-											{hunt.requirements.jobRequiredWorkExperience || 0}
-											{$t('hunt.years')}
-										</p>
-									{/if}
-								</div>
-
-								<div class="grid w-full grid-cols-[150px_1fr] items-start">
-									<h4 class="font-semibold">{$t('hunt.location')}</h4>
-									{#if isEditMode}
-										<div class="flex flex-col gap-2">
-											<DropdownComponent
-												options={availableCountries}
-												value={editableRequirements.country}
-												justString={true}
-												onValueChange={(value) => {
-													editableRequirements.country = value;
-												}}
-												placeholder="Country"
-												optionKey="code"
-												labelKey="name"
-											/>
-
-											<Input
-												type="text"
-												placeholder="City"
-												value={editableRequirements.city}
-												onchange={(e) => {
-													editableRequirements.city = e.currentTarget.value;
-												}}
-												class="transition-all duration-200 focus:ring-primary/30"
-											/>
-											<Input
-												type="text"
-												placeholder="State/Province/Region"
-												value={typeof editableRequirements.stateProvinceRegion === 'string'
-													? editableRequirements.stateProvinceRegion
-													: editableRequirements.stateProvinceRegion[0] || ''}
-												onchange={(e) => {
-													editableRequirements.stateProvinceRegion = e.currentTarget.value;
-												}}
-												class="transition-all duration-200 focus:ring-primary/30"
-											/>
-										</div>
-									{:else}
-										<p
-											class={hunt.requirements.address?.city ||
-											hunt.requirements.address?.stateProvinceRegion
-												? 'text-gray-900'
-												: 'text-gray-500'}
-										>
-											{hunt.requirements.country},
-											{hunt.requirements.address?.city || ''}
-											{formatStateProvinceRegion(hunt.requirements.address?.stateProvinceRegion)}
-										</p>
-									{/if}
-								</div>
-
-								<div class="grid w-full grid-cols-[150px_1fr] items-start">
-									<h4 class="font-semibold">{$t('hunt.workTime')}</h4>
-									<p class={hunt.requirements.workTimeType ? 'text-gray-900' : 'text-gray-500'}>
-										{hunt.requirements.workTimeType?.join(', ') || $t('hunt.notSpecified')}
-									</p>
-								</div>
-
-								<div class="grid w-full grid-cols-[150px_1fr] items-start">
-									<h4 class="font-semibold text-gray-900">{$t('hunt.languages')}</h4>
-									<div class="flex flex-wrap gap-1">
-										{#each hunt.requirements.jobRequiredLanguages || [] as language}
-											<span class="rounded bg-gray-100 px-2 py-0.5 text-xs text-gray-700"
-												>{language}</span
-											>
-										{/each}
-									</div>
-								</div>
-
-								<div class="grid w-full grid-cols-[150px_1fr] items-start">
-									<h4 class="font-semibold">{$t('hunt.salary')}</h4>
-									{#if isEditMode}
-										<div class="flex items-center gap-2">
-											<Input
-												type="number"
-												placeholder="Start"
-												value={editableRequirements.salaryStart}
-												onchange={(e) => {
-													editableRequirements.salaryStart = parseFloat(e.currentTarget.value) || 0;
-												}}
-												class="w-24 transition-all duration-200 focus:ring-primary/30"
-											/>
-											<span>-</span>
-											<Input
-												type="number"
-												placeholder="End"
-												value={editableRequirements.salaryEnd}
-												onchange={(e) => {
-													editableRequirements.salaryEnd = parseFloat(e.currentTarget.value) || 0;
-												}}
-												class="w-24 transition-all duration-200 focus:ring-primary/30"
-											/>
-
-											<DropdownComponent
-												options={availableCurrencies}
-												value={editableRequirements.salaryCurrency}
-												showLabelInBrackets={true}
-												onValueChange={(value) => {
-													editableRequirements.salaryCurrency = value;
-												}}
-												placeholder="Currency"
-												optionKey="code"
-												labelKey="name"
-											/>
-										</div>
-									{:else}
-										<p
-											class={hunt.requirements.salary?.amountStart ||
-											hunt.requirements.salary?.amountEnd
-												? 'text-gray-900'
-												: 'text-gray-500'}
-										>
-											{#if hunt.requirements.salary?.amountStart && hunt.requirements.salary?.amountEnd}
-												{hunt.requirements.salary.amountStart} - {hunt.requirements.salary
-													.amountEnd}
-												{hunt.requirements.salary.currency || ''} ({hunt.requirements.salary.type ||
-													''})
-											{:else}
-												{hunt.requirements.salary?.amountText || $t('hunt.notSpecified')}
-											{/if}
-										</p>
-									{/if}
-								</div>
-							</div>
-
-							<div class="mt-4 border-t pt-3">
-								<h4 class="mb-4 text-xl font-medium">{$t('hunt.requiredQualifications')}</h4>
-								{#if isEditMode}
-									<textarea
-										value={editableRequirements.jobRequiredQualifications}
-										onchange={(e) => {
-											editableRequirements.jobRequiredQualifications = e.currentTarget.value;
-										}}
-										class="min-h-[100px] w-full rounded-md border p-2 text-sm transition-all duration-200 focus:border-primary/50 focus:ring-primary/30"
-									></textarea>
-								{:else}
-									<p
-										class="{hunt.requirements.jobRequiredQualifications
-											? 'text-gray-900'
-											: 'text-gray-500'} text-sm"
-									>
-										{hunt.requirements.jobRequiredQualifications || $t('hunt.notSpecified')}
-									</p>
-								{/if}
-							</div>
-
-							<div class="border-t pt-3">
-								<h4 class="mb-4 text-xl font-medium">{$t('hunt.additionalRequirements')}</h4>
-								<div class="mt-1 grid grid-cols-1 gap-2 text-sm">
-									<div class="grid w-full grid-cols-[150px_1fr] items-start">
-										<h4 class="font-semibold">{$t('hunt.drivingLicense')}</h4>
-										<p
-											class={hunt.requirements.extras?.drivingLicenceRequired
-												? 'text-gray-900'
-												: 'text-gray-500'}
-										>
-											{hunt.requirements.extras?.drivingLicenceRequired
-												? $t('hunt.required')
-												: $t('hunt.notRequired')}
-										</p>
-									</div>
-
-									<div class="grid w-full grid-cols-[150px_1fr] items-start">
-										<h4 class="font-semibold">{$t('hunt.personalCar')}</h4>
-										<p
-											class={hunt.requirements.extras?.personalCarRequired
-												? 'text-gray-900'
-												: 'text-gray-500'}
-										>
-											{hunt.requirements.extras?.personalCarRequired
-												? $t('hunt.required')
-												: $t('hunt.notRequired')}
-										</p>
-									</div>
-
-									{#if hunt.requirements.extras?.accommodationCompensationType}
-										<div class="grid w-full grid-cols-[150px_1fr] items-start">
-											<h4 class="font-semibold">{$t('hunt.accommodation')}</h4>
-											<p
-												class={hunt.requirements.extras?.accommodationCompensationType
-													? 'text-gray-900'
-													: 'text-gray-500'}
-											>
-												{hunt.requirements.extras?.accommodationCompensationType}
-											</p>
-										</div>
-									{/if}
-
-									{#if hunt.requirements.extras?.transportCompensationType}
-										<div class="grid w-full grid-cols-[150px_1fr] items-start">
-											<h4 class="font-semibold">{$t('hunt.transport')}</h4>
-											<p
-												class={hunt.requirements.extras?.transportCompensationType
-													? 'text-gray-900'
-													: 'text-gray-500'}
-											>
-												{hunt.requirements.extras?.transportCompensationType}
-											</p>
-										</div>
-									{/if}
-								</div>
-							</div>
-						</div>
-					</div>
-				{/if}
 			</div>
 		</Tabs.Content>
 		<Tabs.Content value="statistics">
@@ -815,6 +561,12 @@
 					<h4 class="text-xl font-semibold text-gray-900">
 						{$t('statistics.huntConversionFunnel')}
 					</h4>
+					{#if isRecentlyActivated}
+						<Alert.Root class="border-amber-200 bg-amber-50 text-amber-900">
+							<Alert.Title>{$t('statistics.autoOffersNoticeTitle')}</Alert.Title>
+							<Alert.Description>{$t('statistics.autoOffersNoticeDesc')}</Alert.Description>
+						</Alert.Root>
+					{/if}
 					{#if isLoading}
 						<div class="flex items-center justify-center py-8">
 							<div class="h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
@@ -1084,6 +836,31 @@
 					{#if isCancelling}
 						<Loader2 class="mr-2 h-4 w-4 animate-spin" />
 						{$t('hunt.actions.cancelling')}
+					{:else}
+						{$t('hunt.actions.confirm')}
+					{/if}
+				</Button>
+			</div>
+		</Dialog.Content>
+	</Dialog.Root>
+
+	<!-- Pause confirmation dialog -->
+	<Dialog.Root bind:open={isPauseDialogOpen}>
+		<Dialog.Content>
+			<Dialog.Header>
+				<Dialog.Title>{$t('hunt.pauseDialog.title')}</Dialog.Title>
+				<Dialog.Description>
+					{$t('hunt.pauseDialog.description')}
+				</Dialog.Description>
+			</Dialog.Header>
+			<div class="mt-4 flex justify-end gap-2">
+				<Button variant="outline" onclick={() => (isPauseDialogOpen = false)}
+					>{$t('hunt.actions.back')}</Button
+				>
+				<Button variant="default" disabled={isPausing} onclick={pauseCurrentHunt}>
+					{#if isPausing}
+						<Loader2 class="mr-2 h-4 w-4 animate-spin" />
+						{$t('hunt.actions.completing')}
 					{:else}
 						{$t('hunt.actions.confirm')}
 					{/if}

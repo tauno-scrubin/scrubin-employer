@@ -45,13 +45,26 @@
 			"title": "Cancelar búsqueda",
 			"description": "¿Seguro que deseas cancelar esta búsqueda? Esta acción puede ser irreversible."
 		},
+		"pauseDialog": {
+			"title": "Pausar búsqueda",
+			"description": "Pausar detendrá el alcance y las automatizaciones. Podrás reanudar más tarde."
+		},
 		"actions": {
 			"complete": "Completar",
+			"pause": "Pausar",
 			"cancel": "Cancelar",
+			"actions": "Acciones",
 			"confirm": "Confirmar",
 			"back": "Volver",
 			"completing": "Completando",
 			"cancelling": "Cancelando"
+		},
+		"visibility": {
+			"title": "Visibilidad: Privada",
+			"description": "Solo se envían ofertas directas. Hazla pública para ser visible para todos los usuarios.",
+			"makePublic": "Hacer pública",
+			"publishSuccess": "Tu búsqueda ahora es pública.",
+			"publishError": "No se pudo hacer pública la oferta. Inténtalo de nuevo."
 		},
 		"readyForCompany": "Listo para Entrevista",
 		"offersMade": "Ofertas Realizadas",
@@ -125,6 +138,8 @@
 		"interested": "Interesados",
 		"readyForCompany": "Listos para la Empresa",
 		"candidates": "Candidatos",
+		"autoOffersNoticeTitle": "Headhunting automático",
+		"autoOffersNoticeDesc": "El headhunting automático comenzará 1 hora después de activar la búsqueda.",
 		"noInterestedCandidates": "¡Estamos Buscando Grandes Talentos!",
 		"noInterestedCandidatesDesc": "Aún no hay candidatos interesados, pero estamos contactando a profesionales que se ajustan a sus necesidades. ¡Vuelva pronto! Le informaremos tan pronto como tengamos novedades.",
 		"interestedOn": "Interesado el",
@@ -138,6 +153,7 @@
 	"errors": {
 		"paymentIssue": "Hay un problema con el precio de esta Búsqueda, por favor contacte con soporte.",
 		"huntCompleteFailed": "No se pudo completar la búsqueda. Inténtalo de nuevo.",
-		"huntCancelFailed": "No se pudo cancelar la búsqueda. Inténtalo de nuevo."
+		"huntCancelFailed": "No se pudo cancelar la búsqueda. Inténtalo de nuevo.",
+		"huntPauseFailed": "No se pudo pausar la búsqueda. Inténtalo de nuevo."
 	}
 }

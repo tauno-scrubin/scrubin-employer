@@ -425,6 +425,13 @@
 			"brandNamePlaceholder": "Enter brand name",
 			"description": "Description",
 			"descriptionPlaceholder": "Enter company description",
+			"logo": "Logo",
+			"openFullLogo": "Open full-size logo",
+			"logoInstructions": "Drag and drop an image, or click to browse",
+			"logoHint": "PNG, JPG, WEBP, or SVG up to 5MB",
+			"logoUnsupported": "Unsupported file type",
+			"logoTooLarge": "File too large ({{size}}). Max 5MB.",
+			"logoUploadFailed": "Failed to upload logo",
 			"companyName": "Company Name",
 			"companyNamePlaceholder": "Enter company name",
 			"registrationCode": "Registration Code",
@@ -444,6 +451,9 @@
 		"payment": {
 			"title": "Payment Method",
 			"expires": "Expires"
+		},
+		"errors": {
+			"loadFailed": "Failed to load details"
 		},
 		"notifications": {
 			"settingsUpdated": "Settings updated successfully",

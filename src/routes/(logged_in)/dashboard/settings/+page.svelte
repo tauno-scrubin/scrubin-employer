@@ -6,6 +6,7 @@
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
+	import { Textarea } from '$lib/components/ui/textarea';
 	import { Label } from '$lib/components/ui/label';
 	import { User, Phone, Mail, Asterisk, Building2, MapPin, Calendar } from 'lucide-svelte';
 	import { toast } from 'svelte-sonner';
@@ -31,6 +32,21 @@
 	let isSavingPassword = $state(false);
 	let isLoadingAdvertiser = $state(true);
 	let isSavingCompany = $state(false);
+	let isUploadingLogo = $state(false);
+	let logoUrl = $state<string | null>(null);
+	let isDraggingLogo = $state(false);
+	let fileInputEl = $state<HTMLInputElement | null>(null);
+
+	function formatBytes(bytes: number): string {
+		const units = ['B', 'KB', 'MB', 'GB'];
+		let idx = 0;
+		let size = bytes;
+		while (size >= 1024 && idx < units.length - 1) {
+			size /= 1024;
+			idx++;
+		}
+		return `${size.toFixed(1)} ${units[idx]}`;
+	}
 	let countries = $state<string[]>([]);
 	let billingInfo = $state<CompanyBilling | null>(null);
 
@@ -53,11 +69,12 @@
 				brandName: advertiserResult.brandName || '',
 				description: advertiserResult.description || ''
 			};
+			logoUrl = advertiserResult?.logoUrl ? advertiserResult.logoUrl : null;
 			countries = countriesResult;
 			billingInfo = billingResult;
 		} catch (error) {
 			console.error('Error fetching data:', error);
-			toast.error('Failed to load details');
+			toast.error($t('settings.errors.loadFailed'));
 		} finally {
 			isLoading = false;
 			isLoadingAdvertiser = false;
@@ -132,6 +149,67 @@
 		} finally {
 			isSavingCompany = false;
 		}
+	}
+
+	const ACCEPTED_TYPES = ['image/png', 'image/jpeg', 'image/webp', 'image/svg+xml'];
+	const MAX_BYTES = 5 * 1024 * 1024; // 5MB
+
+	async function performLogoUpload(file: File) {
+		if (!ACCEPTED_TYPES.includes(file.type)) {
+			toast.error($t('settings.company.logoUnsupported'));
+			return;
+		}
+		if (file.size > MAX_BYTES) {
+			toast.error($t('settings.company.logoTooLarge', { size: formatBytes(file.size) }));
+			return;
+		}
+		const formData = new FormData();
+		formData.append('file', file);
+		isUploadingLogo = true;
+		try {
+			const result = await scrubinClient.company.uploadCompanyLogo(formData);
+			logoUrl = result.url;
+			if (companyProfile) companyProfile.logoUrl = result.url as unknown as string;
+			toast.success($t ? $t('settings.notifications.settingsUpdated') : 'Logo uploaded');
+		} catch (error) {
+			console.error('Error uploading logo:', error);
+			toast.error(error instanceof Error ? error.message : $t('settings.company.logoUploadFailed'));
+		} finally {
+			isUploadingLogo = false;
+		}
+	}
+
+	function handleUploadLogoChange(event: Event) {
+		const target = event.currentTarget as HTMLInputElement;
+		const file = target.files?.[0];
+		if (!file) return;
+		performLogoUpload(file);
+	}
+
+	function openLogoFileDialog() {
+		fileInputEl?.click();
+	}
+
+	function handleDragOver(e: DragEvent) {
+		e.preventDefault();
+		isDraggingLogo = true;
+	}
+
+	function handleDragLeave() {
+		isDraggingLogo = false;
+	}
+
+	function handleDrop(e: DragEvent) {
+		e.preventDefault();
+		isDraggingLogo = false;
+		const file = e.dataTransfer?.files?.[0];
+		if (!file) return;
+		performLogoUpload(file);
+	}
+
+	function openLogoInNewTab(e: MouseEvent) {
+		e.stopPropagation();
+		// Let the anchor's default action open the link in a new tab
 	}
 </script>
 
@@ -325,6 +403,54 @@
 			{:else if companyProfile}
 				<form onsubmit={handleSubmitCompany} class="space-y-6">
 					<div class="grid gap-6 md:grid-cols-2">
+						<div class="space-y-2 md:col-span-2">
+							<Label for="company-logo">{$t('settings.company.logo')}</Label>
+							<button
+								type="button"
+								class={`w-full rounded-lg border-2 border-dashed p-4 text-left transition-colors ${
+									isDraggingLogo ? 'border-primary bg-primary/5' : 'border-border hover:bg-muted/50'
+								} ${isUploadingLogo ? 'opacity-60' : 'cursor-pointer'}`}
+								onclick={openLogoFileDialog}
+								ondragover={handleDragOver}
+								ondragleave={handleDragLeave}
+								ondrop={handleDrop}
+								aria-label="Upload company logo"
+							>
+								<div class="flex items-center gap-4">
+									{#if logoUrl}
+										<a
+											href={logoUrl}
+											target="_blank"
+											rel="noreferrer noopener"
+											title={$t('settings.company.openFullLogo')}
+											onclick={openLogoInNewTab}
+										>
+											<img
+												src={logoUrl}
+												alt="Company logo"
+												class="h-12 w-12 rounded object-cover"
+											/>
+										</a>
+									{/if}
+									<div class="flex flex-col">
+										<p class="text-sm font-medium">{$t('settings.company.logoInstructions')}</p>
+										<p class="text-xs text-muted-foreground">{$t('settings.company.logoHint')}</p>
+									</div>
+									{#if isUploadingLogo}
+										<span class="loading loading-spinner loading-sm ml-auto"></span>
+									{/if}
+								</div>
+								<input
+									bind:this={fileInputEl}
+									id="company-logo"
+									type="file"
+									accept="image/png,image/jpeg,image/webp,image/svg+xml"
+									class="hidden"
+									onchange={handleUploadLogoChange}
+									disabled={isUploadingLogo}
+								/>
+							</button>
+						</div>
 						<div class="space-y-2">
 							<Label for="brandName">{$t('settings.company.brandName')}</Label>
 							<div class="relative">
@@ -342,10 +468,11 @@
 							<Label for="description">{$t('settings.company.description')}</Label>
 							<div class="relative">
 								<Building2 class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-								<Input
+								<Textarea
 									id="description"
 									bind:value={companyProfile.description}
 									class="pl-9"
+									rows={5}
 									placeholder={$t('settings.company.descriptionPlaceholder')}
 								/>
 							</div>
