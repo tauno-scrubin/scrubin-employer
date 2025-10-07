@@ -418,7 +418,7 @@
 		},
 		"company": {
 			"title": "Configuración de la empresa",
-			"description": "Administre el perfil de su empresa y detalles comerciales",
+			"subTitle": "Administre el perfil de su empresa y detalles comerciales",
 			"brandName": "Nombre de la marca",
 			"brandNamePlaceholder": "Introduzca el nombre de la marca",
 			"description": "Descripción",

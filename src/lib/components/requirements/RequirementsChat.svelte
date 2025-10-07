@@ -179,7 +179,7 @@
 		<div class="flex items-center justify-between p-4 shadow-sm">
 			<div class="flex items-center gap-3">
 				<div class="flex h-10 w-10 items-center justify-center rounded-full bg-blue-50">
-					<Sparkle class="h-5 w-5 text-blue-600" />
+					<Sparkle class="h-5 w3-5 text-blue-600" />
 				</div>
 				<div>
 					<h2 class="text-lg font-semibold text-gray-900">{$t('requirementsChat.title')}</h2>

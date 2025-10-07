@@ -392,7 +392,7 @@
 		<Card.Header>
 			<Card.Title>{$t('settings.company.title')}</Card.Title>
 			<Card.Description>
-				{$t('settings.company.description')}
+				{$t('settings.company.subTitle')}
 			</Card.Description>
 		</Card.Header>
 		<Card.Content>

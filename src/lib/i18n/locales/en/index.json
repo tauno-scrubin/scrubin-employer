@@ -420,7 +420,7 @@
 		},
 		"company": {
 			"title": "Company Settings",
-			"description": "Manage your company profile and business details",
+			"subTitle": "Manage your company profile and business details",
 			"brandName": "Brand Name",
 			"brandNamePlaceholder": "Enter brand name",
 			"description": "Description",

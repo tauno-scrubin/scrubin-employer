@@ -420,7 +420,7 @@
 		},
 		"company": {
 			"title": "Unternehmenseinstellungen",
-			"description": "Verwalten Sie Ihr Unternehmensprofil und Geschäftsdetails",
+			"subTitle": "Verwalten Sie Ihr Unternehmensprofil und Geschäftsdetails",
 			"brandName": "Markenname",
 			"brandNamePlaceholder": "Geben Sie den Markennamen ein",
 			"description": "Beschreibung",

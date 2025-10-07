@@ -420,7 +420,7 @@
 		},
 		"company": {
 			"title": "Yritysasetukset",
-			"description": "Hallitse yrityksesi profiilia ja liiketoiminnan tietoja",
+			"subTitle": "Hallitse yrityksesi profiilia ja liiketoiminnan tietoja",
 			"brandName": "Brändinimi",
 			"brandNamePlaceholder": "Syötä brändinimi",
 			"description": "Kuvaus",

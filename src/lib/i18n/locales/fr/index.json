@@ -420,7 +420,7 @@
 		},
 		"company": {
 			"title": "Paramètres de l'entreprise",
-			"description": "Gérez le profil de votre entreprise et les détails commerciaux",
+			"subTitle": "Gérez le profil de votre entreprise et les détails commerciaux",
 			"brandName": "Nom de la marque",
 			"brandNamePlaceholder": "Entrez le nom de la marque",
 			"description": "Description",

@@ -418,7 +418,7 @@
 		},
 		"company": {
 			"title": "Ettevõtte seaded",
-			"description": "Halda oma ettevõtte profiili ja äri üksikasju",
+			"subTitle": "Halda oma ettevõtte profiili ja äri üksikasju",
 			"brandName": "Brändi nimi",
 			"brandNamePlaceholder": "Sisesta brändi nimi",
 			"description": "Kirjeldus",
