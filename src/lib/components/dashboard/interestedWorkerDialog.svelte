@@ -5,7 +5,7 @@
 	import * as Button from '$lib/components/ui/button/index.js';
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
 	import { t } from '$lib/i18n';
-	import type { InterestedCandidateDetails } from '@/scrubinClient';
+	import type { InterestedCandidateDetails, InterestedCandidateStats } from '@/scrubinClient';
 	import { scrubinClient } from '@/scrubinClient/client';
 	import {
 		Award,
@@ -17,7 +17,10 @@
 		Sparkle,
 		CheckCircle,
 		XCircle,
-		Handshake
+		Handshake,
+		Eye,
+		MailOpen,
+		MessageSquare
 	} from 'lucide-svelte';
 	import CandidateChat from './candidateChat.svelte';
 	import CandidateNotes from './candidateNotes.svelte';
@@ -35,6 +38,7 @@
 	} = $props();
 
 	let worker: InterestedCandidateDetails | null = $state(null);
+	let workerStats: InterestedCandidateStats | null = $state(null);
 	let isLoading = $state(false);
 	let hasError = $state(false);
 	let activeTab = $state('profile'); // profile, messages, notes
@@ -43,7 +47,7 @@
 
 	$effect(() => {
 		if (open && huntId && candidateId) {
-			getWorker();
+			Promise.all([getWorker(), getWorkerStats()]);
 		}
 	});
 
@@ -59,6 +63,19 @@
 			worker = response;
 		} catch (error) {
 			console.error('Error fetching interested worker data:', error);
+			hasError = true;
+		} finally {
+			isLoading = false;
+		}
+	}
+
+	async function getWorkerStats() {
+		try {
+			// Use correct API endpoint based on candidate type
+			const response = await scrubinClient.hunt.getInterestedCandidateStats(huntId, candidateId);
+			workerStats = response;
+		} catch (error) {
+			console.error('Error fetching interested worker stats:', error);
 			hasError = true;
 		} finally {
 			isLoading = false;
@@ -151,8 +168,50 @@
 <Dialog.Root bind:open>
 	<Dialog.Content class="max-h-[90vh] max-w-3xl overflow-y-auto">
 		<Dialog.Header>
-			<Dialog.Title class="flex items-center justify-between gap-2">
+			<Dialog.Title class="flex items-center gap-4">
 				{$t('dashboard.interestedWorkerDialog.title')}
+				{#if workerStats}
+					<div class="flex items-center gap-2">
+						<Tooltip.Root>
+							<Tooltip.Trigger>
+								<div class="flex items-center gap-1 text-xs">
+									<Eye class="h-3.5 w-3.5" />
+									<span>{workerStats.offerOpens}</span>
+								</div>
+							</Tooltip.Trigger>
+							<Tooltip.Content side="bottom">
+								<span>{$t('statistics.offerOpens')}</span>
+							</Tooltip.Content>
+						</Tooltip.Root>
+						<span class="text-muted-foreground">|</span>
+						<Tooltip.Root>
+							<Tooltip.Trigger>
+								<div class="flex items-center gap-1 text-xs">
+									<MailOpen class="h-3.5 w-3.5" />
+									<span>{workerStats.offerEmailOpenedCount}</span>
+								</div>
+							</Tooltip.Trigger>
+							<Tooltip.Content side="bottom">
+								<span>{$t('statistics.offerEmailOpens')}</span>
+							</Tooltip.Content>
+						</Tooltip.Root>
+						<span class="text-muted-foreground">|</span>
+						<Tooltip.Root>
+							<Tooltip.Trigger>
+								<div class="flex items-center gap-1 text-xs">
+									<MessageSquare class="h-3.5 w-3.5" />
+									<span>{workerStats.chatEmailOpenedCount}</span>
+									{#if workerStats.hasUnreadMessages}
+										<span class="ml-1 inline-block h-2 w-2 rounded-full bg-red-500"></span>
+									{/if}
+								</div>
+							</Tooltip.Trigger>
+							<Tooltip.Content side="bottom">
+								<span>Chat email opens</span>
+							</Tooltip.Content>
+						</Tooltip.Root>
+					</div>
+				{/if}
 			</Dialog.Title>
 			<Dialog.Description>
 				{$t('dashboard.interestedWorkerDialog.description')}
@@ -171,7 +230,7 @@
 			</div>
 		{:else if worker}
 			<Tabs.Root value="profile" class="w-full">
-				<Tabs.List class="grid w-full grid-cols-3">
+				<Tabs.List class="inline-flex w-auto items-center justify-start gap-2 self-start">
 					<Tabs.Trigger value="profile"
 						>{$t('dashboard.interestedWorkerDialog.tabs.profile')}</Tabs.Trigger
 					>
@@ -196,6 +255,10 @@
 										{formatDateTime(worker.dateInterview)}
 									</span>
 								</div>
+							{/if}
+
+							{#if workerStats}
+								<!-- engagement now next to dialog title; previous block removed -->
 							{/if}
 
 							<div class="mb-6 rounded-md bg-blue-50 p-4 shadow-sm">
@@ -228,7 +291,8 @@
 																? 'bg-yellow-100 text-yellow-800'
 																: worker.status.toLowerCase() === 'hired'
 																	? 'bg-green-100 text-green-800'
-																	: worker.status.toLowerCase() === 'declined' || worker.status.toLowerCase() === 'rejected'
+																	: worker.status.toLowerCase() === 'declined' ||
+																		  worker.status.toLowerCase() === 'rejected'
 																		? 'bg-red-100 text-red-800'
 																		: 'bg-gray-100 text-gray-800'}"
 													>
@@ -424,6 +488,10 @@
 									</div>
 								{/if}
 							</div>
+
+							{#if workerStats}
+								<!-- engagement moved above contact info; this duplicate block removed -->
+							{/if}
 
 							<div class="space-y-3">
 								<div class="grid grid-cols-1 gap-4 border-b pb-3 text-sm">
@@ -775,6 +843,14 @@
 				</Tabs.Content>
 
 				<Tabs.Content value="messages">
+					{#if workerStats?.hasUnreadMessages}
+						<div class="mb-3 flex items-center gap-2 rounded-md bg-red-50 p-2 text-sm text-red-800">
+							<div class="h-2 w-2 rounded-full bg-red-600"></div>
+							<span
+								>{$t('dashboard.interestedWorkerDialog.unreadMessages') || 'Unread messages'}</span
+							>
+						</div>
+					{/if}
 					<CandidateChat bind:huntId bind:candidateId />
 				</Tabs.Content>
 

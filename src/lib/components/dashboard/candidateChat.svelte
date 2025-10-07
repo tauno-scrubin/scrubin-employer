@@ -1,11 +1,18 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
 	import { ScrollArea } from '$lib/components/ui/scroll-area';
-	import type { ChatMessage, CreateChatMessageRequest } from '$lib/scrubinClient';
-	import { scrubinClient } from '@/scrubinClient/client';
+	import {
+		Tooltip,
+		TooltipContent,
+		TooltipProvider,
+		TooltipTrigger
+	} from '$lib/components/ui/tooltip';
 	import { t } from '$lib/i18n';
+	import type { ChatMessage } from '$lib/scrubinClient';
+	import { scrubinClient } from '@/scrubinClient/client';
+	import { Bell, Bot } from 'lucide-svelte';
+	import { onMount } from 'svelte';
 
 	let {
 		huntId = $bindable(0),
@@ -18,7 +25,7 @@
 	let messages: ChatMessage[] = $state([]);
 	let newMessage = $state('');
 	let isLoading = $state(false);
-	let scrollContainer: HTMLDivElement;
+	let scrollContainer: HTMLElement | null = null;
 
 	// Fetch messages on component mount
 	onMount(async () => {
@@ -28,11 +35,6 @@
 	async function fetchMessages() {
 		isLoading = true;
 		try {
-			// Replace with your actual API call
-			// Example: messages = await api.getChatMessages(candidateId);
-
-			// Placeholder data for demonstration
-
 			const allMessages = await scrubinClient.hunt.getInterestedCandidateChat(huntId, candidateId);
 			messages = allMessages;
 		} catch (error) {
@@ -60,7 +62,9 @@
 					message: newMessage,
 					date: new Date().toISOString(),
 					sentByCandidate: false,
-					dateRead: ''
+					dateRead: '',
+					remindersCount: 0,
+					createdByAssistant: false
 				}
 			];
 
@@ -109,8 +113,9 @@
 
 	function scrollToBottom() {
 		setTimeout(() => {
-			if (scrollContainer) {
-				scrollContainer.scrollTop = scrollContainer.scrollHeight;
+			const container = scrollContainer;
+			if (container) {
+				container.scrollTop = container.scrollHeight;
 			}
 		}, 0);
 	}
@@ -128,41 +133,65 @@
 		<h2 class="text-lg font-medium text-gray-800">{$t('dashboard.candidateChat.title')}</h2>
 	</div>
 
-	<ScrollArea class="max-h-[calc(100vh-25rem)] flex-1 overflow-y-auto p-4">
-		{#if isLoading}
-			<div class="flex h-full items-center justify-center">
-				<div class="h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
-			</div>
-		{:else if messages.length === 0}
-			<div class="flex h-full items-center justify-center py-16 text-gray-500">
-				{$t('dashboard.candidateChat.noMessages')}
-			</div>
-		{:else}
-			<div class="space-y-4">
-				{#each messages as message (message.id)}
-					<div class={`flex ${message.sentByCandidate ? 'justify-start' : 'justify-end'}`}>
-						<div
-							class={`max-w-[80%] rounded-lg p-3 ${
-								message.sentByCandidate
-									? 'bg-gray-100 text-gray-900'
-									: 'bg-primary text-primary-foreground'
-							}`}
-						>
-							<p class="whitespace-pre-wrap break-words">{message.message}</p>
-							<p
-								class={`mt-1 text-xs ${message.sentByCandidate ? 'text-gray-500' : 'text-primary-foreground/80'}`}
+	<TooltipProvider>
+		<ScrollArea
+			bind:ref={scrollContainer}
+			class="max-h-[calc(100vh-25rem)] flex-1 overflow-y-auto p-4"
+		>
+			{#if isLoading}
+				<div class="flex h-full items-center justify-center">
+					<div class="h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
+				</div>
+			{:else if messages.length === 0}
+				<div class="flex h-full items-center justify-center py-16 text-gray-500">
+					{$t('dashboard.candidateChat.noMessages')}
+				</div>
+			{:else}
+				<div class="space-y-4">
+					{#each messages as message (message.id)}
+						<div class={`flex ${message.sentByCandidate ? 'justify-start' : 'justify-end'}`}>
+							<div
+								class={`max-w-[80%] rounded-lg p-3 ${
+									message.sentByCandidate
+										? 'border border-gray-200 bg-gray-100 text-gray-900'
+										: 'border border-gray-200 bg-gray-50 text-gray-900'
+								}`}
 							>
-								{formatMessageTime(message.date)}
-								{#if !message.sentByCandidate && message.dateRead}
-									· {$t('dashboard.candidateChat.read')}
-								{/if}
-							</p>
+								<div class="flex items-start gap-2">
+									{#if !message.sentByCandidate && message.createdByAssistant}
+										<Bot class="mt-0.5 h-4 w-4 text-gray-500" />
+									{/if}
+									<p class="flex-1 whitespace-pre-wrap break-words text-sm">{message.message}</p>
+								</div>
+								<p class={`mt-1 flex items-center gap-2 text-xs text-gray-600`}>
+									{formatMessageTime(message.date)}
+									{#if !message.sentByCandidate && message.dateRead}
+										· {$t('dashboard.candidateChat.read')}
+									{/if}
+									{#if !message.sentByCandidate && message.remindersCount > 0}
+										<Tooltip>
+											<TooltipTrigger
+												class="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-gray-700"
+											>
+												<Bell class="h-3 w-3" />
+												<span class="font-small">{message.remindersCount}</span>
+											</TooltipTrigger>
+											<TooltipContent>
+												<span
+													>{message.remindersCount}
+													{$t('dashboard.candidateChat.remindersSent')}</span
+												>
+											</TooltipContent>
+										</Tooltip>
+									{/if}
+								</p>
+							</div>
 						</div>
-					</div>
-				{/each}
-			</div>
-		{/if}
-	</ScrollArea>
+					{/each}
+				</div>
+			{/if}
+		</ScrollArea>
+	</TooltipProvider>
 
 	<div class="border-t p-4">
 		<form onsubmit={sendMessage} class="flex gap-2">

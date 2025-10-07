@@ -302,14 +302,14 @@ export interface RequirementsChatResponse {
 	workingOnItResponseMessage: string;
 }
 
-export interface ChatMessage {
+export interface ChatMessageMin {
 	role: string;
 	message: string;
 	createdDateTime: string;
 }
 
 export interface ChatMessagesResponse {
-	items: ChatMessage[];
+	items: ChatMessageMin[];
 	total: number;
 	page: number;
 	size: number;
@@ -467,6 +467,9 @@ export interface InterestedCandidate {
 	dateInterested: string;
 	dateInterview?: string;
 	dateReadyForRecruiter?: string;
+	totalMessages: number;
+	hasUnreadMessages: boolean;
+	stats: InterestedCandidateStats;
 }
 
 export interface InterestedCandidateStatusResponse {
@@ -505,12 +508,21 @@ export interface InterestedCandidateDetails extends HuntableDetails {
 	notes?: string;
 }
 
+export interface InterestedCandidateStats {
+	offerOpens: number;
+	offerEmailOpenedCount: number;
+	chatEmailOpenedCount: number;
+	hasUnreadMessages: boolean;
+}
+
 export interface ChatMessage {
 	id: number;
 	message: string;
 	date: string;
 	sentByCandidate: boolean;
 	dateRead: string;
+	remindersCount: number;
+	createdByAssistant: boolean;
 }
 
 export interface UpdateCandidateNotesRequest {
@@ -1174,6 +1186,20 @@ class HuntResource extends BaseResource {
 		) as Promise<InterestedCandidateDetails>;
 	}
 
+	async getInterestedCandidateStats(
+		id: number,
+		candidateId: number
+	): Promise<InterestedCandidateStats> {
+		const url = new URL(
+			`/api/v1/hunts/${id}/interested-candidates/${candidateId}/stats`,
+			this.client.baseUrl
+		);
+		return this.request<InterestedCandidateStats>(
+			'GET',
+			url.toString()
+		) as Promise<InterestedCandidateStats>;
+	}
+
 	async getInterestedApplicantDetails(
 		id: number,
 		candidateId: number
@@ -1285,13 +1311,13 @@ class HuntResource extends BaseResource {
 		id: number,
 		candidateId: number,
 		message: string
-	): Promise<ChatMessage[]> {
+	): Promise<ChatMessageMin[]> {
 		const url = new URL(
 			`/api/v1/hunts/${id}/interested-candidates/${candidateId}/chat`,
 			this.client.baseUrl
 		);
-		return this.request<ChatMessage[]>('POST', url.toString(), { message }) as Promise<
-			ChatMessage[]
+		return this.request<ChatMessageMin[]>('POST', url.toString(), { message }) as Promise<
+			ChatMessageMin[]
 		>;
 	}
 

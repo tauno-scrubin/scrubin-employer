@@ -143,7 +143,10 @@
 		"noInterestedCandidatesDesc": "Pas encore de candidats intéressés, mais nous contactons des professionnels qui correspondent à vos besoins. Revenez bientôt ! Nous vous informerons dès que nous aurons des nouvelles.",
 		"interestedOn": "Intéressé le",
 		"appliedOn": "Candidaté le",
-		"showAllInterestedCandidates": "Afficher tous les candidats intéressés"
+		"showAllInterestedCandidates": "Afficher tous les candidats intéressés",
+		"offerOpens": "Ouvertures d'offre",
+		"offerEmailOpens": "Ouvertures d'e-mail d'offre",
+		"totalChatMessages": "Messages de chat au total"
 	},
 	"questions": {
 		"contextQuestions": "Questions de contexte",

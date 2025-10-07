@@ -203,7 +203,8 @@
 			"monthsAgo": "kuukautta sitten",
 			"yearAgo": "vuosi sitten",
 			"yearsAgo": "vuotta sitten",
-			"read": "Luettu"
+			"read": "Luettu",
+			"remindersSent": "muistutusta lähetetty"
 		},
 		"candidateNotes": {
 			"title": "Ehdokasmuistiinpanot",

@@ -203,7 +203,8 @@
 			"monthsAgo": "months ago",
 			"yearAgo": "year ago",
 			"yearsAgo": "years ago",
-			"read": "Read"
+			"read": "Read",
+			"remindersSent": "reminders sent"
 		},
 		"candidateNotes": {
 			"title": "Candidate Notes",

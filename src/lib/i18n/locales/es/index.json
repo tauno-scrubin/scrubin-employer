@@ -203,7 +203,8 @@
 			"monthsAgo": "hace meses",
 			"yearAgo": "hace un año",
 			"yearsAgo": "hace años",
-			"read": "Leído"
+			"read": "Leído",
+			"remindersSent": "recordatorios enviados"
 		},
 		"candidateNotes": {
 			"title": "Notas del candidato",

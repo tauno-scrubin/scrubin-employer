@@ -203,7 +203,8 @@
 			"monthsAgo": "kuud tagasi",
 			"yearAgo": "aasta tagasi",
 			"yearsAgo": "aastat tagasi",
-			"read": "Loetud"
+			"read": "Loetud",
+			"remindersSent": "meeldetuletust saadetud"
 		},
 		"candidateNotes": {
 			"title": "Kandidaadi märkmed",

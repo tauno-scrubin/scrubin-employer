@@ -203,7 +203,8 @@
 			"monthsAgo": "il y a {{count}} mois",
 			"yearAgo": "il y a un an",
 			"yearsAgo": "il y a {{count}} ans",
-			"read": "Lu"
+			"read": "Lu",
+			"remindersSent": "rappels envoyés"
 		},
 		"candidateNotes": {
 			"title": "Notes sur le candidat",

@@ -1,46 +1,43 @@
 <script lang="ts">
-	function formatStateProvinceRegion(value: string | string[] | undefined): string {
-		if (!value) return '';
-		return Array.isArray(value) ? value.join(', ') : String(value);
-	}
 	import { page } from '$app/state';
 	import PaymentDialog from '$lib/components/payment/paymentDialog.svelte';
 	import RequirementsChat from '$lib/components/requirements/RequirementsChat.svelte';
 	import RequirementsDetails from '$lib/components/requirements/RequirementsDetails.svelte';
+	import * as Alert from '$lib/components/ui/alert';
 	import * as Avatar from '$lib/components/ui/avatar';
 	import Badge from '$lib/components/ui/badge/badge.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import * as Card from '$lib/components/ui/card/index.js';
-	import { Input } from '$lib/components/ui/input';
+	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
 	import * as Tabs from '$lib/components/ui/tabs/index.js';
 	import { t } from '$lib/i18n';
 	import type { Currency as Cur, HuntStats, InterestedCandidate } from '$lib/scrubinClient';
 	import { scrubinClient } from '$lib/scrubinClient/client';
 	import InterestedWorkerDialog from '@/components/dashboard/interestedWorkerDialog.svelte';
 	import QuestionsInHunt from '@/components/dashboard/questionsInHunt.svelte';
-	import DropdownComponent from '@/components/dropdownComponent.svelte';
 	import { getStatusColor } from '@/components/payment/payments.js';
-	import Separator from '@/components/ui/separator/separator.svelte';
 	import * as Dialog from '@/components/ui/dialog/index.js';
 	import * as DropdownMenu from '@/components/ui/dropdown-menu/index.js';
+	import Separator from '@/components/ui/separator/separator.svelte';
 	import {
 		ArrowLeft,
 		Briefcase,
+		ChevronDown,
 		DollarSign,
 		FileText,
 		GraduationCap,
-		ChevronDown,
+		MessageSquare,
 		Loader2,
 		Mail,
-		Pencil,
 		Phone,
-		Save,
 		Sparkle,
-		Users
+		Users,
+		MessageSquareText,
+		Eye,
+		MailOpen
 	} from 'lucide-svelte';
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
-	import * as Alert from '$lib/components/ui/alert';
 
 	let { data } = $props();
 	let hunt = $derived(data.hunt);
@@ -50,6 +47,7 @@
 	let interestedCandidates = $state<InterestedCandidate[]>([]);
 	let showAllInterestedCandidates = $state(false);
 	let isLoading = $state(true);
+	let isLoadingCandidates = $state(false);
 	let showInterestedWorkerDialog = $state(false);
 	let selectedCandidateId = $state(0);
 	let selectedCandidateType = $state<'offer' | 'apply'>('offer');
@@ -252,19 +250,31 @@
 	onMount(async () => {
 		try {
 			// Fetch interested candidates
-			interestedCandidates = await scrubinClient.hunt.getInterestedCandidates(hunt.huntId);
+			isLoadingCandidates = true;
+			scrubinClient.hunt
+				.getInterestedCandidates(hunt.huntId)
+				.then((candidates) => {
+					interestedCandidates = candidates;
+				})
+				.catch((error) => {
+					toast.error('Failed to fetch interested candidates');
+				})
+				.finally(() => {
+					isLoadingCandidates = false;
+				});
 
 			// Fetch latest stats
-			const stats = await scrubinClient.hunt.getHuntStats(hunt.huntId);
-			funnelStats = {
-				huntId: stats.huntId,
-				totalHuntables: stats.totalHuntables || 0,
-				totalHuntablesContacted: stats.totalHuntablesContacted || 0,
-				totalHuntablesInterested: stats.totalHuntablesInterested || 0,
-				totalInterestedReadyForCompany: stats.totalInterestedReadyForCompany || 0,
-				totalOffersMade: stats.totalOffersMade || 0,
-				totalHired: stats.totalHired || 0
-			};
+			scrubinClient.hunt.getHuntStats(hunt.huntId).then((stats) => {
+				funnelStats = {
+					huntId: stats.huntId,
+					totalHuntables: stats.totalHuntables || 0,
+					totalHuntablesContacted: stats.totalHuntablesContacted || 0,
+					totalHuntablesInterested: stats.totalHuntablesInterested || 0,
+					totalInterestedReadyForCompany: stats.totalInterestedReadyForCompany || 0,
+					totalOffersMade: stats.totalOffersMade || 0,
+					totalHired: stats.totalHired || 0
+				};
+			});
 
 			// Check URL for candidateId and open dialog if present
 			const candidateId = page.url.searchParams.get('candidateId');
@@ -277,8 +287,12 @@
 				activeTab = 'statistics';
 			}
 
-			availableCurrencies = await scrubinClient.company.getCurrencies();
-			availableCountries = await scrubinClient.company.getCountries();
+			const [currencies, countries] = await Promise.all([
+				scrubinClient.company.getCurrencies(),
+				scrubinClient.company.getCountries()
+			]);
+			availableCurrencies = currencies;
+			availableCountries = countries;
 		} catch (error) {
 			console.error('Failed to fetch data:', error);
 		} finally {
@@ -605,9 +619,9 @@
 					{/if}
 
 					<div class="flex flex-col gap-4">
-						{#if isLoading}
-							<div class="flex items-center justify-center py-8">
-								<div class="h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
+						{#if isLoadingCandidates}
+							<div class="flex flex-col items-center justify-center gap-6 py-8">
+								<Loader2 class="h-10 w-10 animate-spin text-primary/70" />
 							</div>
 						{:else if interestedCandidates.length === 0}
 							<div class="flex flex-col items-center gap-6 py-8">
@@ -709,6 +723,48 @@
 														</div>
 														<div class="flex flex-col items-end gap-2">
 															<div class="flex items-center gap-2">
+																{#if candidate.stats}
+																	<Tooltip.Root>
+																		<Tooltip.Trigger>
+																			<div class="flex items-center gap-1 text-xs">
+																				<Eye class="h-3.5 w-3.5" />
+																				<span>{candidate.stats.offerOpens}</span>
+																			</div>
+																		</Tooltip.Trigger>
+																		<Tooltip.Content side="bottom">
+																			<span>{$t('statistics.offerOpens')}</span>
+																		</Tooltip.Content>
+																	</Tooltip.Root>
+																	<span class="text-muted-foreground">|</span>
+																	<Tooltip.Root>
+																		<Tooltip.Trigger>
+																			<div class="flex items-center gap-1 text-xs">
+																				<MailOpen class="h-3.5 w-3.5" />
+																				<span>{candidate.stats.offerEmailOpenedCount}</span>
+																			</div>
+																		</Tooltip.Trigger>
+																		<Tooltip.Content side="bottom">
+																			<span>{$t('statistics.offerEmailOpens')}</span>
+																		</Tooltip.Content>
+																	</Tooltip.Root>
+																	<span class="text-muted-foreground">|</span>
+																	<Tooltip.Root>
+																		<Tooltip.Trigger>
+																			<div class="flex items-center gap-1 text-xs">
+																				<MessageSquare class="h-3.5 w-3.5" />
+																				<span>{candidate.totalMessages}</span>
+																				{#if candidate.hasUnreadMessages}
+																					<span
+																						class="ml-1 inline-block h-2 w-2 rounded-full bg-red-500"
+																					></span>
+																				{/if}
+																			</div>
+																		</Tooltip.Trigger>
+																		<Tooltip.Content side="bottom">
+																			<span>{$t('statistics.totalChatMessages')}</span>
+																		</Tooltip.Content>
+																	</Tooltip.Root>
+																{/if}
 																{#if candidate.dateReadyForRecruiter === null}
 																	<span
 																		class="w-fit rounded-full bg-orange-100 px-2 py-1 text-xs font-medium text-orange-800"

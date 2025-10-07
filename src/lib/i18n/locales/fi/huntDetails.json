@@ -144,7 +144,10 @@
 		"noInterestedCandidatesDesc": "Ei kiinnostuneita ehdokkaita vielä, mutta otamme yhteyttä ammattilaisiin, jotka vastaavat tarpeitasi. Tarkista tilanne pian! Ilmoitamme sinulle heti, kun meillä on päivityksiä.",
 		"interestedOn": "Kiinnostunut",
 		"appliedOn": "Hakija",
-		"showAllInterestedCandidates": "Näytä kaikki kiinnostuneet ehdokkaat"
+		"showAllInterestedCandidates": "Näytä kaikki kiinnostuneet ehdokkaat",
+		"offerOpens": "Tarjouksen avaukset",
+		"offerEmailOpens": "Tarjoussähköpostin avaukset",
+		"totalChatMessages": "Chat-viestejä yhteensä"
 	},
 	"questions": {
 		"contextQuestions": "Kontekstikysymykset",
