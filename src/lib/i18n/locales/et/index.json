@@ -57,7 +57,7 @@
 	},
 	"help": {
 		"title": "Vajad abi?",
-		"description": "Võta ühendust oma kliendihaldajaga",
+		"description": "Võta ühendust oma kliendihalduriga",
 		"accountManager": "Kliendihaldur",
 		"message": "Sõnum",
 		"call": "Helista",
