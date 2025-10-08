@@ -52,17 +52,24 @@
 
 	onMount(async () => {
 		try {
-			const [active, bill, subs, invs] = await Promise.all([
+			const [active, bill] = await Promise.all([
 				scrubinClient.company.getActivePlans(),
 				scrubinClient.company.getBilling(),
-				scrubinClient.company.getStripeSubscriptions().catch(() => []),
-				scrubinClient.company.getStripeInvoices().catch(() => [])
+			
 			]);
 
 			activePlans = active;
 			billing = bill;
-			subscriptions = subs.map((s: any) => ({ id: s.id, status: s.status }));
-			invoices = invs as InvoiceDto[];
+
+			if (bill?.stripeCustomerId) {
+				scrubinClient.company.getStripeSubscriptions()
+				.then((subs) => subscriptions = subs?.map((s: any) => ({ id: s.id, status: s.status })))
+				.catch(() => subscriptions = []);
+				
+				scrubinClient.company.getStripeInvoices()
+				.then((inv) => invoices = inv as InvoiceDto[])
+				.catch(() => invoices = []);
+			}
 
 			// Fetch details for all active plans
 			await Promise.all(activePlans.map((plan) => fetchPlanDetails(plan.id)));
