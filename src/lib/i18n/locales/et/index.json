@@ -12,7 +12,8 @@
 		"logout": "Logi välja",
 		"employerPlatform": "Tööandja platvorm",
 		"help": "Abi",
-		"projects": "Projektid"
+		"projects": "Projektid",
+		"faq": "KKK"
 	},
 	"languages": {
 		"en": "English",
@@ -535,6 +536,15 @@
 		},
 		"errors": {
 			"fetchFailed": "Sõnumi saatmine ebaõnnestus"
+		},
+		"invoices": {
+			"title": "Arved",
+			"number": "Arve",
+			"status": "Staatus",
+			"amount": "Summa",
+			"actions": "Tegevused",
+			"downloadPdf": "Laadi PDF",
+			"viewOnline": "Vaata veebis"
 		}
 	}
 }

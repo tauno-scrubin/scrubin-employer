@@ -12,7 +12,8 @@
 		"logout": "Kirjaudu ulos",
 		"employerPlatform": "Työnantajan alusta",
 		"help": "Ohje",
-		"projects": "Projektit"
+		"projects": "Projektit",
+		"faq": "UKK"
 	},
 	"languages": {
 		"en": "English",
@@ -537,6 +538,15 @@
 		},
 		"errors": {
 			"fetchFailed": "Viestin lähetys epäonnistui"
+		},
+		"invoices": {
+			"title": "Laskut",
+			"number": "Lasku",
+			"status": "Tila",
+			"amount": "Summa",
+			"actions": "Toiminnot",
+			"downloadPdf": "Lataa PDF",
+			"viewOnline": "Näytä verkossa"
 		}
 	}
 }

@@ -12,6 +12,7 @@
 		"logout": "Logout",
 		"employerPlatform": "Employer Platform",
 		"help": "Help",
+		"faq": "FAQ",
 		"projects": "Projects"
 	},
 	"languages": {
@@ -540,6 +541,15 @@
 		},
 		"errors": {
 			"fetchFailed": "Failed to send message"
+		},
+		"invoices": {
+			"title": "Invoices",
+			"number": "Invoice",
+			"status": "Status",
+			"amount": "Amount",
+			"actions": "Actions",
+			"downloadPdf": "Download PDF",
+			"viewOnline": "View online"
 		}
 	}
 }

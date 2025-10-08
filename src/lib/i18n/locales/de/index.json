@@ -12,7 +12,8 @@
 		"logout": "Abmelden",
 		"employerPlatform": "Arbeitgeberplattform",
 		"help": "Hilfe",
-		"projects": "Projekte"
+		"projects": "Projekte",
+		"faq": "FAQ"
 	},
 	"languages": {
 		"en": "English",
@@ -540,6 +541,15 @@
 		},
 		"errors": {
 			"fetchFailed": "Nachricht konnte nicht gesendet werden"
+		},
+		"invoices": {
+			"title": "Rechnungen",
+			"number": "Rechnung",
+			"status": "Status",
+			"amount": "Betrag",
+			"actions": "Aktionen",
+			"downloadPdf": "PDF herunterladen",
+			"viewOnline": "Online ansehen"
 		}
 	}
 }

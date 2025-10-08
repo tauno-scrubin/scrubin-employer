@@ -8,7 +8,7 @@
 	import type { PortalUser } from '@/scrubinClient';
 	import { currentUser } from '@/scrubinClient/client';
 	import Scrubinsvg from '@/scrubinsvg.svelte';
-	import { Calendar, DollarSign, HelpCircle } from 'lucide-svelte';
+	import { Book, Calendar, DollarSign, HelpCircle } from 'lucide-svelte';
 	import ChartPie from 'lucide-svelte/icons/chart-pie';
 	import Settings2 from 'lucide-svelte/icons/settings-2';
 	import SquareTerminal from 'lucide-svelte/icons/square-terminal';
@@ -19,6 +19,7 @@
 	import { changeLanguage } from '$lib/utils/languageUtils';
 	import Globe from 'lucide-svelte/icons/globe';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
+	import { goto } from '$app/navigation';
 
 	let {
 		ref = $bindable(null),
@@ -32,7 +33,7 @@
 			email: $currentUser?.email || 'user@example.com',
 			avatar: ''
 		},
-		navMain: [
+			navMain: [
 			{
 				title: $t('nav.dashboard'),
 				url: '/dashboard',
@@ -147,6 +148,18 @@
 				{/each}
 			</DropdownMenu.Content>
 		</DropdownMenu.Root>
+
+		<Button
+			variant="ghost"
+			size="sm"
+			class="w-full justify-start text-start"
+			onclick={() => {
+				goto('/dashboard/faq');
+			}}
+		>
+			<Book class="mr-2 h-4 w-4" />
+			{$t('nav.faq')}
+		</Button>
 
 		<Button
 			variant="ghost"

@@ -411,6 +411,50 @@ export interface CompanyBilling {
 	stripePaymentMethod?: PaymentMethod;
 }
 
+export interface PortalSessionDto {
+	url: string;
+}
+
+export interface SubscriptionDto {
+	id: string;
+	status: string;
+	currentPeriodStart: number;
+	currentPeriodEnd: number;
+	cancelAtPeriodEnd: boolean;
+	canceledAt?: number;
+	items: Array<{
+		id: string;
+		price: {
+			id: string;
+			unitAmount: number;
+			currency: string;
+			recurring: {
+				interval: string;
+				intervalCount: number;
+			};
+			product: {
+				id: string;
+				name: string;
+				description?: string;
+			};
+		};
+		quantity: number;
+	}>;
+}
+
+export interface InvoiceDto {
+	id: string;
+	number: string;
+	status: string;
+	amountPaid: number;
+	amountDue: number;
+	currency: string;
+	created: number;
+	dueDate: number;
+	hostedInvoiceUrl?: string;
+	invoicePdf?: string;
+}
+
 export interface CompanyBillingRequest {
 	stripeCustomerId?: string;
 	stripePaymentMethodId?: string;
@@ -968,6 +1012,21 @@ class CompanyResource extends BaseResource {
 			'GET',
 			url.toString()
 		) as Promise<AvailablePlansResponse>;
+	}
+
+	async createStripePortalSession(): Promise<PortalSessionDto> {
+		const url = new URL(`${this.path}/billing/stripe/portal`, this.client.baseUrl);
+		return this.request<PortalSessionDto>('GET', url.toString()) as Promise<PortalSessionDto>;
+	}
+
+	async getStripeSubscriptions(): Promise<SubscriptionDto[]> {
+		const url = new URL(`${this.path}/billing/stripe/subscriptions`, this.client.baseUrl);
+		return this.request<SubscriptionDto[]>('GET', url.toString()) as Promise<SubscriptionDto[]>;
+	}
+
+	async getStripeInvoices(): Promise<InvoiceDto[]> {
+		const url = new URL(`${this.path}/billing/stripe/invoices`, this.client.baseUrl);
+		return this.request<InvoiceDto[]>('GET', url.toString()) as Promise<InvoiceDto[]>;
 	}
 
 	async getActivePlans(): Promise<CompanyPlanSummary[]> {

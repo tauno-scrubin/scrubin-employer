@@ -12,7 +12,8 @@
 		"logout": "Déconnexion",
 		"employerPlatform": "Plateforme Employeur",
 		"help": "Aide",
-		"projects": "Projets"
+		"projects": "Projets",
+		"faq": "FAQ"
 	},
 	"languages": {
 		"en": "English",
@@ -537,6 +538,15 @@
 		},
 		"errors": {
 			"fetchFailed": "Échec de l'envoi du message"
+		},
+		"invoices": {
+			"title": "Factures",
+			"number": "Facture",
+			"status": "Statut",
+			"amount": "Montant",
+			"actions": "Actions",
+			"downloadPdf": "Télécharger le PDF",
+			"viewOnline": "Voir en ligne"
 		}
 	}
 }

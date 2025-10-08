@@ -8,8 +8,8 @@
 	import Badge from '$lib/components/ui/badge/badge.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import * as Card from '$lib/components/ui/card/index.js';
-	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
 	import * as Tabs from '$lib/components/ui/tabs/index.js';
+	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
 	import { t } from '$lib/i18n';
 	import type { Currency as Cur, HuntStats, InterestedCandidate } from '$lib/scrubinClient';
 	import { scrubinClient } from '$lib/scrubinClient/client';
@@ -24,23 +24,22 @@
 		Briefcase,
 		ChevronDown,
 		DollarSign,
+		Eye,
 		FileText,
 		GraduationCap,
-		MessageSquare,
 		Loader2,
 		Mail,
+		MailOpen,
+		MessageSquare,
 		Phone,
 		Sparkle,
-		Users,
-		MessageSquareText,
-		Eye,
-		MailOpen
+		Users
 	} from 'lucide-svelte';
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
 
 	let { data } = $props();
-	let hunt = $derived(data.hunt);
+	let hunt = $state(data.hunt);
 	let isRecentlyActivated = $derived(
 		hunt?.dateActivated ? Date.now() - new Date(hunt.dateActivated).getTime() < 3600000 : false
 	);
@@ -95,6 +94,61 @@
 		stateProvinceRegion: ''
 	});
 
+	onMount(async () => {
+		try {
+			// Fetch interested candidates
+			isLoadingCandidates = true;
+			scrubinClient.hunt
+				.getInterestedCandidates(hunt.huntId)
+				.then((candidates) => {
+					interestedCandidates = candidates;
+				})
+				.catch((error) => {
+					toast.error('Failed to fetch interested candidates');
+				})
+				.finally(() => {
+					isLoadingCandidates = false;
+				});
+
+			// Fetch latest stats
+			scrubinClient.hunt.getHuntStats(hunt.huntId).then((stats) => {
+				funnelStats = {
+					huntId: stats.huntId,
+					totalHuntables: stats.totalHuntables || 0,
+					totalHuntablesContacted: stats.totalHuntablesContacted || 0,
+					totalHuntablesInterested: stats.totalHuntablesInterested || 0,
+					totalInterestedReadyForCompany: stats.totalInterestedReadyForCompany || 0,
+					totalOffersMade: stats.totalOffersMade || 0,
+					totalHired: stats.totalHired || 0
+				};
+			});
+
+			// Check URL for candidateId and open dialog if present
+			const candidateId = page.url.searchParams.get('candidateId');
+			const candidateExists = interestedCandidates.find(
+				(candidate) => candidate.candidateId === parseInt(candidateId || '0')
+			);
+			if (candidateId && candidateExists) {
+				selectedCandidateId = parseInt(candidateId);
+				showInterestedWorkerDialog = true;
+				activeTab = 'statistics';
+			}
+
+			const [currencies, countries] = await Promise.all([
+				scrubinClient.company.getCurrencies(),
+				scrubinClient.company.getCountries()
+			]);
+			availableCurrencies = currencies;
+			availableCountries = countries;
+
+			hunt = data.hunt;
+		} catch (error) {
+			console.error('Failed to fetch data:', error);
+		} finally {
+			isLoading = false;
+		}
+	});
+
 	$effect(() => {
 		if (hunt) {
 			// Initialize editable requirements based on current hunt requirements
@@ -113,77 +167,18 @@
 		}
 	});
 
-	function toggleEditMode() {
-		isEditMode = !isEditMode;
-
-		// If exiting edit mode without saving, reset values
-		if (!isEditMode) {
-			editableRequirements = {
-				jobTitle: hunt.requirements.jobTitle || '',
-				jobDescription: hunt.requirements.jobDescription || '',
-				jobRequiredQualifications: hunt.requirements.jobRequiredQualifications || '',
-				jobRequiredWorkExperience: hunt.requirements.jobRequiredWorkExperience || 0,
-				salaryStart: hunt.requirements.salary?.amountStart || 0,
-				salaryEnd: hunt.requirements.salary?.amountEnd || 0,
-				salaryCurrency: hunt.requirements.salary?.currency || '',
-				country: hunt.requirements.country || '',
-				city: hunt.requirements.address?.city || '',
-				stateProvinceRegion: hunt.requirements.address?.stateProvinceRegion || ''
-			};
-		}
-	}
-
 	async function makeAdPublic() {
 		if (!hunt?.huntId) return;
 		isPublishing = true;
 		try {
 			await scrubinClient.hunt.convertToJobAd(hunt.huntId);
-			hunt.hasPublicAd = true;
+			hunt = await scrubinClient.hunt.getHuntById(hunt.huntId);
 			toast.success($t('hunt.visibility.publishSuccess'));
 		} catch (error) {
 			console.error('Failed to make ad public:', error);
 			toast.error($t('hunt.visibility.publishError'));
 		} finally {
 			isPublishing = false;
-		}
-	}
-
-	async function saveManualEdits() {
-		if (!hunt.huntId) {
-			toast.error('No hunt ID available.');
-			return;
-		}
-
-		isSaving = true;
-
-		try {
-			const response = await scrubinClient.hunt.updateRequirementFields(hunt.requirements.id, {
-				jobTitle: editableRequirements.jobTitle,
-				jobDescription: editableRequirements.jobDescription,
-				jobRequiredQualifications: editableRequirements.jobRequiredQualifications,
-				jobRequiredWorkExperience: editableRequirements.jobRequiredWorkExperience,
-				salaryAmountStart: editableRequirements.salaryStart,
-				salaryAmountEnd: editableRequirements.salaryEnd,
-				salaryCurrency: editableRequirements.salaryCurrency,
-				country: editableRequirements.country,
-				city: editableRequirements.city,
-				stateProvinceRegion:
-					typeof editableRequirements.stateProvinceRegion === 'string'
-						? [editableRequirements.stateProvinceRegion]
-						: editableRequirements.stateProvinceRegion
-			});
-
-			hunt.requirements = response;
-			// Exit edit mode
-			isEditMode = false;
-			toast.success('Requirements updated successfully');
-		} catch (error) {
-			console.error('Failed to save manual edits:', error);
-			toast.error('Failed to update requirements. Please try again.', {
-				description: (error as Error).message
-			});
-		} finally {
-			isSaving = false;
 		}
 	}
 
@@ -245,59 +240,6 @@
 		totalInterestedReadyForCompany: 0,
 		totalOffersMade: 0,
 		totalHired: 0
-	});
-
-	onMount(async () => {
-		try {
-			// Fetch interested candidates
-			isLoadingCandidates = true;
-			scrubinClient.hunt
-				.getInterestedCandidates(hunt.huntId)
-				.then((candidates) => {
-					interestedCandidates = candidates;
-				})
-				.catch((error) => {
-					toast.error('Failed to fetch interested candidates');
-				})
-				.finally(() => {
-					isLoadingCandidates = false;
-				});
-
-			// Fetch latest stats
-			scrubinClient.hunt.getHuntStats(hunt.huntId).then((stats) => {
-				funnelStats = {
-					huntId: stats.huntId,
-					totalHuntables: stats.totalHuntables || 0,
-					totalHuntablesContacted: stats.totalHuntablesContacted || 0,
-					totalHuntablesInterested: stats.totalHuntablesInterested || 0,
-					totalInterestedReadyForCompany: stats.totalInterestedReadyForCompany || 0,
-					totalOffersMade: stats.totalOffersMade || 0,
-					totalHired: stats.totalHired || 0
-				};
-			});
-
-			// Check URL for candidateId and open dialog if present
-			const candidateId = page.url.searchParams.get('candidateId');
-			const candidateExists = interestedCandidates.find(
-				(candidate) => candidate.candidateId === parseInt(candidateId || '0')
-			);
-			if (candidateId && candidateExists) {
-				selectedCandidateId = parseInt(candidateId);
-				showInterestedWorkerDialog = true;
-				activeTab = 'statistics';
-			}
-
-			const [currencies, countries] = await Promise.all([
-				scrubinClient.company.getCurrencies(),
-				scrubinClient.company.getCountries()
-			]);
-			availableCurrencies = currencies;
-			availableCountries = countries;
-		} catch (error) {
-			console.error('Failed to fetch data:', error);
-		} finally {
-			isLoading = false;
-		}
 	});
 
 	let funnelData = $state<{ name: string; value: number }[]>([]);

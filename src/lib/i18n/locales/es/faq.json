@@ -1,0 +1,41 @@
+{
+  "faq": {
+    "title": "Scrubin – Preguntas frecuentes para organizaciones",
+    "q1": "¿Qué es Scrubin?",
+    "a1": {
+      "p1": "Scrubin es un motor de búsqueda especializado diseñado para profesionales sanitarios (HCP). Nuestro buscador ayuda a médicos, enfermeras y farmacéuticos a encontrar —y realizar— su mejor trabajo. Los profesionales de la salud pueden consultar interacciones farmacológicas, ensayos clínicos, reseñas, salarios y ofertas de empleo que se ajusten a sus necesidades e intereses. Al mismo tiempo, Scrubin permite a hospitales, clínicas y empresas farmacéuticas buscar y llegar a profesionales de la salud verificados mediante búsquedas y campañas precisas basadas en datos."
+    },
+    "q2": "¿Cómo funciona Scrubin?",
+    "a2": {
+      "p1": "Miles de médicos, enfermeras y farmacéuticos —que han subido sus CV junto con su historial laboral, formación e intereses clínicos— utilizan el motor de búsqueda de Scrubin para explorar información sobre una gran variedad de temas: desde ensayos clínicos e interacciones de fármacos hasta oportunidades laborales, salarios y reseñas de lugares de trabajo.",
+      "p2": "Scrubin utiliza un sistema seguro para conectar a estos profesionales sanitarios verificados pero anónimos (HCP) con organizaciones como hospitales, clínicas de atención primaria y compañías farmacéuticas, de forma segura y basada en datos. Scrubin no es un portal de empleo tradicional ni una plataforma publicitaria. Nuestro sistema de emparejamiento aplica psicología, estadística y semántica para garantizar el máximo nivel de precisión. Cuando una organización publica un puesto o lanza una campaña, el sistema de Scrubin identifica la “parte común” entre lo que busca cada HCP y lo que ofrece la organización. Empareja personas y oportunidades en función de habilidades, experiencia, búsquedas y preferencias, creando las conexiones adecuadas. Esto permite a las organizaciones llegar a HCP verificados y activos en el momento exacto —cuando ya están interactuando con temas o actividades de búsqueda relacionadas—.",
+      "p3": "Es importante destacar que los HCP confían en Scrubin porque mantienen su privacidad y control. Las organizaciones no pueden ver sus CV, datos de contacto ni perfiles hasta que el profesional decida interactuar y compartir su contacto. Esto garantiza confianza, cumplimiento y confidencialidad a nivel RGPD, al tiempo que permite una segmentación precisa dentro de una plataforma cerrada y verificada."
+    },
+    "q3": "¿Puedo buscar y ver yo mismo los perfiles de los HCP?",
+    "a3": {
+      "p1": "No, no puedes ver los perfiles de los HCP por tu cuenta antes de que confirmen también su interés en ti. Sin embargo, puedes buscar HCP por especialidad (p. ej., cardiólogos, médicos de familia, psiquiatras), región o palabras clave. Cada perfil que esté interesado en conectar contigo incluye datos clave como experiencia, formación y/o intereses profesionales —todos verificados por los algoritmos internos de Scrubin y comprobaciones de referencias—. Así todo es seguro y conforme a la normativa."
+    },
+    "q4": "¿Cuántos profesionales sanitarios hay en Scrubin?",
+    "a4": {
+      "p1": "Actualmente, más de 70.000 profesionales sanitarios —médicos, enfermeras y farmacéuticos— de Europa, Reino Unido y Australia utilizan Scrubin. Todos los profesionales deben verificar su identidad durante el registro. También les pedimos su CV, formación, historial laboral e intereses profesionales para garantizar que sus perfiles sean completos y precisos."
+    },
+    "q5": "¿Cómo publico una oferta de trabajo o una campaña?",
+    "a5": {
+      "p1": "Haz lo siguiente:",
+      "p2": "Ve al Panel (Dashboard).",
+      "p3": "Describe a quién buscas —por ejemplo—:",
+      "p4": "“Necesitamos contratar un cardiólogo a tiempo completo en Londres” o “Quiero encontrar médicos de familia en Estonia”, y luego configura la búsqueda con los filtros que ves.",
+      "p5": "El sistema configura tu búsqueda o campaña y empieza a encontrar HCP adecuados automáticamente una vez activado tu plan. Si tu plan no está activado, contáctanos a través del botón de Ayuda."
+    },
+    "q6": "¿En qué se diferencia Scrubin de otras plataformas?",
+    "a6": {
+      "p1": "Sólo salud – cada usuario es un HCP verificado.",
+      "p2": "Usuarios proactivos – nuestra IA conecta a los HCP con la información que buscan, por lo que te conecta automáticamente con las personas adecuadas.",
+      "p3": "Más económico y 5× más eficaz – los clientes informan de hasta 5× menor coste por contratación y 8× más interacción frente a portales de empleo tradicionales o anuncios genéricos."
+    },
+    "q7": "¿Mis datos están seguros?",
+    "a7": {
+      "p1": "Sí. Todos los datos de usuarios y clientes se almacenan en servidores conformes con la normativa de la UE (RGPD). Solo profesionales de la salud verificados y organizaciones autorizadas pueden acceder a los datos dentro de sus límites legales."
+    }
+  }
+}

@@ -6,7 +6,12 @@
 	import { Textarea } from '$lib/components/ui/textarea';
 	import { t } from '$lib/i18n';
 	import { scrubinClient } from '@/scrubinClient/client.js';
-	import type { CompanyPlanDetails, CompanyPlanSummary } from '@/scrubinClient/index.js';
+	import type {
+		CompanyPlanDetails,
+		CompanyPlanSummary,
+		CompanyBilling,
+		InvoiceDto
+	} from '@/scrubinClient/index.js';
 	import {
 		BadgeCheck,
 		Calendar,
@@ -26,6 +31,9 @@
 	let planDetails = $state<CompanyPlanDetails[]>([]);
 	let isLoading = $state(true);
 	let error: string | null = $state(null);
+	let billing: CompanyBilling | null = $state(null);
+	let subscriptions: Array<{ id: string; status: string }> = $state([]);
+	let invoices = $state<InvoiceDto[]>([]);
 
 	// Contact dialog state
 	let contactDialogOpen = $state(false);
@@ -44,7 +52,17 @@
 
 	onMount(async () => {
 		try {
-			activePlans = await scrubinClient.company.getActivePlans();
+			const [active, bill, subs, invs] = await Promise.all([
+				scrubinClient.company.getActivePlans(),
+				scrubinClient.company.getBilling(),
+				scrubinClient.company.getStripeSubscriptions().catch(() => []),
+				scrubinClient.company.getStripeInvoices().catch(() => [])
+			]);
+
+			activePlans = active;
+			billing = bill;
+			subscriptions = subs.map((s: any) => ({ id: s.id, status: s.status }));
+			invoices = invs as InvoiceDto[];
 
 			// Fetch details for all active plans
 			await Promise.all(activePlans.map((plan) => fetchPlanDetails(plan.id)));
@@ -94,6 +112,18 @@
 	const openCalendar = () => {
 		window.open('https://calendar.app.google/VN4kA74b4Xjn6tHN7', '_blank');
 	};
+
+	const manageSubscription = async () => {
+		try {
+			const { url } = await scrubinClient.company.createStripePortalSession();
+			if (url) {
+				window.location.href = url;
+			}
+		} catch (e) {
+			const errorMessage = e instanceof Error ? e.message : $t('pricing.errors.fetchFailed');
+			toast.error(errorMessage);
+		}
+	};
 </script>
 
 <div class="mx-auto w-full max-w-screen-xl space-y-6">
@@ -116,6 +146,24 @@
 			<div class="h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
 		</div>
 	{:else}
+		<!-- Billing subscription summary -->
+		<!-- {#if billing?.stripeCustomerId && subscriptions.length > 0}
+			<div class="mb-6 rounded-xl border border-border/50 bg-white p-4 sm:p-6">
+				<div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+					<div>
+						<p class="text-sm text-muted-foreground">
+							{$t('pricing.activePlans.billingStatus') || 'Billing'}
+						</p>
+						<p class="text-sm">
+							<strong>{$t('pricing.activePlans.subscription')}</strong> — {subscriptions[0].status.toUpperCase()}
+						</p>
+					</div>
+					<Button size="sm" onclick={manageSubscription} class="w-full sm:w-auto">
+						{$t('pricing.activePlans.manageSubscription') || 'Manage subscription'}
+					</Button>
+				</div>
+			</div>
+		{/if} -->
 		<!-- Active Plans Section -->
 		{#if activePlans.length > 0}
 			<div class="mb-8 sm:mb-12">
@@ -165,6 +213,7 @@
 													<span class="font-medium">{$t('pricing.activePlans.generalFee')}:</span>
 													{pd.pricingGeneral.amount}
 													{getCurrencySymbol(pd.pricingGeneral.currency)}
+													{$t('pricing.availablePlans.vatLabel', { percentage: '24' })}
 												</p>
 											</div>
 										{/if}
@@ -290,6 +339,72 @@
 							</div>
 						</div>
 					{/each}
+				</div>
+			</div>
+		{/if}
+
+		{#if invoices.length > 0}
+			<div class="mb-8 sm:mb-12">
+				<h2 class="mb-4 px-2 text-xl font-semibold text-foreground sm:mb-6 sm:px-0 sm:text-2xl">
+					{$t('pricing.invoices.title') || 'Invoices'}
+				</h2>
+				<div class="overflow-hidden rounded-xl border border-border/50 bg-white">
+					<div
+						class="hidden grid-cols-12 gap-4 border-b px-4 py-3 text-xs font-medium text-muted-foreground sm:grid"
+					>
+						<div class="col-span-4">{$t('pricing.invoices.number') || 'Invoice'}</div>
+						<div class="col-span-3">{$t('pricing.invoices.status') || 'Status'}</div>
+						<div class="col-span-3">{$t('pricing.invoices.amount') || 'Amount'}</div>
+						<div class="col-span-2 text-right">{$t('pricing.invoices.actions') || 'Actions'}</div>
+					</div>
+
+					<div class="divide-y">
+						{#each invoices as inv}
+							<div class="grid grid-cols-1 gap-3 px-4 py-4 sm:grid-cols-12 sm:items-center">
+								<div class="sm:col-span-4">
+									<div class="text-sm font-medium">{inv.number || inv.id}</div>
+									<div class="text-xs text-muted-foreground">
+										{new Date(inv.created * 1000).toLocaleDateString()}
+									</div>
+								</div>
+								<div class="sm:col-span-3">
+									<div class="inline-flex rounded-md border px-2 py-0.5 text-xs capitalize">
+										{inv.status}
+									</div>
+								</div>
+
+								<div class="text-sm sm:col-span-3">
+									{((inv.amountPaid ?? 0) / 100).toFixed(2)}
+									{inv.currency?.toUpperCase()}
+								</div>
+
+								<div class="sm:col-span-2 sm:text-right">
+									<div class="flex gap-2 sm:justify-end">
+										{#if inv.invoicePdf}
+											<a
+												href={inv.invoicePdf}
+												target="_blank"
+												rel="noreferrer"
+												class="text-xs underline"
+											>
+												{$t('pricing.invoices.downloadPdf') || 'Download PDF'}
+											</a>
+										{/if}
+										{#if inv.hostedInvoiceUrl}
+											<a
+												href={inv.hostedInvoiceUrl}
+												target="_blank"
+												rel="noreferrer"
+												class="text-xs underline"
+											>
+												{$t('pricing.invoices.viewOnline') || 'View online'}
+											</a>
+										{/if}
+									</div>
+								</div>
+							</div>
+						{/each}
+					</div>
 				</div>
 			</div>
 		{/if}

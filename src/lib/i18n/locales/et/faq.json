@@ -1,0 +1,41 @@
+{
+  "faq": {
+    "title": "Scrubin – KKK organisatsioonidele",
+    "q1": "Mis on Scrubin?",
+    "a1": {
+    "p1": "Scrubin on spetsiaalne otsingumootor tervishoiutöötajatele (THT). See aitab arstidel, õdedel ja proviisoritel leida — ja teha — oma parimat tööd. THT-d saavad vaadata ravimite koostoimeid, kliinilisi uuringuid, arvustusi, palgainfot ning tööpakkumisi, mis sobivad nende vajaduste ja huvidega. Samal ajal võimaldab Scrubin haiglatel, kliinikutel ja farmaatsiaettevõtetel jõuda verifitseeritud THT-deni täpse, andmepõhise otsingu ja sihitud kampaaniate kaudu."
+    },
+    "q2": "Kuidas Scrubin töötab?",
+    "a2": {
+    "p1": "Tuhanded arstid, õed ja proviisorid, kes on lisanud oma CV, töökogemuse, hariduse ja kliinilised huvid, kasutavad Scrubinit info leidmiseks alates kliinilistest uuringutest ja ravimite koostoimetest kuni töövõimaluste, palgatasemete ja töökohahinnanguteni.",
+    "p2": "Scrubin ühendab need verifitseeritud, kuid anonüümsed THT-d organisatsioonidega (haiglad, perearstikeskused, farmaatsiaettevõtted) turvalisel ja andmepõhisel viisil. Scrubin ei ole klassikaline tööportaal ega reklaamiplatvorm. Meie sobitusalgoritmid kasutavad psühholoogiat, statistikat ja semantikat, et saavutada maksimaalne täpsus. Kui organisatsioon avaldab töökuulutuse või käivitab kampaania, leiab Scrubini süsteem “ühisosa” selle vahel, mida THT otsib, ja mida organisatsioon pakub — ning sobitab inimesed ja võimalused oskuste, kogemuse, varasemate otsingute ja eelistuste põhjal.",
+    "p3": "THT-d usaldavad Scrubinit, sest nad säilitavad privaatsuse ja kontrolli. Organisatsioonid ei näe THT CV-sid, kontaktandmeid ega profiile enne, kui professionaal otsustab suhelda ja oma kontaktid jagada. See tagab usalduse, vastavuse ja GDPR-iga kooskõlas oleva konfidentsiaalsuse, võimaldades samal ajal täpset sihtimist suletud ja verifitseeritud platvormis."
+    },
+    "q3": "Kas ma saan ise THT profiile otsida ja vaadata?",
+    "a3": {
+    "p1": "Ei. Te ei näe THT profiile enne, kui nad on kinnitanud huvi ka teie vastu. Küll aga saate otsida THT-sid eriala (nt kardioloogid, perearstid, psühhiaatrid), piirkonna või märksõnade järgi. Profiilid, mis soovivad teiega ühendust võtta, jagavad võtmeinfot (kogemus, haridus ja/või tööalased huvid) — kõik Scrubini sisemiste algoritmide ja taustakontrollide poolt kinnitatud. Nii on protsess turvaline ja nõuetele vastav."
+    },
+    "q4": "Kui palju tervishoiutöötajaid on Scrubinis?",
+    "a4": {
+    "p1": "Scrubinit kasutab üle 70 000 THT — arstid, õed ja proviisorid — kogu Euroopas, Ühendkuningriigis ja Austraalias. Kõik THT-d peavad registreerumisel oma isiku verifitseerima. Palume lisada ka CV, hariduse, töökogemuse ja professionaalsed huvid, et tagada profiilide täielikkus ja täpsus."
+    },
+    "q5": "Kuidas postitada tööpakkumist või kampaaniat?",
+    "a5": {
+    "p1": "Toimige nii:",
+    "p2": "Avage töölaud (Dashboard).",
+    "p3": "Kirjeldage, keda otsite — näiteks:",
+    "p4": "“Vajame täiskohaga kardioloogi Tallinna või “Soovin leida perearste Eestist”, seejärel seadistage otsing nähtavate filtrite alusel.",
+    "p5": "Süsteem seab teie otsingu või kampaania üles ja hakkab sobivaid THT-sid automaatselt leidma kohe, kui teie plaan on aktiveeritud. Kui plaan pole aktiveeritud, võtke meiega ühendust nupu Help kaudu."
+    },
+    "q6": "Kuidas erineb Scrubin teistest platvormidest?",
+    "a6": {
+    "p1": "Ainult tervishoid — iga kasutaja on verifitseeritud THT.",
+    "p2": "Proaktiivne sobitus — meie tehisaru ühendab THT-d teabega, mida nad parasjagu otsivad, nii et jõuate automaatselt õigete inimesteni.",
+    "p3": "Soodsam ja mõõdetavalt tõhusam — kliendid teatavad kuni 5× madalamast värbamiskulust ja kuni 8× kõrgemast kaasatusest võrreldes traditsiooniliste tööportaalide või üldreklaamidega."
+    },
+    "q7": "Kas minu andmed on turvalised?",
+    "a7": {
+    "p1": "Jah. Kõik kasutaja- ja kliendiandmed talletatakse ELi andmekaitsemäärusele (GDPR) vastavates serverites. Andmetele pääsevad ligi ainult verifitseeritud THT-d ja volitatud organisatsioonid vastavalt nende seaduslikele õigustele."
+    }
+    }
+  }
