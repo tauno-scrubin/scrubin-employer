@@ -45,14 +45,14 @@
 	/>
 
 	{#if !isSearchActive}
-		<div class="grid grid-cols-6 gap-4">
+		<div class="grid gap-4">
 			<div class="col-span-4">
 				<HuntsList onViewHunt={handleViewHunt} />
 			</div>
 
-			<div class="col-span-2 border-l border-opacity-50 pl-4">
+			<!-- <div class="col-span-2 border-l border-opacity-50 pl-4">
 				<SearchHistory />
-			</div>
+			</div> -->
 		</div>
 	{/if}
 </div>

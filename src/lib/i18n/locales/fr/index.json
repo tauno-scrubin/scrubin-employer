@@ -107,7 +107,11 @@
 			"noDrafts": "Aucun brouillon",
 			"draftsWillAppearHere": "Vos brouillons apparaîtront ici",
 			"untitledDraft": "Brouillon sans titre",
-			"draft": "Brouillon"
+			"draft": "Brouillon",
+			"candidates": "candidats",
+			"interested": "intéressés",
+			"unreadMessages": "non lus",
+			"unanswered": "sans réponse"
 		},
 		"searchView": {
 			"welcomeBack": "Bon retour, {{name}} !",
@@ -205,7 +209,8 @@
 			"yearAgo": "il y a un an",
 			"yearsAgo": "il y a {{count}} ans",
 			"read": "Lu",
-			"remindersSent": "rappels envoyés"
+			"remindersSent": "rappels envoyés",
+			"privateSummaryNote": "Résumé privé — le candidat ne peut pas voir ceci"
 		},
 		"candidateNotes": {
 			"title": "Notes sur le candidat",

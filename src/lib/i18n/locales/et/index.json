@@ -107,7 +107,11 @@
 			"noDrafts": "Mustandeid pole",
 			"draftsWillAppearHere": "Sinu mustandid ilmuvad siia",
 			"untitledDraft": "Pealkirjata mustand",
-			"draft": "Mustand"
+			"draft": "Mustand",
+			"candidates": "kandidaat",
+			"interested": "huvitatud",
+			"unreadMessages": "lugemata",
+			"unanswered": "vastamata"
 		},
 		"searchView": {
 			"welcomeBack": "Tere tulemast tagasi, {{name}}!",
@@ -205,7 +209,8 @@
 			"yearAgo": "aasta tagasi",
 			"yearsAgo": "aastat tagasi",
 			"read": "Loetud",
-			"remindersSent": "meeldetuletust saadetud"
+			"remindersSent": "meeldetuletust saadetud",
+			"privateSummaryNote": "Privaatne kokkuvõte — kandidaat seda ei näe"
 		},
 		"candidateNotes": {
 			"title": "Kandidaadi märkmed",

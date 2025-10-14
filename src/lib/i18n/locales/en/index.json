@@ -107,7 +107,11 @@
 			"noDrafts": "No drafts",
 			"draftsWillAppearHere": "Your drafts will appear here",
 			"untitledDraft": "Untitled Draft",
-			"draft": "Draft"
+			"draft": "Draft",
+			"candidates": "candidates",
+			"interested": "interested",
+			"unreadMessages": "unread",
+			"unanswered": "unanswered"
 		},
 		"searchView": {
 			"welcomeBack": "Welcome back, {{name}}!",
@@ -205,7 +209,8 @@
 			"yearAgo": "year ago",
 			"yearsAgo": "years ago",
 			"read": "Read",
-			"remindersSent": "reminders sent"
+			"remindersSent": "reminders sent",
+			"privateSummaryNote": "Private summary — candidate can't see this"
 		},
 		"candidateNotes": {
 			"title": "Candidate Notes",

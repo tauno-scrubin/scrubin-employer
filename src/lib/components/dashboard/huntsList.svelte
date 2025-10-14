@@ -2,7 +2,19 @@
 	import { scrubinClient } from '@/scrubinClient/client';
 	import type { Hunt, Requirements } from '@/scrubinClient';
 	import * as Card from '$lib/components/ui/card/index.js';
-	import { Loader2, ArrowRight, Clock, Search, History, Sparkle, ArrowDown } from 'lucide-svelte';
+	import {
+		Loader2,
+		ArrowRight,
+		Clock,
+		Search,
+		History,
+		Sparkle,
+		ArrowDown,
+		Users,
+		UserCheck,
+		MessageSquare,
+		HelpCircle
+	} from 'lucide-svelte';
 	import { onMount } from 'svelte';
 	import Button from '../ui/button/button.svelte';
 	import { goto } from '$app/navigation';
@@ -26,12 +38,25 @@
 		isLoading = true;
 		try {
 			const response = await scrubinClient.hunt.getHunts();
-			hunts = response.items;
-			// Sort hunts: ACTIVE first, then by date (newest first)
+			hunts = response.items.map((hunt) => ({
+				...hunt,
+				totalCandidates: hunt.totalCandidates,
+				totalInterestedCandidates: hunt.totalInterestedCandidates,
+				totalUnreadMessages: hunt.totalUnreadMessages,
+				totalUnansweredQuestions: hunt.totalUnansweredQuestions
+			}));
+			// Sort hunts: ACTIVE first, then by unanswered activity, then by date (newest first)
 			hunts.sort((a, b) => {
 				// First prioritize ACTIVE status
 				if (a.status === 'ACTIVE' && b.status !== 'ACTIVE') return -1;
 				if (a.status !== 'ACTIVE' && b.status === 'ACTIVE') return 1;
+
+				// Then prioritize hunts with unanswered chats or questions
+				const aHasUnanswered = a.totalUnreadMessages > 0 || a.totalUnansweredQuestions > 0;
+				const bHasUnanswered = b.totalUnreadMessages > 0 || b.totalUnansweredQuestions > 0;
+
+				if (aHasUnanswered && !bHasUnanswered) return -1;
+				if (!aHasUnanswered && bHasUnanswered) return 1;
 
 				// Then sort by date (newest first)
 				return new Date(b.dateActivated).getTime() - new Date(a.dateActivated).getTime();
@@ -115,13 +140,13 @@
 </script>
 
 <h2 class="mb-4 text-2xl font-medium text-gray-800">{$t('dashboard.huntsList.headhunting')}</h2>
-<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
+<div class="max-h-[500px] space-y-4 overflow-y-auto pr-1">
 	{#if isLoading}
-		<div class="col-span-full flex h-40 items-center justify-center">
+		<div class="flex h-40 items-center justify-center">
 			<Loader2 class="h-5 w-5 animate-spin text-primary/70" />
 		</div>
 	{:else if hunts.length === 0}
-		<div class="col-span-full flex flex-col items-center justify-center py-12 text-center">
+		<div class="flex flex-col items-center justify-center py-12 text-center">
 			<div class="mb-3 rounded-full bg-blue-50/50 p-3">
 				<Search class="h-5 w-5 text-primary/60" />
 			</div>
@@ -134,26 +159,70 @@
 		{#each getDisplayedHunts() as hunt}
 			<Card.Root
 				onclick={() => handleViewHunt(hunt.huntId, hunt.status)}
-				class="h-full cursor-pointer border bg-white shadow-sm transition-all hover:shadow-md"
+				class="relative cursor-pointer border bg-white shadow-sm transition-all hover:shadow-md"
 			>
-				<Card.Content class="flex h-full flex-col p-4">
+				<Card.Content class="p-4 sm:p-6">
+					<span
+						class="absolute right-2 top-2 text-xs sm:right-3 sm:top-3 {getStatusColor(
+							hunt.status
+						)} whitespace-nowrap rounded-full px-2 py-1"
+					>
+						{$t(`hunt.huntStatus.${hunt.status.toLowerCase()}`)}
+					</span>
 					<div class="flex items-start justify-between">
-						<div>
-							<Sparkle class="mb-2 h-4 w-4 rotate-45 text-blue-500" />
-							<p class="mb-2 line-clamp-2 text-sm font-medium text-gray-800">{hunt.title}</p>
-						</div>
-						<span
-							class="text-xs {getStatusColor(
-								hunt.status
-							)} whitespace-nowrap rounded-full px-1.5 py-0.5"
-						>
-							{$t(`hunt.huntStatus.${hunt.status.toLowerCase()}`)}
-						</span>
-					</div>
-					<div class="mt-auto">
-						<div class="flex items-center gap-1">
-							<History class="h-3 w-3 text-gray-400" />
-							<span class="text-xs text-gray-400">{formatDate(hunt.dateActivated || '')}</span>
+						<div class="flex-1 pr-16 sm:pr-20">
+							<div class="mb-3 flex items-center gap-2">
+								<Sparkle class="h-4 w-4 flex-shrink-0 rotate-45 text-blue-500" />
+								<h3 class="text-base font-medium leading-tight text-gray-800 sm:text-lg">
+									{hunt.title}
+								</h3>
+							</div>
+
+							<!-- Stats Row -->
+							<div class="mb-4 flex flex-wrap items-center gap-3 sm:gap-6">
+								<div class="flex items-center gap-1.5">
+									<Users class="h-4 w-4 text-gray-500" />
+									<span class="text-sm text-gray-600">
+										{hunt.totalCandidates}
+										{$t('dashboard.huntsList.candidates')}
+									</span>
+								</div>
+								{#if hunt.totalInterestedCandidates > 0}
+									<div class="flex items-center gap-1.5">
+										<UserCheck class="h-4 w-4 text-green-500" />
+										<span class="text-sm text-gray-600">
+											{hunt.totalInterestedCandidates}
+											{$t('dashboard.huntsList.interested')}
+										</span>
+									</div>
+								{/if}
+								{#if hunt.totalUnreadMessages > 0}
+									<div class="flex items-center gap-1.5">
+										<MessageSquare class="h-4 w-4 text-blue-500" />
+										<span class="text-sm text-gray-600">
+											{hunt.totalUnreadMessages}
+											{$t('dashboard.huntsList.unreadMessages')}
+										</span>
+									</div>
+								{/if}
+								{#if hunt.totalUnansweredQuestions > 0}
+									<div class="flex items-center gap-1.5">
+										<HelpCircle class="h-4 w-4 text-amber-500" />
+										<span class="text-sm text-gray-600">
+											{hunt.totalUnansweredQuestions}
+											{$t('dashboard.huntsList.unanswered')}
+										</span>
+									</div>
+								{/if}
+							</div>
+
+							<div class="flex items-center justify-between">
+								<div class="flex items-center gap-1">
+									<History class="h-3 w-3 flex-shrink-0 text-gray-400" />
+									<span class="text-xs text-gray-400">{formatDate(hunt.dateActivated || '')}</span>
+								</div>
+								<!-- status badge moved to absolute top-right -->
+							</div>
 						</div>
 					</div>
 				</Card.Content>
@@ -161,10 +230,10 @@
 		{/each}
 
 		{#if hunts.length > 6}
-			<div class="col-span-full mt-4 flex justify-start">
-				<Button variant="link" onclick={toggleShowAllHunts} class="px-0  text-sm">
+			<div class="mt-4 flex justify-start">
+				<Button variant="link" onclick={toggleShowAllHunts} class="px-0 text-sm">
 					{showAllHunts ? $t('dashboard.huntsList.showLess') : $t('dashboard.huntsList.viewMore')}
-					<ArrowDown class=" h-4 w-4 {showAllHunts ? 'rotate-180' : ''}" />
+					<ArrowDown class="h-4 w-4 {showAllHunts ? 'rotate-180' : ''}" />
 				</Button>
 			</div>
 		{/if}

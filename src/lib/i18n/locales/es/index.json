@@ -107,7 +107,11 @@
 			"noDrafts": "No hay borradores",
 			"draftsWillAppearHere": "Sus borradores aparecerán aquí",
 			"untitledDraft": "Borrador sin título",
-			"draft": "Borrador"
+			"draft": "Borrador",
+			"candidates": "candidatos",
+			"interested": "interesados",
+			"unreadMessages": "no leídos",
+			"unanswered": "sin responder"
 		},
 		"searchView": {
 			"welcomeBack": "¡Bienvenido de nuevo, {{name}}!",
@@ -205,7 +209,8 @@
 			"yearAgo": "hace un año",
 			"yearsAgo": "hace años",
 			"read": "Leído",
-			"remindersSent": "recordatorios enviados"
+			"remindersSent": "recordatorios enviados",
+			"privateSummaryNote": "Resumen privado — el candidato no puede verlo"
 		},
 		"candidateNotes": {
 			"title": "Notas del candidato",

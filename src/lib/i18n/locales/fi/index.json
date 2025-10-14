@@ -107,7 +107,11 @@
 			"noDrafts": "Ei luonnoksia",
 			"draftsWillAppearHere": "Luonnoksesi näkyvät täällä",
 			"untitledDraft": "Nimetön luonnos",
-			"draft": "Luonnos"
+			"draft": "Luonnos",
+			"candidates": "hakijaa",
+			"interested": "kiinnostunut",
+			"unreadMessages": "lukematta",
+			"unanswered": "vastaamatta"
 		},
 		"searchView": {
 			"welcomeBack": "Tervetuloa takaisin, {{name}}!",
@@ -205,7 +209,8 @@
 			"yearAgo": "vuosi sitten",
 			"yearsAgo": "vuotta sitten",
 			"read": "Luettu",
-			"remindersSent": "muistutusta lähetetty"
+			"remindersSent": "muistutusta lähetetty",
+			"privateSummaryNote": "Yksityinen yhteenveto — ehdokas ei näe tätä"
 		},
 		"candidateNotes": {
 			"title": "Ehdokasmuistiinpanot",

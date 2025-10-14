@@ -8,10 +8,15 @@
 		TooltipProvider,
 		TooltipTrigger
 	} from '$lib/components/ui/tooltip';
+	import {
+		Collapsible,
+		CollapsibleContent,
+		CollapsibleTrigger
+	} from '$lib/components/ui/collapsible';
 	import { t } from '$lib/i18n';
 	import type { ChatMessage } from '$lib/scrubinClient';
 	import { scrubinClient } from '@/scrubinClient/client';
-	import { Bell, Bot } from 'lucide-svelte';
+	import { Bell, Bot, Lock, User } from 'lucide-svelte';
 	import { onMount } from 'svelte';
 
 	let {
@@ -25,7 +30,7 @@
 	let messages: ChatMessage[] = $state([]);
 	let newMessage = $state('');
 	let isLoading = $state(false);
-	let scrollContainer: HTMLElement | null = null;
+	let scrollContainer: HTMLElement | null = $state(null);
 
 	// Fetch messages on component mount
 	onMount(async () => {
@@ -64,6 +69,7 @@
 					sentByCandidate: false,
 					dateRead: '',
 					remindersCount: 0,
+					isSummary: false,
 					createdByAssistant: false
 				}
 			];
@@ -76,6 +82,24 @@
 		} catch (error) {
 			console.error('Failed to send message:', error);
 		}
+	}
+
+	function getBubbleClasses(message: ChatMessage): string {
+		if (message.isSummary) {
+			return 'border border-amber-200 bg-amber-50 text-gray-900';
+		}
+		if (!message.sentByCandidate && message.createdByAssistant) {
+			return 'border border-violet-200 bg-violet-50 text-gray-900';
+		}
+		if (message.sentByCandidate) {
+			return 'border border-gray-200 bg-gray-100 text-gray-900';
+		}
+		return 'border border-gray-200 bg-gray-50 text-gray-900';
+	}
+
+	function getSummaryPreview(text: string, maxLength: number = 220): string {
+		if (!text) return '';
+		return text.length > maxLength ? text.slice(0, maxLength).trimEnd() + '…' : text;
 	}
 
 	function formatMessageTime(dateString: string): string {
@@ -149,24 +173,54 @@
 			{:else}
 				<div class="space-y-4">
 					{#each messages as message (message.id)}
-						<div class={`flex ${message.sentByCandidate ? 'justify-start' : 'justify-end'}`}>
-							<div
-								class={`max-w-[80%] rounded-lg p-3 ${
-									message.sentByCandidate
-										? 'border border-gray-200 bg-gray-100 text-gray-900'
-										: 'border border-gray-200 bg-gray-50 text-gray-900'
-								}`}
-							>
-								<div class="flex items-start gap-2">
-									{#if !message.sentByCandidate && message.createdByAssistant}
-										<Bot class="mt-0.5 h-4 w-4 text-gray-500" />
-									{/if}
-									<p class="flex-1 whitespace-pre-wrap break-words text-sm">{message.message}</p>
-								</div>
-								<p class={`mt-1 flex items-center gap-2 text-xs text-gray-600`}>
+						<div
+							class={`flex items-start gap-2 ${message.sentByCandidate ? 'justify-start' : 'justify-end'}`}
+						>
+							{#if !message.sentByCandidate}
+								{#if message.createdByAssistant || message.isSummary}
+									<Bot class="mt-0.5 h-4 w-4 text-gray-500" />
+								{:else}
+									<User class="mt-0.5 h-4 w-4 text-gray-500" />
+								{/if}
+							{/if}
+							<div class={`max-w-[80%] rounded-lg p-3 ${getBubbleClasses(message)}`}>
+								{#if message.isSummary}
+									<Collapsible class="group w-full">
+										<div class="flex items-start gap-2 group-data-[state=open]:hidden">
+											<p class="flex-1 whitespace-pre-wrap break-words text-sm text-gray-800">
+												{getSummaryPreview(message.message)}
+												{#if message.message.length > 220}
+													<CollapsibleTrigger
+														class="ml-1 text-xs text-amber-700 underline underline-offset-2"
+													>
+														Show more
+													</CollapsibleTrigger>
+												{/if}
+											</p>
+										</div>
+										<CollapsibleContent>
+											<div class="flex items-start gap-2 pt-2">
+												<p class="flex-1 whitespace-pre-wrap break-words text-sm">
+													{message.message}
+												</p>
+											</div>
+										</CollapsibleContent>
+									</Collapsible>
+								{:else}
+									<div class="flex items-start gap-2">
+										<p class="flex-1 whitespace-pre-wrap break-words text-sm">{message.message}</p>
+									</div>
+								{/if}
+								<p class={`mt-1 flex flex-wrap items-center gap-2 text-xs text-gray-600`}>
 									{formatMessageTime(message.date)}
-									{#if !message.sentByCandidate && message.dateRead}
+									{#if !message.sentByCandidate && !message.isSummary && message.dateRead}
 										· {$t('dashboard.candidateChat.read')}
+									{/if}
+									{#if message.isSummary}
+										· <span class="inline-flex items-center gap-1 text-amber-700">
+											<Lock class="h-3 w-3" />
+											<span>{$t('dashboard.candidateChat.privateSummaryNote')}</span>
+										</span>
 									{/if}
 									{#if !message.sentByCandidate && message.remindersCount > 0}
 										<Tooltip>

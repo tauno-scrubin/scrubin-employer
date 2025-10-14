@@ -340,6 +340,10 @@ export interface Hunt {
 	dateActivated: string;
 	dateCompleted: string | null;
 	status: string;
+	totalCandidates: number;
+	totalInterestedCandidates: number;
+	totalUnreadMessages: number;
+	totalUnansweredQuestions: number;
 }
 
 export interface HuntsResponse {
@@ -566,6 +570,7 @@ export interface ChatMessage {
 	sentByCandidate: boolean;
 	dateRead: string;
 	remindersCount: number;
+	isSummary: boolean;
 	createdByAssistant: boolean;
 }
 

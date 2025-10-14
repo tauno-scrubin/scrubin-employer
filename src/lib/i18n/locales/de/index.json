@@ -107,7 +107,11 @@
 			"noDrafts": "Keine Entwürfe",
 			"draftsWillAppearHere": "Ihre Entwürfe werden hier angezeigt",
 			"untitledDraft": "Unbenannter Entwurf",
-			"draft": "Entwurf"
+			"draft": "Entwurf",
+			"candidates": "Kandidaten",
+			"interested": "interessiert",
+			"unreadMessages": "ungelesen",
+			"unanswered": "offen"
 		},
 		"searchView": {
 			"welcomeBack": "Willkommen zurück, {{name}}!",
@@ -205,7 +209,8 @@
 			"yearAgo": "vor einem Jahr",
 			"yearsAgo": "vor {{count}} Jahren",
 			"read": "Gelesen",
-			"remindersSent": "Erinnerungen gesendet"
+			"remindersSent": "Erinnerungen gesendet",
+			"privateSummaryNote": "Private Zusammenfassung — Kandidat kann dies nicht sehen"
 		},
 		"candidateNotes": {
 			"title": "Kandidatennotizen",
