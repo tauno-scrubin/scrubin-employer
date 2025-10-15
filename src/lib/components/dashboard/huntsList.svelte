@@ -140,13 +140,13 @@
 </script>
 
 <h2 class="mb-4 text-2xl font-medium text-gray-800">{$t('dashboard.huntsList.headhunting')}</h2>
-<div class="max-h-[500px] space-y-4 overflow-y-auto pr-1">
+<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
 	{#if isLoading}
-		<div class="flex h-40 items-center justify-center">
+		<div class="col-span-full flex h-40 items-center justify-center">
 			<Loader2 class="h-5 w-5 animate-spin text-primary/70" />
 		</div>
 	{:else if hunts.length === 0}
-		<div class="flex flex-col items-center justify-center py-12 text-center">
+		<div class="col-span-full flex flex-col items-center justify-center py-12 text-center">
 			<div class="mb-3 rounded-full bg-blue-50/50 p-3">
 				<Search class="h-5 w-5 text-primary/60" />
 			</div>
@@ -159,9 +159,9 @@
 		{#each getDisplayedHunts() as hunt}
 			<Card.Root
 				onclick={() => handleViewHunt(hunt.huntId, hunt.status)}
-				class="relative cursor-pointer border bg-white shadow-sm transition-all hover:shadow-md"
+				class="relative h-full cursor-pointer border bg-white shadow-sm transition-all hover:shadow-md"
 			>
-				<Card.Content class="p-4 sm:p-6">
+				<Card.Content class="flex h-full flex-col p-3 sm:p-4">
 					<span
 						class="absolute right-2 top-2 text-xs sm:right-3 sm:top-3 {getStatusColor(
 							hunt.status
@@ -169,20 +169,20 @@
 					>
 						{$t(`hunt.huntStatus.${hunt.status.toLowerCase()}`)}
 					</span>
-					<div class="flex items-start justify-between">
+					<div class="flex items-start">
 						<div class="flex-1 pr-16 sm:pr-20">
-							<div class="mb-3 flex items-center gap-2">
+							<div class="mb-2 flex items-center gap-2">
 								<Sparkle class="h-4 w-4 flex-shrink-0 rotate-45 text-blue-500" />
-								<h3 class="text-base font-medium leading-tight text-gray-800 sm:text-lg">
+								<h3 class="text-sm font-medium leading-tight text-gray-800 sm:text-base">
 									{hunt.title}
 								</h3>
 							</div>
 
 							<!-- Stats Row -->
-							<div class="mb-4 flex flex-wrap items-center gap-3 sm:gap-6">
+							<div class="mb-3 flex flex-wrap items-center gap-3 sm:gap-4">
 								<div class="flex items-center gap-1.5">
 									<Users class="h-4 w-4 text-gray-500" />
-									<span class="text-sm text-gray-600">
+									<span class="text-xs text-gray-600 sm:text-sm">
 										{hunt.totalCandidates}
 										{$t('dashboard.huntsList.candidates')}
 									</span>
@@ -190,7 +190,7 @@
 								{#if hunt.totalInterestedCandidates > 0}
 									<div class="flex items-center gap-1.5">
 										<UserCheck class="h-4 w-4 text-green-500" />
-										<span class="text-sm text-gray-600">
+										<span class="text-xs text-gray-600 sm:text-sm">
 											{hunt.totalInterestedCandidates}
 											{$t('dashboard.huntsList.interested')}
 										</span>
@@ -199,7 +199,7 @@
 								{#if hunt.totalUnreadMessages > 0}
 									<div class="flex items-center gap-1.5">
 										<MessageSquare class="h-4 w-4 text-blue-500" />
-										<span class="text-sm text-gray-600">
+										<span class="text-xs text-gray-600 sm:text-sm">
 											{hunt.totalUnreadMessages}
 											{$t('dashboard.huntsList.unreadMessages')}
 										</span>
@@ -208,7 +208,7 @@
 								{#if hunt.totalUnansweredQuestions > 0}
 									<div class="flex items-center gap-1.5">
 										<HelpCircle class="h-4 w-4 text-amber-500" />
-										<span class="text-sm text-gray-600">
+										<span class="text-xs text-gray-600 sm:text-sm">
 											{hunt.totalUnansweredQuestions}
 											{$t('dashboard.huntsList.unanswered')}
 										</span>
@@ -219,7 +219,9 @@
 							<div class="flex items-center justify-between">
 								<div class="flex items-center gap-1">
 									<History class="h-3 w-3 flex-shrink-0 text-gray-400" />
-									<span class="text-xs text-gray-400">{formatDate(hunt.dateActivated || '')}</span>
+									<span class="text-[11px] text-gray-400 sm:text-xs"
+										>{formatDate(hunt.dateActivated || '')}</span
+									>
 								</div>
 								<!-- status badge moved to absolute top-right -->
 							</div>
@@ -230,7 +232,7 @@
 		{/each}
 
 		{#if hunts.length > 6}
-			<div class="mt-4 flex justify-start">
+			<div class="col-span-full mt-2 flex justify-start">
 				<Button variant="link" onclick={toggleShowAllHunts} class="px-0 text-sm">
 					{showAllHunts ? $t('dashboard.huntsList.showLess') : $t('dashboard.huntsList.viewMore')}
 					<ArrowDown class="h-4 w-4 {showAllHunts ? 'rotate-180' : ''}" />
