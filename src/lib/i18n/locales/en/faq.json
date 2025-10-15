@@ -1,41 +1,50 @@
 {
-  "faq": {
-    "title": "Scrubin – FAQ for Organisations",
-    "q1": "What is Scrubin?",
-    "a1": {
-      "p1": "Scrubin is a specialised search engine designed for healthcare professionals (HCPs). Our search engine helps doctors, nurses, and pharmacists find — and do — their best work. Healthcare professionals can look up drug interactions, clinical trials, reviews, salaries, and job offers that match their needs and interests. At the same time, Scrubin enables hospitals, clinics, and pharmaceutical companies to search and reach verified healthcare professionals through precise, data-driven searches and campaigns."
-    },
-    "q2": "How does Scrubin work?",
-    "a2": {
-      "p1": "Thousands of doctors, nurses, and pharmacists — who have uploaded their CVs along with their work history, education, and clinical interests — use Scrubin’s search engine to explore information on a variety of topics: from clinical trials and drug interactions to job opportunities, salaries, and workplace reviews.",
-      "p2": "Scrubin uses a secure system to connect these verified but anonymous healthcare professionals (HCPs) with organisations such as hospitals, GP clinics, and pharmaceutical companies, in a secure and data-driven way. Scrubin is not a traditional job board or advertising platform. Our matching system applies psychology, statistics, and semantics to ensure the highest level of precision. When an organisation posts a role or launches a campaign, Scrubin’s system identifies the “common part” between what each HCP is searching for and what the organisation is offering. It matches people and opportunities based on skills, experience, searches, and wishes, creating the right connections. This enables organisations to reach verified and active HCPs at exactly the right moment — when they are already engaging with related topics or search activity.",
-      "p3": "Importantly, HCPs trust Scrubin because they remain private and in control. Organisations cannot see their CVs, contact details, or profiles until the professional chooses to engage and share their contact. This guarantees trust, compliance, and GDPR-level confidentiality, while still enabling precise targeting within a closed and verified platform."
-    },
-    "q3": "Can I search and see HCPs profiles myself?",
-    "a3": {
-      "p1": "No, you cannot see the HCPs profiles yourself, before they confirm their interest in you too. However, you can search HCPs by specialty (e.g. cardiologists, GPs, psychiatrists), region, or keywords. Each profile that is interested to connect back with you, includes key details such as experience, education, and/ or work interests — all verified by Scrubin’s internal algorithms and reference checks. This way everything is secure and compliant."
-    },
-    "q4": "How many healthcare professionals are on Scrubin?",
-    "a4": {
-      "p1": "Today, there are over 70,000 healthcare professionals like doctors, nurses, pharmacists across Europe, the UK, and Australia, who use Scrubin. All healthcare professionals are required to verify their identity during signup. We also ask them to provide their CV, education, work history, and professional interests to ensure their profiles are complete and accurate."
-    },
-    "q5": "How do I post a job opportunity or a campaign?",
-    "a5": {
-      "p1": "Do the following:",
-      "p2": "Go on the Dashboard.",
-      "p3": "Describe who are you looking for — for example:",
-      "p4": "“We need to hire a full-time cardiologist in London” or ”I want to find GP’s from Estonia” and then set up the search based on the filters you see.",
-      "p5": "The system sets up your search or campaign and starts finding suitable HCPs automatically once your plan is activated. If your plan is not activated, please reach out to us via the Help button."
-    },
-    "q6": "How is Scrubin different from other platforms?",
-    "a6": {
-      "p1": "Healthcare-only – every user is a verified HCP.",
-      "p2": "Proactive users – our AI connects HCPs with the information they are looking for, so it connects you to the right people automatically.",
-      "p3": "Cheaper and 5× more effective – clients report up to 5× lower cost per hire and 8× higher engagement compared to traditional job boards or generic ads."
-    },
-    "q7": "Is my data secure?",
-    "a7": {
-      "p1": "Yes. All user and client data is stored on EU-compliant servers (GDPR compliant). Only verified healthcare professionals and authorised organisations can access data within their legal boundaries."
-    }
-  }
+	"faq": {
+		"title": "Scrubin – FAQ for Organisations",
+		"q1": "What is Scrubin?",
+		"a1": {
+			"p1": "Scrubin is a specialised search engine designed for healthcare professionals (HCPs). Our search engine helps doctors, nurses, and pharmacists find — and do — their best work. Healthcare professionals can look up drug interactions, clinical trials, reviews, salaries, and job offers that match their needs and interests. At the same time, Scrubin enables hospitals, clinics, and pharmaceutical companies to search and reach verified healthcare professionals through precise, data-driven searches and campaigns."
+		},
+		"q2": "How does Scrubin work?",
+		"a2": {
+			"p1": "Thousands of doctors, nurses, and pharmacists — who have uploaded their CVs along with their work history, education, and clinical interests — use Scrubin’s search engine to explore information on a variety of topics: from clinical trials and drug interactions to job opportunities, salaries, and workplace reviews.",
+			"p2": "Scrubin uses a secure system to connect these verified but anonymous healthcare professionals (HCPs) with organisations such as hospitals, GP clinics, and pharmaceutical companies, in a secure and data-driven way. Scrubin is not a traditional job board or advertising platform. Our matching system applies psychology, statistics, and semantics to ensure the highest level of precision. When an organisation posts a role or launches a campaign, Scrubin’s system identifies the “common part” between what each HCP is searching for and what the organisation is offering. It matches people and opportunities based on skills, experience, searches, and wishes, creating the right connections. This enables organisations to reach verified and active HCPs at exactly the right moment — when they are already engaging with related topics or search activity.",
+			"p3": "Importantly, HCPs trust Scrubin because they remain private and in control. Organisations cannot see their CVs, contact details, or profiles until the professional chooses to engage and share their contact. This guarantees trust, compliance, and GDPR-level confidentiality, while still enabling precise targeting within a closed and verified platform."
+		},
+		"q3": "Can I search and see HCPs profiles myself?",
+		"a3": {
+			"p1": "No, you cannot see the HCPs profiles yourself, before they confirm their interest in you too. However, you can search HCPs by specialty (e.g. cardiologists, GPs, psychiatrists), region, or keywords. Each profile that is interested to connect back with you, includes key details such as experience, education, and/ or work interests — all verified by Scrubin’s internal algorithms and reference checks. This way everything is secure and compliant."
+		},
+		"q4": "How many healthcare professionals are on Scrubin?",
+		"a4": {
+			"p1": "Today, there are over 70,000 healthcare professionals like doctors, nurses, pharmacists across Europe, the UK, and Australia, who use Scrubin. All healthcare professionals are required to verify their identity during signup. We also ask them to provide their CV, education, work history, and professional interests to ensure their profiles are complete and accurate."
+		},
+		"q5": "How do I post a job opportunity or a campaign?",
+		"a5": {
+			"p1": "Do the following:",
+			"p2": "Go on the Dashboard.",
+			"p3": "Describe who are you looking for — for example:",
+			"p4": "“We need to hire a full-time cardiologist in London” or ”I want to find GP’s from Estonia” and then set up the search based on the filters you see.",
+			"p5": "The system sets up your search or campaign and starts finding suitable HCPs automatically once your plan is activated. If your plan is not activated, please reach out to us via the Help button."
+		},
+		"q6": "How is Scrubin different from other platforms?",
+		"a6": {
+			"p1": "Healthcare-only – every user is a verified HCP.",
+			"p2": "Proactive users – our AI connects HCPs with the information they are looking for, so it connects you to the right people automatically.",
+			"p3": "Cheaper and 5× more effective – clients report up to 5× lower cost per hire and 8× higher engagement compared to traditional job boards or generic ads."
+		},
+		"q7": "Is my data secure?",
+		"a7": {
+			"p1": "Yes. All user and client data is stored on EU-compliant servers (GDPR compliant). Only verified healthcare professionals and authorised organisations can access data within their legal boundaries."
+		},
+		"q8": "How does Scrubin's system send out job offers — and why does the number of offers vary?",
+		"a8": {
+			"p1": "Scrubin's system uses a data-driven matching engine that continuously evaluates which healthcare professionals best fit each job. When a job is posted, the system automatically identifies and invites suitable candidates based on their specialty, location, experience, language, and activity level (how recently they've been active, got another offer or open to other offers).",
+			"p2": "The number of offers sent daily can vary — sometimes it's 2, sometimes 5, and other times tens or even hundreds — because Scrubin's algorithm adapts dynamically to ensure efficiency and relevance:",
+			"p3": "Quality before quantity: The system starts by sending offers to the most relevant and active candidates first. If enough interest is shown, it won't need to send more.",
+			"p4": "Progressive expansion: If there's little or no response after the first batch, Scrubin automatically widens the search to include candidates with slightly broader criteria (e.g., nearby locations, slightly different experience levels).",
+			"p5": "Different pool sizes per specialty: In some fields (e.g., psychiatry or radiology), there might only be 200 candidates in the system, while in others (e.g., general practice or nursing), there may be 2,000–10,000. The system adjusts the volume of outreach accordingly.",
+			"p6": "Anti-spam and candidate experience control: To avoid overwhelming professionals, Scrubin controls how many offers each user receives in a short time — prioritizing personalized and relevant ones."
+		}
+	}
 }

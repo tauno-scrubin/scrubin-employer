@@ -1,41 +1,50 @@
 {
-  "faq": {
-    "title": "Korduma kippuvad küsimused (KKK)",
-    "q1": "Mis on Scrubin?",
-    "a1": {
-    "p1": "Scrubin on spetsiaalne otsingumootor tervishoiutöötajatele (THT). See aitab nii arstidel, õdedel kui ka proviisoritel leida — ja teha — parimat tööd. Tervishoiutöötajad saavad meie kaudu otsida ravimite koostoimeid, kliinilisi uuringuid, arvustusi, palgainfot ning tööpakkumisi, mis vastavad nende soovidele. Samal ajal võimaldab Scrubin haiglatel, kliinikutel ja farmaatsiaettevõtetel jõuda verifitseeritud THT-deni täpsete, andmepõhiste otsingute ja sihitud kampaaniate kaudu."
-    },
-    "q2": "Kuidas Scrubin töötab?",
-    "a2": {
-    "p1": "Tuhanded arstid, õed ja proviisorid, kes on lisanud meie platvormile enda CV, töökogemused, haridused ja kliinilised huvid, kasutavad meid info leidmiseks alates kliinilistest uuringutest ja ravimite koostoimetest kuni uute töövõimaluste ja palgatasemete vaatamiseks.",
-    "p2": "Scrubin ühendab kõik verifitseeritud, kuid anonüümsed tervishoiutöötajad organisatsioonidega (haiglad, perearstikeskused, farmaatsiaettevõtted) turvalisel viisil. Scrubin ei ole klassikaline tööportaal või platvorm. Meie algoritmid võtavad arvesse nii psühholoogiat, statistikat kui ka semantikat, et saavutada parim tulemus. Kui organisatsioon avaldab töökuulutuse või käivitab kampaania, leiab Scrubini süsteem \"ühisosa\" selle vahel, mida THT otsib, ja mida organisatsioon pakub — ning sobitab siis õiged inimesed ja organisatsioonid kokku.",
-    "p3": "Tervishoiutöötajad usaldavad meid, sest nad säilitavad meie platvormil enda privaatsuse ja kontrolli. Organisatsioonid ei näe nende CV-sid, kontaktandmeid ega profiile enne, kui nad ise otsustavad edasi suhelda ja oma kontakte võimaluse arutamiseks teiega jagada. See tagab usalduse ja vastavuse GDPR-iga, võimaldades samal ajal parimad tulemused."
-    },
-    "q3": "Kas ma saan ise THT profiile otsida ja vaadata?",
-    "a3": {
-    "p1": "Ei. Te ei näe tervishoiutöötajate profiile enne, kui nad on kinnitanud enda huvi vastu. Küll aga saate otsida neid vastavalt nende erialadele (nt kardioloogid, perearstid, psühhiaatrid), nende töökohtade piirkondade või märksõnade järgi. Nii on otsing kõigile osapooltele nii turvaline kui ka andmekaitsenõuetele vastav."
-    },
-    "q4": "Kui palju tervishoiutöötajaid on Scrubinis?",
-    "a4": {
-    "p1": "Meid kasutab täna üle 70 000 tervishoiutöötaja — nii arstid, õed kui ka proviisorid — ja seda üle Euroopa, Ühendkuningriigi ja Austraalia. Kõik tervishoiutöötajad peavad konto registreerumisel ka oma isiku verifitseerima näiteks läbi unikaalse tervishoiutöötaja koodi. Peale selle palume neil lisada enda profiilile ka oma CV, kus on lisatud nii nende haridus, töökogemus, kui ka nende professionaalsed huvid."
-    },
-    "q5": "Kuidas postitada tööpakkumist või kampaaniat?",
-    "a5": {
-    "p1": "Toimige järgnevalt:",
-    "p2": "Avage Töölaud.",
-    "p3": "Kirjeldage vabas vormis, keda otsite — näiteks:",
-    "p4": "\"Soovime leida endale täiskohaga kardioloogi Eestist. Töö asukoht on Tallinn ja palgavahemik on €35-45 tunnis\", seejärel seadistage otsing nähtavate filtrite alusel.",
-    "p5": "Süsteem seab teie otsingu üles ja hakkab sobivaid töötaid teile automaatselt ise leidma kohe, kui teie plaan on aktiveeritud. Kui plaan pole aktiveeritud, võtke meiega ühendust nupu Abi kaudu."
-    },
-    "q6": "Kuidas erineb Scrubin teistest platvormidest?",
-    "a6": {
-    "p1": "Oleme keskendunud ainult tervishoiule — iga kasutaja meie platvormil on verifitseeritud tervishoiutöötaja.",
-    "p2": "Automaatne sobitus — meie tehisintellekt ühendab sobivad tervishoiutöötajad teie pakkumisega ja teie saate e-maili, kui kandidaat soovib teiega edasi suhelda.",
-    "p3": "Soodsam ja tõhusam — meie tulemused räägivad meie enda eest, sest kui kõik kulud kokku liita, siis pakume kuni 5× madalamat värbamiskulu võrreldes traditsiooniliste tööportaalidega."
-    },
-    "q7": "Kas minu andmed on turvalised?",
-    "a7": {
-    "p1": "Jah. Kõik kasutaja- ja kliendiandmed talletatakse ELi andmekaitsemäärusele (GDPR) vastavates serverites. Andmetele pääsevad ligi ainult verifitseeritud THT-d ja volitatud organisatsioonid vastavalt nende seaduslikele esindajatele."
-    }
-    }
-  }
+	"faq": {
+		"title": "Korduma kippuvad küsimused (KKK)",
+		"q1": "Mis on Scrubin?",
+		"a1": {
+			"p1": "Scrubin on spetsiaalne otsingumootor tervishoiutöötajatele (THT). See aitab nii arstidel, õdedel kui ka proviisoritel leida — ja teha — parimat tööd. Tervishoiutöötajad saavad meie kaudu otsida ravimite koostoimeid, kliinilisi uuringuid, arvustusi, palgainfot ning tööpakkumisi, mis vastavad nende soovidele. Samal ajal võimaldab Scrubin haiglatel, kliinikutel ja farmaatsiaettevõtetel jõuda verifitseeritud THT-deni täpsete, andmepõhiste otsingute ja sihitud kampaaniate kaudu."
+		},
+		"q2": "Kuidas Scrubin töötab?",
+		"a2": {
+			"p1": "Tuhanded arstid, õed ja proviisorid, kes on lisanud meie platvormile enda CV, töökogemused, haridused ja kliinilised huvid, kasutavad meid info leidmiseks alates kliinilistest uuringutest ja ravimite koostoimetest kuni uute töövõimaluste ja palgatasemete vaatamiseks.",
+			"p2": "Scrubin ühendab kõik verifitseeritud, kuid anonüümsed tervishoiutöötajad organisatsioonidega (haiglad, perearstikeskused, farmaatsiaettevõtted) turvalisel viisil. Scrubin ei ole klassikaline tööportaal või platvorm. Meie algoritmid võtavad arvesse nii psühholoogiat, statistikat kui ka semantikat, et saavutada parim tulemus. Kui organisatsioon avaldab töökuulutuse või käivitab kampaania, leiab Scrubini süsteem \"ühisosa\" selle vahel, mida THT otsib, ja mida organisatsioon pakub — ning sobitab siis õiged inimesed ja organisatsioonid kokku.",
+			"p3": "Tervishoiutöötajad usaldavad meid, sest nad säilitavad meie platvormil enda privaatsuse ja kontrolli. Organisatsioonid ei näe nende CV-sid, kontaktandmeid ega profiile enne, kui nad ise otsustavad edasi suhelda ja oma kontakte võimaluse arutamiseks teiega jagada. See tagab usalduse ja vastavuse GDPR-iga, võimaldades samal ajal parimad tulemused."
+		},
+		"q3": "Kas ma saan ise THT profiile otsida ja vaadata?",
+		"a3": {
+			"p1": "Ei. Te ei näe tervishoiutöötajate profiile enne, kui nad on kinnitanud enda huvi vastu. Küll aga saate otsida neid vastavalt nende erialadele (nt kardioloogid, perearstid, psühhiaatrid), nende töökohtade piirkondade või märksõnade järgi. Nii on otsing kõigile osapooltele nii turvaline kui ka andmekaitsenõuetele vastav."
+		},
+		"q4": "Kui palju tervishoiutöötajaid on Scrubinis?",
+		"a4": {
+			"p1": "Meid kasutab täna üle 70 000 tervishoiutöötaja — nii arstid, õed kui ka proviisorid — ja seda üle Euroopa, Ühendkuningriigi ja Austraalia. Kõik tervishoiutöötajad peavad konto registreerumisel ka oma isiku verifitseerima näiteks läbi unikaalse tervishoiutöötaja koodi. Peale selle palume neil lisada enda profiilile ka oma CV, kus on lisatud nii nende haridus, töökogemus, kui ka nende professionaalsed huvid."
+		},
+		"q5": "Kuidas postitada tööpakkumist või kampaaniat?",
+		"a5": {
+			"p1": "Toimige järgnevalt:",
+			"p2": "Avage Töölaud.",
+			"p3": "Kirjeldage vabas vormis, keda otsite — näiteks:",
+			"p4": "\"Soovime leida endale täiskohaga kardioloogi Eestist. Töö asukoht on Tallinn ja palgavahemik on €35-45 tunnis\", seejärel seadistage otsing nähtavate filtrite alusel.",
+			"p5": "Süsteem seab teie otsingu üles ja hakkab sobivaid töötaid teile automaatselt ise leidma kohe, kui teie plaan on aktiveeritud. Kui plaan pole aktiveeritud, võtke meiega ühendust nupu Abi kaudu."
+		},
+		"q6": "Kuidas erineb Scrubin teistest platvormidest?",
+		"a6": {
+			"p1": "Oleme keskendunud ainult tervishoiule — iga kasutaja meie platvormil on verifitseeritud tervishoiutöötaja.",
+			"p2": "Automaatne sobitus — meie tehisintellekt ühendab sobivad tervishoiutöötajad teie pakkumisega ja teie saate e-maili, kui kandidaat soovib teiega edasi suhelda.",
+			"p3": "Soodsam ja tõhusam — meie tulemused räägivad meie enda eest, sest kui kõik kulud kokku liita, siis pakume kuni 5× madalamat värbamiskulu võrreldes traditsiooniliste tööportaalidega."
+		},
+		"q7": "Kas minu andmed on turvalised?",
+		"a7": {
+			"p1": "Jah. Kõik kasutaja- ja kliendiandmed talletatakse ELi andmekaitsemäärusele (GDPR) vastavates serverites. Andmetele pääsevad ligi ainult verifitseeritud THT-d ja volitatud organisatsioonid vastavalt nende seaduslikele esindajatele."
+		},
+		"q8": "Kuidas saadab Scrubini süsteem tööpakkumisi — ja miks pakkumiste arv varieerub?",
+		"a8": {
+			"p1": "Scrubini süsteem kasutab andmepõhist sobitamismootorit, mis hindab pidevalt, millised tervishoiutöötajad sobivad kõige paremini igale töökohale. Kui töökoht avaldatakse, identifitseerib süsteem automaatselt ja kutsub sobivaid kandidaate, tuginedes nende erialale, asukohale, kogemusele, keelele ja aktiivsuse tasemele (kui hiljuti nad on olnud aktiivsed, saanud teise pakkumise või olnud avatud teistele pakkumistele).",
+			"p2": "Igal päeval saadetavate pakkumiste arv võib varieeruda — mõnikord 2, mõnikord 5, ja teinekord kümneid või isegi sadu —, sest Scrubini algoritm kohandub dünaamiliselt, et tagada tõhusus ja asjakohasus:",
+			"p3": "Kvaliteet enne kvantiteeti: Süsteem alustab pakkumiste saatmisega kõige asjakohasematesse ja aktiivsematesse kandidaatidesse. Kui näidatakse piisavalt huvi, ei ole vaja rohkem saata.",
+			"p4": "Progressiivne laiendamine: Kui pärast esimest partiid on vähe või üldse mitte vastust, laiendab Scrubin automaatselt otsingut, et kaasata kandidaate veidi laiemate kriteeriumidega (nt lähedased asukohad, veidi erinevad kogemuse tasemed).",
+			"p5": "Erinevad grupi suurused erialade kaupa: Mõnes valdkonnas (nt psühhiaatria või radioloogia) võib süsteemis olla ainult 200 kandidaati, samas kui teistes (nt perearstid või õed) võib olla 2000–10 000. Süsteem kohandab vastavalt kontakteerumise mahtu.",
+			"p6": "Spämmivastane ja kandidaadi kogemuse kontroll: Et mitte üle koormata professionaale, kontrollib Scrubin, kui palju pakkumisi iga kasutaja saab lühikese aja jooksul — eelistades isikupärastatud ja asjakohaseid."
+		}
+	}
+}

@@ -1,41 +1,50 @@
 {
-  "faq": {
-    "title": "Scrubin – FAQ für Organisationen",
-    "q1": "Was ist Scrubin?",
-    "a1": {
-      "p1": "Scrubin ist eine spezialisierte Suchmaschine für Gesundheitsfachkräfte (HCP). Unsere Suche hilft Ärztinnen und Ärzten, Pflegekräften und Apothekerinnen/Apothekern, ihre beste Arbeit zu finden — und zu leisten. Gesundheitsfachkräfte können Wechselwirkungen von Arzneimitteln, klinische Studien, Bewertungen, Gehälter und passende Jobangebote recherchieren. Gleichzeitig ermöglicht Scrubin Krankenhäusern, Kliniken und Pharmaunternehmen, verifizierte Gesundheitsfachkräfte über präzise, datengetriebene Suchen und Kampagnen zu erreichen."
-    },
-    "q2": "Wie funktioniert Scrubin?",
-    "a2": {
-      "p1": "Tausende Ärztinnen/Ärzte, Pflegekräfte und Apothekerinnen/Apotheker — die ihren Lebenslauf mit Berufserfahrung, Ausbildung und klinischen Interessen hochgeladen haben — nutzen die Suchmaschine von Scrubin, um Informationen zu vielen Themen zu erkunden: von klinischen Studien und Arzneimittelinteraktionen bis hin zu Jobchancen, Gehältern und Bewertungen von Arbeitsplätzen.",
-      "p2": "Scrubin verbindet diese verifizierten, aber anonymen Gesundheitsfachkräfte (HCP) mittels eines sicheren Systems mit Organisationen wie Krankenhäusern, Hausarztpraxen und Pharmaunternehmen — sicher und datenbasiert. Scrubin ist keine traditionelle Jobbörse und keine Werbeplattform. Unser Matching-System nutzt Psychologie, Statistik und Semantik, um höchste Präzision zu gewährleisten. Wenn eine Organisation eine Stelle veröffentlicht oder eine Kampagne startet, identifiziert das System von Scrubin den „gemeinsamen Teil“ zwischen dem, wonach jede HCP sucht, und dem, was die Organisation anbietet. Menschen und Möglichkeiten werden nach Fähigkeiten, Erfahrung, Suchaktivität und Wünschen zusammengeführt — für die richtigen Verbindungen. So erreichen Organisationen verifizierte und aktive HCP genau zum richtigen Zeitpunkt — wenn sie sich bereits mit verwandten Themen oder Suchaktivitäten beschäftigen.",
-      "p3": "Wichtig: HCPs vertrauen Scrubin, weil sie privat bleiben und die Kontrolle behalten. Organisationen sehen ihre Lebensläufe, Kontaktdaten oder Profile erst, wenn die Fachkraft sich aktiv meldet und ihre Daten teilt. Das garantiert Vertrauen, Compliance und Vertraulichkeit auf GDPR-Niveau — und ermöglicht dennoch präzises Targeting innerhalb einer geschlossenen und verifizierten Plattform."
-    },
-    "q3": "Kann ich selbst nach HCP-Profilen suchen und sie einsehen?",
-    "a3": {
-      "p1": "Nein, Sie können die HCP-Profile nicht selbst einsehen, bevor die Fachkräfte nicht ebenfalls ihr Interesse an Ihnen bestätigt haben. Sie können jedoch nach Fachgebiet (z. B. Kardiologie, Allgemeinmedizin, Psychiatrie), Region oder Schlagwörtern suchen. Jedes Profil, das an einer Kontaktaufnahme interessiert ist, enthält Schlüsseldaten wie Erfahrung, Ausbildung und/oder berufliche Interessen — alles verifiziert durch Scrubins interne Algorithmen und Referenzprüfungen. So bleibt alles sicher und regelkonform."
-    },
-    "q4": "Wie viele Gesundheitsfachkräfte sind auf Scrubin?",
-    "a4": {
-      "p1": "Aktuell nutzen über 70.000 Gesundheitsfachkräfte — Ärztinnen/Ärzte, Pflegekräfte, Apothekerinnen/Apotheker — in Europa, dem Vereinigten Königreich und Australien Scrubin. Alle Fachkräfte müssen ihre Identität bei der Registrierung verifizieren. Außerdem bitten wir um Lebenslauf, Ausbildung, Berufserfahrung und berufliche Interessen, um vollständige und präzise Profile sicherzustellen."
-    },
-    "q5": "Wie veröffentliche ich ein Jobangebot oder eine Kampagne?",
-    "a5": {
-      "p1": "Gehen Sie folgendermaßen vor:",
-      "p2": "Öffnen Sie das Dashboard.",
-      "p3": "Beschreiben Sie, wen Sie suchen — zum Beispiel:",
-      "p4": "„Wir müssen eine/n Kardiologin/Kardiologen in Vollzeit in London einstellen“ oder „Ich möchte Hausärztinnen/Hausärzte aus Estland finden“, und richten Sie die Suche anhand der sichtbaren Filter ein.",
-      "p5": "Das System richtet Ihre Suche oder Kampagne ein und beginnt automatisch, passende HCPs zu finden, sobald Ihr Plan aktiviert ist. Ist Ihr Plan nicht aktiviert, kontaktieren Sie uns bitte über die Hilfe-Schaltfläche."
-    },
-    "q6": "Wodurch unterscheidet sich Scrubin von anderen Plattformen?",
-    "a6": {
-      "p1": "Nur Gesundheitswesen – jede Nutzerin/jeder Nutzer ist eine verifizierte HCP.",
-      "p2": "Proaktive Nutzer – unsere KI verbindet HCPs mit den Informationen, die sie suchen, und führt Sie so automatisch mit den richtigen Personen zusammen.",
-      "p3": "Günstiger und 5× effektiver – Kundinnen/Kunden berichten von bis zu 5× niedrigeren Einstellungskosten und 8× höherem Engagement im Vergleich zu traditionellen Jobbörsen oder generischen Anzeigen."
-    },
-    "q7": "Sind meine Daten sicher?",
-    "a7": {
-      "p1": "Ja. Alle Benutzer- und Kundendaten werden auf EU-konformen Servern (DSGVO-konform) gespeichert. Nur verifizierte Gesundheitsfachkräfte und autorisierte Organisationen können im gesetzlichen Rahmen auf die Daten zugreifen."
-    }
-  }
+	"faq": {
+		"title": "Scrubin – FAQ für Organisationen",
+		"q1": "Was ist Scrubin?",
+		"a1": {
+			"p1": "Scrubin ist eine spezialisierte Suchmaschine für Gesundheitsfachkräfte (HCP). Unsere Suche hilft Ärztinnen und Ärzten, Pflegekräften und Apothekerinnen/Apothekern, ihre beste Arbeit zu finden — und zu leisten. Gesundheitsfachkräfte können Wechselwirkungen von Arzneimitteln, klinische Studien, Bewertungen, Gehälter und passende Jobangebote recherchieren. Gleichzeitig ermöglicht Scrubin Krankenhäusern, Kliniken und Pharmaunternehmen, verifizierte Gesundheitsfachkräfte über präzise, datengetriebene Suchen und Kampagnen zu erreichen."
+		},
+		"q2": "Wie funktioniert Scrubin?",
+		"a2": {
+			"p1": "Tausende Ärztinnen/Ärzte, Pflegekräfte und Apothekerinnen/Apotheker — die ihren Lebenslauf mit Berufserfahrung, Ausbildung und klinischen Interessen hochgeladen haben — nutzen die Suchmaschine von Scrubin, um Informationen zu vielen Themen zu erkunden: von klinischen Studien und Arzneimittelinteraktionen bis hin zu Jobchancen, Gehältern und Bewertungen von Arbeitsplätzen.",
+			"p2": "Scrubin verbindet diese verifizierten, aber anonymen Gesundheitsfachkräfte (HCP) mittels eines sicheren Systems mit Organisationen wie Krankenhäusern, Hausarztpraxen und Pharmaunternehmen — sicher und datenbasiert. Scrubin ist keine traditionelle Jobbörse und keine Werbeplattform. Unser Matching-System nutzt Psychologie, Statistik und Semantik, um höchste Präzision zu gewährleisten. Wenn eine Organisation eine Stelle veröffentlicht oder eine Kampagne startet, identifiziert das System von Scrubin den „gemeinsamen Teil“ zwischen dem, wonach jede HCP sucht, und dem, was die Organisation anbietet. Menschen und Möglichkeiten werden nach Fähigkeiten, Erfahrung, Suchaktivität und Wünschen zusammengeführt — für die richtigen Verbindungen. So erreichen Organisationen verifizierte und aktive HCP genau zum richtigen Zeitpunkt — wenn sie sich bereits mit verwandten Themen oder Suchaktivitäten beschäftigen.",
+			"p3": "Wichtig: HCPs vertrauen Scrubin, weil sie privat bleiben und die Kontrolle behalten. Organisationen sehen ihre Lebensläufe, Kontaktdaten oder Profile erst, wenn die Fachkraft sich aktiv meldet und ihre Daten teilt. Das garantiert Vertrauen, Compliance und Vertraulichkeit auf GDPR-Niveau — und ermöglicht dennoch präzises Targeting innerhalb einer geschlossenen und verifizierten Plattform."
+		},
+		"q3": "Kann ich selbst nach HCP-Profilen suchen und sie einsehen?",
+		"a3": {
+			"p1": "Nein, Sie können die HCP-Profile nicht selbst einsehen, bevor die Fachkräfte nicht ebenfalls ihr Interesse an Ihnen bestätigt haben. Sie können jedoch nach Fachgebiet (z. B. Kardiologie, Allgemeinmedizin, Psychiatrie), Region oder Schlagwörtern suchen. Jedes Profil, das an einer Kontaktaufnahme interessiert ist, enthält Schlüsseldaten wie Erfahrung, Ausbildung und/oder berufliche Interessen — alles verifiziert durch Scrubins interne Algorithmen und Referenzprüfungen. So bleibt alles sicher und regelkonform."
+		},
+		"q4": "Wie viele Gesundheitsfachkräfte sind auf Scrubin?",
+		"a4": {
+			"p1": "Aktuell nutzen über 70.000 Gesundheitsfachkräfte — Ärztinnen/Ärzte, Pflegekräfte, Apothekerinnen/Apotheker — in Europa, dem Vereinigten Königreich und Australien Scrubin. Alle Fachkräfte müssen ihre Identität bei der Registrierung verifizieren. Außerdem bitten wir um Lebenslauf, Ausbildung, Berufserfahrung und berufliche Interessen, um vollständige und präzise Profile sicherzustellen."
+		},
+		"q5": "Wie veröffentliche ich ein Jobangebot oder eine Kampagne?",
+		"a5": {
+			"p1": "Gehen Sie folgendermaßen vor:",
+			"p2": "Öffnen Sie das Dashboard.",
+			"p3": "Beschreiben Sie, wen Sie suchen — zum Beispiel:",
+			"p4": "„Wir müssen eine/n Kardiologin/Kardiologen in Vollzeit in London einstellen“ oder „Ich möchte Hausärztinnen/Hausärzte aus Estland finden“, und richten Sie die Suche anhand der sichtbaren Filter ein.",
+			"p5": "Das System richtet Ihre Suche oder Kampagne ein und beginnt automatisch, passende HCPs zu finden, sobald Ihr Plan aktiviert ist. Ist Ihr Plan nicht aktiviert, kontaktieren Sie uns bitte über die Hilfe-Schaltfläche."
+		},
+		"q6": "Wodurch unterscheidet sich Scrubin von anderen Plattformen?",
+		"a6": {
+			"p1": "Nur Gesundheitswesen – jede Nutzerin/jeder Nutzer ist eine verifizierte HCP.",
+			"p2": "Proaktive Nutzer – unsere KI verbindet HCPs mit den Informationen, die sie suchen, und führt Sie so automatisch mit den richtigen Personen zusammen.",
+			"p3": "Günstiger und 5× effektiver – Kundinnen/Kunden berichten von bis zu 5× niedrigeren Einstellungskosten und 8× höherem Engagement im Vergleich zu traditionellen Jobbörsen oder generischen Anzeigen."
+		},
+		"q7": "Sind meine Daten sicher?",
+		"a7": {
+			"p1": "Ja. Alle Benutzer- und Kundendaten werden auf EU-konformen Servern (DSGVO-konform) gespeichert. Nur verifizierte Gesundheitsfachkräfte und autorisierte Organisationen können im gesetzlichen Rahmen auf die Daten zugreifen."
+		},
+		"q8": "Wie versendet Scrubins System Stellenausschreibungen — und warum variiert die Anzahl der Angebote?",
+		"a8": {
+			"p1": "Scrubins System nutzt eine datengetriebene Matching-Engine, die kontinuierlich bewertet, welche Gesundheitsfachkräfte am besten zu jeder Stelle passen. Wenn eine Stelle ausgeschrieben wird, identifiziert und lädt das System automatisch geeignete Kandidaten basierend auf ihrer Fachrichtung, Standort, Erfahrung, Sprache und Aktivitätslevel (wie kürzlich sie aktiv waren, ein anderes Angebot erhalten haben oder offen für andere Angebote sind) ein.",
+			"p2": "Die Anzahl der täglich versendeten Angebote kann variieren — manchmal sind es 2, manchmal 5, und andere Male Dutzende oder sogar Hunderte —, weil Scrubins Algorithmus dynamisch anpasst, um Effizienz und Relevanz zu gewährleisten:",
+			"p3": "Qualität vor Quantität: Das System beginnt damit, Angebote zuerst an die relevantesten und aktivsten Kandidaten zu senden. Wenn genügend Interesse gezeigt wird, muss es nicht mehr senden.",
+			"p4": "Progressive Erweiterung: Wenn es nach der ersten Runde wenig oder keine Reaktion gibt, erweitert Scrubin automatisch die Suche, um Kandidaten mit etwas breiteren Kriterien einzubeziehen (z. B. nahegelegene Standorte, leicht unterschiedliche Erfahrungsniveaus).",
+			"p5": "Unterschiedliche Poolgrößen pro Fachrichtung: In einigen Bereichen (z. B. Psychiatrie oder Radiologie) gibt es möglicherweise nur 200 Kandidaten im System, während es in anderen (z. B. Allgemeinmedizin oder Pflege) 2.000–10.000 geben kann. Das System passt das Volumen der Kontaktaufnahme entsprechend an.",
+			"p6": "Anti-Spam und Kandidatenerfahrungskontrolle: Um Fachkräfte nicht zu überwältigen, kontrolliert Scrubin, wie viele Angebote jeder Nutzer in kurzer Zeit erhält — und priorisiert personalisierte und relevante."
+		}
+	}
 }
