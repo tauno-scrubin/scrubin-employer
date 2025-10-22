@@ -50,26 +50,39 @@
 	let planToSubscribe: AvailablePlan | null = $state(null);
 	let selectedPaymentMethod = $state<'card' | 'invoice'>('card');
 
-	// Plan names mapping based on baseFee amount
+	// Plan names mapping based on position in sorted plans
 	const getPlanName = (plan: AvailablePlan): string => {
+		const sortedPlans = [...availablePlans].sort((a, b) => a.baseFee.amount - b.baseFee.amount);
+		const planIndex = sortedPlans.findIndex((p) => p.planId === plan.planId);
+
 		if (plan.baseFee.amount === 0) return $t('pricing.planSelection.planNames.riskFreeStarter');
-		if (plan.baseFee.amount <= 200) return $t('pricing.planSelection.planNames.smartPlan');
-		return $t('pricing.planSelection.planNames.superPlan');
+		if (planIndex === 1) return $t('pricing.planSelection.planNames.smartPlan'); // Middle option
+		return $t('pricing.planSelection.planNames.superPlan'); // Most expensive
 	};
 
 	const getPlanDescription = (plan: AvailablePlan): string => {
+		const sortedPlans = [...availablePlans].sort((a, b) => a.baseFee.amount - b.baseFee.amount);
+		const planIndex = sortedPlans.findIndex((p) => p.planId === plan.planId);
+
 		if (plan.baseFee.amount === 0) {
 			return $t('pricing.planSelection.planDescriptions.riskFreeStarter');
 		}
-		if (plan.baseFee.amount <= 200) {
-			return $t('pricing.planSelection.planDescriptions.smartPlan');
+		if (planIndex === 1) {
+			return $t('pricing.planSelection.planDescriptions.smartPlan'); // Middle option
 		}
-		return $t('pricing.planSelection.planDescriptions.superPlan');
+		return $t('pricing.planSelection.planDescriptions.superPlan'); // Most expensive
 	};
 
-	// Simple recommendation logic - just one recommended plan
+	// Recommendation logic - middle plan is always recommended when there are 3 options
 	const isRecommendedPlan = (plan: AvailablePlan): boolean => {
-		return plan.baseFee.amount <= 200 && plan.baseFee.amount > 0; // Smart Plan is recommended
+		if (availablePlans.length === 3) {
+			// When there are exactly 3 plans, recommend the middle one (index 1)
+			const sortedPlans = [...availablePlans].sort((a, b) => a.baseFee.amount - b.baseFee.amount);
+			const middlePlanIndex = sortedPlans.findIndex((p) => p.planId === plan.planId);
+			return middlePlanIndex === 1;
+		}
+		// Fallback to original logic for other cases
+		return plan.baseFee.amount <= 200 && plan.baseFee.amount > 0;
 	};
 
 	// Fetch available plans
