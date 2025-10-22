@@ -593,6 +593,39 @@
 				"riskFreeStarter": "Perfekt zum Ausprobieren unseres Services ohne Vorauszahlung. Zahlen Sie nur bei erfolgreicher Einstellung.",
 				"smartPlan": "Ausgewogener Ansatz mit moderaten Vorauszahlungen und wettbewerbsfähigen Erfolgsgebühren.",
 				"superPlan": "Premium-Service mit höherer Vorauszahlung und niedrigeren Erfolgsgebühren."
+			},
+			"enterprise": {
+				"customPricing": "Individuelle Preisgestaltung",
+				"customPricingDescription": "Maßgeschneiderte Preise basierend auf Ihren spezifischen Bedürfnissen und Anforderungen.",
+				"dedicatedSupport": "Persönlicher Support",
+				"dedicatedSupportDescription": "Persönlicher Account Manager und Prioritätssupport."
+			},
+			"contactDialog": {
+				"title": "Kontaktieren Sie uns",
+				"description": "Wählen Sie, wie Sie sich über Enterprise-Lösungen informieren möchten.",
+				"bookCall": "Anruf buchen",
+				"sendMessage": "Senden Sie uns eine Nachricht",
+				"messagePlaceholder": "Teilen Sie uns kurz Ihre Bedürfnisse mit",
+				"sending": "Wird gesendet...",
+				"sendMessageButton": "Nachricht senden"
+			},
+			"planDescriptionsStatic": {
+				"starter": "Perfekt für den Einstieg mit grundlegenden Rekrutierungsbedürfnissen",
+				"smart": "Erweiterte Funktionen für wachsende Unternehmen",
+				"enterprise": "Maßgeschneiderte Lösungen für Unternehmensbedürfnisse"
+			},
+			"paymentMethod": "Zahlungsmethode",
+			"contactUs": "Kontaktieren Sie uns",
+			"enterpriseName": "Unternehmen",
+			"starterName": "Starter",
+			"smartName": "Smart",
+			"vat": "MwSt.",
+			"toast": {
+				"planNotAvailable": "Plan nicht für Abonnement verfügbar",
+				"subscriptionCreated": "Abonnement erfolgreich erstellt!",
+				"messageSent": "Nachricht gesendet! Wir melden uns in Kürze bei Ihnen.",
+				"enterMessage": "Bitte geben Sie eine Nachricht ein",
+				"failedToSend": "Nachricht konnte nicht gesendet werden"
 			}
 		}
 	}

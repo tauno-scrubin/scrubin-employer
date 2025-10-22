@@ -589,6 +589,39 @@
 				"riskFreeStarter": "Suurepärane teenuse proovimiseks ilma ettemaksuta. Maksa ainult siis, kui leiad sobiva kandidaadi.",
 				"smartPlan": "Tasakaalustatud lähenemine mõõduka ettemaksuga ja konkurentsivõimeliste edukustasusid.",
 				"superPlan": "Premium teenus kõrgema ettemaksuga ja madalamate edukustasusid."
+			},
+			"enterprise": {
+				"customPricing": "Kohandatud hinnakujundus",
+				"customPricingDescription": "Kohandatud hinnad teie spetsiifiliste vajaduste ja nõuete põhjal.",
+				"dedicatedSupport": "Isiklik klienditugi",
+				"dedicatedSupportDescription": "Isiklik klienditugi, mis võtab teie vajadusi arvesse ja annab sulle prioriteetse tugi."
+			},
+			"contactDialog": {
+				"title": "Võta meiega ühendust",
+				"description": "Valige, kuidas soovite ettevõtte lahenduste kohta teavet saada.",
+				"bookCall": "Broneeri kõne",
+				"sendMessage": "Saada meile sõnum",
+				"messagePlaceholder": "Räägi meile lühidalt oma vajadustest",
+				"sending": "Saadan...",
+				"sendMessageButton": "Saada sõnum"
+			},
+			"planDescriptionsStatic": {
+				"starter": "Suurepärane alustamiseks põhivärbamisvajadustega",
+				"smart": "Täiustatud funktsioonid kasvavatele ettevõtetele",
+				"enterprise": "Kohandatud lahendused ettevõtte vajadustele"
+			},
+			"paymentMethod": "Makseviis",
+			"contactUs": "Võta meiega ühendust",
+			"enterpriseName": "Kohandatud",
+			"starterName": "Alustaja",
+			"smartName": "Nutikas",
+			"vat": "KM",
+			"toast": {
+				"planNotAvailable": "Plaan pole tellimiseks saadaval",
+				"subscriptionCreated": "Tellimus loodud edukalt!",
+				"messageSent": "Sõnum saadetud! Võtame peagi ühendust.",
+				"enterMessage": "Palun sisesta sõnum",
+				"failedToSend": "Sõnumi saatmine ebaõnnestus"
 			}
 		}
 	}

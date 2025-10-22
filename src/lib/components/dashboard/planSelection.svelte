@@ -36,7 +36,7 @@
 		onSubscriptionCreated?: () => void;
 	}
 
-	let { onPlanSelected, onCustomPlanRequested, onSubscriptionCreated }: Props = $props();
+	let { onPlanSelected, onSubscriptionCreated }: Props = $props();
 
 	// State
 	let availablePlans = $state<AvailablePlan[]>([]);
@@ -50,39 +50,44 @@
 	let planToSubscribe: AvailablePlan | null = $state(null);
 	let selectedPaymentMethod = $state<'card' | 'invoice'>('card');
 
-	// Plan names mapping based on position in sorted plans
-	const getPlanName = (plan: AvailablePlan): string => {
-		const sortedPlans = [...availablePlans].sort((a, b) => a.baseFee.amount - b.baseFee.amount);
-		const planIndex = sortedPlans.findIndex((p) => p.planId === plan.planId);
+	// Enterprise contact dialog state
+	let contactDialogOpen = $state(false);
+	let contactMessage = $state('');
+	let isSendingMessage = $state(false);
 
-		if (plan.baseFee.amount === 0) return $t('pricing.planSelection.planNames.riskFreeStarter');
-		if (planIndex === 1) return $t('pricing.planSelection.planNames.smartPlan'); // Middle option
-		return $t('pricing.planSelection.planNames.superPlan'); // Most expensive
+	// Plan names mapping based on position in sorted plans (exclude custom enterprise)
+	const getPlanName = (plan: AvailablePlan): string => {
+		if (plan.planId === -1) return $t('pricing.planSelection.enterpriseName');
+		const paidPlansSorted = [...availablePlans]
+			.filter((p) => p.planId !== -1)
+			.sort((a, b) => a.baseFee.amount - b.baseFee.amount);
+		const planIndex = paidPlansSorted.findIndex((p) => p.planId === plan.planId);
+
+		if (planIndex === 0) return $t('pricing.planSelection.starterName');
+		if (planIndex === 1) return $t('pricing.planSelection.smartName');
+		return $t('pricing.planSelection.starterName');
 	};
 
 	const getPlanDescription = (plan: AvailablePlan): string => {
-		const sortedPlans = [...availablePlans].sort((a, b) => a.baseFee.amount - b.baseFee.amount);
-		const planIndex = sortedPlans.findIndex((p) => p.planId === plan.planId);
+		if (plan.planId === -1) return $t('pricing.planSelection.planDescriptionsStatic.enterprise');
+		const paidPlansSorted = [...availablePlans]
+			.filter((p) => p.planId !== -1)
+			.sort((a, b) => a.baseFee.amount - b.baseFee.amount);
+		const planIndex = paidPlansSorted.findIndex((p) => p.planId === plan.planId);
 
-		if (plan.baseFee.amount === 0) {
-			return $t('pricing.planSelection.planDescriptions.riskFreeStarter');
-		}
-		if (planIndex === 1) {
-			return $t('pricing.planSelection.planDescriptions.smartPlan'); // Middle option
-		}
-		return $t('pricing.planSelection.planDescriptions.superPlan'); // Most expensive
+		if (planIndex === 0) return $t('pricing.planSelection.planDescriptionsStatic.starter');
+		if (planIndex === 1) return $t('pricing.planSelection.planDescriptionsStatic.smart');
+		return '';
 	};
 
-	// Recommendation logic - middle plan is always recommended when there are 3 options
+	// Recommendation logic - Smart plan (second paid plan) is always recommended
 	const isRecommendedPlan = (plan: AvailablePlan): boolean => {
-		if (availablePlans.length === 3) {
-			// When there are exactly 3 plans, recommend the middle one (index 1)
-			const sortedPlans = [...availablePlans].sort((a, b) => a.baseFee.amount - b.baseFee.amount);
-			const middlePlanIndex = sortedPlans.findIndex((p) => p.planId === plan.planId);
-			return middlePlanIndex === 1;
-		}
-		// Fallback to original logic for other cases
-		return plan.baseFee.amount <= 200 && plan.baseFee.amount > 0;
+		if (plan.planId === -1) return false;
+		const paidPlansSorted = [...availablePlans]
+			.filter((p) => p.planId !== -1)
+			.sort((a, b) => a.baseFee.amount - b.baseFee.amount);
+		const planIndex = paidPlansSorted.findIndex((p) => p.planId === plan.planId);
+		return planIndex === 1;
 	};
 
 	// Fetch available plans
@@ -92,7 +97,33 @@
 			error = null;
 
 			const response = await scrubinClient.company.getAvailablePlansV2();
-			availablePlans = response.plans.sort((a, b) => a.baseFee.amount - b.baseFee.amount);
+			let plans = response.plans.sort((a, b) => a.baseFee.amount - b.baseFee.amount);
+
+			// If we only have 2 plans, add a custom enterprise plan (sorted last visually)
+			if (plans.length === 2) {
+				const enterprisePlan: AvailablePlan = {
+					planId: -1, // Use -1 to identify custom enterprise plan
+					planType: 'enterprise-custom',
+					baseFee: {
+						amount: Number.MAX_SAFE_INTEGER, // force to sort last by price
+						currency: 'EUR',
+						vatAmount: 0
+					},
+					successFeeDoctor: {
+						amount: 0,
+						currency: 'EUR',
+						vatAmount: 0
+					},
+					successFeeOther: {
+						amount: 0,
+						currency: 'EUR',
+						vatAmount: 0
+					}
+				};
+				plans = [...plans, enterprisePlan];
+			}
+
+			availablePlans = plans;
 			paymentMethods = response.paymentMethods;
 		} catch (err) {
 			error = (err as Error).message;
@@ -118,7 +149,7 @@
 
 	const confirmSubscription = async () => {
 		if (!planToSubscribe?.planId) {
-			toast.error('Plan not available for subscription');
+			toast.error($t('pricing.planSelection.toast.planNotAvailable'));
 			return;
 		}
 
@@ -149,7 +180,7 @@
 			} else if (selectedPaymentMethod === 'invoice') {
 				// For invoice payments, trigger parent component to refresh active plans
 				onSubscriptionCreated?.();
-				toast.success('Subscription created successfully!');
+				toast.success($t('pricing.planSelection.toast.subscriptionCreated'));
 			}
 		} catch (err) {
 			const errorMessage = err instanceof Error ? err.message : 'Failed to create subscription';
@@ -167,7 +198,35 @@
 	};
 
 	const handleCustomPlan = () => {
-		onCustomPlanRequested?.();
+		// Keep callback for parent if needed
+		// onCustomPlanRequested?.();
+		contactDialogOpen = true;
+	};
+
+	const sendCustomPlanRequest = async () => {
+		if (!contactMessage.trim()) {
+			toast.error($t('pricing.planSelection.toast.enterMessage'));
+			return;
+		}
+		try {
+			isSendingMessage = true;
+			await scrubinClient.company.requestCustomPlan(contactMessage.trim());
+			toast.success($t('pricing.planSelection.toast.messageSent'));
+			contactMessage = '';
+			contactDialogOpen = false;
+		} catch (err) {
+			const errorMessage =
+				err instanceof Error ? err.message : $t('pricing.planSelection.toast.failedToSend');
+			toast.error(errorMessage);
+			console.error('Custom plan request failed:', err);
+		} finally {
+			isSendingMessage = false;
+		}
+	};
+
+	const openCalendarBooking = () => {
+		const url = 'https://calendar.app.google/VN4kA74b4Xjn6tHN7';
+		window.open(url, '_blank', 'noopener');
 	};
 
 	// Initialize
@@ -210,20 +269,28 @@
 						<div class="mb-4 h-8"></div>
 					{/if}
 					<Card
-						class="relative overflow-hidden transition-all hover:shadow-lg {isRecommended
+						class="relative flex h-full min-h-[350px] flex-col overflow-hidden transition-all hover:shadow-lg {isRecommended
 							? 'ring-1 ring-blue-500 ring-opacity-50'
 							: ''}"
 					>
 						<CardHeader class="pb-4">
 							<div class="flex items-center justify-between">
 								<CardTitle class="text-xl">{planName}</CardTitle>
-								{#if plan.baseFee.amount > 0}
+								{#if plan.planId === -1}
+									<!-- <div class="text-right">
+										<div class="text-2xl font-bold text-primary">
+											{$t('pricing.planSelection.contactUs')}
+										</div>
+									</div> -->
+								{:else if plan.baseFee.amount > 0}
 									<div class="text-right">
 										<div class="text-2xl font-bold">
 											{plan.baseFee.amount}
 											{getCurrencySymbol(plan.baseFee.currency)}
 											{#if plan.baseFee.vatAmount && plan.baseFee.vatAmount > 0}
-												<span class="text-xs font-normal text-muted-foreground">(+VAT)</span>
+												<span class="text-xs font-normal text-muted-foreground"
+													>(+{$t('pricing.planSelection.vat')})</span
+												>
 											{/if}
 										</div>
 									</div>
@@ -240,104 +307,126 @@
 							</CardDescription>
 						</CardHeader>
 
-						<CardContent class="space-y-6">
-							<!-- Success Fees -->
-							<div class="space-y-4">
-								<div class="flex items-center gap-2">
-									<Stethoscope class="h-4 w-4 text-primary" />
-									<span class="text-sm font-medium">{$t('pricing.planSelection.doctors')}</span>
-								</div>
-								<div class="space-y-2 text-sm">
-									<div class="flex justify-between">
-										<span class="text-muted-foreground"
-											>{$t('pricing.planSelection.successFee')}:</span
+						<CardContent class="flex-1 space-y-6">
+							{#if plan.planId === -1}
+								<!-- Custom Enterprise Plan Content -->
+								<div class="space-y-4">
+									<div class="flex items-center gap-2">
+										<Sparkles class="h-4 w-4 text-primary" />
+										<span class="text-sm font-medium"
+											>{$t('pricing.planSelection.enterprise.customPricing')}</span
 										>
-										<span class="font-medium">
-											{plan.successFeeDoctor.amount}
-											{getCurrencySymbol(plan.successFeeDoctor.currency)}
-											{#if plan.successFeeDoctor.vatAmount && plan.successFeeDoctor.vatAmount > 0}
-												<span class="text-xs font-normal text-muted-foreground">(+VAT)</span>
-											{/if}
-										</span>
+									</div>
+									<div class="space-y-2 text-sm">
+										<div class="text-muted-foreground">
+											{$t('pricing.planSelection.enterprise.customPricingDescription')}
+										</div>
 									</div>
 								</div>
-							</div>
 
-							<div class="space-y-4">
-								<div class="flex items-center gap-2">
-									<Users class="h-4 w-4 text-primary" />
-									<span class="text-sm font-medium"
-										>{$t('pricing.planSelection.otherProfessionals')}</span
-									>
-								</div>
-								<div class="space-y-2 text-sm">
-									<div class="flex justify-between">
-										<span class="text-muted-foreground"
-											>{$t('pricing.planSelection.successFee')}:</span
+								<div class="space-y-4">
+									<div class="flex items-center gap-2">
+										<Users class="h-4 w-4 text-primary" />
+										<span class="text-sm font-medium"
+											>{$t('pricing.planSelection.enterprise.dedicatedSupport')}</span
 										>
-										<span class="font-medium">
-											{plan.successFeeOther.amount}
-											{getCurrencySymbol(plan.successFeeOther.currency)}
-											{#if plan.successFeeOther.vatAmount && plan.successFeeOther.vatAmount > 0}
-												<span class="text-xs font-normal text-muted-foreground">(+VAT)</span>
-											{/if}
-										</span>
+									</div>
+									<div class="space-y-2 text-sm">
+										<div class="text-muted-foreground">
+											{$t('pricing.planSelection.enterprise.dedicatedSupportDescription')}
+										</div>
 									</div>
 								</div>
-							</div>
+							{:else}
+								<!-- Success Fees -->
+								<div class="space-y-4">
+									<div class="flex items-center gap-2">
+										<Stethoscope class="h-4 w-4 text-primary" />
+										<span class="text-sm font-medium">{$t('pricing.planSelection.doctors')}</span>
+									</div>
+									<div class="space-y-2 text-sm">
+										<div class="flex justify-between">
+											<span class="text-muted-foreground"
+												>{$t('pricing.planSelection.successFee')}:</span
+											>
+											<span class="font-medium">
+												{plan.successFeeDoctor.amount}
+												{getCurrencySymbol(plan.successFeeDoctor.currency)}
+												{#if plan.successFeeDoctor.vatAmount && plan.successFeeDoctor.vatAmount > 0}
+													<span class="text-xs font-normal text-muted-foreground"
+														>(+{$t('pricing.planSelection.vat')})</span
+													>
+												{/if}
+											</span>
+										</div>
+									</div>
+								</div>
+
+								<div class="space-y-4">
+									<div class="flex items-center gap-2">
+										<Users class="h-4 w-4 text-primary" />
+										<span class="text-sm font-medium"
+											>{$t('pricing.planSelection.otherProfessionals')}</span
+										>
+									</div>
+									<div class="space-y-2 text-sm">
+										<div class="flex justify-between">
+											<span class="text-muted-foreground"
+												>{$t('pricing.planSelection.successFee')}:</span
+											>
+											<span class="font-medium">
+												{plan.successFeeOther.amount}
+												{getCurrencySymbol(plan.successFeeOther.currency)}
+												{#if plan.successFeeOther.vatAmount && plan.successFeeOther.vatAmount > 0}
+													<span class="text-xs font-normal text-muted-foreground"
+														>(+{$t('pricing.planSelection.vat')})</span
+													>
+												{/if}
+											</span>
+										</div>
+									</div>
+								</div>
+							{/if}
 
 							<!-- Payment Information -->
-							<div class="rounded-md bg-muted/50 p-3">
-								<div class="flex items-center gap-2 text-xs text-muted-foreground">
-									<CheckCircle class="h-3 w-3" />
-									<span>{$t('pricing.planSelection.paymentInfo')}</span>
+							{#if plan.planId !== -1}
+								<div class="rounded-md bg-muted/50 p-3">
+									<div class="flex items-center gap-2 text-xs text-muted-foreground">
+										<CheckCircle class="h-3 w-3" />
+										<span>{$t('pricing.planSelection.paymentInfo')}</span>
+									</div>
 								</div>
-							</div>
+							{/if}
 						</CardContent>
 
-						<CardFooter class="pt-0">
-							<Button
-								class="w-full"
-								variant="default"
-								onclick={() => handleSubscribe(plan)}
-								disabled={isCreatingSubscription}
-							>
-								{#if isCreatingSubscription && selectedPlan === plan}
-									<div
-										class="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-background border-t-transparent"
-									></div>
-									{$t('pricing.planSelection.creating')}
-								{:else}
-									<CreditCard class="mr-2 h-4 w-4" />
-									{$t('pricing.planSelection.selectPlan')}
-								{/if}
-							</Button>
+						<CardFooter class="mt-auto pt-0">
+							{#if plan.planId === -1}
+								<Button class="w-full" variant="outline" onclick={handleCustomPlan}>
+									<Sparkles class="mr-2 h-4 w-4" />
+									{$t('pricing.planSelection.contactUs')}
+								</Button>
+							{:else}
+								<Button
+									class="w-full"
+									variant="default"
+									onclick={() => handleSubscribe(plan)}
+									disabled={isCreatingSubscription}
+								>
+									{#if isCreatingSubscription && selectedPlan === plan}
+										<div
+											class="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-background border-t-transparent"
+										></div>
+										{$t('pricing.planSelection.creating')}
+									{:else}
+										<CreditCard class="mr-2 h-4 w-4" />
+										{$t('pricing.planSelection.selectPlan')}
+									{/if}
+								</Button>
+							{/if}
 						</CardFooter>
 					</Card>
 				</div>
 			{/each}
-		</div>
-
-		<!-- Custom Plan Option -->
-		<div class="mt-12 space-y-6">
-			<div class="h-px bg-border"></div>
-			<div class="rounded-lg border border-border bg-muted/30 p-6">
-				<div class="space-y-3">
-					<div class="flex items-center gap-2">
-						<Sparkles class="h-5 w-5 text-primary" />
-						<h3 class="text-xl font-semibold">
-							{$t('pricing.planSelection.customTitle')}
-						</h3>
-					</div>
-					<p class="text-base text-muted-foreground">
-						{$t('pricing.planSelection.customDescription')}
-					</p>
-					<Button variant="outline" onclick={handleCustomPlan} class="mt-4 w-full sm:w-auto">
-						<Sparkles class="mr-2 h-4 w-4" />
-						{$t('pricing.planSelection.requestCustom')}
-					</Button>
-				</div>
-			</div>
 		</div>
 
 		<!-- Coupon Code Input -->
@@ -456,7 +545,7 @@
 				<!-- Payment Method Selection -->
 				{#if paymentMethods.length > 0}
 					<div class="mt-4 space-y-3">
-						<div class="text-sm font-medium">Payment Method</div>
+						<div class="text-sm font-medium">{$t('pricing.planSelection.paymentMethod')}</div>
 						<div class="space-y-2">
 							{#each paymentMethods as method}
 								<label class="flex cursor-pointer items-center space-x-2">
@@ -501,5 +590,52 @@
 				{/if}
 			</Button>
 		</Dialog.Footer>
+	</Dialog.Content>
+</Dialog.Root>
+
+<!-- Contact Us Dialog for Enterprise plan -->
+<Dialog.Root bind:open={contactDialogOpen}>
+	<Dialog.Content class="mx-4 sm:mx-auto sm:max-w-lg">
+		<Dialog.Header>
+			<Dialog.Title class="text-base sm:text-lg"
+				>{$t('pricing.planSelection.contactDialog.title')}</Dialog.Title
+			>
+			<Dialog.Description class="text-sm sm:text-base">
+				{$t('pricing.planSelection.contactDialog.description')}
+			</Dialog.Description>
+		</Dialog.Header>
+
+		<div class="space-y-4 py-2">
+			<div class="flex flex-col gap-2 sm:flex-row">
+				<Button class="w-full sm:w-auto" variant="outline" onclick={openCalendarBooking}>
+					<Sparkles class="mr-2 h-4 w-4" />
+					{$t('pricing.planSelection.contactDialog.bookCall')}
+				</Button>
+			</div>
+			<div class="space-y-2">
+				<label for="contact-message" class="text-sm font-medium"
+					>{$t('pricing.planSelection.contactDialog.sendMessage')}</label
+				>
+				<textarea
+					id="contact-message"
+					class="min-h-28 w-full rounded-md border border-input px-3 py-2 text-sm"
+					bind:value={contactMessage}
+					placeholder={$t('pricing.planSelection.contactDialog.messagePlaceholder')}
+				></textarea>
+				<div class="flex justify-end">
+					<Button onclick={sendCustomPlanRequest} disabled={isSendingMessage}>
+						{#if isSendingMessage}
+							<div
+								class="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-background border-t-transparent"
+							></div>
+							{$t('pricing.planSelection.contactDialog.sending')}
+						{:else}
+							<FileText class="mr-2 h-4 w-4" />
+							{$t('pricing.planSelection.contactDialog.sendMessageButton')}
+						{/if}
+					</Button>
+				</div>
+			</div>
+		</div>
 	</Dialog.Content>
 </Dialog.Root>

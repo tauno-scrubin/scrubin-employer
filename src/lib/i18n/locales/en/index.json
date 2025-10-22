@@ -594,6 +594,39 @@
 				"riskFreeStarter": "Perfect for trying our service with no upfront cost. Pay only when you hire.",
 				"smartPlan": "Balanced approach with moderate upfront cost and competitive success fees.",
 				"superPlan": "Premium service with higher upfront investment and lower success fees."
+			},
+			"enterprise": {
+				"customPricing": "Custom Pricing",
+				"customPricingDescription": "Tailored pricing based on your specific needs and requirements.",
+				"dedicatedSupport": "Dedicated Support",
+				"dedicatedSupportDescription": "Personal account manager and priority support."
+			},
+			"contactDialog": {
+				"title": "Contact Us",
+				"description": "Choose how you would like to get in touch about Enterprise solutions.",
+				"bookCall": "Book a Call",
+				"sendMessage": "Send us a message",
+				"messagePlaceholder": "Tell us briefly about your needs",
+				"sending": "Sending...",
+				"sendMessageButton": "Send Message"
+			},
+			"planDescriptionsStatic": {
+				"starter": "Perfect for getting started with basic recruitment needs",
+				"smart": "Advanced features for growing businesses",
+				"enterprise": "Custom solutions for enterprise needs"
+			},
+			"paymentMethod": "Payment Method",
+			"contactUs": "Contact Us",
+			"enterpriseName": "Enterprise",
+			"starterName": "Starter",
+			"smartName": "Smart",
+			"vat": "VAT",
+			"toast": {
+				"planNotAvailable": "Plan not available for subscription",
+				"subscriptionCreated": "Subscription created successfully!",
+				"messageSent": "Message sent! We will get back to you shortly.",
+				"enterMessage": "Please enter a message",
+				"failedToSend": "Failed to send message"
 			}
 		}
 	}

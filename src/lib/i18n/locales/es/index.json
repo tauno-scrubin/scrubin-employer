@@ -588,6 +588,39 @@
 				"riskFreeStarter": "Perfecto para probar nuestro servicio sin costo inicial. Pague solo cuando contrate.",
 				"smartPlan": "Enfoque equilibrado con costo inicial moderado y tarifas de éxito competitivas.",
 				"superPlan": "Servicio premium con mayor inversión inicial y tarifas de éxito más bajas."
+			},
+			"enterprise": {
+				"customPricing": "Precios Personalizados",
+				"customPricingDescription": "Precios adaptados basados en sus necesidades y requisitos específicos.",
+				"dedicatedSupport": "Soporte Dedicado",
+				"dedicatedSupportDescription": "Gerente de cuenta personal y soporte prioritario."
+			},
+			"contactDialog": {
+				"title": "Contáctenos",
+				"description": "Elija cómo le gustaría ponerse en contacto sobre soluciones empresariales.",
+				"bookCall": "Reservar Llamada",
+				"sendMessage": "Envíenos un mensaje",
+				"messagePlaceholder": "Cuéntenos brevemente sobre sus necesidades",
+				"sending": "Enviando...",
+				"sendMessageButton": "Enviar Mensaje"
+			},
+			"planDescriptionsStatic": {
+				"starter": "Perfecto para comenzar con necesidades básicas de reclutamiento",
+				"smart": "Características avanzadas para empresas en crecimiento",
+				"enterprise": "Soluciones personalizadas para necesidades empresariales"
+			},
+			"paymentMethod": "Método de Pago",
+			"contactUs": "Contáctenos",
+			"enterpriseName": "Empresa",
+			"starterName": "Inicial",
+			"smartName": "Inteligente",
+			"vat": "IVA",
+			"toast": {
+				"planNotAvailable": "Plan no disponible para suscripción",
+				"subscriptionCreated": "¡Suscripción creada exitosamente!",
+				"messageSent": "¡Mensaje enviado! Nos pondremos en contacto contigo pronto.",
+				"enterMessage": "Por favor ingresa un mensaje",
+				"failedToSend": "Error al enviar el mensaje"
 			}
 		}
 	}

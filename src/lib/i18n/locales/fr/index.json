@@ -590,6 +590,39 @@
 				"riskFreeStarter": "Parfait pour essayer notre service sans coût initial. Payez seulement quand vous embauchez.",
 				"smartPlan": "Approche équilibrée avec un coût initial modéré et des frais de succès compétitifs.",
 				"superPlan": "Service premium avec un investissement initial plus élevé et des frais de succès plus bas."
+			},
+			"enterprise": {
+				"customPricing": "Tarification Personnalisée",
+				"customPricingDescription": "Tarifs adaptés basés sur vos besoins et exigences spécifiques.",
+				"dedicatedSupport": "Support Dédié",
+				"dedicatedSupportDescription": "Gestionnaire de compte personnel et support prioritaire."
+			},
+			"contactDialog": {
+				"title": "Contactez-nous",
+				"description": "Choisissez comment vous souhaitez nous contacter concernant les solutions d'entreprise.",
+				"bookCall": "Réserver un Appel",
+				"sendMessage": "Envoyez-nous un message",
+				"messagePlaceholder": "Parlez-nous brièvement de vos besoins",
+				"sending": "Envoi en cours...",
+				"sendMessageButton": "Envoyer le Message"
+			},
+			"planDescriptionsStatic": {
+				"starter": "Parfait pour commencer avec des besoins de recrutement de base",
+				"smart": "Fonctionnalités avancées pour les entreprises en croissance",
+				"enterprise": "Solutions personnalisées pour les besoins d'entreprise"
+			},
+			"paymentMethod": "Moyen de Paiement",
+			"contactUs": "Contactez-nous",
+			"enterpriseName": "Entreprise",
+			"starterName": "Débutant",
+			"smartName": "Intelligent",
+			"vat": "TVA",
+			"toast": {
+				"planNotAvailable": "Plan non disponible pour l'abonnement",
+				"subscriptionCreated": "Abonnement créé avec succès !",
+				"messageSent": "Message envoyé ! Nous vous recontacterons bientôt.",
+				"enterMessage": "Veuillez entrer un message",
+				"failedToSend": "Échec de l'envoi du message"
 			}
 		}
 	}

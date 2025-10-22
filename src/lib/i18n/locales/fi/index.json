@@ -590,6 +590,39 @@
 				"riskFreeStarter": "Täydellinen palvelumme kokeilemiseen ilman ennakkomaksua. Maksa vain kun palkkaat.",
 				"smartPlan": "Tasapainotettu lähestymistapa kohtuullisella ennakkomaksulla ja kilpailukykyisillä onnistumismaksuilla.",
 				"superPlan": "Premium-palvelu korkeammalla ennakkoinvestoinnilla ja alhaisemmilla onnistumismaksuilla."
+			},
+			"enterprise": {
+				"customPricing": "Mukautettu hinnoittelu",
+				"customPricingDescription": "Räätälöidyt hinnat perustuen erityistarpeisiisi ja vaatimuksiisi.",
+				"dedicatedSupport": "Omistautunut tuki",
+				"dedicatedSupportDescription": "Henkilökohtainen asiakasvastaava ja prioriteettituki."
+			},
+			"contactDialog": {
+				"title": "Ota yhteyttä",
+				"description": "Valitse, miten haluat ottaa yhteyttä yritysratkaisuista.",
+				"bookCall": "Varaa puhelu",
+				"sendMessage": "Lähetä meille viesti",
+				"messagePlaceholder": "Kerro lyhyesti tarpeistasi",
+				"sending": "Lähetetään...",
+				"sendMessageButton": "Lähetä viesti"
+			},
+			"planDescriptionsStatic": {
+				"starter": "Täydellinen aloittamiseen perusrekrytointitarpeilla",
+				"smart": "Edistyneet ominaisuudet kasvaville yrityksille",
+				"enterprise": "Räätälöidyt ratkaisut yritystarpeisiin"
+			},
+			"paymentMethod": "Maksutapa",
+			"contactUs": "Ota yhteyttä",
+			"enterpriseName": "Yritys",
+			"starterName": "Aloittelija",
+			"smartName": "Älykäs",
+			"vat": "ALV",
+			"toast": {
+				"planNotAvailable": "Suunnitelma ei ole saatavilla tilaukseen",
+				"subscriptionCreated": "Tilaus luotu onnistuneesti!",
+				"messageSent": "Viesti lähetetty! Otamme yhteyttä pian.",
+				"enterMessage": "Anna viesti",
+				"failedToSend": "Viestin lähetys epäonnistui"
 			}
 		}
 	}
