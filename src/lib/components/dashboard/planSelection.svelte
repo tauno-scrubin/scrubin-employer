@@ -136,7 +136,16 @@
 
 			if (selectedPaymentMethod === 'card' && response.checkoutUrl) {
 				// Redirect to Stripe checkout for card payments
-				window.location.href = response.checkoutUrl;
+				// Add success/cancel URLs to maintain session context
+				const currentUrl = new URL(window.location.href);
+				const successUrl = `${currentUrl.origin}/dashboard/pricing?subscription=success`;
+				const cancelUrl = `${currentUrl.origin}/dashboard/pricing?subscription=cancelled`;
+
+				const checkoutUrl = new URL(response.checkoutUrl);
+				checkoutUrl.searchParams.set('success_url', successUrl);
+				checkoutUrl.searchParams.set('cancel_url', cancelUrl);
+
+				window.location.href = checkoutUrl.toString();
 			} else if (selectedPaymentMethod === 'invoice') {
 				// For invoice payments, trigger parent component to refresh active plans
 				onSubscriptionCreated?.();
@@ -435,13 +444,13 @@
 							</div>
 						</div>
 
-            <div class="mt-3 pt-3">
+						<div class="mt-3 pt-3">
 							<div class="flex items-center gap-2 text-xs text-muted-foreground">
 								<CheckCircle class="h-3 w-3" />
 								<span>{@html $t('pricing.planSelection.terms')}</span>
 							</div>
 						</div>
-          </div>
+					</div>
 				</div>
 
 				<!-- Payment Method Selection -->

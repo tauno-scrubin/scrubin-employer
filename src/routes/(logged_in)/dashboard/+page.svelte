@@ -7,6 +7,7 @@
 	import type { WorkerLookup } from '@/scrubinClient';
 	import { scrubinClient } from '@/scrubinClient/client';
 	import { onMount } from 'svelte';
+	import { toast } from 'svelte-sonner';
 
 	let searchViewComponent: SimpleSearchView;
 	let isLoading = $state(false);
@@ -32,6 +33,24 @@
 
 	onMount(() => {
 		loadSearchHistory();
+
+		// Handle return from Stripe checkout
+		const urlParams = new URLSearchParams(page.url.search);
+		const subscriptionStatus = urlParams.get('subscription');
+
+		if (subscriptionStatus === 'success') {
+			toast.success('Subscription created successfully!');
+			// Clean up URL
+			const newUrl = new URL(page.url);
+			newUrl.searchParams.delete('subscription');
+			window.history.replaceState({}, '', newUrl.toString());
+		} else if (subscriptionStatus === 'cancelled') {
+			toast.error('Subscription was cancelled');
+			// Clean up URL
+			const newUrl = new URL(page.url);
+			newUrl.searchParams.delete('subscription');
+			window.history.replaceState({}, '', newUrl.toString());
+		}
 	});
 </script>
 
@@ -39,10 +58,7 @@
 
 <div class="mx-auto w-full max-w-screen-xl space-y-2">
 	<!-- Search View -->
-	<SimpleSearchView
-		redirect={true}
-		bind:this={searchViewComponent}
-	/>
+	<SimpleSearchView bind:this={searchViewComponent} />
 
 	{#if !isSearchActive}
 		<div class="grid gap-4">

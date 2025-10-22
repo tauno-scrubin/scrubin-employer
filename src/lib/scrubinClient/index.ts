@@ -757,10 +757,10 @@ class AuthStore {
 			// Set the new cookie with appropriate domain
 			if (isLocalhost) {
 				// For localhost, don't set a domain (defaults to current hostname)
-				document.cookie = `scrubin_auth=${value}; path=/; SameSite=Strict`;
+				document.cookie = `scrubin_auth=${value}; path=/; SameSite=Lax`;
 			} else {
 				// For production, use .scrubin.io domain
-				document.cookie = `scrubin_auth=${value}; path=/; domain=.scrubin.io; SameSite=Strict`;
+				document.cookie = `scrubin_auth=${value}; path=/; domain=.scrubin.io; SameSite=Lax`;
 			}
 		}
 	}
@@ -827,7 +827,7 @@ class AuthStore {
 			domain ? `domain=${domain}` : null,
 			options.secure ? 'Secure' : null,
 			options.httpOnly ? 'HttpOnly' : null,
-			'SameSite=Strict'
+			'SameSite=Lax'
 		]
 			.filter(Boolean)
 			.join('; ');
