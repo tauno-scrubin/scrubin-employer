@@ -601,6 +601,7 @@ export interface CompanyPlanPrice {
 	currency: string;
 	vatAmount?: number;
 	vatPercentage?: number;
+	stripeId?: string;
 }
 
 export interface CompanyPlanPricingSuccess {
@@ -619,14 +620,33 @@ export interface CompanyPlanPricingSuccess {
 }
 
 export interface AvailablePlan {
-	planType: PlanType;
-	pricingGeneral: CompanyPlanPrice;
-	pricingSuccess: CompanyPlanPricingSuccess;
+	planId: number;
+	planType: string;
+	baseFee: CompanyPlanPrice;
+	successFeeDoctor: CompanyPlanPrice;
+	successFeeOther: CompanyPlanPrice;
 }
 
 export interface AvailablePlansResponse {
 	paymentMethods: string[];
 	plans: AvailablePlan[];
+}
+
+export interface CreateSubscriptionRequest {
+	planId: number;
+	paymentMethod: 'card' | 'invoice';
+	stripePaymentMethodId?: string;
+	couponCode?: string;
+}
+
+export interface CreateSubscriptionResponse {
+	subscriptionId: string;
+	status: string;
+	currentPeriodStart: number;
+	currentPeriodEnd: number;
+	cancelAtPeriodEnd: boolean;
+	clientSecret?: string;
+	checkoutUrl?: string;
 }
 
 export interface CompanyPlanSummary {
@@ -1011,8 +1031,8 @@ class CompanyResource extends BaseResource {
 		return this.request<CompanyBilling>('PATCH', url.toString(), data) as Promise<CompanyBilling>;
 	}
 
-	async getAvailablePlans(): Promise<AvailablePlansResponse> {
-		const url = new URL(`${this.path}/available-plans`, this.client.baseUrl);
+	async getAvailablePlansV2(): Promise<AvailablePlansResponse> {
+		const url = new URL(`/api/v2/company/available-plans`, this.client.baseUrl);
 		return this.request<AvailablePlansResponse>(
 			'GET',
 			url.toString()
@@ -1049,6 +1069,15 @@ class CompanyResource extends BaseResource {
 	async requestCustomPlan(message: string): Promise<void> {
 		const url = new URL(`${this.path}/plans/request-custom`, this.client.baseUrl);
 		return this.request<void>('POST', url.toString(), { message }, true) as Promise<void>;
+	}
+
+	async createSubscription(data: CreateSubscriptionRequest): Promise<CreateSubscriptionResponse> {
+		const url = new URL(`${this.path}/plans/subscribe`, this.client.baseUrl);
+		return this.request<CreateSubscriptionResponse>(
+			'POST',
+			url.toString(),
+			data
+		) as Promise<CreateSubscriptionResponse>;
 	}
 
 	async startPlan(planType: string): Promise<CompanyPlanSummary> {

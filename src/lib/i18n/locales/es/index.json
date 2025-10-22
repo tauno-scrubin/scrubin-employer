@@ -550,6 +550,44 @@
 			"actions": "Acciones",
 			"downloadPdf": "Descargar PDF",
 			"viewOnline": "Ver en línea"
+		},
+		"planSelection": {
+			"paymentInfo": "Pago dividido: 50% cuando el candidato firma, 50% cuando comienza",
+			"recommended": "Recomendado",
+			"mostPopular": "Más Popular",
+			"upfront": "por adelantado",
+			"free": "Gratis",
+			"noUpfront": "sin costo inicial",
+			"doctors": "Médicos",
+			"otherProfessionals": "Enfermeras y otros profesionales",
+			"successFee": "Tarifa de Éxito",
+			"vatIncluded": "Todos los precios incluyen 24% IVA",
+			"vatAdded": "Se añadirá IVA a los precios",
+			"selectPlan": "Seleccionar Plan",
+			"creating": "Creando...",
+			"customTitle": "¿Necesita una Solución Personalizada?",
+			"customDescription": "Contáctenos para discutir sus requisitos específicos y obtener un plan personalizado.",
+			"requestCustom": "Solicitar Plan Personalizado",
+			"couponLabel": "Código de Cupón (Opcional)",
+			"couponPlaceholder": "Ingrese código de cupón",
+			"confirmTitle": "Confirmar Suscripción",
+			"confirmDescription": "Le cobraremos {{amount}} {{currency}} cada mes por este plan.",
+			"confirmDescriptionFree": "Recopilaremos sus datos para confirmar su suscripción. No se requiere pago inicial.",
+			"planDetails": "Detalles del Plan",
+			"planName": "Plan",
+			"monthlyFee": "Tarifa Mensual",
+			"cancel": "Cancelar",
+			"confirm": "Confirmar Suscripción",
+			"planNames": {
+				"riskFreeStarter": "Inicio Sin Riesgo",
+				"smartPlan": "Plan Inteligente",
+				"superPlan": "Super Plan"
+			},
+			"planDescriptions": {
+				"riskFreeStarter": "Perfecto para probar nuestro servicio sin costo inicial. Pague solo cuando contrate.",
+				"smartPlan": "Enfoque equilibrado con costo inicial moderado y tarifas de éxito competitivas.",
+				"superPlan": "Servicio premium con mayor inversión inicial y tarifas de éxito más bajas."
+			}
 		}
 	}
 }

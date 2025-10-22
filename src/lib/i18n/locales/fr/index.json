@@ -552,6 +552,44 @@
 			"actions": "Actions",
 			"downloadPdf": "Télécharger le PDF",
 			"viewOnline": "Voir en ligne"
+		},
+		"planSelection": {
+			"paymentInfo": "Paiement divisé : 50% à la signature du candidat, 50% au début du travail",
+			"recommended": "Recommandé",
+			"mostPopular": "Le Plus Populaire",
+			"upfront": "d'avance",
+			"free": "Gratuit",
+			"noUpfront": "sans coût initial",
+			"doctors": "Médecins",
+			"otherProfessionals": "Infirmières et autres professionnels",
+			"successFee": "Frais de Succès",
+			"vatIncluded": "Tous les prix incluent 24% de TVA",
+			"vatAdded": "La TVA sera ajoutée aux prix",
+			"selectPlan": "Sélectionner le Plan",
+			"creating": "Création...",
+			"customTitle": "Besoin d'une Solution Personnalisée ?",
+			"customDescription": "Contactez-nous pour discuter de vos exigences spécifiques et obtenir un plan personnalisé.",
+			"requestCustom": "Demander un Plan Personnalisé",
+			"couponLabel": "Code Coupon (Optionnel)",
+			"couponPlaceholder": "Entrez le code coupon",
+			"confirmTitle": "Confirmer l'Abonnement",
+			"confirmDescription": "Nous vous facturerons {{amount}} {{currency}} chaque mois pour ce plan.",
+			"confirmDescriptionFree": "Nous collecterons vos données pour confirmer votre abonnement. Aucun paiement initial requis.",
+			"planDetails": "Détails du Plan",
+			"planName": "Plan",
+			"monthlyFee": "Frais Mensuels",
+			"cancel": "Annuler",
+			"confirm": "Confirmer l'Abonnement",
+			"planNames": {
+				"riskFreeStarter": "Démarrage Sans Risque",
+				"smartPlan": "Plan Intelligent",
+				"superPlan": "Super Plan"
+			},
+			"planDescriptions": {
+				"riskFreeStarter": "Parfait pour essayer notre service sans coût initial. Payez seulement quand vous embauchez.",
+				"smartPlan": "Approche équilibrée avec un coût initial modéré et des frais de succès compétitifs.",
+				"superPlan": "Service premium avec un investissement initial plus élevé et des frais de succès plus bas."
+			}
 		}
 	}
 }

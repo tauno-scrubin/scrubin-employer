@@ -478,10 +478,11 @@
 			"activeSince": "Active since",
 			"customPlanDetails": "Custom Plan Details",
 			"generalFee": "General fee",
+			"baseFee": "Base fee",
 			"viewSuccessFees": "View success fees",
 			"endPlan": "End Plan",
 			"doctorsTitle": "Doctors",
-			"otherProfessionalsTitle": "Other Healthcare Professionals",
+			"otherProfessionalsTitle": "Nurses and other healthcare professionals",
 			"startFee": "Start fee",
 			"successFee": "Success fee",
 			"perHiredCandidate": "(per hired candidate)"
@@ -555,6 +556,44 @@
 			"actions": "Actions",
 			"downloadPdf": "Download PDF",
 			"viewOnline": "View online"
+		},
+		"planSelection": {
+			"paymentInfo": "Split payment: 50% when candidate signs, 50% when they start",
+			"recommended": "Recommended",
+			"mostPopular": "Most Popular",
+			"upfront": "upfront",
+			"free": "Free",
+			"noUpfront": "no upfront cost",
+			"doctors": "Doctors",
+			"otherProfessionals": "Nurses and other professionals",
+			"successFee": "Success Fee",
+			"vatIncluded": "All prices include 24% VAT",
+			"vatAdded": "VAT will be added to prices",
+			"selectPlan": "Select Plan",
+			"creating": "Creating...",
+			"customTitle": "Need a Custom Solution?",
+			"customDescription": "Contact us to discuss your specific requirements and get a tailored plan.",
+			"requestCustom": "Request Custom Plan",
+			"couponLabel": "Coupon Code (Optional)",
+			"couponPlaceholder": "Enter coupon code",
+			"confirmTitle": "Confirm Subscription",
+			"confirmDescription": "We will charge you {{amount}} {{currency}} each month for this plan.",
+			"confirmDescriptionFree": "We will collect your details to confirm your subscription. No upfront payment required.",
+			"planDetails": "Plan Details",
+			"planName": "Plan",
+			"monthlyFee": "Monthly Fee",
+			"cancel": "Cancel",
+			"confirm": "Confirm Subscription",
+			"planNames": {
+				"riskFreeStarter": "Risk-free Starter",
+				"smartPlan": "Smart Plan",
+				"superPlan": "Super Plan"
+			},
+			"planDescriptions": {
+				"riskFreeStarter": "Perfect for trying our service with no upfront cost. Pay only when you hire.",
+				"smartPlan": "Balanced approach with moderate upfront cost and competitive success fees.",
+				"superPlan": "Premium service with higher upfront investment and lower success fees."
+			}
 		}
 	}
 }

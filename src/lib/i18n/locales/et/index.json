@@ -473,6 +473,7 @@
 			"activeSince": "Aktiivne alates",
 			"customPlanDetails": "Kohandatud paketi üksikasjad",
 			"generalFee": "Üldine tasu",
+			"baseFee": "Baastasu",
 			"viewSuccessFees": "Vaata edukustasusid",
 			"endPlan": "Lõpeta pakett",
 			"doctorsTitle": "Arstid",
@@ -502,8 +503,8 @@
 			"contactUs": "Võta meiega ühendust"
 		},
 		"page": {
-			"title": "Küsi personaalset pakkumist",
-			"subtitle": "Iga organisatsioon on unikaalne - seetõttu pakume värbamis- ja turunduslahendusi, mis on täpselt kohandatud teie vajaduste ja eesmärkide järgi.",
+			"title": "Kohandatud tervishoiu värbamine",
+			"subtitle": "Kohandatud lahendused teie tervishoiu personalivajaduste jaoks paindlike hindade ja pühendunud toe võimalustega",
 			"features": {
 				"feature1": {
 					"title": "Suurim tervishoiutöötajate andmebaas Euroopas",
@@ -550,6 +551,44 @@
 			"actions": "Tegevused",
 			"downloadPdf": "Laadi PDF",
 			"viewOnline": "Vaata veebis"
+		},
+		"planSelection": {
+			"paymentInfo": "Jagatud makse: 50% kandidaadi allkirjastamisel, 50% töö alustamisel",
+			"recommended": "Soovitatud",
+			"mostPopular": "Kõige populaarsem",
+			"upfront": "ette",
+			"free": "Tasuta",
+			"noUpfront": "ettemaksu pole",
+			"doctors": "Arstid",
+			"otherProfessionals": "Õed ja teised tervishoiu spetsialistid",
+			"successFee": "Edukustasu",
+			"vatIncluded": "Kõik hinnad sisaldavad 24% KM",
+			"vatAdded": "KM lisatakse hindadele",
+			"selectPlan": "Vali plaan",
+			"creating": "Loon...",
+			"customTitle": "Vajad kohandatud lahendust?",
+			"customDescription": "Võta meiega ühendust, et arutada oma spetsiifilisi nõudeid ja saada kohandatud plaan.",
+			"requestCustom": "Taotle kohandatud plaani",
+			"couponLabel": "Kupongi kood (valikuline)",
+			"couponPlaceholder": "Sisesta kupongi kood",
+			"confirmTitle": "Kinnita tellimus",
+			"confirmDescription": "Me arvestame selle plaani eest {{amount}} {{currency}} iga kuu.",
+			"confirmDescriptionFree": "Kogume sinu andmeid tellimuse kinnitamiseks. Ette maksu pole vaja.",
+			"planDetails": "Plaani üksikasjad",
+			"planName": "Plaan",
+			"monthlyFee": "Kuutasu",
+			"cancel": "Tühista",
+			"confirm": "Kinnita tellimus",
+			"planNames": {
+				"riskFreeStarter": "Riskivaba alustaja",
+				"smartPlan": "Nutikas plaan",
+				"superPlan": "Super plaan"
+			},
+			"planDescriptions": {
+				"riskFreeStarter": "Suurepärane teenuse proovimiseks ilma ettemaksuta. Maksa ainult siis, kui leiad sobiva kandidaadi.",
+				"smartPlan": "Tasakaalustatud lähenemine mõõduka ettemaksuga ja konkurentsivõimeliste edukustasusid.",
+				"superPlan": "Premium teenus kõrgema ettemaksuga ja madalamate edukustasusid."
+			}
 		}
 	}
 }

@@ -555,6 +555,44 @@
 			"actions": "Aktionen",
 			"downloadPdf": "PDF herunterladen",
 			"viewOnline": "Online ansehen"
+		},
+		"planSelection": {
+			"paymentInfo": "Geteilte Zahlung: 50% bei Kandidatenunterzeichnung, 50% bei Arbeitsbeginn",
+			"recommended": "Empfohlen",
+			"mostPopular": "Am beliebtesten",
+			"upfront": "Vorauszahlung",
+			"free": "Kostenlos",
+			"noUpfront": "keine Vorauszahlung",
+			"doctors": "Ärzte",
+			"otherProfessionals": "Krankenschwestern und andere Fachkräfte",
+			"successFee": "Erfolgsgebühr",
+			"vatIncluded": "Alle Preise inklusive 24% MwSt.",
+			"vatAdded": "MwSt. wird zu den Preisen hinzugefügt",
+			"selectPlan": "Plan auswählen",
+			"creating": "Erstelle...",
+			"customTitle": "Benötigen Sie eine maßgeschneiderte Lösung?",
+			"customDescription": "Kontaktieren Sie uns, um Ihre spezifischen Anforderungen zu besprechen und einen maßgeschneiderten Plan zu erhalten.",
+			"requestCustom": "Maßgeschneiderten Plan anfordern",
+			"couponLabel": "Gutscheincode (Optional)",
+			"couponPlaceholder": "Gutscheincode eingeben",
+			"confirmTitle": "Abonnement bestätigen",
+			"confirmDescription": "Wir werden Ihnen {{amount}} {{currency}} jeden Monat für diesen Plan berechnen.",
+			"confirmDescriptionFree": "Wir sammeln Ihre Daten zur Bestätigung Ihres Abonnements. Keine Vorauszahlung erforderlich.",
+			"planDetails": "Plan-Details",
+			"planName": "Plan",
+			"monthlyFee": "Monatliche Gebühr",
+			"cancel": "Abbrechen",
+			"confirm": "Abonnement bestätigen",
+			"planNames": {
+				"riskFreeStarter": "Risikofreier Starter",
+				"smartPlan": "Smart Plan",
+				"superPlan": "Super Plan"
+			},
+			"planDescriptions": {
+				"riskFreeStarter": "Perfekt zum Ausprobieren unseres Services ohne Vorauszahlung. Zahlen Sie nur bei erfolgreicher Einstellung.",
+				"smartPlan": "Ausgewogener Ansatz mit moderaten Vorauszahlungen und wettbewerbsfähigen Erfolgsgebühren.",
+				"superPlan": "Premium-Service mit höherer Vorauszahlung und niedrigeren Erfolgsgebühren."
+			}
 		}
 	}
 }

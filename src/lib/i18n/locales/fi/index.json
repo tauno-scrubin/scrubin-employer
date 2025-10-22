@@ -552,6 +552,44 @@
 			"actions": "Toiminnot",
 			"downloadPdf": "Lataa PDF",
 			"viewOnline": "Näytä verkossa"
+		},
+		"planSelection": {
+			"paymentInfo": "Jaettu maksu: 50% kun ehdokas allekirjoittaa, 50% kun he aloittavat",
+			"recommended": "Suositeltu",
+			"mostPopular": "Suosituin",
+			"upfront": "ennakkoon",
+			"free": "Ilmainen",
+			"noUpfront": "ei ennakkomaksua",
+			"doctors": "Lääkärit",
+			"otherProfessionals": "Sairaanhoitajat ja muut ammattilaiset",
+			"successFee": "Onnistumismaksu",
+			"vatIncluded": "Kaikki hinnat sisältävät 24% ALV",
+			"vatAdded": "ALV lisätään hintoihin",
+			"selectPlan": "Valitse suunnitelma",
+			"creating": "Luodaan...",
+			"customTitle": "Tarvitsetko mukautetun ratkaisun?",
+			"customDescription": "Ota yhteyttä keskustellaksesi erityisistä tarpeistasi ja saadaksesi räätälöidyn suunnitelman.",
+			"requestCustom": "Pyydä mukautettua suunnitelmaa",
+			"couponLabel": "Kuponkikoodi (valinnainen)",
+			"couponPlaceholder": "Syötä kuponkikoodi",
+			"confirmTitle": "Vahvista tilaus",
+			"confirmDescription": "Veloitamme {{amount}} {{currency}} kuukaudessa tästä suunnitelmasta.",
+			"confirmDescriptionFree": "Keräämme tietosi tilauksen vahvistamiseksi. Ennakkomaksua ei tarvita.",
+			"planDetails": "Suunnitelman tiedot",
+			"planName": "Suunnitelma",
+			"monthlyFee": "Kuukausimaksu",
+			"cancel": "Peruuta",
+			"confirm": "Vahvista tilaus",
+			"planNames": {
+				"riskFreeStarter": "Riskitön aloittaja",
+				"smartPlan": "Älykäs suunnitelma",
+				"superPlan": "Super suunnitelma"
+			},
+			"planDescriptions": {
+				"riskFreeStarter": "Täydellinen palvelumme kokeilemiseen ilman ennakkomaksua. Maksa vain kun palkkaat.",
+				"smartPlan": "Tasapainotettu lähestymistapa kohtuullisella ennakkomaksulla ja kilpailukykyisillä onnistumismaksuilla.",
+				"superPlan": "Premium-palvelu korkeammalla ennakkoinvestoinnilla ja alhaisemmilla onnistumismaksuilla."
+			}
 		}
 	}
 }
