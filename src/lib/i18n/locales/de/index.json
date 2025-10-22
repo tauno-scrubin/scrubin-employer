@@ -558,6 +558,7 @@
 		},
 		"planSelection": {
 			"paymentInfo": "Geteilte Zahlung: 50% bei Kandidatenunterzeichnung, 50% bei Arbeitsbeginn",
+			"terms": "Durch die Bestätigung stimmen Sie unseren <a href='https://scrubin.io/terms-and-conditions' target='_blank'>Nutzungsbedingungen</a> und <a href='https://scrubin.io/privacy-policy' target='_blank'>Datenschutzrichtlinien</a> zu",
 			"recommended": "Empfohlen",
 			"mostPopular": "Am beliebtesten",
 			"upfront": "Vorauszahlung",

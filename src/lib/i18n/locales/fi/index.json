@@ -560,6 +560,7 @@
 			"upfront": "ennakkoon",
 			"free": "Ilmainen",
 			"noUpfront": "ei ennakkomaksua",
+			"terms": "Vahvistamalla hyväksyt <a href='https://scrubin.io/terms-and-conditions' target='_blank'>käyttöehdot</a> ja <a href='https://scrubin.io/privacy-policy' target='_blank'>tietosuojakäytännöt</a>",
 			"doctors": "Lääkärit",
 			"otherProfessionals": "Sairaanhoitajat ja muut ammattilaiset",
 			"successFee": "Onnistumismaksu",

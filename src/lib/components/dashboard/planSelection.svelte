@@ -434,7 +434,14 @@
 								<span>{$t('pricing.planSelection.paymentInfo')}</span>
 							</div>
 						</div>
-					</div>
+
+            <div class="mt-3 pt-3">
+							<div class="flex items-center gap-2 text-xs text-muted-foreground">
+								<CheckCircle class="h-3 w-3" />
+								<span>{@html $t('pricing.planSelection.terms')}</span>
+							</div>
+						</div>
+          </div>
 				</div>
 
 				<!-- Payment Method Selection -->
