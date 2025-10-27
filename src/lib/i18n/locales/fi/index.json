@@ -468,8 +468,8 @@
 		}
 	},
 	"pricing": {
-		"title": "Hinnoittelusuunnitelmat",
-		"subtitle": "Valitse ratkaisu, joka toimii parhaiten terveydenhuollon rekrytointitarpeisiisi",
+		"title": "Valitse Rekrytointisuunnitelmasi",
+		"subtitle": "Joustava hinnoittelu terveydenhuoltoorganisaatioille kaikista kooista — pienistä lääkäriasemista suuriin ryhmiin tai sairaaloihin. Jokainen suunnitelma sisältää vahvistettuja ehdokkaita, tekoälyavusteista hakuprosessia ja älykkäitä vastaavuusratkaisuja molempien osapuolten toiveiden, tarpeiden, mieltymysten, taitojen ja roolivaatimusten perusteella.",
 		"activePlans": {
 			"title": "Aktiiviset suunnitelmasi",
 			"activeSince": "Aktiivinen alkaen",
@@ -496,7 +496,7 @@
 			"startPlan": "Aloita suunnitelma",
 			"successFees": "Onnistumismaksut",
 			"vatLabel": "(+{{percentage}}% ALV)",
-			"successFeeNotice": "Onnistumismaksu maksetaan kuukausittaisissa erissä jokaisesta onnistuneesti palkatusta ehdokkaasta, kun molemmat osapuolet vahvistavat, että ehdokas on aloittanut työskentelyn, ja se jatkuu niin kauan kuin ehdokas työskentelee siellä"
+			"successFeeNotice": "Onnistumismaksu maksetaan jaetulla maksulla: 50% kun ehdokas allekirjoittaa, 50% kun he aloittavat"
 		},
 		"customSolutions": {
 			"title": "MUKAUTETUT RATKAISUT",
@@ -607,9 +607,31 @@
 				"sendMessageButton": "Lähetä viesti"
 			},
 			"planDescriptionsStatic": {
-				"starter": "Täydellinen aloittamiseen perusrekrytointitarpeilla",
-				"smart": "Edistyneet ominaisuudet kasvaville yrityksille",
-				"enterprise": "Räätälöidyt ratkaisut yritystarpeisiin"
+				"starter": "Pienille klinikoille, jotka palkkaavat 1–2 lääkäriä tai sairaanhoitajaa vuodessa.",
+				"smart": "Kasvaville klinikoille, joilla on säännöllisiä rekrytointitarpeita.",
+				"enterprise": "Terveydenhuollon organisaatioille (10+ palkkaukset vuodessa)."
+			},
+			"paymentTerms": {
+				"UK": {
+					"paymentSchedule": "50% ehdokkaan vahvistamisen yhteydessä, 50% aloituspäivänä",
+					"installments": "Menestyspalkkio voidaan laskuttaa kokonaan tai joustavasti jopa £500 erissä",
+					"taxInfo": "Kaikki hinnat eivät sisällä arvonlisäveroa, jos ostetaan Yhdistyneen kuningaskunnan yrityksenä"
+				},
+				"AU": {
+					"paymentSchedule": "50% ehdokkaan allekirjoituksen yhteydessä, 50% aloituspäivänä",
+					"installments": "Menestyspalkkio voidaan laskuttaa kokonaan tai joustavasti $2,500 erissä",
+					"taxInfo": "Kaikki hinnat eivät sisällä GST:tä, jos ostetaan australialaisena yrityksenä"
+				},
+				"EE": {
+					"paymentSchedule": "50% ehdokkaan vahvistamisen yhteydessä, 50% aloituspäivänä",
+					"installments": "Menestyspalkkio voidaan laskuttaa kokonaan tai joustavasti jopa €500 erissä",
+					"taxInfo": "Kaikki hinnat eivät sisällä arvonlisäveroa"
+				},
+				"OTHER": {
+					"paymentSchedule": "50% ehdokkaan vahvistamisen yhteydessä, 50% aloituspäivänä",
+					"installments": "Menestyspalkkio voidaan laskuttaa kokonaan tai joustavasti jopa €500 erissä",
+					"taxInfo": "Kaikki hinnat eivät sisällä arvonlisäveroa, jos ostetaan EU-yrityksenä"
+				}
 			},
 			"paymentMethod": "Maksutapa",
 			"contactUs": "Ota yhteyttä",
@@ -617,6 +639,21 @@
 			"starterName": "Aloittelija",
 			"smartName": "Älykäs",
 			"vat": "ALV",
+			"custom": "Mukautettu",
+			"paymentTermsTitle": "Maksuehdot",
+			"paymentSchedule": "Maksuaikataulu",
+			"installments": "Osamaksut",
+			"taxInfo": "Verotiedot",
+			"monthlyAccountFee": "Kuukausimaksu",
+			"monthlyAccountFeeDescription": "Kuukausimaksu alustan käyttöoikeudesta ja ominaisuuksista",
+			"successFeeDescription": "Kertamaksu, joka maksetaan vain onnistuneen rekrytoinnin yhteydessä",
+			"includedFeatures": "Sisältyvät Ominaisuudet",
+			"features": {
+				"aiOffers": "Automatisoidut tekoälypohjaiset työtarjoukset",
+				"candidateMatching": "Älykäs ehdokkaiden sovittamisalgoritmi",
+				"verifiedPool": "Vahvistettu terveydenhuoltoammattilaisten pooli",
+				"analytics": "Rekrytointianalyysit ja oivallukset"
+			},
 			"toast": {
 				"planNotAvailable": "Suunnitelma ei ole saatavilla tilaukseen",
 				"subscriptionCreated": "Tilaus luotu onnistuneesti!",

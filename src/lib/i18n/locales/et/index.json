@@ -466,8 +466,8 @@
 		}
 	},
 	"pricing": {
-		"title": "Hinnapaketid",
-		"subtitle": "Vali lahendus, mis sobib kõige paremini sinu tervishoiutöötajate värbamise vajadustega",
+		"title": "Vali oma värbamisplaan",
+		"subtitle": "Paindlik hinnastamine tervishoiuorganisatsioonidele kõikidest suurustest — väikestest perearsti kabinettidest kuni suurte gruppide või haiglateni. Iga plaan sisaldab kontrollitud kandidaate, AI-abilist otsingul ja nutikat sobivust mõlema poole soovide, vajaduste, eelistuste, oskuste ja rollinõuete põhjal.",
 		"activePlans": {
 			"title": "Sinu aktiivsed paketid",
 			"activeSince": "Aktiivne alates",
@@ -495,7 +495,7 @@
 			"startPlan": "Alusta paketti",
 			"successFees": "Edukustasud",
 			"vatLabel": "(+{{percentage}}% KM)",
-			"successFeeNotice": "Edukustasu makstakse igakuiste osamaksetena iga eduka kandidaadi eest, kui mõlemad osapooled kinnitavad, et kandidaat on alustanud tööd, ja jätkub seni, kuni kandidaat seal töötab"
+			"successFeeNotice": "Edukustasu makstakse jagatud maksega: 50% kandidaadi allkirjastamisel, 50% töö alustamisel"
 		},
 		"customSolutions": {
 			"title": "KOHANDATUD LAHENDUSED",
@@ -606,9 +606,31 @@
 				"sendMessageButton": "Saada sõnum"
 			},
 			"planDescriptionsStatic": {
-				"starter": "Suurepärane alustamiseks põhivärbamisvajadustega",
-				"smart": "Täiustatud funktsioonid kasvavatele ettevõtetele",
-				"enterprise": "Kohandatud lahendused ettevõtte vajadustele"
+				"starter": "Sobib väiksematele kliinikutele, kes palkavad 1–2 töötajat aastas.",
+				"smart": "Kasvavatele kliinikutele regulaarse värbamisvajadusega (3-9 töötajat aastas)",
+				"enterprise": "Suurematele tervishoiuasutustele (10+ värbamist aastas)."
+			},
+			"paymentTerms": {
+				"UK": {
+					"paymentSchedule": "50% kandidaadi kinnitamisel, 50% tööle asumisel",
+					"installments": "Tulemustasu võib tasuda täissummas või paindlikult kuni £500 kaupa",
+					"taxInfo": "Kõik hinnad on ilma käibemaksuta Ühendkuningriigi ettevõtetele"
+				},
+				"AU": {
+					"paymentSchedule": "50% kandidaadi allkirjastamisel, 50% tööle asumisel",
+					"installments": "Tulemustasu võib tasuda täissummas või paindlikult $2,500 kaupa",
+					"taxInfo": "Kõik hinnad on ilma GST-ta Austraalia ettevõtetele"
+				},
+				"EE": {
+					"paymentSchedule": "50% kandidaadi kinnitamisel, 50% tööle asumisel",
+					"installments": "Tulemustasu võib tasuda täissummas või paindlikult kuni €500 kaupa",
+					"taxInfo": "Kõik hinnad on ilma käibemaksuta (KM)"
+				},
+				"OTHER": {
+					"paymentSchedule": "50% kandidaadi kinnitamisel, 50% tööle asumisel",
+					"installments": "Tulemustasu võib tasuda täissummas või paindlikult kuni €500 kaupa",
+					"taxInfo": "Kõik hinnad on ilma käibemaksuta EL ettevõtetele"
+				}
 			},
 			"paymentMethod": "Makseviis",
 			"contactUs": "Võta meiega ühendust",
@@ -616,6 +638,21 @@
 			"starterName": "Alustaja",
 			"smartName": "Nutikas",
 			"vat": "KM",
+			"custom": "Kohandatud",
+			"paymentTermsTitle": "Maksetingimused",
+			"paymentSchedule": "Maksegraafik",
+			"installments": "Osamaksed",
+			"taxInfo": "Maksuinfo",
+			"monthlyAccountFee": "Kuu kontotasu",
+			"monthlyAccountFeeDescription": "Kuu tellimustasu platvormi juurdepääsu ja teenuste eest",
+			"successFeeDescription": "Ühekordne tasu, mida makstakse ainult kandidaadi edukal palkamisel",
+			"includedFeatures": "Paketis sisaldub",
+			"features": {
+				"aiOffers": "AI-toel automatiseeritud pakkumised",
+				"candidateMatching": "Nutikas kandidaatide sobivuse algoritm",
+				"verifiedPool": "Kontrollitud tervishoiuspetsialistid",
+				"analytics": "Värbamise analüütika ja ülevaated"
+			},
 			"toast": {
 				"planNotAvailable": "Plaan pole tellimiseks saadaval",
 				"subscriptionCreated": "Tellimus loodud edukalt!",

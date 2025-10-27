@@ -466,8 +466,8 @@
 		}
 	},
 	"pricing": {
-		"title": "Planes de precios",
-		"subtitle": "Elija la solución que mejor se adapte a sus necesidades de contratación de personal sanitario",
+		"title": "Elija Su Plan de Reclutamiento",
+		"subtitle": "Precios flexibles diseñados para organizaciones de salud de todos los tamaños — desde pequeñas clínicas de medicina general hasta grandes grupos u hospitales. Cada plan incluye candidatos verificados, búsqueda asistida por IA y coincidencias inteligentes basadas en deseos, necesidades, preferencias, habilidades y requisitos del rol de ambas partes.",
 		"activePlans": {
 			"title": "Sus planes activos",
 			"activeSince": "Activo desde",
@@ -494,7 +494,7 @@
 			"startPlan": "Iniciar plan",
 			"successFees": "Tarifas de éxito",
 			"vatLabel": "(+{{percentage}}% IVA)",
-			"successFeeNotice": "La tarifa de éxito se paga en cuotas mensuales por cada candidato exitoso cuando ambas partes confirman que el candidato ha comenzado a trabajar y continúa mientras el candidato trabaje allí"
+			"successFeeNotice": "La tarifa de éxito se paga en pago dividido: 50% cuando el candidato firma, 50% cuando comienza"
 		},
 		"customSolutions": {
 			"title": "SOLUCIONES PERSONALIZADAS",
@@ -605,9 +605,31 @@
 				"sendMessageButton": "Enviar Mensaje"
 			},
 			"planDescriptionsStatic": {
-				"starter": "Perfecto para comenzar con necesidades básicas de reclutamiento",
-				"smart": "Características avanzadas para empresas en crecimiento",
-				"enterprise": "Soluciones personalizadas para necesidades empresariales"
+				"starter": "Para clínicas pequeñas que contratan 1-2 médicos o enfermeros al año.",
+				"smart": "Para clínicas en crecimiento con necesidades regulares de contratación.",
+				"enterprise": "Para organizaciones de salud (10+ contrataciones al año)."
+			},
+			"paymentTerms": {
+				"UK": {
+					"paymentSchedule": "50% al confirmar candidato, 50% al inicio",
+					"installments": "Tarifa de éxito puede facturarse completa o en cuotas flexibles hasta £500",
+					"taxInfo": "Todos los precios excluyen IVA si se compra como empresa del Reino Unido"
+				},
+				"AU": {
+					"paymentSchedule": "50% al firmar candidato, 50% al inicio",
+					"installments": "Tarifa de éxito puede facturarse completa o en cuotas flexibles de $2,500",
+					"taxInfo": "Todos los precios excluyen GST si se compra como empresa australiana"
+				},
+				"EE": {
+					"paymentSchedule": "50% al confirmar candidato, 50% al inicio",
+					"installments": "Tarifa de éxito puede facturarse completa o en cuotas flexibles hasta €500",
+					"taxInfo": "Todos los precios excluyen IVA"
+				},
+				"OTHER": {
+					"paymentSchedule": "50% al confirmar candidato, 50% al inicio",
+					"installments": "Tarifa de éxito puede facturarse completa o en cuotas flexibles hasta €500",
+					"taxInfo": "Todos los precios excluyen IVA si se compra como empresa de la UE"
+				}
 			},
 			"paymentMethod": "Método de Pago",
 			"contactUs": "Contáctenos",
@@ -615,6 +637,21 @@
 			"starterName": "Inicial",
 			"smartName": "Inteligente",
 			"vat": "IVA",
+			"custom": "Personalizado",
+			"paymentTermsTitle": "Términos de Pago",
+			"paymentSchedule": "Cronograma de Pago",
+			"installments": "Cuotas",
+			"taxInfo": "Información Fiscal",
+			"monthlyAccountFee": "Tarifa Mensual de Cuenta",
+			"monthlyAccountFeeDescription": "Tarifa de suscripción mensual para acceso a la plataforma y funciones",
+			"successFeeDescription": "Tarifa única que se paga solo cuando contratas exitosamente a un candidato",
+			"includedFeatures": "Características Incluidas",
+			"features": {
+				"aiOffers": "Ofertas de trabajo automatizadas con IA",
+				"candidateMatching": "Algoritmo inteligente de coincidencia de candidatos",
+				"verifiedPool": "Pool verificado de profesionales de la salud",
+				"analytics": "Análisis e insights de reclutamiento"
+			},
 			"toast": {
 				"planNotAvailable": "Plan no disponible para suscripción",
 				"subscriptionCreated": "¡Suscripción creada exitosamente!",

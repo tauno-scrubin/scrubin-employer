@@ -468,8 +468,8 @@
 		}
 	},
 	"pricing": {
-		"title": "Plans tarifaires",
-		"subtitle": "Choisissez la solution qui convient le mieux à vos besoins de recrutement en santé",
+		"title": "Choisissez Votre Plan de Recrutement",
+		"subtitle": "Tarification flexible conçue pour les organisations de santé de toutes tailles — des petits cabinets de médecine générale aux grands groupes ou hôpitaux. Chaque plan comprend des candidats vérifiés, un sourcing assisté par IA et un appariement intelligent basé sur les souhaits, besoins, préférences, compétences et exigences de rôle des deux parties.",
 		"activePlans": {
 			"title": "Vos plans actifs",
 			"activeSince": "Actif depuis",
@@ -496,7 +496,7 @@
 			"startPlan": "Démarrer le plan",
 			"successFees": "Frais de succès",
 			"vatLabel": "(+{{percentage}}% TVA)",
-			"successFeeNotice": "Les frais de succès sont payés en versements mensuels pour chaque candidat embauché avec succès lorsque les deux parties confirment que le candidat a commencé à travailler et se poursuivent tant que le candidat y travaille"
+			"successFeeNotice": "Les frais de succès sont payés en paiement divisé : 50% à la signature du candidat, 50% au début du travail"
 		},
 		"customSolutions": {
 			"title": "SOLUTIONS PERSONNALISÉES",
@@ -607,9 +607,31 @@
 				"sendMessageButton": "Envoyer le Message"
 			},
 			"planDescriptionsStatic": {
-				"starter": "Parfait pour commencer avec des besoins de recrutement de base",
-				"smart": "Fonctionnalités avancées pour les entreprises en croissance",
-				"enterprise": "Solutions personnalisées pour les besoins d'entreprise"
+				"starter": "Pour les petites cliniques embauchant 1 à 2 médecins ou infirmières par an.",
+				"smart": "Pour les cliniques en croissance avec des besoins réguliers de recrutement.",
+				"enterprise": "Pour les organisations de santé (10+ embauches par an)."
+			},
+			"paymentTerms": {
+				"UK": {
+					"paymentSchedule": "50% à la confirmation du candidat, 50% à la date de début",
+					"installments": "Frais de réussite peuvent être facturés intégralement ou en mensualités flexibles jusqu'à £500",
+					"taxInfo": "Tous les prix excluent la TVA si achetés en tant qu'entreprise britannique"
+				},
+				"AU": {
+					"paymentSchedule": "50% à la signature du candidat, 50% à la date de début",
+					"installments": "Frais de réussite peuvent être facturés intégralement ou en mensualités flexibles de $2,500",
+					"taxInfo": "Tous les prix excluent la GST si achetés en tant qu'entreprise australienne"
+				},
+				"EE": {
+					"paymentSchedule": "50% à la confirmation du candidat, 50% à la date de début",
+					"installments": "Frais de réussite peuvent être facturés intégralement ou en mensualités flexibles jusqu'à €500",
+					"taxInfo": "Tous les prix excluent la TVA"
+				},
+				"OTHER": {
+					"paymentSchedule": "50% à la confirmation du candidat, 50% à la date de début",
+					"installments": "Frais de réussite peuvent être facturés intégralement ou en mensualités flexibles jusqu'à €500",
+					"taxInfo": "Tous les prix excluent la TVA si achetés en tant qu'entreprise européenne"
+				}
 			},
 			"paymentMethod": "Moyen de Paiement",
 			"contactUs": "Contactez-nous",
@@ -617,6 +639,21 @@
 			"starterName": "Débutant",
 			"smartName": "Intelligent",
 			"vat": "TVA",
+			"custom": "Personnalisé",
+			"paymentTermsTitle": "Conditions de Paiement",
+			"paymentSchedule": "Calendrier de Paiement",
+			"installments": "Versements",
+			"taxInfo": "Informations Fiscales",
+			"monthlyAccountFee": "Frais Mensuels de Compte",
+			"monthlyAccountFeeDescription": "Frais d'abonnement mensuel pour l'accès à la plateforme et aux fonctionnalités",
+			"successFeeDescription": "Frais unique payé uniquement lors d'un recrutement réussi",
+			"includedFeatures": "Fonctionnalités Incluses",
+			"features": {
+				"aiOffers": "Offres d'emploi automatisées alimentées par IA",
+				"candidateMatching": "Algorithme intelligent d'appariement de candidats",
+				"verifiedPool": "Pool vérifié de professionnels de santé",
+				"analytics": "Analyses et insights de recrutement"
+			},
 			"toast": {
 				"planNotAvailable": "Plan non disponible pour l'abonnement",
 				"subscriptionCreated": "Abonnement créé avec succès !",

@@ -471,8 +471,8 @@
 		}
 	},
 	"pricing": {
-		"title": "Pricing Plans",
-		"subtitle": "Choose solution that works best for your healthcare recruitment needs",
+		"title": "Choose Your Recruitment Plan",
+		"subtitle": "Flexible pricing designed for healthcare organisations of all sizes — from small GP clinics to large groups or hospitals. Every plan includes verified candidates, AI-assisted sourcing, and smart matching based on both sides' wants, needs, preferences, skills, and role requirements.",
 		"activePlans": {
 			"title": "Your Active Plans",
 			"activeSince": "Active since",
@@ -500,7 +500,7 @@
 			"startPlan": "Start Plan",
 			"successFees": "Success Fees",
 			"vatLabel": "(+{{percentage}}% VAT)",
-			"successFeeNotice": "Success fee is paid in monthly installments for every successful candidate when both parties confirm the candidate has started working and continues as long as the candidate works there"
+			"successFeeNotice": "Success fee is paid in split payment: 50% when candidate signs, 50% when they start"
 		},
 		"customSolutions": {
 			"title": "CUSTOM SOLUTIONS",
@@ -611,9 +611,31 @@
 				"sendMessageButton": "Send Message"
 			},
 			"planDescriptionsStatic": {
-				"starter": "Perfect for getting started with basic recruitment needs",
-				"smart": "Advanced features for growing businesses",
-				"enterprise": "Custom solutions for enterprise needs"
+				"starter": "For small clinics hiring 1–2 doctors or nurses a year.",
+				"smart": "For growing clinics with regular hiring needs.",
+				"enterprise": "For healthcare organisations (10+ hires per year)."
+			},
+			"paymentTerms": {
+				"UK": {
+					"paymentSchedule": "50% upon candidate confirmation, 50% upon start date",
+					"installments": "Success fee may be billed in full or flexible up to £500 installments",
+					"taxInfo": "All prices exclude VAT if purchased as a UK business"
+				},
+				"AU": {
+					"paymentSchedule": "50% upon candidate signing, 50% upon start date",
+					"installments": "Success fee may be billed in full or flexible $2,500 installments",
+					"taxInfo": "All prices exclude GST if purchased as an Australian business"
+				},
+				"EE": {
+					"paymentSchedule": "50% upon candidate confirmation, 50% upon start date",
+					"installments": "Success fee may be billed in full or flexible up to €500 installments",
+					"taxInfo": "All prices exclude VAT (KM)"
+				},
+				"OTHER": {
+					"paymentSchedule": "50% upon candidate confirmation, 50% upon start date",
+					"installments": "Success fee may be billed in full or flexible up to €500 installments",
+					"taxInfo": "All prices exclude VAT if purchased as an EU business"
+				}
 			},
 			"paymentMethod": "Payment Method",
 			"contactUs": "Contact Us",
@@ -621,6 +643,21 @@
 			"starterName": "Starter",
 			"smartName": "Smart",
 			"vat": "VAT",
+			"custom": "Custom",
+			"paymentTermsTitle": "Payment Terms",
+			"paymentSchedule": "Payment Schedule",
+			"installments": "Installments",
+			"taxInfo": "Tax Information",
+			"monthlyAccountFee": "Monthly Account Fee",
+			"monthlyAccountFeeDescription": "Monthly subscription fee for platform access and features",
+			"successFeeDescription": "One-time fee paid only when you successfully hire a candidate",
+			"includedFeatures": "Included Features",
+			"features": {
+				"aiOffers": "Automated AI-powered job offers",
+				"candidateMatching": "Smart candidate matching algorithm",
+				"verifiedPool": "Verified healthcare professional pool",
+				"analytics": "Recruitment analytics & insights"
+			},
 			"toast": {
 				"planNotAvailable": "Plan not available for subscription",
 				"subscriptionCreated": "Subscription created successfully!",

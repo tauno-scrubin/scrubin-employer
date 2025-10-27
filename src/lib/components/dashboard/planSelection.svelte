@@ -11,21 +11,31 @@
 	} from '$lib/components/ui/card';
 	import { Badge } from '$lib/components/ui/badge';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
+	import * as Popover from '$lib/components/ui/popover/index.js';
 	import { t } from '$lib/i18n';
 	import { scrubinClient } from '@/scrubinClient/client.js';
 	import type {
 		AvailablePlansResponse,
 		AvailablePlan,
-		CreateSubscriptionRequest
+		CreateSubscriptionRequest,
+		Company
 	} from '@/scrubinClient/index.js';
 	import {
-		CheckCircle,
 		Sparkles,
 		Stethoscope,
 		Users,
 		CreditCard,
 		FileText,
-		AlertCircle
+		AlertCircle,
+		Calendar,
+		CheckCircle,
+		Info,
+		Receipt,
+		Zap,
+		Shield,
+		Target,
+		TrendingUp,
+		Loader2
 	} from 'lucide-svelte';
 	import { toast } from 'svelte-sonner';
 
@@ -49,6 +59,7 @@
 	let confirmationDialogOpen = $state(false);
 	let planToSubscribe: AvailablePlan | null = $state(null);
 	let selectedPaymentMethod = $state<'card' | 'invoice'>('card');
+	let companyInfo: Company | null = $state(null);
 
 	// Enterprise contact dialog state
 	let contactDialogOpen = $state(false);
@@ -80,6 +91,37 @@
 		return '';
 	};
 
+	const getPaymentTerms = (): { schedule: string; installments: string; tax: string } | null => {
+		if (!companyInfo) return null;
+
+		const country = companyInfo.country;
+		let countryKey = 'OTHER';
+
+		// Map country to specific key
+		if (country === 'Estonia') {
+			countryKey = 'EE';
+		} else if (country === 'United Kingdom') {
+			countryKey = 'UK';
+		} else if (country === 'Australia') {
+			countryKey = 'AU';
+		}
+
+		// Access translation keys individually
+		const schedule = $t(`pricing.planSelection.paymentTerms.${countryKey}.paymentSchedule`);
+		const installments = $t(`pricing.planSelection.paymentTerms.${countryKey}.installments`);
+		const tax = $t(`pricing.planSelection.paymentTerms.${countryKey}.taxInfo`);
+
+		// Check if any translation was found (if not, it returns the key itself)
+		if (schedule && !schedule.includes('pricing.planSelection.paymentTerms')) {
+			return {
+				schedule,
+				installments,
+				tax
+			};
+		}
+		return null;
+	};
+
 	// Recommendation logic - Smart plan (second paid plan) is always recommended
 	const isRecommendedPlan = (plan: AvailablePlan): boolean => {
 		if (plan.planId === -1) return false;
@@ -96,7 +138,11 @@
 			isLoading = true;
 			error = null;
 
-			const response = await scrubinClient.company.getAvailablePlansV2();
+			const [response, company] = await Promise.all([
+				scrubinClient.company.getAvailablePlansV2(),
+				scrubinClient.company.getCompany()
+			]);
+			companyInfo = company;
 			let plans = response.plans.sort((a, b) => a.baseFee.amount - b.baseFee.amount);
 
 			// If we only have 2 plans, add a custom enterprise plan (sorted last visually)
@@ -237,8 +283,8 @@
 
 <div class="mx-auto w-full max-w-screen-xl space-y-8 pb-12">
 	{#if isLoading}
-		<div class="flex items-center justify-center py-12">
-			<div class="h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
+		<div class="flex h-40 items-center justify-center">
+			<Loader2 class="h-5 w-5 animate-spin text-primary/70" />
 		</div>
 	{:else if error}
 		<div
@@ -248,13 +294,14 @@
 		</div>
 	{:else}
 		<!-- Plans Grid -->
-		<div class="grid grid-cols-1 gap-6 md:grid-cols-3">
+		<div class="grid grid-cols-1 items-start gap-6 md:grid-cols-3">
 			{#each availablePlans as plan}
 				{@const planName = getPlanName(plan)}
 				{@const planDescription = getPlanDescription(plan)}
 				{@const isRecommended = isRecommendedPlan(plan)}
+				{@const paymentTerms = getPaymentTerms()}
 
-				<div class="relative">
+				<div class="relative flex h-full flex-col">
 					{#if isRecommended}
 						<!-- Most Popular badge positioned outside and above the card -->
 						<div class="mb-4 flex justify-center">
@@ -269,30 +316,47 @@
 						<div class="mb-4 h-8"></div>
 					{/if}
 					<Card
-						class="relative flex h-full min-h-[350px] flex-col overflow-hidden transition-all hover:shadow-lg {isRecommended
-							? 'ring-1 ring-blue-500 ring-opacity-50'
-							: ''}"
+						class="relative flex h-full flex-col overflow-hidden transition-all hover:shadow-lg"
 					>
 						<CardHeader class="pb-4">
 							<div class="flex items-center justify-between">
 								<CardTitle class="text-xl">{planName}</CardTitle>
 								{#if plan.planId === -1}
-									<!-- <div class="text-right">
-										<div class="text-2xl font-bold text-primary">
+									<div class="text-right">
+										<div class="text-sm font-semibold text-primary">
 											{$t('pricing.planSelection.contactUs')}
 										</div>
-									</div> -->
+									</div>
 								{:else if plan.baseFee.amount > 0}
 									<div class="text-right">
-										<div class="text-2xl font-bold">
-											{plan.baseFee.amount}
-											{getCurrencySymbol(plan.baseFee.currency)}
-											{#if plan.baseFee.vatAmount && plan.baseFee.vatAmount > 0}
-												<span class="text-xs font-normal text-muted-foreground"
-													>(+{$t('pricing.planSelection.vat')})</span
-												>
-											{/if}
-										</div>
+										<Popover.Root>
+											<Popover.Trigger>
+												<div class="flex cursor-pointer items-center justify-end gap-2">
+													<Button variant="ghost" size="sm" class="h-6 w-6 p-0 hover:bg-muted">
+														<Info class="h-3 w-3 text-muted-foreground" />
+													</Button>
+													<div class="text-2xl font-bold">
+														{plan.baseFee.amount}
+														{getCurrencySymbol(plan.baseFee.currency)}
+														{#if plan.baseFee.vatAmount && plan.baseFee.vatAmount > 0}
+															<span class="text-xs font-normal text-muted-foreground"
+																>(+{$t('pricing.planSelection.vat')})</span
+															>
+														{/if}
+													</div>
+												</div>
+											</Popover.Trigger>
+											<Popover.Content class="w-80">
+												<div class="space-y-2">
+													<h4 class="text-sm font-medium">
+														{$t('pricing.planSelection.monthlyAccountFee')}
+													</h4>
+													<p class="text-xs text-muted-foreground">
+														{$t('pricing.planSelection.monthlyAccountFeeDescription')}
+													</p>
+												</div>
+											</Popover.Content>
+										</Popover.Root>
 									</div>
 								{:else}
 									<div class="text-right">
@@ -308,95 +372,114 @@
 						</CardHeader>
 
 						<CardContent class="flex-1 space-y-6">
-							{#if plan.planId === -1}
-								<!-- Custom Enterprise Plan Content -->
-								<div class="space-y-4">
+							<!-- Plan Features -->
+							<div class="space-y-3">
+								<h4 class="text-sm font-semibold text-foreground">
+									{$t('pricing.planSelection.includedFeatures')}
+								</h4>
+								<div class="space-y-2">
 									<div class="flex items-center gap-2">
-										<Sparkles class="h-4 w-4 text-primary" />
-										<span class="text-sm font-medium"
-											>{$t('pricing.planSelection.enterprise.customPricing')}</span
+										<Zap class="h-4 w-4 text-blue-500" />
+										<span class="text-sm text-muted-foreground"
+											>{$t('pricing.planSelection.features.aiOffers')}</span
 										>
 									</div>
-									<div class="space-y-2 text-sm">
-										<div class="text-muted-foreground">
-											{$t('pricing.planSelection.enterprise.customPricingDescription')}
-										</div>
+									<div class="flex items-center gap-2">
+										<Target class="h-4 w-4 text-green-500" />
+										<span class="text-sm text-muted-foreground"
+											>{$t('pricing.planSelection.features.candidateMatching')}</span
+										>
 									</div>
+									<div class="flex items-center gap-2">
+										<Shield class="h-4 w-4 text-purple-500" />
+										<span class="text-sm text-muted-foreground"
+											>{$t('pricing.planSelection.features.verifiedPool')}</span
+										>
+									</div>
+									<div class="flex items-center gap-2">
+										<TrendingUp class="h-4 w-4 text-orange-500" />
+										<span class="text-sm text-muted-foreground"
+											>{$t('pricing.planSelection.features.analytics')}</span
+										>
+									</div>
+								</div>
+							</div>
+
+							<!-- Success Fees - Clean Design -->
+							<div class="mt-auto space-y-3 border-t border-border pt-4">
+								<div class="flex items-center gap-2">
+									<CheckCircle class="h-4 w-4 text-primary" />
+									<h4 class="text-sm font-semibold text-foreground">
+										{$t('pricing.planSelection.successFee')}
+									</h4>
 								</div>
 
-								<div class="space-y-4">
-									<div class="flex items-center gap-2">
-										<Users class="h-4 w-4 text-primary" />
-										<span class="text-sm font-medium"
-											>{$t('pricing.planSelection.enterprise.dedicatedSupport')}</span
-										>
-									</div>
-									<div class="space-y-2 text-sm">
-										<div class="text-muted-foreground">
-											{$t('pricing.planSelection.enterprise.dedicatedSupportDescription')}
-										</div>
-									</div>
-								</div>
-							{:else}
-								<!-- Success Fees -->
-								<div class="space-y-4">
-									<div class="flex items-center gap-2">
-										<Stethoscope class="h-4 w-4 text-primary" />
-										<span class="text-sm font-medium">{$t('pricing.planSelection.doctors')}</span>
-									</div>
-									<div class="space-y-2 text-sm">
-										<div class="flex justify-between">
-											<span class="text-muted-foreground"
-												>{$t('pricing.planSelection.successFee')}:</span
-											>
-											<span class="font-medium">
-												{plan.successFeeDoctor.amount}
-												{getCurrencySymbol(plan.successFeeDoctor.currency)}
-												{#if plan.successFeeDoctor.vatAmount && plan.successFeeDoctor.vatAmount > 0}
-													<span class="text-xs font-normal text-muted-foreground"
-														>(+{$t('pricing.planSelection.vat')})</span
+								<div class="space-y-3">
+									<p class="text-xs text-muted-foreground">
+										{$t('pricing.planSelection.successFeeDescription')}
+									</p>
+
+									<div class="space-y-2">
+										{#if plan.planId === -1}
+											<!-- Enterprise - Custom pricing -->
+											<!-- Doctors Box -->
+											<div class="flex items-center justify-between">
+												<div class="flex items-center gap-2">
+													<Stethoscope class="h-4 w-4 text-blue-500" />
+													<span class="text-sm font-medium text-foreground"
+														>{$t('pricing.planSelection.doctors')}</span
 													>
-												{/if}
-											</span>
-										</div>
-									</div>
-								</div>
+												</div>
+												<span class="text-sm font-semibold text-muted-foreground">
+													{$t('pricing.planSelection.custom')}
+												</span>
+											</div>
 
-								<div class="space-y-4">
-									<div class="flex items-center gap-2">
-										<Users class="h-4 w-4 text-primary" />
-										<span class="text-sm font-medium"
-											>{$t('pricing.planSelection.otherProfessionals')}</span
-										>
-									</div>
-									<div class="space-y-2 text-sm">
-										<div class="flex justify-between">
-											<span class="text-muted-foreground"
-												>{$t('pricing.planSelection.successFee')}:</span
-											>
-											<span class="font-medium">
-												{plan.successFeeOther.amount}
-												{getCurrencySymbol(plan.successFeeOther.currency)}
-												{#if plan.successFeeOther.vatAmount && plan.successFeeOther.vatAmount > 0}
-													<span class="text-xs font-normal text-muted-foreground"
-														>(+{$t('pricing.planSelection.vat')})</span
+											<!-- Nurses Box -->
+											<div class="flex items-center justify-between">
+												<div class="flex items-center gap-2">
+													<Users class="h-4 w-4 text-green-500" />
+													<span class="text-sm font-medium text-foreground"
+														>{$t('pricing.planSelection.otherProfessionals')}</span
 													>
-												{/if}
-											</span>
-										</div>
-									</div>
-								</div>
-							{/if}
+												</div>
+												<span class="text-sm font-semibold text-muted-foreground">
+													{$t('pricing.planSelection.custom')}
+												</span>
+											</div>
+										{:else}
+											<!-- Regular plans - Show actual pricing -->
+											<!-- Doctors Box -->
+											<div class="flex items-center justify-between">
+												<div class="flex items-center gap-2">
+													<Stethoscope class="h-4 w-4 text-blue-500" />
+													<span class="text-sm font-medium text-foreground"
+														>{$t('pricing.planSelection.doctors')}</span
+													>
+												</div>
+												<span class="text-sm font-semibold text-foreground">
+													{plan.successFeeDoctor.amount}
+													{getCurrencySymbol(plan.successFeeDoctor.currency)}
+												</span>
+											</div>
 
-							<!-- Payment Information -->
-							{#if plan.planId !== -1}
-								<div class="rounded-md bg-muted/50 p-3">
-									<div class="flex items-center gap-2 text-xs text-muted-foreground">
-										<CheckCircle class="h-3 w-3" />
-										<span>{$t('pricing.planSelection.paymentInfo')}</span>
+											<!-- Nurses Box -->
+											<div class="flex items-center justify-between">
+												<div class="flex items-center gap-2">
+													<Users class="h-4 w-4 text-green-500" />
+													<span class="text-sm font-medium text-foreground"
+														>{$t('pricing.planSelection.otherProfessionals')}</span
+													>
+												</div>
+												<span class="text-sm font-semibold text-foreground">
+													{plan.successFeeOther.amount}
+													{getCurrencySymbol(plan.successFeeOther.currency)}
+												</span>
+											</div>
+										{/if}
 									</div>
 								</div>
-							{/if}
+							</div>
 						</CardContent>
 
 						<CardFooter class="mt-auto pt-0">
@@ -428,6 +511,54 @@
 				</div>
 			{/each}
 		</div>
+
+		<!-- Global Payment Terms Section -->
+		{#if getPaymentTerms()}
+			{@const paymentTerms = getPaymentTerms()!}
+			<div class="w-full space-y-4 rounded-lg border border-border bg-muted/20 p-6">
+				<div class="flex items-center gap-2">
+					<Info class="h-4 w-4 text-muted-foreground" />
+					<h3 class="text-sm font-medium text-muted-foreground">
+						{$t('pricing.planSelection.paymentTermsTitle')}
+					</h3>
+				</div>
+				<div class="grid gap-4 md:grid-cols-3">
+					{#if paymentTerms.schedule}
+						<div class="space-y-2">
+							<div class="flex items-center gap-2">
+								<Calendar class="h-4 w-4 text-blue-500" />
+								<h4 class="text-sm font-medium text-muted-foreground">
+									{$t('pricing.planSelection.paymentSchedule')}
+								</h4>
+							</div>
+							<p class="text-sm text-muted-foreground">{paymentTerms.schedule}</p>
+						</div>
+					{/if}
+					{#if paymentTerms.installments}
+						<div class="space-y-2">
+							<div class="flex items-center gap-2">
+								<CreditCard class="h-4 w-4 text-green-500" />
+								<h4 class="text-sm font-medium text-muted-foreground">
+									{$t('pricing.planSelection.installments')}
+								</h4>
+							</div>
+							<p class="text-sm text-muted-foreground">{paymentTerms.installments}</p>
+						</div>
+					{/if}
+					{#if paymentTerms.tax}
+						<div class="space-y-2">
+							<div class="flex items-center gap-2">
+								<Receipt class="h-4 w-4 text-purple-500" />
+								<h4 class="text-sm font-medium text-muted-foreground">
+									{$t('pricing.planSelection.taxInfo')}
+								</h4>
+							</div>
+							<p class="text-sm text-muted-foreground">{paymentTerms.tax}</p>
+						</div>
+					{/if}
+				</div>
+			</div>
+		{/if}
 
 		<!-- Coupon Code Input -->
 		{#if selectedPlan}

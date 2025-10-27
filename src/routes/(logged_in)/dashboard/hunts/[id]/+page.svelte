@@ -462,20 +462,6 @@
 				{#if hunt.planType === 'success_fee'}
 					<div class="rounded-lg bg-white p-4 shadow-sm">
 						<div class="grid grid-cols-2 gap-6">
-							{#if hunt.startFee?.amount > 0}
-								<div class="flex items-center space-x-4 rounded-lg border p-4">
-									<div class="rounded-full bg-primary/5 p-2">
-										<DollarSign class="h-5 w-5 text-primary" />
-									</div>
-									<div>
-										<p class="text-sm text-muted-foreground">{$t('payment.startFee')}</p>
-										<p class="text-lg font-semibold">
-											{hunt.startFee.amount}
-											{hunt.startFee.currency}
-										</p>
-									</div>
-								</div>
-							{/if}
 							{#if hunt.successFee?.amount > 0}
 								<div class="flex items-center space-x-4 rounded-lg border p-4">
 									<div class="rounded-full bg-green-100 p-2">

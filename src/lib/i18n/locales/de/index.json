@@ -471,8 +471,8 @@
 		}
 	},
 	"pricing": {
-		"title": "Preispläne",
-		"subtitle": "Wählen Sie die Lösung, die am besten zu Ihren Anforderungen für die Gesundheitsrekrutierung passt",
+		"title": "Wählen Sie Ihren Rekrutierungsplan",
+		"subtitle": "Flexible Preisgestaltung für Gesundheitsorganisationen aller Größen — von kleinen Hausarztpraxen bis hin zu großen Gruppen oder Krankenhäusern. Jeder Plan umfasst verifizierte Kandidaten, KI-gestützte Suche und intelligente Zuordnung basierend auf Wünschen, Bedürfnissen, Präferenzen, Fähigkeiten und Rollenanforderungen beider Seiten.",
 		"activePlans": {
 			"title": "Ihre aktiven Pläne",
 			"activeSince": "Aktiv seit",
@@ -499,7 +499,7 @@
 			"startPlan": "Plan starten",
 			"successFees": "Erfolgsgebühren",
 			"vatLabel": "(+{{percentage}}% MwSt.)",
-			"successFeeNotice": "Die Erfolgsgebühr wird in monatlichen Raten für jeden erfolgreich eingestellten Kandidaten gezahlt, wenn beide Parteien bestätigen, dass der Kandidat mit der Arbeit begonnen hat, und setzt sich fort, solange der Kandidat dort arbeitet"
+			"successFeeNotice": "Die Erfolgsgebühr wird in geteilter Zahlung bezahlt: 50% bei Kandidatenunterzeichnung, 50% bei Arbeitsbeginn"
 		},
 		"customSolutions": {
 			"title": "INDIVIDUELLE LÖSUNGEN",
@@ -610,9 +610,31 @@
 				"sendMessageButton": "Nachricht senden"
 			},
 			"planDescriptionsStatic": {
-				"starter": "Perfekt für den Einstieg mit grundlegenden Rekrutierungsbedürfnissen",
-				"smart": "Erweiterte Funktionen für wachsende Unternehmen",
-				"enterprise": "Maßgeschneiderte Lösungen für Unternehmensbedürfnisse"
+				"starter": "Für kleine Kliniken, die 1–2 Ärzte oder Krankenschwestern pro Jahr einstellen.",
+				"smart": "Für wachsende Kliniken mit regelmäßigem Personalbedarf.",
+				"enterprise": "Für Gesundheitsorganisationen (10+ Einstellungen pro Jahr)."
+			},
+			"paymentTerms": {
+				"UK": {
+					"paymentSchedule": "50% bei Kandidatenbestätigung, 50% bei Arbeitsbeginn",
+					"installments": "Erfolgsprämie kann vollständig oder in flexiblen Raten bis zu £500 abgerechnet werden",
+					"taxInfo": "Alle Preise ohne MwSt. bei Kauf als UK-Unternehmen"
+				},
+				"AU": {
+					"paymentSchedule": "50% bei Kandidatenunterschrift, 50% bei Arbeitsbeginn",
+					"installments": "Erfolgsprämie kann vollständig oder in flexiblen $2.500-Raten abgerechnet werden",
+					"taxInfo": "Alle Preise ohne GST bei Kauf als australisches Unternehmen"
+				},
+				"EE": {
+					"paymentSchedule": "50% bei Kandidatenbestätigung, 50% bei Arbeitsbeginn",
+					"installments": "Erfolgsprämie kann vollständig oder in flexiblen Raten bis zu €500 abgerechnet werden",
+					"taxInfo": "Alle Preise ohne MwSt."
+				},
+				"OTHER": {
+					"paymentSchedule": "50% bei Kandidatenbestätigung, 50% bei Arbeitsbeginn",
+					"installments": "Erfolgsprämie kann vollständig oder in flexiblen Raten bis zu €500 abgerechnet werden",
+					"taxInfo": "Alle Preise ohne MwSt. bei Kauf als EU-Unternehmen"
+				}
 			},
 			"paymentMethod": "Zahlungsmethode",
 			"contactUs": "Kontaktieren Sie uns",
@@ -620,6 +642,21 @@
 			"starterName": "Starter",
 			"smartName": "Smart",
 			"vat": "MwSt.",
+			"custom": "Individuell",
+			"paymentTermsTitle": "Zahlungsbedingungen",
+			"paymentSchedule": "Zahlungsplan",
+			"installments": "Ratenzahlung",
+			"taxInfo": "Steuerinformationen",
+			"monthlyAccountFee": "Monatliche Kontogebühr",
+			"monthlyAccountFeeDescription": "Monatliche Abonnementgebühr für Plattformzugang und Funktionen",
+			"successFeeDescription": "Einmalige Gebühr, die nur bei erfolgreicher Einstellung eines Kandidaten gezahlt wird",
+			"includedFeatures": "Enthaltene Funktionen",
+			"features": {
+				"aiOffers": "Automatisierte KI-gestützte Stellenausschreibungen",
+				"candidateMatching": "Intelligenter Kandidaten-Matching-Algorithmus",
+				"verifiedPool": "Verifizierter Pool von Gesundheitsfachkräften",
+				"analytics": "Rekrutierungsanalysen & Einblicke"
+			},
 			"toast": {
 				"planNotAvailable": "Plan nicht für Abonnement verfügbar",
 				"subscriptionCreated": "Abonnement erfolgreich erstellt!",
