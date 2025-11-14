@@ -634,6 +634,10 @@
 				}
 			},
 			"paymentMethod": "Moyen de Paiement",
+			"paymentMethods": {
+				"card": "Carte",
+				"invoice": "Facture"
+			},
 			"contactUs": "Contactez-nous",
 			"enterpriseName": "Entreprise",
 			"starterName": "Débutant",

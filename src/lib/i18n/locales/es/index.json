@@ -632,6 +632,10 @@
 				}
 			},
 			"paymentMethod": "Método de Pago",
+			"paymentMethods": {
+				"card": "Tarjeta",
+				"invoice": "Factura"
+			},
 			"contactUs": "Contáctenos",
 			"enterpriseName": "Empresa",
 			"starterName": "Inicial",

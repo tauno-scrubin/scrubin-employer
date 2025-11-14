@@ -634,6 +634,10 @@
 				}
 			},
 			"paymentMethod": "Maksutapa",
+			"paymentMethods": {
+				"card": "Kortti",
+				"invoice": "Lasku"
+			},
 			"contactUs": "Ota yhteyttä",
 			"enterpriseName": "Yritys",
 			"starterName": "Aloittelija",

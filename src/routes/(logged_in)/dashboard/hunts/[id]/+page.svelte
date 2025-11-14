@@ -27,6 +27,7 @@
 		Eye,
 		FileText,
 		GraduationCap,
+		Info,
 		Loader2,
 		Mail,
 		MailOpen,
@@ -248,7 +249,7 @@
 		funnelData = [
 			{ name: 'statistics.totalHuntables', value: funnelStats.totalHuntables },
 			{ name: 'statistics.contacted', value: funnelStats.totalHuntablesContacted },
-			{ name: 'statistics.interested', value: funnelStats.totalHuntablesInterested },
+			{ name: 'statistics.initialInterest', value: funnelStats.totalHuntablesInterested },
 			{ name: 'statistics.readyForCompany', value: funnelStats.totalInterestedReadyForCompany },
 			{ name: 'statistics.offersMade', value: funnelStats.totalOffersMade },
 			{ name: 'statistics.hired', value: funnelStats.totalHired }
@@ -517,9 +518,19 @@
 						<div class="grid grid-cols-3 gap-4">
 							{#each funnelData as item}
 								<div class="flex flex-col gap-2 rounded-md border p-4">
-									<h5 class="text-sm font-medium text-gray-500">
-										{$t(`${item.name}`)}
-									</h5>
+									<div class="flex items-center gap-2">
+										<h5 class="text-sm font-medium text-gray-500">
+											{$t(`${item.name}`)}
+										</h5>
+										<Tooltip.Root>
+											<Tooltip.Trigger>
+												<Info class="h-4 w-4 cursor-help text-muted-foreground" />
+											</Tooltip.Trigger>
+											<Tooltip.Content side="bottom">
+												<p class="max-w-xs text-sm">{$t(`${item.name}Desc`)}</p>
+											</Tooltip.Content>
+										</Tooltip.Root>
+									</div>
 									<p class="text-3xl font-semibold text-gray-900">{item.value}</p>
 								</div>
 							{/each}
@@ -528,9 +539,10 @@
 
 					<Separator class="mb-2" />
 					<h4 class="text-xl font-semibold text-gray-900">{$t('statistics.candidates')}</h4>
+					<p class="mb-4 text-sm text-muted-foreground">{$t('statistics.candidatesDesc')}</p>
 
 					<!-- Controls for showing all interested candidates -->
-					{#if interestedCandidates.some((c) => c.dateReadyForRecruiter === null)}
+					<!-- {#if interestedCandidates.some((c) => c.dateReadyForRecruiter === null)}
 						<div class="flex items-center rounded-lg border bg-gray-50 p-4">
 							<div class="flex items-center space-x-3">
 								<input
@@ -544,7 +556,7 @@
 								</label>
 							</div>
 						</div>
-					{/if}
+					{/if} -->
 
 					<div class="flex flex-col gap-4">
 						{#if isLoadingCandidates}

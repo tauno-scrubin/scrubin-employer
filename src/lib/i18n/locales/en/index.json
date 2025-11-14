@@ -638,6 +638,10 @@
 				}
 			},
 			"paymentMethod": "Payment Method",
+			"paymentMethods": {
+				"card": "Card",
+				"invoice": "Invoice"
+			},
 			"contactUs": "Contact Us",
 			"enterpriseName": "Enterprise",
 			"starterName": "Starter",

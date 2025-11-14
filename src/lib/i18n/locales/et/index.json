@@ -474,28 +474,28 @@
 			"customPlanDetails": "Kohandatud paketi üksikasjad",
 			"generalFee": "Üldine tasu",
 			"baseFee": "Baastasu",
-			"viewSuccessFees": "Vaata edukustasusid",
+			"viewSuccessFees": "Vaata tulemustasuid",
 			"endPlan": "Lõpeta pakett",
 			"doctorsTitle": "Arstid",
 			"otherProfessionalsTitle": "Teised tervishoiutöötajad",
 			"startFee": "Alustustasu",
-			"successFee": "Edukustasu",
+			"successFee": "Tulemustasu",
 			"perHiredCandidate": "(värvatud kandidaadi kohta)"
 		},
 		"startingFee": {
 			"title": "Alusta {{amount}} {{currency}}",
 			"withFee": "Alusta sihtotsingut {{amount}} {{currency}} alustustasuga",
 			"withoutFee": "Alusta sihtotsingut kohe ilma ettemaksude või kohustusteta",
-			"payWhenSuccessful": "Maksa edukustasusid ainult eduka värbamise korral"
+			"payWhenSuccessful": "Maksa tulemustasu ainult eduka värbamise korral"
 		},
 		"availablePlans": {
 			"title": "Saadaval paketid",
 			"generalFee": "Üldine tasu",
 			"noGeneralFee": "Üldine tasu puudub",
 			"startPlan": "Alusta paketti",
-			"successFees": "Edukustasud",
+			"successFees": "Tulemustasud",
 			"vatLabel": "(+{{percentage}}% KM)",
-			"successFeeNotice": "Edukustasu makstakse jagatud maksega: 50% kandidaadi allkirjastamisel, 50% töö alustamisel"
+			"successFeeNotice": "Tulemustasu makstakse jagatud maksega: 50% kandidaadi allkirjastamisel, 50% töö alustamisel"
 		},
 		"customSolutions": {
 			"title": "KOHANDATUD LAHENDUSED",
@@ -562,7 +562,7 @@
 			"terms": "Kinnitades nõustute meie <a href='https://scrubin.io/et/kasutustingimused' target='_blank'>teenuse tingimustega</a> ja <a href='https://scrubin.io/et/privaatsuspoliitika' target='_blank'>privaatsuspoliitikaga</a>",
 			"doctors": "Arstid",
 			"otherProfessionals": "Õed ja teised tervishoiu spetsialistid",
-			"successFee": "Edukustasu",
+			"successFee": "Tulemustasu",
 			"vatIncluded": "Kõik hinnad sisaldavad 24% KM",
 			"vatAdded": "KM lisatakse hindadele",
 			"selectPlan": "Vali plaan",
@@ -587,8 +587,8 @@
 			},
 			"planDescriptions": {
 				"riskFreeStarter": "Suurepärane teenuse proovimiseks ilma ettemaksuta. Maksa ainult siis, kui leiad sobiva kandidaadi.",
-				"smartPlan": "Tasakaalustatud lähenemine mõõduka ettemaksuga ja konkurentsivõimeliste edukustasusid.",
-				"superPlan": "Premium teenus kõrgema ettemaksuga ja madalamate edukustasusid."
+				"smartPlan": "Tasakaalustatud lähenemine mõõduka ettemaksuga ja konkurentsivõimeliste tulemustasu.",
+				"superPlan": "Premium teenus kõrgema ettemaksuga ja madalamate tulemustasudega."
 			},
 			"enterprise": {
 				"customPricing": "Kohandatud hinnakujundus",
@@ -633,6 +633,10 @@
 				}
 			},
 			"paymentMethod": "Makseviis",
+			"paymentMethods": {
+				"card": "Kaart",
+				"invoice": "Arve"
+			},
 			"contactUs": "Võta meiega ühendust",
 			"enterpriseName": "Kohandatud",
 			"starterName": "Alustaja",
@@ -650,7 +654,7 @@
 			"features": {
 				"aiOffers": "AI-toel automatiseeritud pakkumised",
 				"candidateMatching": "Nutikas kandidaatide sobivuse algoritm",
-				"verifiedPool": "Kontrollitud tervishoiuspetsialistid",
+				"verifiedPool": "Verifitseeritud tervishoiuspetsialistid",
 				"analytics": "Värbamise analüütika ja ülevaated"
 			},
 			"toast": {
