@@ -846,9 +846,7 @@
 					{#if workerStats?.hasUnreadMessages}
 						<div class="mb-3 flex items-center gap-2 rounded-md bg-red-50 p-2 text-sm text-red-800">
 							<div class="h-2 w-2 rounded-full bg-red-600"></div>
-							<span
-								>{$t('dashboard.interestedWorkerDialog.unreadMessages') || 'Unread messages'}</span
-							>
+							<span>{$t('dashboard.interestedWorkerDialog.unreadMessages')}</span>
 						</div>
 					{/if}
 					<CandidateChat bind:huntId bind:candidateId />

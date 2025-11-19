@@ -254,6 +254,7 @@
 				"messages": "Mensajes",
 				"notes": "Notas"
 			},
+			"unreadMessages": "Mensajes no leídos",
 			"pendingConfirmation": "Interesado, esperando CV actualizado",
 			"interview": "Entrevista reservada para",
 			"contactInfo": "Información de contacto",

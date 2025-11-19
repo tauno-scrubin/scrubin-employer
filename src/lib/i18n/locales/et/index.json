@@ -254,6 +254,7 @@
 				"messages": "Sõnumid",
 				"notes": "Märkmed"
 			},
+			"unreadMessages": "Lugemata sõnumid",
 			"pendingConfirmation": "Huvitatud, ootame uuendatud CV-d",
 			"interview": "Intervjuu broneeritud ajaks",
 			"contactInfo": "Kontaktandmed",

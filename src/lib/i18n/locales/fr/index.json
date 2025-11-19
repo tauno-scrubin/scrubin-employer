@@ -254,6 +254,7 @@
 				"messages": "Messages",
 				"notes": "Notes"
 			},
+			"unreadMessages": "Messages non lus",
 			"pendingConfirmation": "Intéressé, en attente du CV mis à jour",
 			"interview": "Entretien prévu pour",
 			"contactInfo": "Coordonnées",

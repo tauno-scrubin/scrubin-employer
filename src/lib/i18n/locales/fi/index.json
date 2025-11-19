@@ -254,6 +254,7 @@
 				"messages": "Viestit",
 				"notes": "Muistiinpanot"
 			},
+			"unreadMessages": "Lukemattomat viestit",
 			"pendingConfirmation": "Kiinnostunut, odotetaan päivitettyä CV:tä",
 			"interview": "Haastattelu varattu ajalle",
 			"contactInfo": "Yhteystiedot",
