@@ -515,6 +515,7 @@ export interface InterestedCandidate {
 	dateInterested: string;
 	dateInterview?: string;
 	dateReadyForRecruiter?: string;
+	dateLastUserAction: Date;
 	totalMessages: number;
 	hasUnreadMessages: boolean;
 	stats: InterestedCandidateStats;

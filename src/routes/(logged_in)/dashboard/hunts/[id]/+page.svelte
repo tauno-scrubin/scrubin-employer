@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import PaymentDialog from '$lib/components/payment/paymentDialog.svelte';
 	import RequirementsChat from '$lib/components/requirements/RequirementsChat.svelte';
@@ -99,10 +100,20 @@
 		try {
 			// Fetch interested candidates
 			isLoadingCandidates = true;
-			scrubinClient.hunt
+			await scrubinClient.hunt
 				.getInterestedCandidates(hunt.huntId)
 				.then((candidates) => {
-					interestedCandidates = candidates;
+					interestedCandidates = candidates.sort((a, b) => {
+						const dateA =
+							a.dateLastUserAction instanceof Date
+								? a.dateLastUserAction.getTime()
+								: new Date(a.dateLastUserAction).getTime();
+						const dateB =
+							b.dateLastUserAction instanceof Date
+								? b.dateLastUserAction.getTime()
+								: new Date(b.dateLastUserAction).getTime();
+						return dateB - dateA; // Descending order (most recent first)
+					});
 				})
 				.catch((error) => {
 					toast.error('Failed to fetch interested candidates');
@@ -110,6 +121,21 @@
 				.finally(() => {
 					isLoadingCandidates = false;
 				});
+
+			// Check URL for candidateId and open dialog if present (after candidates are loaded)
+			const candidateIdParam = page.url.searchParams.get('candidateId');
+			if (candidateIdParam) {
+				const candidateIdNum = parseInt(candidateIdParam);
+				const candidateExists = interestedCandidates.find(
+					(candidate) => candidate.candidateId === candidateIdNum
+				);
+				if (candidateExists) {
+					selectedCandidateId = candidateIdNum;
+					selectedCandidateType = candidateExists.type;
+					showInterestedWorkerDialog = true;
+					activeTab = 'statistics';
+				}
+			}
 
 			// Fetch latest stats
 			scrubinClient.hunt.getHuntStats(hunt.huntId).then((stats) => {
@@ -123,17 +149,6 @@
 					totalHired: stats.totalHired || 0
 				};
 			});
-
-			// Check URL for candidateId and open dialog if present
-			const candidateId = page.url.searchParams.get('candidateId');
-			const candidateExists = interestedCandidates.find(
-				(candidate) => candidate.candidateId === parseInt(candidateId || '0')
-			);
-			if (candidateId && candidateExists) {
-				selectedCandidateId = parseInt(candidateId);
-				showInterestedWorkerDialog = true;
-				activeTab = 'statistics';
-			}
 
 			const [currencies, countries] = await Promise.all([
 				scrubinClient.company.getCurrencies(),
@@ -165,6 +180,84 @@
 				city: hunt.requirements.address?.city || '',
 				stateProvinceRegion: hunt.requirements.address?.stateProvinceRegion || ''
 			};
+		}
+	});
+
+	// Track the last candidateId we set in URL to prevent loops
+	let lastUrlCandidateId = $state<string | null>(null);
+	// Flag to prevent effects from running during URL updates
+	let isUpdatingUrl = $state(false);
+
+	// Function to update URL with candidateId - called explicitly on user actions
+	function updateUrlWithCandidateId(candidateId: number | null) {
+		if (isUpdatingUrl) return; // Prevent re-entrancy
+
+		isUpdatingUrl = true;
+		const currentUrl = new URL(page.url);
+		const newCandidateIdStr = candidateId && candidateId > 0 ? candidateId.toString() : null;
+
+		if (newCandidateIdStr) {
+			currentUrl.searchParams.set('candidateId', newCandidateIdStr);
+		} else {
+			currentUrl.searchParams.delete('candidateId');
+		}
+
+		goto(currentUrl.pathname + currentUrl.search, { replaceState: true, noScroll: true })
+			.then(() => {
+				// Only update lastUrlCandidateId after URL actually updates
+				lastUrlCandidateId = newCandidateIdStr;
+				isUpdatingUrl = false;
+			})
+			.catch(() => {
+				isUpdatingUrl = false;
+			});
+	}
+
+	// Handle URL changes from browser navigation (back/forward buttons)
+	// This is the ONLY reactive effect - it only syncs FROM URL to dialog state
+	$effect(() => {
+		if (isUpdatingUrl) return; // Skip if we're updating URL programmatically
+
+		const urlCandidateId = page.url.searchParams.get('candidateId');
+
+		// If URL matches what we last set, no action needed (we set it, so state should already match)
+		if (urlCandidateId === lastUrlCandidateId) {
+			return;
+		}
+
+		const candidateIdNum = urlCandidateId ? parseInt(urlCandidateId) : 0;
+
+		// URL changed externally (browser navigation) - sync to dialog state
+		if (urlCandidateId && candidateIdNum > 0) {
+			// Check if we need to update dialog state
+			if (candidateIdNum !== selectedCandidateId || !showInterestedWorkerDialog) {
+				const candidate = interestedCandidates.find((c) => c.candidateId === candidateIdNum);
+				if (candidate) {
+					selectedCandidateId = candidateIdNum;
+					selectedCandidateType = candidate.type;
+					showInterestedWorkerDialog = true;
+					activeTab = 'statistics';
+					lastUrlCandidateId = urlCandidateId;
+				}
+			}
+		} else if (!urlCandidateId && showInterestedWorkerDialog) {
+			// URL doesn't have candidateId but dialog is open - close it (browser back)
+			showInterestedWorkerDialog = false;
+			lastUrlCandidateId = null;
+		}
+	});
+
+	// Sync dialog close to URL - watch for dialog closing and update URL
+	$effect(() => {
+		if (isUpdatingUrl) return; // Skip if we're updating URL programmatically
+
+		// Only update URL when dialog closes (not when it opens, that's handled in onclick)
+		if (!showInterestedWorkerDialog) {
+			const urlCandidateId = page.url.searchParams.get('candidateId');
+			// Only update if URL still has candidateId (user closed dialog, not browser navigation)
+			if (urlCandidateId && lastUrlCandidateId !== null) {
+				updateUrlWithCandidateId(null);
+			}
 		}
 	});
 
@@ -511,8 +604,8 @@
 						</Alert.Root>
 					{/if}
 					{#if isLoading}
-						<div class="flex items-center justify-center py-8">
-							<div class="h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
+						<div class="flex flex-col items-center justify-center gap-6 py-8">
+							<Loader2 class="h-10 w-10 animate-spin text-primary/70" />
 						</div>
 					{:else}
 						<div class="grid grid-cols-3 gap-4">
@@ -640,9 +733,10 @@
 									<Card.Root
 										class="cursor-pointer overflow-hidden transition-shadow hover:shadow-md"
 										onclick={() => {
-											showInterestedWorkerDialog = true;
 											selectedCandidateId = candidate.candidateId;
 											selectedCandidateType = candidate.type;
+											showInterestedWorkerDialog = true;
+											updateUrlWithCandidateId(candidate.candidateId);
 										}}
 									>
 										<Card.Content class="p-4">

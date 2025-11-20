@@ -1,26 +1,25 @@
 <script lang="ts">
-	import { scrubinClient } from '@/scrubinClient/client';
-	import type { Hunt, Requirements } from '@/scrubinClient';
-	import * as Card from '$lib/components/ui/card/index.js';
-	import {
-		Loader2,
-		ArrowRight,
-		Clock,
-		Search,
-		History,
-		Sparkle,
-		ArrowDown,
-		Users,
-		UserCheck,
-		MessageSquare,
-		HelpCircle
-	} from 'lucide-svelte';
-	import { onMount } from 'svelte';
-	import Button from '../ui/button/button.svelte';
 	import { goto } from '$app/navigation';
-	import { formatStatus, getStatusColor } from '../payment/payments';
+	import * as Card from '$lib/components/ui/card/index.js';
 	import { t } from '$lib/i18n';
 	import { visible } from '@/components/dashboard/overlay';
+	import type { Hunt, Requirements } from '@/scrubinClient';
+	import { scrubinClient } from '@/scrubinClient/client';
+	import {
+		ArrowDown,
+		Clock,
+		HelpCircle,
+		History,
+		Loader2,
+		MessageSquare,
+		Search,
+		Sparkle,
+		UserCheck,
+		Users
+	} from 'lucide-svelte';
+	import { onMount } from 'svelte';
+	import { getStatusColor } from '../payment/payments';
+	import Button from '../ui/button/button.svelte';
 
 	let {
 		onViewHunt
@@ -197,9 +196,9 @@
 									</div>
 								{/if}
 								{#if hunt.totalUnreadMessages > 0}
-									<div class="flex items-center gap-1.5">
-										<MessageSquare class="h-4 w-4 text-blue-500" />
-										<span class="text-xs text-gray-600 sm:text-sm">
+									<div class="flex items-center gap-1.5 rounded-full bg-blue-100 px-2 py-0.5">
+										<MessageSquare class="h-4 w-4 flex-shrink-0 text-blue-600" />
+										<span class="text-xs font-medium text-blue-700 sm:text-sm">
 											{hunt.totalUnreadMessages}
 											{$t('dashboard.huntsList.unreadMessages')}
 										</span>

@@ -11,7 +11,7 @@
 		Award,
 		Briefcase,
 		Calendar,
-		GraduationCap,
+		GraduationCap,	
 		Mail,
 		Phone,
 		Sparkle,
