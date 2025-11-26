@@ -111,7 +111,9 @@
 			"candidates": "candidatos",
 			"interested": "interesados",
 			"unreadMessages": "no leídos",
-			"unanswered": "sin responder"
+			"unanswered": "preguntas de contexto sin responder",
+			"unansweredMessages": "mensajes necesitan respuesta",
+			"needsAttention": "necesitan atención"
 		},
 		"searchView": {
 			"welcomeBack": "¡Bienvenido de nuevo, {{name}}!",

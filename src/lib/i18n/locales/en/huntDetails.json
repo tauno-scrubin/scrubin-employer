@@ -157,7 +157,57 @@
 		"showAllInterestedCandidates": "Show all interested candidates",
 		"offerOpens": "Offer opens",
 		"offerEmailOpens": "Offer email opens",
-		"totalChatMessages": "Total chat messages"
+		"totalChatMessages": "Total chat messages",
+		"hiringProgressPipeline": "Hiring Progress Pipeline",
+		"filterCandidatesByStage": "Filter candidates by hiring stage",
+		"needAction": "Need Action",
+		"noCandidatesYet": "No candidates yet. Pipeline will appear once candidates start showing interest.",
+		"all": "All",
+		"noCandidates": "No candidates",
+		"messages": "Messages",
+		"opens": "Opens",
+		"pipelineStatuses": {
+			"interested": {
+				"label": "Interested",
+				"description": "Candidates who showed interest"
+			},
+			"under_review": {
+				"label": "Under Review",
+				"description": "Candidates being reviewed by your team"
+			},
+			"meeting_scheduled": {
+				"label": "Meeting Scheduled",
+				"description": "Interviews or meetings scheduled"
+			},
+			"screening_completed": {
+				"label": "Screening Done",
+				"description": "Screening process completed"
+			},
+			"offer_made": {
+				"label": "Offer Made",
+				"description": "Job offer extended to candidate"
+			},
+			"accepted": {
+				"label": "Hired",
+				"description": "Offer accepted by candidate"
+			},
+			"rejected": {
+				"label": "Rejected",
+				"description": "Candidate rejected the offer"
+			},
+			"declined": {
+				"label": "Declined",
+				"description": "Declined by company"
+			},
+			"expired": {
+				"label": "Expired",
+				"description": "Offers that expired without response"
+			},
+			"cancelled": {
+				"label": "Cancelled",
+				"description": "Cancelled by company"
+			}
+		}
 	},
 	"questions": {
 		"contextQuestions": "Context Questions",
@@ -167,6 +217,9 @@
 		"paymentIssue": "There is an issue with this Hunt pricing, please contact support.",
 		"huntCompleteFailed": "Failed to complete hunt. Please try again.",
 		"huntCancelFailed": "Failed to cancel hunt. Please try again.",
-		"huntPauseFailed": "Failed to pause hunt. Please try again."
+		"huntPauseFailed": "Failed to pause hunt. Please try again.",
+		"fetchCandidatesFailed": "Failed to fetch interested candidates",
+		"activateHuntFailed": "Failed to activate hunt. Please try again.",
+		"paymentSuccess": "Payment successful! Hunt is now active."
 	}
 }

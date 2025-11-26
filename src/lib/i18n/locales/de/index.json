@@ -111,7 +111,9 @@
 			"candidates": "Kandidaten",
 			"interested": "interessiert",
 			"unreadMessages": "ungelesen",
-			"unanswered": "offen"
+			"unanswered": "offene Kontextfragen",
+			"unansweredMessages": "Nachrichten benötigen Antwort",
+			"needsAttention": "erfordern Aufmerksamkeit"
 		},
 		"searchView": {
 			"welcomeBack": "Willkommen zurück, {{name}}!",

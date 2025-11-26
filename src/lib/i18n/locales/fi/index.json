@@ -111,7 +111,9 @@
 			"candidates": "hakijaa",
 			"interested": "kiinnostunut",
 			"unreadMessages": "lukematta",
-			"unanswered": "vastaamatta"
+			"unanswered": "vastaamattomat kontekstikysymykset",
+			"unansweredMessages": "viestit tarvitsevat vastausta",
+			"needsAttention": "vaativat huomiota"
 		},
 		"searchView": {
 			"welcomeBack": "Tervetuloa takaisin, {{name}}!",

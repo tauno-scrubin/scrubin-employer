@@ -7,11 +7,10 @@
 	import { scrubinClient } from '@/scrubinClient/client';
 	import {
 		ArrowDown,
+		Bell,
 		Clock,
-		HelpCircle,
 		History,
 		Loader2,
-		MessageSquare,
 		Search,
 		Sparkle,
 		UserCheck,
@@ -20,12 +19,6 @@
 	import { onMount } from 'svelte';
 	import { getStatusColor } from '../payment/payments';
 	import Button from '../ui/button/button.svelte';
-
-	let {
-		onViewHunt
-	}: {
-		onViewHunt: (huntId: number) => void;
-	} = $props();
 
 	let isLoading = $state(false);
 	let hunts: Hunt[] = $state([]);
@@ -42,15 +35,24 @@
 				totalCandidates: hunt.totalCandidates,
 				totalInterestedCandidates: hunt.totalInterestedCandidates,
 				totalUnreadMessages: hunt.totalUnreadMessages,
+				totalUnansweredMessages: hunt.totalUnansweredMessages,
 				totalUnansweredQuestions: hunt.totalUnansweredQuestions
 			}));
-			// Sort hunts: ACTIVE first, then by unanswered activity, then by date (newest first)
+			// Sort hunts: ACTIVE first, then by unanswered messages (highest priority), then other activity, then by date (newest first)
 			hunts.sort((a, b) => {
 				// First prioritize ACTIVE status
 				if (a.status === 'ACTIVE' && b.status !== 'ACTIVE') return -1;
 				if (a.status !== 'ACTIVE' && b.status === 'ACTIVE') return 1;
 
-				// Then prioritize hunts with unanswered chats or questions
+				// Then prioritize hunts with unanswered messages (messages needing response)
+				if (a.totalUnansweredMessages > 0 && b.totalUnansweredMessages === 0) return -1;
+				if (a.totalUnansweredMessages === 0 && b.totalUnansweredMessages > 0) return 1;
+				if (a.totalUnansweredMessages > 0 && b.totalUnansweredMessages > 0) {
+					// If both have unanswered messages, sort by count (most first)
+					return b.totalUnansweredMessages - a.totalUnansweredMessages;
+				}
+
+				// Then prioritize hunts with other unanswered activity
 				const aHasUnanswered = a.totalUnreadMessages > 0 || a.totalUnansweredQuestions > 0;
 				const bHasUnanswered = b.totalUnreadMessages > 0 || b.totalUnansweredQuestions > 0;
 
@@ -195,24 +197,21 @@
 										</span>
 									</div>
 								{/if}
-								{#if hunt.totalUnreadMessages > 0}
-									<div class="flex items-center gap-1.5 rounded-full bg-blue-100 px-2 py-0.5">
-										<MessageSquare class="h-4 w-4 flex-shrink-0 text-blue-600" />
-										<span class="text-xs font-medium text-blue-700 sm:text-sm">
-											{hunt.totalUnreadMessages}
-											{$t('dashboard.huntsList.unreadMessages')}
-										</span>
-									</div>
-								{/if}
-								{#if hunt.totalUnansweredQuestions > 0}
-									<div class="flex items-center gap-1.5">
-										<HelpCircle class="h-4 w-4 text-amber-500" />
-										<span class="text-xs text-gray-600 sm:text-sm">
-											{hunt.totalUnansweredQuestions}
-											{$t('dashboard.huntsList.unanswered')}
-										</span>
-									</div>
-								{/if}
+								{#if hunt.totalUnansweredMessages > 0 || hunt.totalUnreadMessages > 0 || hunt.totalUnansweredQuestions > 0}
+								<div
+									class="flex items-center gap-1.5 rounded-full bg-red-500/10 px-2 py-0.5 ring-1 ring-red-200"
+								>
+									<Bell class="h-4 w-4 flex-shrink-0 text-red-600" />
+									<span class="text-xs font-semibold text-red-700 sm:text-sm">
+	
+										{(hunt.totalUnansweredMessages ?? 0) +
+											(hunt.totalUnreadMessages ?? 0) +
+											(hunt.totalNeedAttentionMessages ?? 0) +
+											(hunt.totalUnansweredQuestions ?? 0)}
+										{$t('dashboard.huntsList.needsAttention')}
+									</span>
+								</div>
+							{/if}
 							</div>
 
 							<div class="flex items-center justify-between">

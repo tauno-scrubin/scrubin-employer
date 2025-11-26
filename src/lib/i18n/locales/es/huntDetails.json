@@ -156,7 +156,57 @@
 		"showAllInterestedCandidates": "Mostrar todos los candidatos interesados",
 		"offerOpens": "Aperturas de oferta",
 		"offerEmailOpens": "Aperturas de correo de oferta",
-		"totalChatMessages": "Mensajes totales del chat"
+		"totalChatMessages": "Mensajes totales del chat",
+		"hiringProgressPipeline": "Pipeline de Progreso de Contratación",
+		"filterCandidatesByStage": "Filtrar candidatos por etapa de contratación",
+		"needAction": "Requiere Acción",
+		"noCandidatesYet": "Aún no hay candidatos. El pipeline aparecerá una vez que los candidatos comiencen a mostrar interés.",
+		"all": "Todos",
+		"noCandidates": "No hay candidatos",
+		"messages": "Mensajes",
+		"opens": "Aperturas",
+		"pipelineStatuses": {
+			"interested": {
+				"label": "Interesado",
+				"description": "Candidatos que mostraron interés"
+			},
+			"under_review": {
+				"label": "En Revisión",
+				"description": "Candidatos siendo revisados por su equipo"
+			},
+			"meeting_scheduled": {
+				"label": "Reunión Programada",
+				"description": "Entrevistas o reuniones programadas"
+			},
+			"screening_completed": {
+				"label": "Evaluación Completada",
+				"description": "Proceso de evaluación completado"
+			},
+			"offer_made": {
+				"label": "Oferta Realizada",
+				"description": "Oferta de trabajo extendida al candidato"
+			},
+			"accepted": {
+				"label": "Contratado",
+				"description": "Oferta aceptada por el candidato"
+			},
+			"rejected": {
+				"label": "Rechazado",
+				"description": "El candidato rechazó la oferta"
+			},
+			"declined": {
+				"label": "Declinado",
+				"description": "Declinado por la empresa"
+			},
+			"expired": {
+				"label": "Expirado",
+				"description": "Ofertas que expiraron sin respuesta"
+			},
+			"cancelled": {
+				"label": "Cancelado",
+				"description": "Cancelado por la empresa"
+			}
+		}
 	},
 	"questions": {
 		"contextQuestions": "Preguntas de Contexto",
@@ -166,6 +216,9 @@
 		"paymentIssue": "Hay un problema con el precio de esta Búsqueda, por favor contacte con soporte.",
 		"huntCompleteFailed": "No se pudo completar la búsqueda. Inténtalo de nuevo.",
 		"huntCancelFailed": "No se pudo cancelar la búsqueda. Inténtalo de nuevo.",
-		"huntPauseFailed": "No se pudo pausar la búsqueda. Inténtalo de nuevo."
+		"huntPauseFailed": "No se pudo pausar la búsqueda. Inténtalo de nuevo.",
+		"fetchCandidatesFailed": "No se pudieron obtener los candidatos interesados",
+		"activateHuntFailed": "No se pudo activar la búsqueda. Inténtalo de nuevo.",
+		"paymentSuccess": "¡Pago exitoso! La búsqueda ahora está activa."
 	}
 }

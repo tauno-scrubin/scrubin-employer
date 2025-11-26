@@ -155,7 +155,57 @@
 		"showAllInterestedCandidates": "Afficher tous les candidats intéressés",
 		"offerOpens": "Ouvertures d'offre",
 		"offerEmailOpens": "Ouvertures d'e-mail d'offre",
-		"totalChatMessages": "Messages de chat au total"
+		"totalChatMessages": "Messages de chat au total",
+		"hiringProgressPipeline": "Pipeline de Progrès d'Embauche",
+		"filterCandidatesByStage": "Filtrer les candidats par étape d'embauche",
+		"needAction": "Nécessite une Action",
+		"noCandidatesYet": "Pas encore de candidats. Le pipeline apparaîtra une fois que les candidats commenceront à montrer de l'intérêt.",
+		"all": "Tous",
+		"noCandidates": "Aucun candidat",
+		"messages": "Messages",
+		"opens": "Ouvertures",
+		"pipelineStatuses": {
+			"interested": {
+				"label": "Intéressé",
+				"description": "Candidats qui ont montré de l'intérêt"
+			},
+			"under_review": {
+				"label": "En Révision",
+				"description": "Candidats en cours de révision par votre équipe"
+			},
+			"meeting_scheduled": {
+				"label": "Réunion Planifiée",
+				"description": "Entretiens ou réunions planifiés"
+			},
+			"screening_completed": {
+				"label": "Sélection Terminée",
+				"description": "Processus de sélection terminé"
+			},
+			"offer_made": {
+				"label": "Offre Faite",
+				"description": "Offre d'emploi faite au candidat"
+			},
+			"accepted": {
+				"label": "Embauché",
+				"description": "Offre acceptée par le candidat"
+			},
+			"rejected": {
+				"label": "Rejeté",
+				"description": "Le candidat a rejeté l'offre"
+			},
+			"declined": {
+				"label": "Refusé",
+				"description": "Refusé par l'entreprise"
+			},
+			"expired": {
+				"label": "Expiré",
+				"description": "Offres qui ont expiré sans réponse"
+			},
+			"cancelled": {
+				"label": "Annulé",
+				"description": "Annulé par l'entreprise"
+			}
+		}
 	},
 	"questions": {
 		"contextQuestions": "Questions de contexte",
@@ -165,6 +215,9 @@
 		"paymentIssue": "Il y a un problème avec la tarification de cette recherche, veuillez contacter le support.",
 		"huntCompleteFailed": "Échec de la finalisation de la recherche. Veuillez réessayer.",
 		"huntCancelFailed": "Échec de l'annulation de la recherche. Veuillez réessayer.",
-		"huntPauseFailed": "Échec de la mise en pause de la recherche. Veuillez réessayer."
+		"huntPauseFailed": "Échec de la mise en pause de la recherche. Veuillez réessayer.",
+		"fetchCandidatesFailed": "Échec de la récupération des candidats intéressés",
+		"activateHuntFailed": "Échec de l'activation de la recherche. Veuillez réessayer.",
+		"paymentSuccess": "Paiement réussi ! La recherche est maintenant active."
 	}
 }

@@ -343,6 +343,8 @@ export interface Hunt {
 	totalCandidates: number;
 	totalInterestedCandidates: number;
 	totalUnreadMessages: number;
+	totalUnansweredMessages: number;
+	totalNeedAttentionMessages: number;
 	totalUnansweredQuestions: number;
 }
 
@@ -517,7 +519,6 @@ export interface InterestedCandidate {
 	dateReadyForRecruiter?: string;
 	dateLastUserAction: Date;
 	totalMessages: number;
-	hasUnreadMessages: boolean;
 	stats: InterestedCandidateStats;
 }
 
@@ -562,6 +563,7 @@ export interface InterestedCandidateStats {
 	offerEmailOpenedCount: number;
 	chatEmailOpenedCount: number;
 	hasUnreadMessages: boolean;
+	needAttention: boolean;
 }
 
 export interface ChatMessage {
@@ -1376,6 +1378,21 @@ class HuntResource extends BaseResource {
 			'POST',
 			url.toString()
 		) as Promise<InterestedCandidateStatusResponse>;
+	}
+
+	// POST /api/v1/hunts/{id}/interested-candidates/{candidateId}/update-status
+	async updateInterestedCandidateStatus(
+		id: number,
+		candidateId: number,
+		status: string
+	): Promise<InterestedCandidateStatusResponse> {
+		const url = new URL(
+			`/api/v1/hunts/${id}/interested-candidates/${candidateId}/update-status`,
+			this.client.baseUrl
+		);
+		return this.request<InterestedCandidateStatusResponse>('POST', url.toString(), {
+			status
+		}) as Promise<InterestedCandidateStatusResponse>;
 	}
 
 	// PUT /api/v1/hunts/{id}/interested-candidates/{candidateId}/notes

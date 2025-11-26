@@ -156,7 +156,57 @@
 		"showAllInterestedCandidates": "Näita kõiki huvitatud kandidaate",
 		"offerOpens": "Pakkumist avatud",
 		"offerEmailOpens": "Pakkumise e-kirja avatud",
-		"totalChatMessages": "Vestlusi kokku"
+		"totalChatMessages": "Vestlusi kokku",
+		"hiringProgressPipeline": "Palkamise edenemise voog",
+		"filterCandidatesByStage": "Filtreeri kandidaate palkamise etapi järgi",
+		"needAction": "Vajab tegevust",
+		"noCandidatesYet": "Kandidaate pole veel. Voog ilmub, kui kandidaadid hakkavad huvi näitama.",
+		"all": "Kõik",
+		"noCandidates": "Kandidaate pole",
+		"messages": "Sõnumid",
+		"opens": "Avamised",
+		"pipelineStatuses": {
+			"interested": {
+				"label": "Huvitatud",
+				"description": "Kandidaadid, kes on huvi näidanud"
+			},
+			"under_review": {
+				"label": "Ülevaatamisel",
+				"description": "Kandidaadid, keda teie meeskond ülevaatab"
+			},
+			"meeting_scheduled": {
+				"label": "Kohtumine plaanitud",
+				"description": "Vestlused või kohtumised on plaanitud"
+			},
+			"screening_completed": {
+				"label": "Eelvalik tehtud",
+				"description": "Eelvaliku protsess lõpetatud"
+			},
+			"offer_made": {
+				"label": "Pakkumine tehtud",
+				"description": "Tööpakkumine kandidaadile tehtud"
+			},
+			"accepted": {
+				"label": "Tööle võetud",
+				"description": "Pakkumine kandidaadi poolt vastu võetud"
+			},
+			"rejected": {
+				"label": "Tagasi lükatud",
+				"description": "Kandidaat lükkas pakkumise tagasi"
+			},
+			"declined": {
+				"label": "Keeldutud",
+				"description": "Ettevõtte poolt keeldutud"
+			},
+			"expired": {
+				"label": "Aegunud",
+				"description": "Pakkumised, mis aegusid ilma vastuseta"
+			},
+			"cancelled": {
+				"label": "Tühistatud",
+				"description": "Ettevõtte poolt tühistatud"
+			}
+		}
 	},
 	"questions": {
 		"contextQuestions": "Konteksti küsimused",
@@ -166,6 +216,9 @@
 		"paymentIssue": "Selle otsingu hinnastamisega on probleem, palun võtke ühendust klienditoega.",
 		"huntCompleteFailed": "Otsingu lõpetamine ebaõnnestus. Palun proovi uuesti.",
 		"huntCancelFailed": "Otsingu tühistamine ebaõnnestus. Palun proovi uuesti.",
-		"huntPauseFailed": "Otsingu peatamine ebaõnnestus. Palun proovi uuesti."
+		"huntPauseFailed": "Otsingu peatamine ebaõnnestus. Palun proovi uuesti.",
+		"fetchCandidatesFailed": "Huvitatud kandidaatide laadimine ebaõnnestus",
+		"activateHuntFailed": "Otsingu aktiveerimine ebaõnnestus. Palun proovi uuesti.",
+		"paymentSuccess": "Makse õnnestus! Otsing on nüüd aktiivne."
 	}
 }

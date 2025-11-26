@@ -156,7 +156,57 @@
 		"showAllInterestedCandidates": "Näytä kaikki kiinnostuneet ehdokkaat",
 		"offerOpens": "Tarjouksen avaukset",
 		"offerEmailOpens": "Tarjoussähköpostin avaukset",
-		"totalChatMessages": "Chat-viestejä yhteensä"
+		"totalChatMessages": "Chat-viestejä yhteensä",
+		"hiringProgressPipeline": "Palkkauksen edistymisen putki",
+		"filterCandidatesByStage": "Suodata ehdokkaita palkkauksen vaiheen mukaan",
+		"needAction": "Vaatii toimenpidettä",
+		"noCandidatesYet": "Ei vielä ehdokkaita. Putki näkyy, kun ehdokkaat alkavat osoittaa kiinnostusta.",
+		"all": "Kaikki",
+		"noCandidates": "Ei ehdokkaita",
+		"messages": "Viestit",
+		"opens": "Avaukset",
+		"pipelineStatuses": {
+			"interested": {
+				"label": "Kiinnostunut",
+				"description": "Ehdokkaat, jotka ovat osoittaneet kiinnostusta"
+			},
+			"under_review": {
+				"label": "Tarkastelussa",
+				"description": "Ehdokkaat, joita tiimisi tarkastelee"
+			},
+			"meeting_scheduled": {
+				"label": "Tapaaminen ajastettu",
+				"description": "Haastattelut tai tapaamiset ajastettu"
+			},
+			"screening_completed": {
+				"label": "Esiarvio valmis",
+				"description": "Esiarviointiprosessi valmis"
+			},
+			"offer_made": {
+				"label": "Tarjous tehty",
+				"description": "Työtarjous tehty ehdokkaalle"
+			},
+			"accepted": {
+				"label": "Palkattu",
+				"description": "Tarjous ehdokkaan hyväksymä"
+			},
+			"rejected": {
+				"label": "Hylätty",
+				"description": "Ehdokas hylkäsi tarjouksen"
+			},
+			"declined": {
+				"label": "Kieltäytynyt",
+				"description": "Yrityksen kieltäytynyt"
+			},
+			"expired": {
+				"label": "Vanhentunut",
+				"description": "Tarjoukset, jotka vanhenivat ilman vastausta"
+			},
+			"cancelled": {
+				"label": "Peruutettu",
+				"description": "Yrityksen peruuttama"
+			}
+		}
 	},
 	"questions": {
 		"contextQuestions": "Kontekstikysymykset",
@@ -166,6 +216,9 @@
 		"paymentIssue": "Tämän haun hinnoittelussa on ongelma, ota yhteyttä tukeen.",
 		"huntCompleteFailed": "Haun merkitseminen valmiiksi epäonnistui. Yritä uudelleen.",
 		"huntCancelFailed": "Haun peruutus epäonnistui. Yritä uudelleen.",
-		"huntPauseFailed": "Haun tauottaminen epäonnistui. Yritä uudelleen."
+		"huntPauseFailed": "Haun tauottaminen epäonnistui. Yritä uudelleen.",
+		"fetchCandidatesFailed": "Kiinnostuneiden ehdokkaiden hakeminen epäonnistui",
+		"activateHuntFailed": "Haun aktivointi epäonnistui. Yritä uudelleen.",
+		"paymentSuccess": "Maksu onnistui! Haku on nyt aktiivinen."
 	}
 }

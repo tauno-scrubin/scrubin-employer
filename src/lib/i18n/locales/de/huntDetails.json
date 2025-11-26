@@ -155,7 +155,57 @@
 		"showAllInterestedCandidates": "Alle interessierten Kandidaten anzeigen",
 		"offerOpens": "Angebotsöffnungen",
 		"offerEmailOpens": "E-Mail-Öffnungen des Angebots",
-		"totalChatMessages": "Chat-Nachrichten insgesamt"
+		"totalChatMessages": "Chat-Nachrichten insgesamt",
+		"hiringProgressPipeline": "Einstellungsfortschritts-Pipeline",
+		"filterCandidatesByStage": "Kandidaten nach Einstellungsstadium filtern",
+		"needAction": "Benötigt Aktion",
+		"noCandidatesYet": "Noch keine Kandidaten. Die Pipeline wird angezeigt, sobald Kandidaten Interesse zeigen.",
+		"all": "Alle",
+		"noCandidates": "Keine Kandidaten",
+		"messages": "Nachrichten",
+		"opens": "Öffnungen",
+		"pipelineStatuses": {
+			"interested": {
+				"label": "Interessiert",
+				"description": "Kandidaten, die Interesse gezeigt haben"
+			},
+			"under_review": {
+				"label": "In Prüfung",
+				"description": "Kandidaten, die von Ihrem Team geprüft werden"
+			},
+			"meeting_scheduled": {
+				"label": "Termin vereinbart",
+				"description": "Interviews oder Termine vereinbart"
+			},
+			"screening_completed": {
+				"label": "Screening abgeschlossen",
+				"description": "Screening-Prozess abgeschlossen"
+			},
+			"offer_made": {
+				"label": "Angebot gemacht",
+				"description": "Stellenangebot an Kandidat gemacht"
+			},
+			"accepted": {
+				"label": "Eingestellt",
+				"description": "Angebot vom Kandidaten angenommen"
+			},
+			"rejected": {
+				"label": "Abgelehnt",
+				"description": "Kandidat hat das Angebot abgelehnt"
+			},
+			"declined": {
+				"label": "Abgelehnt",
+				"description": "Von Unternehmen abgelehnt"
+			},
+			"expired": {
+				"label": "Abgelaufen",
+				"description": "Angebote, die ohne Antwort abgelaufen sind"
+			},
+			"cancelled": {
+				"label": "Storniert",
+				"description": "Von Unternehmen storniert"
+			}
+		}
 	},
 	"questions": {
 		"contextQuestions": "Kontextfragen",
@@ -165,6 +215,9 @@
 		"paymentIssue": "Es gibt ein Problem mit der Preisgestaltung dieser Suche, bitte kontaktieren Sie den Support.",
 		"huntCompleteFailed": "Suche konnte nicht abgeschlossen werden. Bitte versuchen Sie es erneut.",
 		"huntCancelFailed": "Suche konnte nicht abgebrochen werden. Bitte versuchen Sie es erneut.",
-		"huntPauseFailed": "Suche konnte nicht pausiert werden. Bitte versuchen Sie es erneut."
+		"huntPauseFailed": "Suche konnte nicht pausiert werden. Bitte versuchen Sie es erneut.",
+		"fetchCandidatesFailed": "Interessierte Kandidaten konnten nicht abgerufen werden",
+		"activateHuntFailed": "Suche konnte nicht aktiviert werden. Bitte versuchen Sie es erneut.",
+		"paymentSuccess": "Zahlung erfolgreich! Die Suche ist jetzt aktiv."
 	}
 }

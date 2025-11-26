@@ -30,6 +30,7 @@
 	let messages: ChatMessage[] = $state([]);
 	let newMessage = $state('');
 	let isLoading = $state(false);
+	let isSending = $state(false);
 	let scrollContainer: HTMLElement | null = $state(null);
 
 	// Fetch messages on component mount
@@ -51,15 +52,16 @@
 	}
 
 	async function sendMessage() {
-		if (!newMessage.trim()) return;
+		if (!newMessage.trim() || isSending) return;
 
-		await scrubinClient.hunt.createInterestedCandidateMessage(
-			huntId,
-			candidateId,
-			newMessage.trim()
-		);
-
+		isSending = true;
 		try {
+			await scrubinClient.hunt.createInterestedCandidateMessage(
+				huntId,
+				candidateId,
+				newMessage.trim()
+			);
+
 			messages = [
 				...messages,
 				{
@@ -81,6 +83,8 @@
 			// await fetchMessages();
 		} catch (error) {
 			console.error('Failed to send message:', error);
+		} finally {
+			isSending = false;
 		}
 	}
 
@@ -256,7 +260,7 @@
 				onkeydown={handleKeyDown}
 				class="flex-1"
 			/>
-			<Button type="submit" disabled={!newMessage.trim()}>
+			<Button type="submit" disabled={!newMessage.trim() || isSending}>
 				{$t('dashboard.candidateChat.send')}
 			</Button>
 		</form>

@@ -111,7 +111,9 @@
 			"candidates": "candidates",
 			"interested": "interested",
 			"unreadMessages": "unread",
-			"unanswered": "unanswered"
+			"unanswered": "unanswered context questions",
+			"unansweredMessages": "messages need response",
+			"needsAttention": "need attention"
 		},
 		"searchView": {
 			"welcomeBack": "Welcome back, {{name}}!",

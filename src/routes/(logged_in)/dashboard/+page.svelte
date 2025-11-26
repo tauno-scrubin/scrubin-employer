@@ -2,7 +2,6 @@
 	import { page } from '$app/state';
 	import SEO from '$lib/components/SEO.svelte';
 	import HuntsList from '@/components/dashboard/huntsList.svelte';
-	import SearchHistory from '@/components/dashboard/searchHistory.svelte';
 	import SimpleSearchView from '@/components/dashboard/simpleSearchView.svelte';
 	import type { WorkerLookup } from '@/scrubinClient';
 	import { scrubinClient } from '@/scrubinClient/client';
@@ -24,11 +23,6 @@
 		} finally {
 			isLoading = false;
 		}
-	}
-
-	function handleViewHunt(huntId: number) {
-		// This function is passed to HuntsList component
-		// The HuntsList component handles the navigation internally
 	}
 
 	onMount(() => {
@@ -63,7 +57,7 @@
 	{#if !isSearchActive}
 		<div class="grid gap-4">
 			<div class="col-span-4">
-				<HuntsList onViewHunt={handleViewHunt} />
+				<HuntsList />
 			</div>
 
 			<!-- <div class="col-span-2 border-l border-opacity-50 pl-4">

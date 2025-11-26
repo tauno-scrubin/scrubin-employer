@@ -11,7 +11,8 @@
 	import * as Card from '$lib/components/ui/card/index.js';
 	import * as Tabs from '$lib/components/ui/tabs/index.js';
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
-	import { t } from '$lib/i18n';
+	import { t, locale } from '$lib/i18n';
+	import { get } from 'svelte/store';
 	import type { Currency as Cur, HuntStats, InterestedCandidate } from '$lib/scrubinClient';
 	import { scrubinClient } from '$lib/scrubinClient/client';
 	import InterestedWorkerDialog from '@/components/dashboard/interestedWorkerDialog.svelte';
@@ -22,8 +23,11 @@
 	import Separator from '@/components/ui/separator/separator.svelte';
 	import {
 		ArrowLeft,
+		Bell,
 		Briefcase,
+		CheckCircle2,
 		ChevronDown,
+		Clock,
 		DollarSign,
 		Eye,
 		FileText,
@@ -35,7 +39,13 @@
 		MessageSquare,
 		Phone,
 		Sparkle,
-		Users
+		UserCheck,
+		UserCog,
+		UserMinus,
+		UserPlus,
+		UserX,
+		Users,
+		XCircle
 	} from 'lucide-svelte';
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
@@ -47,13 +57,13 @@
 	);
 	let interestedCandidates = $state<InterestedCandidate[]>([]);
 	let showAllInterestedCandidates = $state(false);
+	let selectedPipelineStatus = $state<string | null>(null);
 	let isLoading = $state(true);
 	let isLoadingCandidates = $state(false);
+	let unansweredQuestionsCount = $state(0);
 	let showInterestedWorkerDialog = $state(false);
 	let selectedCandidateId = $state(0);
 	let selectedCandidateType = $state<'offer' | 'apply'>('offer');
-	let availableCurrencies = $state<Cur[]>([]);
-	let availableCountries = $state<string[]>([]);
 	let paymentDialogOpen = $state(false);
 	let chargeableAmount = $state({
 		amount: 0,
@@ -103,7 +113,8 @@
 			await scrubinClient.hunt
 				.getInterestedCandidates(hunt.huntId)
 				.then((candidates) => {
-					interestedCandidates = candidates.sort((a, b) => {
+					const allCandidates = [...candidates];
+					interestedCandidates = allCandidates.sort((a, b) => {
 						const dateA =
 							a.dateLastUserAction instanceof Date
 								? a.dateLastUserAction.getTime()
@@ -116,7 +127,7 @@
 					});
 				})
 				.catch((error) => {
-					toast.error('Failed to fetch interested candidates');
+					toast.error($t('errors.fetchCandidatesFailed'));
 				})
 				.finally(() => {
 					isLoadingCandidates = false;
@@ -139,6 +150,9 @@
 
 			// Fetch latest stats
 			scrubinClient.hunt.getHuntStats(hunt.huntId).then((stats) => {
+				if (stats.totalInterestedReadyForCompany > 0) {
+					activeTab = 'statistics';
+				}
 				funnelStats = {
 					huntId: stats.huntId,
 					totalHuntables: stats.totalHuntables || 0,
@@ -149,13 +163,6 @@
 					totalHired: stats.totalHired || 0
 				};
 			});
-
-			const [currencies, countries] = await Promise.all([
-				scrubinClient.company.getCurrencies(),
-				scrubinClient.company.getCountries()
-			]);
-			availableCurrencies = currencies;
-			availableCountries = countries;
 
 			hunt = data.hunt;
 		} catch (error) {
@@ -371,6 +378,166 @@
 		});
 	}
 
+	// Pipeline status configuration - reactive with i18n
+	let pipelineStatuses = $derived.by(() => {
+		// Reference locale to make this reactive to language changes
+		get(locale);
+		const translate = get(t);
+		return [
+			{
+				key: 'interested',
+				icon: UserPlus,
+				color: 'bg-emerald-100 text-emerald-700 border-emerald-300',
+				hoverColor: 'hover:bg-emerald-200',
+				iconColor: 'text-emerald-600',
+				label: translate('statistics.pipelineStatuses.interested.label'),
+				description: translate('statistics.pipelineStatuses.interested.description')
+			},
+			{
+				key: 'under_review',
+				icon: UserCog,
+				color: 'bg-purple-100 text-purple-700 border-purple-300',
+				hoverColor: 'hover:bg-purple-200',
+				iconColor: 'text-purple-600',
+				label: translate('statistics.pipelineStatuses.under_review.label'),
+				description: translate('statistics.pipelineStatuses.under_review.description')
+			},
+			{
+				key: 'meeting_scheduled',
+				icon: Users,
+				color: 'bg-indigo-100 text-indigo-700 border-indigo-300',
+				hoverColor: 'hover:bg-indigo-200',
+				iconColor: 'text-indigo-600',
+				label: translate('statistics.pipelineStatuses.meeting_scheduled.label'),
+				description: translate('statistics.pipelineStatuses.meeting_scheduled.description')
+			},
+			{
+				key: 'screening_completed',
+				icon: UserCheck,
+				color: 'bg-cyan-100 text-cyan-700 border-cyan-300',
+				hoverColor: 'hover:bg-cyan-200',
+				iconColor: 'text-cyan-600',
+				label: translate('statistics.pipelineStatuses.screening_completed.label'),
+				description: translate('statistics.pipelineStatuses.screening_completed.description')
+			},
+			{
+				key: 'offer_made',
+				icon: FileText,
+				color: 'bg-amber-100 text-amber-700 border-amber-300',
+				hoverColor: 'hover:bg-amber-200',
+				iconColor: 'text-amber-600',
+				label: translate('statistics.pipelineStatuses.offer_made.label'),
+				description: translate('statistics.pipelineStatuses.offer_made.description')
+			},
+			{
+				key: 'accepted',
+				icon: CheckCircle2,
+				color: 'bg-green-100 text-green-700 border-green-300',
+				hoverColor: 'hover:bg-green-200',
+				iconColor: 'text-green-600',
+				label: translate('statistics.pipelineStatuses.accepted.label'),
+				description: translate('statistics.pipelineStatuses.accepted.description')
+			},
+			{
+				key: 'rejected',
+				icon: XCircle,
+				color: 'bg-red-100 text-red-700 border-red-300',
+				hoverColor: 'hover:bg-red-200',
+				iconColor: 'text-red-600',
+				label: translate('statistics.pipelineStatuses.rejected.label'),
+				description: translate('statistics.pipelineStatuses.rejected.description')
+			},
+			{
+				key: 'declined',
+				icon: UserMinus,
+				color: 'bg-orange-100 text-orange-700 border-orange-300',
+				hoverColor: 'hover:bg-orange-200',
+				iconColor: 'text-orange-600',
+				label: translate('statistics.pipelineStatuses.declined.label'),
+				description: translate('statistics.pipelineStatuses.declined.description')
+			},
+			{
+				key: 'expired',
+				icon: Clock,
+				color: 'bg-slate-100 text-slate-700 border-slate-300',
+				hoverColor: 'hover:bg-slate-200',
+				iconColor: 'text-slate-600',
+				label: translate('statistics.pipelineStatuses.expired.label'),
+				description: translate('statistics.pipelineStatuses.expired.description')
+			},
+			{
+				key: 'cancelled',
+				icon: UserX,
+				color: 'bg-rose-100 text-rose-700 border-rose-300',
+				hoverColor: 'hover:bg-rose-200',
+				iconColor: 'text-rose-600',
+				label: translate('statistics.pipelineStatuses.cancelled.label'),
+				description: translate('statistics.pipelineStatuses.cancelled.description')
+			}
+		];
+	});
+
+	// Computed pipeline data with counts
+	let pipelineData = $derived(
+		pipelineStatuses.map((status) => ({
+			...status,
+			count: interestedCandidates.filter(
+				(c) => c.status?.toLowerCase() === status.key || (!c.status && status.key === 'interested')
+			).length
+		}))
+	);
+
+	// Filtered candidates based on selected pipeline status
+	let filteredCandidates = $derived(
+		selectedPipelineStatus
+			? interestedCandidates.filter((c) => {
+					const candidateStatus = c.status?.toLowerCase() || 'interested';
+					return candidateStatus === selectedPipelineStatus;
+				})
+			: interestedCandidates.filter(
+					(c) => showAllInterestedCandidates || c.dateReadyForRecruiter !== null
+				)
+	);
+
+	// Group candidates by status for "All" view
+	let groupedCandidates = $derived(() => {
+		const filtered = interestedCandidates.filter(
+			(c) => showAllInterestedCandidates || c.dateReadyForRecruiter !== null
+		);
+
+		// Key stages that should always be shown
+		const keyStages = [
+			'interested',
+			'under_review',
+			'meeting_scheduled',
+			'screening_completed',
+			'offer_made',
+			'accepted'
+		];
+
+		return pipelineStatuses.reduce(
+			(acc, status) => {
+				const candidates = filtered.filter(
+					(c) => (c.status?.toLowerCase() || 'interested') === status.key
+				);
+				// Show if has candidates OR is a key stage
+				if (candidates.length > 0 || keyStages.includes(status.key)) {
+					acc[status.key] = {
+						...status,
+						candidates
+					};
+				}
+				return acc;
+			},
+			{} as Record<string, (typeof pipelineStatuses)[0] & { candidates: InterestedCandidate[] }>
+		);
+	});
+
+	// Candidates that need action (have needAttention flag)
+	let candidatesNeedingAction = $derived(
+		interestedCandidates.filter((c) => c.stats.needAttention).length
+	);
+
 	function handleActivateOrPay() {
 		if (hunt.status === 'PENDING') {
 			activateHunt();
@@ -401,13 +568,13 @@
 			}
 		} catch (error) {
 			console.error('Failed to activate hunt:', error);
-			toast.error('Failed to activate hunt. Please try again.');
+			toast.error($t('errors.activateHuntFailed'));
 		}
 	}
 
 	function onPaymentSuccess() {
 		window.location.reload();
-		toast.success('Payment successful! Hunt is now active.');
+		toast.success($t('errors.paymentSuccess'));
 	}
 </script>
 
@@ -427,8 +594,7 @@
 	vatAmount={chargeableAmount.vatAmount}
 	onSuccess={onPaymentSuccess}
 />
-
-<div class="container mx-auto max-w-7xl space-y-6 py-6">
+<div class="container mx-auto max-w-6xl space-y-6 py-6 2xl:max-w-7xl">
 	<div class="mb-6 flex items-center gap-4">
 		<Button onclick={goToPrevPage} variant="outline" size="icon" class="h-9 w-9">
 			<ArrowLeft class="h-4 w-4" />
@@ -452,8 +618,26 @@
 	<Tabs.Root bind:value={activeTab} class="w-full">
 		<Tabs.List class="grid w-fit grid-cols-3">
 			<Tabs.Trigger value="details">{$t('hunt.details')}</Tabs.Trigger>
-			<Tabs.Trigger value="statistics">{$t('hunt.statistics')}</Tabs.Trigger>
-			<Tabs.Trigger value="questions">{$t('hunt.questions')}</Tabs.Trigger>
+			<Tabs.Trigger value="statistics">
+				<span>{$t('hunt.statistics')}</span>
+				{#if candidatesNeedingAction > 0}
+					<span
+						class="ml-2 inline-flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-red-500 px-1.5 text-xs font-semibold text-white"
+					>
+						{candidatesNeedingAction}
+					</span>
+				{/if}
+			</Tabs.Trigger>
+			<Tabs.Trigger value="questions">
+				<span>{$t('hunt.questions')}</span>
+				{#if unansweredQuestionsCount > 0}
+					<span
+						class="ml-2 inline-flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-amber-500 px-1.5 text-xs font-semibold text-white"
+					>
+						{unansweredQuestionsCount}
+					</span>
+				{/if}
+			</Tabs.Trigger>
 			<!-- <Tabs.Trigger value="agent_chat">Agent chat</Tabs.Trigger> -->
 		</Tabs.List>
 		<Tabs.Content value="details">
@@ -593,7 +777,7 @@
 		</Tabs.Content>
 		<Tabs.Content value="statistics">
 			<div class="rounded-md bg-blue-50/80 p-4">
-				<div class="flex flex-col gap-4 rounded-md bg-white p-4">
+				<div class="flex flex-col gap-4 rounded-md bg-white p-4 shadow-sm">
 					<h4 class="text-xl font-semibold text-gray-900">
 						{$t('statistics.huntConversionFunnel')}
 					</h4>
@@ -608,50 +792,128 @@
 							<Loader2 class="h-10 w-10 animate-spin text-primary/70" />
 						</div>
 					{:else}
-						<div class="grid grid-cols-3 gap-4">
+						<div class="grid grid-cols-6 gap-2">
 							{#each funnelData as item}
-								<div class="flex flex-col gap-2 rounded-md border p-4">
-									<div class="flex items-center gap-2">
-										<h5 class="text-sm font-medium text-gray-500">
+								<div class="flex flex-col gap-1.5 rounded-md border p-2.5">
+									<div class="flex items-center gap-1.5">
+										<h5 class="text-xs font-medium text-gray-500">
 											{$t(`${item.name}`)}
 										</h5>
 										<Tooltip.Root>
 											<Tooltip.Trigger>
-												<Info class="h-4 w-4 cursor-help text-muted-foreground" />
+												<Info class="h-3 w-3 flex-shrink-0 cursor-help text-muted-foreground" />
 											</Tooltip.Trigger>
 											<Tooltip.Content side="bottom">
-												<p class="max-w-xs text-sm">{$t(`${item.name}Desc`)}</p>
+												<p class="max-w-[180px] text-xs">{$t(`${item.name}Desc`)}</p>
 											</Tooltip.Content>
 										</Tooltip.Root>
 									</div>
-									<p class="text-3xl font-semibold text-gray-900">{item.value}</p>
+									<p class="text-2xl font-semibold leading-tight text-gray-900">{item.value}</p>
 								</div>
 							{/each}
 						</div>
 					{/if}
 
 					<Separator class="mb-2" />
-					<h4 class="text-xl font-semibold text-gray-900">{$t('statistics.candidates')}</h4>
-					<p class="mb-4 text-sm text-muted-foreground">{$t('statistics.candidatesDesc')}</p>
 
-					<!-- Controls for showing all interested candidates -->
-					<!-- {#if interestedCandidates.some((c) => c.dateReadyForRecruiter === null)}
-						<div class="flex items-center rounded-lg border bg-gray-50 p-4">
-							<div class="flex items-center space-x-3">
-								<input
-									type="checkbox"
-									id="showAllCandidates"
-									bind:checked={showAllInterestedCandidates}
-									class="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-								/>
-								<label for="showAllCandidates" class="text-sm font-medium text-gray-700">
-									{$t('statistics.showAllInterestedCandidates')}
-								</label>
+					<!-- Hiring Progress Pipeline -->
+					<div class="space-y-4">
+						<div class="flex items-center justify-between">
+							<div>
+								<h4 class="text-xl font-semibold text-gray-900">
+									{$t('statistics.hiringProgressPipeline')}
+								</h4>
+								<p class="text-sm text-muted-foreground">
+									{$t('statistics.filterCandidatesByStage')}
+								</p>
 							</div>
+							{#if candidatesNeedingAction > 0}
+								<Badge variant="destructive" class="h-6">
+									{candidatesNeedingAction}
+									{$t('statistics.needAction')}
+								</Badge>
+							{/if}
 						</div>
-					{/if} -->
 
-					<div class="flex flex-col gap-4">
+						{#if isLoadingCandidates}
+							<div class="flex flex-col items-center justify-center gap-6 py-8">
+								<Loader2 class="h-10 w-10 animate-spin text-primary/70" />
+							</div>
+						{:else if interestedCandidates.length === 0}
+							<div class="rounded-lg border border-dashed p-8 text-center">
+								<Users class="mx-auto h-12 w-12 text-muted-foreground/50" />
+								<p class="mt-2 text-sm text-muted-foreground">
+									{$t('statistics.noCandidatesYet')}
+								</p>
+							</div>
+						{:else}
+							<!-- Pipeline Status Filters/Tabs -->
+							<div class="flex flex-wrap gap-2">
+								<!-- All button -->
+								<button
+									onclick={() => (selectedPipelineStatus = null)}
+									class="inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-sm font-medium transition-all
+									{selectedPipelineStatus === null
+										? 'border-primary bg-primary text-primary-foreground shadow-sm'
+										: 'border-border bg-background hover:bg-accent hover:text-accent-foreground'}"
+								>
+									<Users class="h-3.5 w-3.5" />
+									{$t('statistics.all')}
+									<span
+										class="ml-0.5 rounded-full px-1.5 py-0.5 text-xs font-semibold
+									{selectedPipelineStatus === null
+											? 'bg-primary-foreground/20 text-primary-foreground'
+											: 'bg-muted text-muted-foreground'}"
+									>
+										{interestedCandidates.length}
+									</span>
+								</button>
+
+								{#each pipelineData.filter((s) => s.count > 0 || ['interested', 'under_review', 'meeting_scheduled', 'offer_made', 'accepted'].includes(s.key)) as status}
+									{@const Icon = status.icon}
+									<Tooltip.Root>
+										<Tooltip.Trigger>
+											<button
+												onclick={() => {
+													selectedPipelineStatus =
+														selectedPipelineStatus === status.key ? null : status.key;
+												}}
+												class="inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-sm font-medium transition-all
+												{selectedPipelineStatus === status.key
+													? `${status.color} border-current shadow-sm`
+													: 'border-border bg-background hover:bg-accent hover:text-accent-foreground'}"
+											>
+												<Icon class="h-3.5 w-3.5" />
+												<span>{status.label}</span>
+												<span
+													class="ml-0.5 rounded-full px-1.5 py-0.5 text-xs font-semibold
+													{selectedPipelineStatus === status.key ? 'bg-current/20' : 'bg-muted text-muted-foreground'}"
+												>
+													{status.count}
+												</span>
+												{#if interestedCandidates.filter((c) => c.status?.toLowerCase() === status.key && c.stats.hasUnreadMessages).length > 0}
+													<span
+														class="flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white"
+													>
+														{interestedCandidates.filter(
+															(c) =>
+																c.status?.toLowerCase() === status.key && c.stats.hasUnreadMessages
+														).length}
+													</span>
+												{/if}
+											</button>
+										</Tooltip.Trigger>
+										<Tooltip.Content side="bottom">
+											<p class="max-w-xs text-sm">{status.description}</p>
+										</Tooltip.Content>
+									</Tooltip.Root>
+								{/each}
+							</div>
+						{/if}
+					</div>
+
+					<!-- Candidates Section -->
+					<div class="mt-6 flex max-w-full flex-col gap-4 overflow-x-auto">
 						{#if isLoadingCandidates}
 							<div class="flex flex-col items-center justify-center gap-6 py-8">
 								<Loader2 class="h-10 w-10 animate-spin text-primary/70" />
@@ -727,9 +989,117 @@
 									</p>
 								</div>
 							</div>
+						{:else if selectedPipelineStatus === null}
+							<!-- Kanban-style column view when "All" is selected -->
+							<div class="overflow-x-auto">
+								<div class="flex gap-4 pb-4">
+									{#each Object.entries(groupedCandidates()) as [statusKey, statusGroup]}
+										{@const Icon = statusGroup.icon}
+										<div class="flex w-64 flex-shrink-0 flex-col rounded-lg border">
+											<!-- Column Header -->
+											<div class="border-b px-3 py-2 {statusGroup.color}">
+												<div class="flex items-center justify-between">
+													<div class="flex items-center gap-2">
+														<Icon class="h-3.5 w-3.5 {statusGroup.iconColor}" />
+														<h5 class="text-sm font-semibold">{statusGroup.label}</h5>
+													</div>
+													<span
+														class="flex h-5 w-5 items-center justify-center rounded-full text-xs font-bold {statusGroup.color}"
+													>
+														{statusGroup.candidates.length}
+													</span>
+												</div>
+											</div>
+											<!-- Column Content -->
+											<div class="flex flex-col gap-2 p-3">
+												{#if statusGroup.candidates.length === 0}
+													<div class="py-8 text-center">
+														<p class="text-xs text-muted-foreground">
+															{$t('statistics.noCandidates')}
+														</p>
+													</div>
+												{:else}
+													{#each statusGroup.candidates as candidate}
+														<button
+															onclick={() => {
+																selectedCandidateId = candidate.candidateId;
+																selectedCandidateType = candidate.type;
+																showInterestedWorkerDialog = true;
+																updateUrlWithCandidateId(candidate.candidateId);
+															}}
+															class="group relative flex flex-col gap-1.5 rounded-lg border bg-background p-2.5 text-left transition-all hover:border-primary hover:shadow-md {candidate
+																.stats.hasUnreadMessages
+																? 'border-l-4 border-l-orange-500'
+																: ''}"
+														>
+															{#if candidate.stats.hasUnreadMessages || candidate.stats.needAttention}
+																<div
+																	class="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-orange-500 text-[10px] font-bold text-white shadow-lg ring-2 ring-background"
+																>
+																	<Bell class="h-3 w-3" />
+																</div>
+															{/if}
+
+															<!-- Name -->
+															<div class="text-sm font-medium">
+																{candidate.firstName}
+																{candidate.lastName.charAt(0)}.
+															</div>
+
+															<!-- Email -->
+															<div
+																class="flex items-center gap-1 truncate text-xs text-muted-foreground"
+															>
+																<Mail class="h-3 w-3 flex-shrink-0" />
+																<span class="truncate">{candidate.email}</span>
+															</div>
+
+															<!-- Stats row -->
+															<div
+																class="flex items-center justify-between border-t pt-1 text-xs text-muted-foreground"
+															>
+																<div class="flex items-center gap-2">
+																	<Tooltip.Root>
+																		<Tooltip.Trigger>
+																			<div class="flex items-center gap-0.5">
+																				<MessageSquare class="h-3 w-3" />
+																				<span>{candidate.totalMessages}</span>
+																			</div>
+																		</Tooltip.Trigger>
+																		<Tooltip.Content>
+																			<span>{$t('statistics.messages')}</span>
+																		</Tooltip.Content>
+																	</Tooltip.Root>
+
+																	<Tooltip.Root>
+																		<Tooltip.Trigger>
+																			<div class="flex items-center gap-0.5">
+																				<Eye class="h-3 w-3" />
+																				<span>{candidate.stats.offerOpens}</span>
+																			</div>
+																		</Tooltip.Trigger>
+																		<Tooltip.Content>
+																			<span>{$t('statistics.opens')}</span>
+																		</Tooltip.Content>
+																	</Tooltip.Root>
+																</div>
+
+																<span class="text-[10px]">
+																	{formatDate(candidate.dateInterested).split(',')[0]}
+																</span>
+															</div>
+														</button>
+													{/each}
+												{/if}
+											</div>
+										</div>
+									{/each}
+								</div>
+							</div>
 						{:else}
+							<!-- Detailed card view when specific status is selected -->
 							<div class="grid gap-4">
-								{#each interestedCandidates.filter((c) => showAllInterestedCandidates || c.dateReadyForRecruiter !== null) as candidate}
+								{#each filteredCandidates as candidate}
 									<Card.Root
 										class="cursor-pointer overflow-hidden transition-shadow hover:shadow-md"
 										onclick={() => {
@@ -787,10 +1157,12 @@
 																			<div class="flex items-center gap-1 text-xs">
 																				<MessageSquare class="h-3.5 w-3.5" />
 																				<span>{candidate.totalMessages}</span>
-																				{#if candidate.hasUnreadMessages}
+																				{#if candidate.stats.hasUnreadMessages}
 																					<span
-																						class="ml-1 inline-block h-2 w-2 rounded-full bg-red-500"
-																					></span>
+																						class="ml-1 inline-flex h-4 w-4 animate-pulse items-center justify-center rounded-full bg-orange-500 text-white"
+																					>
+																						<Bell class="h-2.5 w-2.5" />
+																					</span>
 																				{/if}
 																			</div>
 																		</Tooltip.Trigger>
@@ -866,7 +1238,10 @@
 					<p class="mb-6 text-sm text-muted-foreground">
 						{$t('questions.contextQuestionsDesc')}
 					</p>
-					<QuestionsInHunt huntId={hunt.huntId} />
+					<QuestionsInHunt
+						huntId={hunt.huntId}
+						onUnansweredChange={(count) => (unansweredQuestionsCount = count)}
+					/>
 				</div>
 			</div>
 		</Tabs.Content>

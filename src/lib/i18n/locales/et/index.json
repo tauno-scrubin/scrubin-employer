@@ -111,7 +111,9 @@
 			"candidates": "kandidaat",
 			"interested": "huvitatud",
 			"unreadMessages": "lugemata",
-			"unanswered": "vastamata"
+			"unanswered": "vastamata kontekstiküsimused",
+			"unansweredMessages": "sõnumid vajavad vastust",
+			"needsAttention": "vajavad tähelepanu"
 		},
 		"searchView": {
 			"welcomeBack": "Tere tulemast tagasi, {{name}}!",

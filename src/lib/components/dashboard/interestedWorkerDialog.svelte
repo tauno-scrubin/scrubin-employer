@@ -4,6 +4,8 @@
 	import * as Tabs from '$lib/components/ui/tabs/index.js';
 	import * as Button from '$lib/components/ui/button/index.js';
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
+	import * as Select from '$lib/components/ui/select/index.js';
+	import { get } from 'svelte/store';
 	import { t } from '$lib/i18n';
 	import type { InterestedCandidateDetails, InterestedCandidateStats } from '@/scrubinClient';
 	import { scrubinClient } from '@/scrubinClient/client';
@@ -11,16 +13,20 @@
 		Award,
 		Briefcase,
 		Calendar,
-		GraduationCap,	
+		GraduationCap,
 		Mail,
 		Phone,
 		Sparkle,
-		CheckCircle,
-		XCircle,
-		Handshake,
 		Eye,
 		MailOpen,
-		MessageSquare
+		MessageSquare,
+		UserPlus,
+		UserCog,
+		Users,
+		UserCheck,
+		FileText,
+		CheckCircle2,
+		UserMinus
 	} from 'lucide-svelte';
 	import CandidateChat from './candidateChat.svelte';
 	import CandidateNotes from './candidateNotes.svelte';
@@ -44,6 +50,57 @@
 	let activeTab = $state('profile'); // profile, messages, notes
 	let isProcessing = $state(false);
 	let actionError = $state('');
+
+	// Available pipeline statuses
+	let availableStatuses = $derived.by(() => {
+		const translate = get(t);
+		return [
+			{
+				value: 'interested',
+				label: translate('statistics.pipelineStatuses.interested.label'),
+				icon: UserPlus
+			},
+			{
+				value: 'under_review',
+				label: translate('statistics.pipelineStatuses.under_review.label'),
+				icon: UserCog
+			},
+			{
+				value: 'meeting_scheduled',
+				label: translate('statistics.pipelineStatuses.meeting_scheduled.label'),
+				icon: Users
+			},
+			{
+				value: 'screening_completed',
+				label: translate('statistics.pipelineStatuses.screening_completed.label'),
+				icon: UserCheck
+			},
+			{
+				value: 'offer_made',
+				label: translate('statistics.pipelineStatuses.offer_made.label'),
+				icon: FileText
+			},
+			{
+				value: 'accepted',
+				label: translate('statistics.pipelineStatuses.accepted.label'),
+				icon: CheckCircle2
+			},
+			{
+				value: 'declined',
+				label: translate('statistics.pipelineStatuses.declined.label'),
+				icon: UserMinus
+			}
+		];
+	});
+
+	// Current status value for the select dropdown
+	let currentStatus = $derived.by(() => {
+		if (!worker?.status) return 'interested';
+		// Map old status values to new ones
+		const statusLower = worker.status.toLowerCase();
+		if (statusLower === 'hired') return 'accepted';
+		return statusLower;
+	});
 
 	$effect(() => {
 		if (open && huntId && candidateId) {
@@ -82,43 +139,16 @@
 		}
 	}
 
-	async function handleStatusChange(action: 'offer' | 'hired' | 'decline') {
-		if (!worker || !huntId || !candidateId) return;
+	async function handleStatusChange(newStatus: string) {
+		if (!worker || !huntId || !candidateId || !newStatus) return;
+		if (newStatus === currentStatus) return; // No change
 
 		isProcessing = true;
 		actionError = '';
 
 		try {
-			// Use correct API endpoints based on candidate type
-			if (type === 'apply') {
-				// For applicants, only hired and decline are available
-				switch (action) {
-					case 'hired':
-						await scrubinClient.hunt.markInterestedApplicantStatusToHired(huntId, candidateId);
-						break;
-					case 'decline':
-						await scrubinClient.hunt.markInterestedApplicantStatusToDeclined(huntId, candidateId);
-						break;
-					default:
-						throw new Error(`Invalid action ${action} for applicant type`);
-				}
-			} else {
-				// For offer candidates, all actions are available
-				switch (action) {
-					case 'offer':
-						await scrubinClient.hunt.markInterestedCandidateStatusToCompanyOfferMade(
-							huntId,
-							candidateId
-						);
-						break;
-					case 'hired':
-						await scrubinClient.hunt.markInterestedCandidateStatusToHired(huntId, candidateId);
-						break;
-					case 'decline':
-						await scrubinClient.hunt.markInterestedCandidateStatusToDeclined(huntId, candidateId);
-						break;
-				}
-			}
+			// Use the new unified endpoint
+			await scrubinClient.hunt.updateInterestedCandidateStatus(huntId, candidateId, newStatus);
 
 			// Reload hunt stats
 			await scrubinClient.hunt.getHuntStats(huntId);
@@ -126,7 +156,7 @@
 			// Refresh worker details
 			await getWorker();
 		} catch (error) {
-			console.error(`Error changing status to ${action}:`, error);
+			console.error(`Error changing status to ${newStatus}:`, error);
 			actionError = $t('dashboard.interestedWorkerDialog.updateStatusError');
 		} finally {
 			isProcessing = false;
@@ -379,7 +409,7 @@
 								</div>
 							</div>
 
-							<!-- Candidate Action Buttons -->
+							<!-- Candidate Status Dropdown -->
 							<div class="mb-6 rounded-md border border-gray-200 bg-gray-50 p-4">
 								<h4 class="mb-3 text-lg font-medium text-gray-800">
 									{$t('dashboard.interestedWorkerDialog.actions')}
@@ -391,102 +421,58 @@
 									</div>
 								{/if}
 
-								<div class="grid grid-cols-1 gap-3 md:grid-cols-3">
-									{#if worker && worker.status && worker.status.toLowerCase() === 'interested' && type !== 'apply'}
-										<!-- Show Offer Made button only for interested offer candidates (not applicants) -->
-										<div class="flex flex-col gap-2">
-											<Tooltip.Root>
-												<Tooltip.Trigger>
-													<div class="w-full">
-														<Button.Root
-															class="w-full justify-start gap-2 bg-white hover:bg-blue-50"
-															variant="outline"
-															disabled={isProcessing}
-															onclick={() => handleStatusChange('offer')}
-														>
-															<Handshake class="h-5 w-5 text-blue-600" />
-															<span>{$t('dashboard.interestedWorkerDialog.offerMade')}</span>
-														</Button.Root>
-													</div>
-												</Tooltip.Trigger>
-												<Tooltip.Content side="bottom" class="max-w-xs">
-													<p class="text-sm">
-														{$t('dashboard.interestedWorkerDialog.offerMadeTooltip')}
-													</p>
-												</Tooltip.Content>
-											</Tooltip.Root>
-										</div>
-									{/if}
-
-									{#if worker && worker.status && (type === 'apply' || ['interested', 'offer_made', 'declined'].includes(worker.status.toLowerCase()))}
-										<!-- Show Hired button for applicants (all statuses) or offer candidates (interested, offer_made, declined states) -->
-										<div class="flex flex-col gap-2">
-											<Tooltip.Root>
-												<Tooltip.Trigger>
-													<div class="w-full">
-														<Button.Root
-															class="w-full justify-start gap-2 bg-white hover:bg-green-50"
-															variant="outline"
-															disabled={isProcessing}
-															onclick={() => handleStatusChange('hired')}
-														>
-															<CheckCircle class="h-5 w-5 text-green-600" />
-															<span>{$t('dashboard.interestedWorkerDialog.hired')}</span>
-														</Button.Root>
-													</div>
-												</Tooltip.Trigger>
-												<Tooltip.Content side="bottom" class="max-w-xs">
-													<p class="text-sm">
-														{$t('dashboard.interestedWorkerDialog.hiredTooltip')}
-													</p>
-												</Tooltip.Content>
-											</Tooltip.Root>
-										</div>
-									{/if}
-
-									{#if worker && worker.status && (type === 'apply' || ['interested', 'offer_made'].includes(worker.status.toLowerCase()))}
-										<!-- Show Decline button for applicants (all statuses) or offer candidates (interested, offer_made statuses) -->
-										<div class="flex flex-col gap-2">
-											<Tooltip.Root>
-												<Tooltip.Trigger>
-													<div class="w-full">
-														<Button.Root
-															class="w-full justify-start gap-2 bg-white hover:bg-red-50"
-															variant="outline"
-															disabled={isProcessing}
-															onclick={() => handleStatusChange('decline')}
-														>
-															<XCircle class="h-5 w-5 text-red-600" />
-															<span>{$t('dashboard.interestedWorkerDialog.decline')}</span>
-														</Button.Root>
-													</div>
-												</Tooltip.Trigger>
-												<Tooltip.Content side="bottom" class="max-w-xs">
-													<p class="text-sm">
-														{$t('dashboard.interestedWorkerDialog.declineTooltip')}
-													</p>
-												</Tooltip.Content>
-											</Tooltip.Root>
-										</div>
-									{/if}
-
-									{#if worker && worker.status && worker.status.toLowerCase() === 'hired'}
-										<div
-											class="col-span-full flex items-center gap-2 rounded-md bg-green-100 p-3 text-sm text-green-800"
+								<div class="flex flex-col gap-3">
+									<div class="flex items-center gap-3">
+										<label for="status-select" class="text-sm font-medium text-gray-700">
+											{$t('dashboard.interestedWorkerDialog.currentStatus')}:
+										</label>
+										<Select.Root
+											type="single"
+											value={currentStatus}
+											onValueChange={(value: string | undefined) => {
+												if (value) handleStatusChange(value);
+											}}
+											disabled={isProcessing}
 										>
-											<CheckCircle class="h-4 w-4" />
-											<span>{$t('dashboard.interestedWorkerDialog.hiredStatus')}</span>
+											<Select.Trigger id="status-select" class="w-[280px]">
+												{@const selectedStatus = availableStatuses.find(
+													(s) => s.value === currentStatus
+												)}
+												{#if selectedStatus}
+													{@const Icon = selectedStatus.icon}
+													<div class="flex items-center gap-2">
+														<Icon class="h-4 w-4" />
+														<span>{selectedStatus.label}</span>
+													</div>
+												{:else}
+													<span>{currentStatus}</span>
+												{/if}
+											</Select.Trigger>
+											<Select.Content>
+												<Select.Group>
+													{#each availableStatuses as status}
+														{@const Icon = status.icon}
+														<Select.Item value={status.value}>
+															<div class="flex items-center gap-2">
+																<Icon class="h-4 w-4" />
+																<span>{status.label}</span>
+															</div>
+														</Select.Item>
+													{/each}
+												</Select.Group>
+											</Select.Content>
+										</Select.Root>
+									</div>
+
+									{#if isProcessing}
+										<div class="flex items-center gap-2 text-sm text-gray-600">
+											<div
+												class="h-4 w-4 animate-spin rounded-full border-2 border-blue-500 border-t-transparent"
+											></div>
+											<span>Updating status...</span>
 										</div>
 									{/if}
 								</div>
-
-								{#if isProcessing}
-									<div class="mt-4 flex justify-center">
-										<div
-											class="h-5 w-5 animate-spin rounded-full border-2 border-blue-500 border-t-transparent"
-										></div>
-									</div>
-								{/if}
 							</div>
 
 							{#if workerStats}

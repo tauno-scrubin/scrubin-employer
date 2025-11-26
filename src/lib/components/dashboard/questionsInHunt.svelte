@@ -8,7 +8,12 @@
 	import { onMount, tick } from 'svelte';
 	import { t } from '$lib/i18n';
 
-	const { huntId } = $props();
+	interface QuestionsInHuntProps {
+		huntId: number;
+		onUnansweredChange?: (count: number) => void;
+	}
+
+	const { huntId, onUnansweredChange = () => {} } = $props<QuestionsInHuntProps>();
 
 	let questions = $state<ContextQuestion[]>([]);
 	let isLoading = $state(true);
@@ -26,6 +31,7 @@
 			console.error('Failed to load questions:', error);
 		} finally {
 			isLoading = false;
+			updateUnansweredCount();
 		}
 	}
 
@@ -45,6 +51,7 @@
 			// Reset the form
 			answer = '';
 			editingQuestionId = null;
+			updateUnansweredCount();
 		} catch (error) {
 			console.error('Failed to submit answer:', error);
 		}
@@ -66,6 +73,11 @@
 		await tick();
 		console.log(inputRef);
 		inputRef?.focus();
+	}
+
+	function updateUnansweredCount() {
+		const count = questions.filter((q) => !q.answer || q.answer.trim().length === 0).length;
+		onUnansweredChange(count);
 	}
 </script>
 
