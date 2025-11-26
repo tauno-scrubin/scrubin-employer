@@ -1380,7 +1380,7 @@ class HuntResource extends BaseResource {
 		) as Promise<InterestedCandidateStatusResponse>;
 	}
 
-	// POST /api/v1/hunts/{id}/interested-candidates/{candidateId}/update-status
+	// PATCH /api/v1/hunts/{id}/interested-candidates/{candidateId}/update-status
 	async updateInterestedCandidateStatus(
 		id: number,
 		candidateId: number,
@@ -1390,7 +1390,7 @@ class HuntResource extends BaseResource {
 			`/api/v1/hunts/${id}/interested-candidates/${candidateId}/update-status`,
 			this.client.baseUrl
 		);
-		return this.request<InterestedCandidateStatusResponse>('POST', url.toString(), {
+		return this.request<InterestedCandidateStatusResponse>('PATCH', url.toString(), {
 			status
 		}) as Promise<InterestedCandidateStatusResponse>;
 	}
