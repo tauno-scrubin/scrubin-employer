@@ -158,6 +158,7 @@
 		</div>
 	{:else}
 		{#each getDisplayedHunts() as hunt}
+		{@const totalAttention = (hunt.totalUnansweredMessages ?? 0) + (hunt.totalUnreadMessages ?? 0) + (hunt.totalUnansweredQuestions ?? 0) + (hunt.totalNeedAttentionMessages ?? 0)}
 			<Card.Root
 				onclick={() => handleViewHunt(hunt.huntId, hunt.status)}
 				class="relative h-full cursor-pointer border bg-white shadow-sm transition-all hover:shadow-md"
@@ -197,17 +198,13 @@
 										</span>
 									</div>
 								{/if}
-								{#if hunt.totalUnansweredMessages > 0 || hunt.totalUnreadMessages > 0 || hunt.totalUnansweredQuestions > 0}
+								{#if totalAttention > 0}
 								<div
 									class="flex items-center gap-1.5 rounded-full bg-red-500/10 px-2 py-0.5 ring-1 ring-red-200"
 								>
 									<Bell class="h-4 w-4 flex-shrink-0 text-red-600" />
 									<span class="text-xs font-semibold text-red-700 sm:text-sm">
-	
-										{(hunt.totalUnansweredMessages ?? 0) +
-											(hunt.totalUnreadMessages ?? 0) +
-											(hunt.totalNeedAttentionMessages ?? 0) +
-											(hunt.totalUnansweredQuestions ?? 0)}
+										{totalAttention}
 										{$t('dashboard.huntsList.needsAttention')}
 									</span>
 								</div>
