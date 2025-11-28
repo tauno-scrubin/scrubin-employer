@@ -484,7 +484,10 @@
 			"otherProfessionalsTitle": "Muut terveydenhuollon ammattilaiset",
 			"startFee": "Aloitusmaksu",
 			"successFee": "Onnistumismaksu",
-			"perHiredCandidate": "(per palkattu ehdokas)"
+			"perHiredCandidate": "(per palkattu ehdokas)",
+			"acceptedTerms": "Ehdot Hyväksytty",
+			"viewTerms": "Näytä Rekrytointiehdot",
+			"acceptedOn": "Hyväksytty"
 		},
 		"startingFee": {
 			"title": "Aloita {{amount}} {{currency}}",
@@ -558,6 +561,14 @@
 		},
 		"planSelection": {
 			"paymentInfo": "Jaettu maksu: 50% kun ehdokas allekirjoittaa, 50% kun he aloittavat",
+			"hiringTermsUrl": "https://drive.google.com/file/d/1qZYhxByRASYr3RErdxCBg4Ci6Smifib8/view?usp=sharing",
+			"acceptTerms": "Olen lukenut ja hyväksyn",
+			"hiringTerms": "Rekrytointiehdot",
+			"privacyPolicyUrl": "https://scrubin.io/privacy-policy",
+			"termsOfServiceUrl": "https://scrubin.io/terms-and-conditions",
+			"privacyPolicy": "Tietosuojakäytäntö",
+			"termsOfService": "Käyttöehdot",
+			"and": "ja",
 			"recommended": "Suositeltu",
 			"mostPopular": "Suosituin",
 			"upfront": "ennakkoon",

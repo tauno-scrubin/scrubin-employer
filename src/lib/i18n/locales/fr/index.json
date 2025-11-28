@@ -484,7 +484,10 @@
 			"otherProfessionalsTitle": "Autres professionnels de santé",
 			"startFee": "Frais de démarrage",
 			"successFee": "Frais de succès",
-			"perHiredCandidate": "(par candidat embauché)"
+			"perHiredCandidate": "(par candidat embauché)",
+			"acceptedTerms": "Conditions Acceptées",
+			"viewTerms": "Voir les Conditions Générales de Recrutement",
+			"acceptedOn": "Accepté le"
 		},
 		"startingFee": {
 			"title": "Commencez avec {{amount}} {{currency}}",
@@ -558,6 +561,14 @@
 		},
 		"planSelection": {
 			"paymentInfo": "Paiement divisé : 50% à la signature du candidat, 50% au début du travail",
+			"hiringTermsUrl": "https://drive.google.com/file/d/1qZYhxByRASYr3RErdxCBg4Ci6Smifib8/view?usp=sharing",
+			"acceptTerms": "J'ai lu et j'accepte les",
+			"hiringTerms": "Conditions Générales de Recrutement",
+			"privacyPolicyUrl": "https://scrubin.io/privacy-policy",
+			"termsOfServiceUrl": "https://scrubin.io/terms-and-conditions",
+			"privacyPolicy": "Politique de Confidentialité",
+			"termsOfService": "Conditions d'Utilisation",
+			"and": "et",
 			"recommended": "Recommandé",
 			"mostPopular": "Le Plus Populaire",
 			"upfront": "d'avance",

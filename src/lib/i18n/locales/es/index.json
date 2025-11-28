@@ -482,7 +482,10 @@
 			"otherProfessionalsTitle": "Otros profesionales sanitarios",
 			"startFee": "Tarifa inicial",
 			"successFee": "Tarifa de éxito",
-			"perHiredCandidate": "(por candidato contratado)"
+			"perHiredCandidate": "(por candidato contratado)",
+			"acceptedTerms": "Términos Aceptados",
+			"viewTerms": "Ver Términos y Condiciones de Contratación",
+			"acceptedOn": "Aceptado el"
 		},
 		"startingFee": {
 			"title": "Comience con {{amount}} {{currency}}",
@@ -556,6 +559,14 @@
 		},
 		"planSelection": {
 			"paymentInfo": "Pago dividido: 50% cuando el candidato firma, 50% cuando comienza",
+			"hiringTermsUrl": "https://drive.google.com/file/d/1qZYhxByRASYr3RErdxCBg4Ci6Smifib8/view?usp=sharing",
+			"acceptTerms": "He leído y acepto los",
+			"hiringTerms": "Términos y Condiciones de Contratación",
+			"privacyPolicyUrl": "https://scrubin.io/privacy-policy",
+			"termsOfServiceUrl": "https://scrubin.io/terms-and-conditions",
+			"privacyPolicy": "Política de Privacidad",
+			"termsOfService": "Términos de Servicio",
+			"and": "y",
 			"recommended": "Recomendado",
 			"mostPopular": "Más Popular",
 			"upfront": "por adelantado",

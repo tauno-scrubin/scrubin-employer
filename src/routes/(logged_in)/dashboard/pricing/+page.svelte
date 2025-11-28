@@ -328,6 +328,57 @@
 												</div>
 											{/if}
 										{/if}
+
+										<!-- Accepted Terms -->
+										{#if plan.termsUrl && plan.acceptanceDate}
+											<div class="mt-4 rounded-lg border border-border/50 bg-muted/30 p-4">
+												<div class="flex items-center gap-2">
+													<InfoIcon class="h-4 w-4 text-muted-foreground" />
+													<p class="text-xs font-medium text-muted-foreground">
+														{$t('pricing.activePlans.acceptedTerms') || 'Terms Accepted'}
+													</p>
+												</div>
+												<div class="mt-2 space-y-2">
+													<div class="flex flex-wrap gap-x-2 gap-y-1 text-sm">
+														{#if plan.termsUrl}
+															<a
+																href={plan.termsUrl}
+																target="_blank"
+																rel="noopener noreferrer"
+																class="font-medium text-primary underline hover:text-primary/80"
+															>
+																{$t('pricing.activePlans.viewTerms') || 'View Hiring Terms & Conditions'}
+															</a>
+														{/if}
+														{#if plan.privacyPolicyUrl}
+															<span class="text-muted-foreground">•</span>
+															<a
+																href={plan.privacyPolicyUrl}
+																target="_blank"
+																rel="noopener noreferrer"
+																class="font-medium text-primary underline hover:text-primary/80"
+															>
+																{$t('pricing.planSelection.privacyPolicy') || 'Privacy Policy'}
+															</a>
+														{/if}
+														{#if plan.termsOfServiceUrl}
+															<span class="text-muted-foreground">•</span>
+															<a
+																href={plan.termsOfServiceUrl}
+																target="_blank"
+																rel="noopener noreferrer"
+																class="font-medium text-primary underline hover:text-primary/80"
+															>
+																{$t('pricing.planSelection.termsOfService') || 'Terms of Service'}
+															</a>
+														{/if}
+													</div>
+													<p class="text-xs text-muted-foreground">
+														{$t('pricing.activePlans.acceptedOn') || 'Accepted on'}: {new Date(plan.acceptanceDate).toLocaleString()}
+													</p>
+												</div>
+											</div>
+										{/if}
 									</div>
 									<Button
 										variant="outline"

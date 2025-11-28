@@ -9,6 +9,7 @@
 		CardHeader,
 		CardTitle
 	} from '$lib/components/ui/card';
+	import { Checkbox } from '$lib/components/ui/checkbox';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import { t } from '$lib/i18n';
 	import { scrubinClient } from '@/scrubinClient/client.js';
@@ -52,6 +53,7 @@
 	let planToSubscribe: AvailablePlan | null = $state(null);
 	let selectedPaymentMethod = $state<'card' | 'invoice'>('card');
 	let companyInfo: Company | null = $state(null);
+	let termsAccepted = $state(false);
 
 	// Enterprise contact dialog state
 	let contactDialogOpen = $state(false);
@@ -182,6 +184,7 @@
 		selectedPaymentMethod = paymentMethods.includes('card')
 			? 'card'
 			: (paymentMethods[0] as 'card' | 'invoice');
+		termsAccepted = false;
 		confirmationDialogOpen = true;
 	};
 
@@ -198,7 +201,11 @@
 			const subscriptionData: CreateSubscriptionRequest = {
 				planId: planToSubscribe.planId,
 				paymentMethod: selectedPaymentMethod,
-				couponCode: couponCode.trim() || undefined
+				couponCode: couponCode.trim() || undefined,
+				termsUrl: $t('pricing.planSelection.hiringTermsUrl'),
+				privacyPolicyUrl: $t('pricing.planSelection.privacyPolicyUrl'),
+				termsOfServiceUrl: $t('pricing.planSelection.termsOfServiceUrl'),
+				acceptanceDate: new Date().toISOString()
 			};
 
 			const response = await scrubinClient.company.createSubscription(subscriptionData);
@@ -233,6 +240,7 @@
 	const cancelSubscription = () => {
 		confirmationDialogOpen = false;
 		planToSubscribe = null;
+		termsAccepted = false;
 	};
 
 	const handleCustomPlan = () => {
@@ -671,6 +679,41 @@
 						</div>
 					</div>
 				{/if}
+
+				<!-- Hiring Terms Acceptance -->
+				<div class="mt-4 rounded-md border border-border bg-muted/30 p-4">
+					<label class="flex cursor-pointer items-start space-x-3">
+						<Checkbox bind:checked={termsAccepted} />
+						<span class="text-sm leading-relaxed">
+							{$t('pricing.planSelection.acceptTerms') || 'I have read and agree to the'}
+							<a
+								href={$t('pricing.planSelection.hiringTermsUrl')}
+								target="_blank"
+								rel="noopener noreferrer"
+								class="font-medium text-primary underline hover:text-primary/80"
+							>
+								{$t('pricing.planSelection.hiringTerms') || 'Hiring Terms and Conditions'}
+							</a>,
+							<a
+								href={$t('pricing.planSelection.privacyPolicyUrl')}
+								target="_blank"
+								rel="noopener noreferrer"
+								class="font-medium text-primary underline hover:text-primary/80"
+							>
+								{$t('pricing.planSelection.privacyPolicy') || 'Privacy Policy'}
+							</a>
+							{$t('pricing.planSelection.and') || 'and'}
+							<a
+								href={$t('pricing.planSelection.termsOfServiceUrl')}
+								target="_blank"
+								rel="noopener noreferrer"
+								class="font-medium text-primary underline hover:text-primary/80"
+							>
+								{$t('pricing.planSelection.termsOfService') || 'Terms of Service'}
+							</a>
+						</span>
+					</label>
+				</div>
 			</div>
 		{/if}
 
@@ -686,7 +729,7 @@
 			</Button>
 			<Button
 				onclick={confirmSubscription}
-				disabled={isCreatingSubscription}
+				disabled={isCreatingSubscription || !termsAccepted}
 				class="w-full text-sm sm:w-auto"
 			>
 				{#if isCreatingSubscription}

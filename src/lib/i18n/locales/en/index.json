@@ -488,7 +488,10 @@
 			"otherProfessionalsTitle": "Nurses and other healthcare professionals",
 			"startFee": "Start fee",
 			"successFee": "Success fee",
-			"perHiredCandidate": "(per hired candidate)"
+			"perHiredCandidate": "(per hired candidate)",
+			"acceptedTerms": "Terms Accepted",
+			"viewTerms": "View Hiring Terms & Conditions",
+			"acceptedOn": "Accepted on"
 		},
 		"startingFee": {
 			"title": "Start with {{amount}} {{currency}}",
@@ -563,6 +566,14 @@
 		"planSelection": {
 			"paymentInfo": "Split payment: 50% when candidate signs, 50% when they start",
 			"terms": "By confirming, you agree to our <a href='https://scrubin.io/terms-and-conditions' target='_blank'>Terms of Service</a> and <a href='https://scrubin.io/privacy-policy' target='_blank'>Privacy Policy</a>",
+			"hiringTermsUrl": "https://drive.google.com/file/d/1qZYhxByRASYr3RErdxCBg4Ci6Smifib8/view?usp=sharing",
+			"privacyPolicyUrl": "https://scrubin.io/privacy-policy",
+			"termsOfServiceUrl": "https://scrubin.io/terms-and-conditions",
+			"acceptTerms": "I have read and agree to the",
+			"hiringTerms": "Hiring Terms and Conditions",
+			"privacyPolicy": "Privacy Policy",
+			"termsOfService": "Terms of Service",
+			"and": "and",
 			"recommended": "Recommended",
 			"mostPopular": "Most Popular",
 			"upfront": "upfront",

@@ -640,6 +640,10 @@ export interface CreateSubscriptionRequest {
 	paymentMethod: 'card' | 'invoice';
 	stripePaymentMethodId?: string;
 	couponCode?: string;
+	termsUrl?: string;
+	privacyPolicyUrl?: string;
+	termsOfServiceUrl?: string;
+	acceptanceDate?: string;
 }
 
 export interface CreateSubscriptionResponse {
@@ -658,6 +662,10 @@ export interface CompanyPlanSummary {
 	planActive: boolean;
 	dateStarted: string;
 	dateEnded: string | null;
+	termsUrl?: string;
+	privacyPolicyUrl?: string;
+	termsOfServiceUrl?: string;
+	acceptanceDate?: string;
 }
 
 export interface CompanyPlanDetails extends CompanyPlanSummary {

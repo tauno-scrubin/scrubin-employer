@@ -487,7 +487,10 @@
 			"otherProfessionalsTitle": "Andere Gesundheitsfachkräfte",
 			"startFee": "Startgebühr",
 			"successFee": "Erfolgsgebühr",
-			"perHiredCandidate": "(pro eingestelltem Kandidaten)"
+			"perHiredCandidate": "(pro eingestelltem Kandidaten)",
+			"acceptedTerms": "Bedingungen akzeptiert",
+			"viewTerms": "Einstellungsbedingungen ansehen",
+			"acceptedOn": "Akzeptiert am"
 		},
 		"startingFee": {
 			"title": "Starten Sie mit {{amount}} {{currency}}",
@@ -562,6 +565,14 @@
 		"planSelection": {
 			"paymentInfo": "Geteilte Zahlung: 50% bei Kandidatenunterzeichnung, 50% bei Arbeitsbeginn",
 			"terms": "Durch die Bestätigung stimmen Sie unseren <a href='https://scrubin.io/terms-and-conditions' target='_blank'>Nutzungsbedingungen</a> und <a href='https://scrubin.io/privacy-policy' target='_blank'>Datenschutzrichtlinien</a> zu",
+			"hiringTermsUrl": "https://drive.google.com/file/d/1qZYhxByRASYr3RErdxCBg4Ci6Smifib8/view?usp=sharing",
+			"acceptTerms": "Ich habe gelesen und stimme den",
+			"hiringTerms": "Einstellungsbedingungen",
+			"privacyPolicyUrl": "https://scrubin.io/privacy-policy",
+			"termsOfServiceUrl": "https://scrubin.io/terms-and-conditions",
+			"privacyPolicy": "Datenschutzrichtlinie",
+			"termsOfService": "Nutzungsbedingungen",
+			"and": "und",
 			"recommended": "Empfohlen",
 			"mostPopular": "Am beliebtesten",
 			"upfront": "Vorauszahlung",

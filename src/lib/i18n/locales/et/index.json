@@ -483,7 +483,10 @@
 			"otherProfessionalsTitle": "Teised tervishoiutöötajad",
 			"startFee": "Alustustasu",
 			"successFee": "Tulemustasu",
-			"perHiredCandidate": "(värvatud kandidaadi kohta)"
+			"perHiredCandidate": "(värvatud kandidaadi kohta)",
+			"acceptedTerms": "Tingimustega nõustutud",
+			"viewTerms": "Vaata värbamise tingimusi",
+			"acceptedOn": "Nõustutud"
 		},
 		"startingFee": {
 			"title": "Alusta {{amount}} {{currency}}",
@@ -563,6 +566,14 @@
 			"free": "Tasuta",
 			"noUpfront": "ettemaksu pole",
 			"terms": "Kinnitades nõustute meie <a href='https://scrubin.io/et/kasutustingimused' target='_blank'>teenuse tingimustega</a> ja <a href='https://scrubin.io/et/privaatsuspoliitika' target='_blank'>privaatsuspoliitikaga</a>",
+			"hiringTermsUrl": "https://drive.google.com/file/d/1sSSUasKuZPB9B8uq2TR-3J9najgOdETC/view?usp=sharing",
+			"privacyPolicyUrl": "https://scrubin.io/et/privaatsuspoliitika",
+			"termsOfServiceUrl": "https://scrubin.io/et/kasutustingimused",
+			"acceptTerms": "Olen tutvunud ja nõustun",
+			"hiringTerms": "värbamise tingimustega",
+			"privacyPolicy": "privaatsuspoliitikaga",
+			"termsOfService": "teenuse tingimustega",
+			"and": "ja",
 			"doctors": "Arstid",
 			"otherProfessionals": "Õed ja teised tervishoiu spetsialistid",
 			"successFee": "Tulemustasu",
