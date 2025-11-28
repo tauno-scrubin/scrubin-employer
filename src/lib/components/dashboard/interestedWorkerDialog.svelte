@@ -19,15 +19,9 @@
 		Sparkle,
 		Eye,
 		MailOpen,
-		MessageSquare,
-		UserPlus,
-		UserCog,
-		Users,
-		UserCheck,
-		FileText,
-		CheckCircle2,
-		UserMinus
+		MessageSquare
 	} from 'lucide-svelte';
+	import { PIPELINE_STATUS_CONFIGS } from '$lib/config/pipelineStatuses';
 	import CandidateChat from './candidateChat.svelte';
 	import CandidateNotes from './candidateNotes.svelte';
 
@@ -54,43 +48,10 @@
 	// Available pipeline statuses
 	let availableStatuses = $derived.by(() => {
 		const translate = get(t);
-		return [
-			{
-				value: 'interested',
-				label: translate('statistics.pipelineStatuses.interested.label'),
-				icon: UserPlus
-			},
-			{
-				value: 'under_review',
-				label: translate('statistics.pipelineStatuses.under_review.label'),
-				icon: UserCog
-			},
-			{
-				value: 'meeting_scheduled',
-				label: translate('statistics.pipelineStatuses.meeting_scheduled.label'),
-				icon: Users
-			},
-			{
-				value: 'screening_completed',
-				label: translate('statistics.pipelineStatuses.screening_completed.label'),
-				icon: UserCheck
-			},
-			{
-				value: 'offer_made',
-				label: translate('statistics.pipelineStatuses.offer_made.label'),
-				icon: FileText
-			},
-			{
-				value: 'accepted',
-				label: translate('statistics.pipelineStatuses.accepted.label'),
-				icon: CheckCircle2
-			},
-			{
-				value: 'declined',
-				label: translate('statistics.pipelineStatuses.declined.label'),
-				icon: UserMinus
-			}
-		];
+		return PIPELINE_STATUS_CONFIGS.map((config) => ({
+			...config,
+			label: translate(config.translationKey)
+		}));
 	});
 
 	// Current status value for the select dropdown
@@ -309,25 +270,20 @@
 												>{worker.firstName} {worker.lastName}</span
 											>
 											{#if worker.status}
+												{@const statusLower = worker.status.toLowerCase() === 'hired' ? 'accepted' : worker.status.toLowerCase()}
+												{@const statusConfig = availableStatuses.find((s) => s.value === statusLower)}
+												{@const statusColor = statusConfig?.color || 'bg-gray-100 text-gray-800'}
+												{@const StatusIcon = statusConfig?.icon}
 												<div class="flex items-center gap-2">
 													<span class="text-xs font-medium text-gray-500">
 														{$t('dashboard.interestedWorkerDialog.currentStatus')}:
 													</span>
-													<span
-														class="rounded-full px-2 py-1 text-xs font-medium
-														{worker.status.toLowerCase() === 'interested'
-															? 'bg-blue-100 text-blue-800'
-															: worker.status.toLowerCase() === 'offer_made'
-																? 'bg-yellow-100 text-yellow-800'
-																: worker.status.toLowerCase() === 'hired'
-																	? 'bg-green-100 text-green-800'
-																	: worker.status.toLowerCase() === 'declined' ||
-																		  worker.status.toLowerCase() === 'rejected'
-																		? 'bg-red-100 text-red-800'
-																		: 'bg-gray-100 text-gray-800'}"
-													>
+													<span class="rounded-full px-3 py-1 text-xs font-medium {statusColor} flex items-center gap-1.5">
+														{#if StatusIcon}
+															<StatusIcon class="h-3.5 w-3.5" />
+														{/if}
 														{$t(
-															`dashboard.interestedWorkerDialog.status.${worker.status.toLowerCase()}`
+															`statistics.pipelineStatuses.${statusLower}.label`
 														)}
 													</span>
 												</div>
@@ -441,8 +397,10 @@
 												{#if selectedStatus}
 													{@const Icon = selectedStatus.icon}
 													<div class="flex items-center gap-2">
-														<Icon class="h-4 w-4" />
-														<span>{selectedStatus.label}</span>
+														<span class="rounded-full px-3 py-1 text-xs font-medium {selectedStatus.color} flex items-center gap-1.5">
+															<Icon class="h-3.5 w-3.5" />
+															{selectedStatus.label}
+														</span>
 													</div>
 												{:else}
 													<span>{currentStatus}</span>
@@ -453,10 +411,10 @@
 													{#each availableStatuses as status}
 														{@const Icon = status.icon}
 														<Select.Item value={status.value}>
-															<div class="flex items-center gap-2">
-																<Icon class="h-4 w-4" />
-																<span>{status.label}</span>
-															</div>
+															<span class="rounded-full px-3 py-1 text-xs font-medium {status.color} flex items-center gap-1.5">
+																<Icon class="h-3.5 w-3.5" />
+																{status.label}
+															</span>
 														</Select.Item>
 													{/each}
 												</Select.Group>

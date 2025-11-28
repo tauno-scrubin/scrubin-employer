@@ -18,6 +18,7 @@
 	import InterestedWorkerDialog from '@/components/dashboard/interestedWorkerDialog.svelte';
 	import QuestionsInHunt from '@/components/dashboard/questionsInHunt.svelte';
 	import { getStatusColor } from '@/components/payment/payments.js';
+	import { getStatusConfig } from '$lib/config/pipelineStatuses';
 	import * as Dialog from '@/components/ui/dialog/index.js';
 	import * as DropdownMenu from '@/components/ui/dropdown-menu/index.js';
 	import Separator from '@/components/ui/separator/separator.svelte';
@@ -1178,22 +1179,14 @@
 																		{$t('dashboard.interestedWorkerDialog.pendingConfirmation')}
 																	</span>
 																{:else if candidate.status}
-																	<span
-																		class="w-fit rounded-full px-2 py-1 text-xs font-medium
-																		{candidate.status.toLowerCase() === 'interested'
-																			? 'bg-blue-100 text-blue-800'
-																			: candidate.status.toLowerCase() === 'offer_made'
-																				? 'bg-yellow-100 text-yellow-800'
-																				: candidate.status.toLowerCase() === 'hired'
-																					? 'bg-green-100 text-green-800'
-																					: candidate.status.toLowerCase() === 'declined' ||
-																						  candidate.status.toLowerCase() === 'rejected'
-																						? 'bg-red-100 text-red-800'
-																						: 'bg-gray-100 text-gray-800'}"
-																	>
-																		{$t(
-																			`dashboard.interestedWorkerDialog.status.${candidate.status.toLowerCase()}`
-																		)}
+																	{@const statusLower = candidate.status.toLowerCase() === 'hired' ? 'accepted' : candidate.status.toLowerCase()}
+																	{@const statusConfig = getStatusConfig(statusLower)}
+																	{@const StatusIcon = statusConfig?.icon}
+																	<span class="w-fit rounded-full px-3 py-1 text-xs font-medium {statusConfig?.color || 'bg-gray-100 text-gray-800'} flex items-center gap-1.5">
+																		{#if StatusIcon}
+																			<StatusIcon class="h-3.5 w-3.5" />
+																		{/if}
+																		{$t(`statistics.pipelineStatuses.${statusLower}.label`)}
 																	</span>
 																{/if}
 																<Badge variant="outline" class="text-xs">
