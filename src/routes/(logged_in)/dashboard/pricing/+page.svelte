@@ -330,7 +330,7 @@
 										{/if}
 
 										<!-- Accepted Terms -->
-										{#if plan.termsUrl && plan.acceptanceDate}
+										{#if plan.acceptanceDate}
 											<div class="mt-4 rounded-lg border border-border/50 bg-muted/30 p-4">
 												<div class="flex items-center gap-2">
 													<InfoIcon class="h-4 w-4 text-muted-foreground" />
@@ -351,7 +351,7 @@
 															</a>
 														{/if}
 														{#if plan.privacyPolicyUrl}
-															<span class="text-muted-foreground">•</span>
+														{#if plan.termsUrl}<span class="text-muted-foreground">•</span>{/if}
 															<a
 																href={plan.privacyPolicyUrl}
 																target="_blank"
