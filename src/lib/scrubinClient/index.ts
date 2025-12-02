@@ -1504,6 +1504,7 @@ class HuntResource extends BaseResource {
 			salaryCurrency?: string;
 			salaryType?: string;
 			salaryTypeV2?: string;
+			salaryExtra?: string;
 			cityBorough?: string[];
 			// Extended manual-editable fields
 			professions?: number[];

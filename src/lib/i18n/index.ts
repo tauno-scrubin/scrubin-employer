@@ -19,6 +19,12 @@ import etFaq from './locales/et/faq.json';
 import fiFaq from './locales/fi/faq.json';
 import frFaq from './locales/fr/faq.json';
 import deFaq from './locales/de/faq.json';
+import enRequirementsV2 from './locales/en/requirementsV2.json';
+import esRequirementsV2 from './locales/es/requirementsV2.json';
+import etRequirementsV2 from './locales/et/requirementsV2.json';
+import fiRequirementsV2 from './locales/fi/requirementsV2.json';
+import frRequirementsV2 from './locales/fr/requirementsV2.json';
+import deRequirementsV2 from './locales/de/requirementsV2.json';
 
 // Define recursive types properly to avoid circular references
 interface TranslationObject {
@@ -34,12 +40,12 @@ function mergeTranslations(...objs: TranslationObject[]): TranslationObject {
 
 // Create a map of all translations
 const translations: Record<string, TranslationObject> = {
-	en: mergeTranslations(en, enHuntDetails, enFaq),
-	es: mergeTranslations(es, esHuntDetails, esFaq),
-	et: mergeTranslations(et, etHuntDetails, etFaq),
-	fi: mergeTranslations(fi, fiHuntDetails, fiFaq),
-	fr: mergeTranslations(fr, frHuntDetails, frFaq),
-	de: mergeTranslations(de, deHuntDetails, deFaq)
+	en: mergeTranslations(en, enHuntDetails, enFaq, enRequirementsV2),
+	es: mergeTranslations(es, esHuntDetails, esFaq, esRequirementsV2),
+	et: mergeTranslations(et, etHuntDetails, etFaq, etRequirementsV2),
+	fi: mergeTranslations(fi, fiHuntDetails, fiFaq, fiRequirementsV2),
+	fr: mergeTranslations(fr, frHuntDetails, frFaq, frRequirementsV2),
+	de: mergeTranslations(de, deHuntDetails, deFaq, deRequirementsV2)
 };
 
 // Get initial locale based on:

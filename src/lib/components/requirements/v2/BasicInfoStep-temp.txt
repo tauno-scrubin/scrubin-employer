@@ -1,0 +1,16 @@
+<!-- Continue from line 168 -->
+	<!-- Specialization -->
+	<div class="space-y-2">
+		<Label class="text-base font-medium">{$t('requirementsV2.fields.specialization.label')}</Label>
+		<p class="text-sm text-muted-foreground">
+			{$t('requirementsV2.fields.specialization.description')}
+		</p>
+		<Combobox
+			items={availableSpecialties.map((s) => ({ value: s.code, label: s.name }))}
+			value={selectedSpecialization !== null ? String(selectedSpecialization) : undefined}
+			onValueChange={(v) => (selectedSpecialization = v ? Number(v) : null)}
+			placeholder={$t('requirementsV2.fields.specialization.placeholder')}
+			searchPlaceholder={$t('requirementsV2.fields.specialization.searchPlaceholder')}
+			emptyText={$t('search.noResults')}
+			class="w-full"
+		/>

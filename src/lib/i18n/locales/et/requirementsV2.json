@@ -1,0 +1,205 @@
+{
+	"requirementsV2": {
+		"title": "Create New Job Hunt",
+		"subtitle": "Fill out the information step by step to create your job hunt",
+		"steps": {
+			"basic": {
+				"title": "Basic Info",
+				"description": "Job title and profession",
+				"heading": "Basic Information",
+				"subheading": "Start by providing the essential details about the position you're hiring for."
+			},
+			"location": {
+				"title": "Location & Salary",
+				"description": "Where and compensation",
+				"heading": "Location & Compensation",
+				"subheading": "Specify where the job is located and the compensation details."
+			},
+			"details": {
+				"title": "Job Details",
+				"description": "Description and requirements",
+				"heading": "Job Details",
+				"subheading": "Provide detailed information about the role to attract the right candidates."
+			},
+			"targeting": {
+				"title": "Targeting",
+				"description": "Search preferences",
+				"heading": "Candidate Targeting",
+				"subheading": "Configure search preferences to find the most relevant candidates."
+			},
+			"preview": {
+				"title": "Preview",
+				"description": "Review and activate",
+				"heading": "Review Your Job Hunt",
+				"subheading": "Review all the details before activating your hunt. You can go back to any step to make changes."
+			}
+		},
+		"navigation": {
+			"previous": "Previous",
+			"next": "Next",
+			"activateHunt": "Activate Hunt",
+			"activating": "Activating..."
+		},
+		"fields": {
+			"jobTitle": {
+				"label": "Job Title",
+				"placeholder": "e.g., Senior Software Engineer, Registered Nurse, Marketing Manager",
+				"description": "What is the official title for this position? Be specific and clear."
+			},
+			"professions": {
+				"label": "Professions",
+				"placeholder": "Select professions...",
+				"searchPlaceholder": "Search professions...",
+				"description": "Select one or more professions that best match this role. This helps us find relevant candidates."
+			},
+			"specialization": {
+				"label": "Specialization",
+				"placeholder": "Select specialization (optional)...",
+				"searchPlaceholder": "Search specializations...",
+				"description": "Optionally specify a specialization within the profession to narrow down the search."
+			},
+			"workExperience": {
+				"label": "Required Work Experience (years)",
+				"placeholder": "0",
+				"description": "Minimum years of relevant work experience required for this position."
+			},
+			"languages": {
+				"label": "Required Languages",
+				"placeholder": "Select languages...",
+				"searchPlaceholder": "Search languages...",
+				"description": "Select the languages candidates must be proficient in for this role."
+			},
+			"country": {
+				"label": "Country",
+				"placeholder": "Select country...",
+				"searchPlaceholder": "Search countries...",
+				"description": "Where is this position based?"
+			},
+			"city": {
+				"label": "City",
+				"placeholder": "e.g., London, New York, Berlin",
+				"description": "Which city is the job located in?"
+			},
+			"region": {
+				"label": "State / Province / Region",
+				"placeholder": "e.g., California, Greater London",
+				"description": "Specify the state, province, or region (optional). Separate multiple with commas."
+			},
+			"address": {
+				"label": "Street Address",
+				"placeholder": "e.g., 123 Main Street",
+				"description": "Full street address (optional but helpful)"
+			},
+			"salaryRange": {
+				"label": "Salary Range",
+				"from": "From",
+				"to": "To",
+				"description": "Provide a salary range to attract suitable candidates. Transparency helps!"
+			},
+			"currency": {
+				"label": "Currency",
+				"placeholder": "Select currency..."
+			},
+			"salaryPeriod": {
+				"label": "Salary Period",
+				"placeholder": "Select period...",
+				"description": "How often is the salary paid?"
+			},
+			"salaryExtra": {
+				"label": "Additional Compensation Details",
+				"placeholder": "e.g., Performance bonuses, health insurance, 401k matching, commission structure...",
+				"description": "Any extra information about compensation (bonuses, benefits, commission, etc.)"
+			},
+			"jobDescription": {
+				"label": "Job Description",
+				"placeholder": "Describe the job role, main responsibilities, day-to-day tasks, team structure, growth opportunities, and what makes this role unique. Be detailed and engaging to attract top talent.",
+				"description": "Describe the role, responsibilities, and what makes this opportunity exciting."
+			},
+			"jobRequiredQualifications": {
+				"label": "Required Qualifications",
+				"placeholder": "List the essential qualifications, certifications, skills, and experience candidates must have. Be specific but realistic.",
+				"description": "List the must-have skills, experience, and qualifications for this role."
+			},
+			"preferredCountries": {
+				"label": "Preferred Countries",
+				"placeholder": "Select preferred countries...",
+				"searchPlaceholder": "Search countries...",
+				"description": "Countries where you'd prefer to search for candidates. Candidates from these countries will be prioritized in search results.",
+				"info": "Selecting preferred countries helps us prioritize candidates from these locations, but we'll still search globally."
+			},
+			"onlyCountries": {
+				"label": "Only Search in Countries",
+				"placeholder": "Select countries to restrict search (optional)...",
+				"searchPlaceholder": "Search countries...",
+				"description": "Restrict the search to only these countries. If specified, candidates from other countries will not be included.",
+				"warning": "Warning: Restricting to specific countries may significantly limit your candidate pool. Leave empty to search globally."
+			},
+			"companyContext": {
+				"label": "Company Context",
+				"placeholder": "Describe your company, industry, size, culture, values, mission, and what makes it a great place to work.",
+				"description": "Provide context about your company that helps candidates understand your organization. This information helps our AI match you with candidates who align with your company culture."
+			},
+			"hiringContext": {
+				"label": "Hiring Context",
+				"placeholder": "Explain why this position exists, team structure, growth opportunities, and what success looks like in this role.",
+				"description": "Explain why you're hiring and what the role means for your team. This helps us find candidates who are the right fit for this specific opportunity."
+			}
+		},
+		"sections": {
+			"location": "Job Location",
+			"compensation": "Compensation",
+			"geographicTargeting": "Geographic Targeting",
+			"additionalContext": "Additional Context"
+		},
+		"aiGenerate": {
+			"button": "AI Generate",
+			"generating": "Generating...",
+			"description": "Click the \"AI Generate\" buttons to automatically create professional descriptions and qualifications based on the information you've provided. You can always edit the generated content to fit your needs.",
+			"enableTip": "Add a job title in the first step to enable AI generation"
+		},
+		"tips": {
+			"beSpecific": {
+				"title": "Tip: Be specific but not too restrictive",
+				"description": "Providing clear details helps us match you with the right candidates, but being too restrictive might limit your candidate pool."
+			},
+			"salaryTransparency": {
+				"title": "Salary transparency increases applications",
+				"description": "Being upfront about compensation attracts more qualified candidates and saves time in the hiring process."
+			},
+			"targeting": {
+				"title": "How targeting works",
+				"description": "Our AI uses all the information you provide to find and rank candidates. Better targeting and context leads to better matches. Don't worry about being too specific - you can always adjust these settings later."
+			}
+		},
+		"preview": {
+			"readyToActivate": {
+				"title": "Ready to activate!",
+				"description": "All required information has been provided. Click \"Activate Hunt\" to start finding candidates."
+			},
+			"missingInfo": {
+				"title": "Missing required information",
+				"description": "Please complete the following:"
+			},
+			"potentialReach": "Potential Candidate Reach",
+			"reachDescription": "candidates match your requirements and will be notified about this opportunity",
+			"jobOverview": "Job Overview",
+			"locationSection": "Location",
+			"compensationSection": "Compensation",
+			"jobDetailsSection": "Job Details",
+			"targetingSection": "Targeting & Context",
+			"notSpecified": "Not specified",
+			"notProvided": "Not provided",
+			"years": "years"
+		},
+		"errors": {
+			"failedToInitialize": "Failed to initialize. Please try again.",
+			"failedToSave": "Failed to save. Please try again.",
+			"failedToActivate": "Failed to activate hunt. Please try again.",
+			"needActivePlan": "You need an active plan to activate this hunt"
+		},
+		"success": {
+			"saved": "Saved successfully",
+			"activated": "Hunt activated successfully!"
+		}
+	}
+}
