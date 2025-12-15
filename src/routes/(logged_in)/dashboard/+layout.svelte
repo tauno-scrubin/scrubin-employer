@@ -4,6 +4,7 @@
 	import * as Sidebar from '@/components/ui/sidebar';
 	import { Toaster } from '@/components/ui/sonner';
 	import { currentUser, currentUserCompany, scrubinClient } from '@/scrubinClient/client.js';
+	import { t } from '$lib/i18n';
 	import { ModeWatcher, setMode } from 'mode-watcher';
 	import { onMount } from 'svelte';
 
@@ -32,6 +33,10 @@
 		}
 	}
 </script>
+
+<svelte:head>
+	<title>{$t('app.title')}</title>
+</svelte:head>
 
 <!-- {#if data.user.isDemoUser}
 <div class="fixed top-0 left-0 w-full h-full bg-black/50 z-50">
