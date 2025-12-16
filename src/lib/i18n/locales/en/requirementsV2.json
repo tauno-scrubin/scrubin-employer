@@ -38,7 +38,9 @@
 		"previous": "Previous",
 		"next": "Next",
 		"activateHunt": "Activate Hunt",
-		"activating": "Activating..."
+		"activating": "Activating...",
+		"step": "Step",
+		"of": "of"
 	},
 	"fields": {
 		"jobTitle": {
@@ -56,6 +58,7 @@
 			"label": "Specialization",
 			"placeholder": "Select specialization (optional)...",
 			"searchPlaceholder": "Search specializations...",
+			"emptyText": "No specializations found",
 			"description": "Optionally specify a specialization within the profession to narrow down the search."
 		},
 		"workExperience": {
@@ -67,12 +70,14 @@
 			"label": "Required Languages",
 			"placeholder": "Select languages...",
 			"searchPlaceholder": "Search languages...",
+			"emptyText": "No languages found",
 			"description": "Select the languages candidates must be proficient in for this role."
 		},
 		"country": {
 			"label": "Country",
 			"placeholder": "Select country...",
 			"searchPlaceholder": "Search countries...",
+			"emptyText": "No countries found",
 			"description": "Where is this position based?"
 		},
 		"city": {
@@ -128,10 +133,12 @@
 			"info": "Selecting preferred countries helps us prioritize candidates from these locations, but we'll still search globally."
 		},
 		"onlyCountries": {
-			"label": "Only Search in Countries",
-			"placeholder": "Select countries to restrict search (optional)...",
+			"label": "Filter by Country",
+			"placeholder": "Select countries (optional)...",
 			"searchPlaceholder": "Search countries...",
-			"description": "Restrict the search to only these countries. If specified, candidates from other countries will not be included.",
+			"emptyText": "No countries found",
+			"description": "Select specific countries to restrict your search. Leave empty to search globally.",
+			"info": "When no countries are selected, we search globally. Selecting specific countries will limit the search to only those locations.",
 			"warning": "Warning: Restricting to specific countries may significantly limit your candidate pool. Leave empty to search globally."
 		},
 		"companyContext": {
@@ -154,6 +161,7 @@
 	"aiGenerate": {
 		"button": "AI Generate",
 		"generating": "Generating...",
+		"title": "AI assistance available!",
 		"description": "Click the \"AI Generate\" buttons to automatically create professional descriptions and qualifications based on the information you've provided. You can always edit the generated content to fit your needs.",
 		"enableTip": "Add a job title in the first step to enable AI generation"
 	},
@@ -180,9 +188,28 @@
 			"title": "Missing required information",
 			"description": "Please complete the following:"
 		},
+		"missingFields": {
+			"jobTitle": "Job Title",
+			"professions": "Professions",
+			"country": "Country",
+			"jobDescription": "Job Description"
+		},
 		"potentialReach": "Potential Candidate Reach",
 		"reachDescription": "candidates match your requirements and will be notified about this opportunity",
 		"jobOverview": "Job Overview",
+		"fields": {
+			"jobTitle": "Job Title",
+			"professions": "Professions",
+			"specialization": "Specialization",
+			"requiredExperience": "Required Experience",
+			"requiredLanguages": "Required Languages",
+			"description": "Description",
+			"requiredQualifications": "Required Qualifications",
+			"preferredCountries": "Preferred Countries",
+			"onlySearchIn": "Only Search In",
+			"companyContext": "Company Context",
+			"hiringContext": "Hiring Context"
+		},
 		"locationSection": "Location",
 		"compensationSection": "Compensation",
 		"jobDetailsSection": "Job Details",
@@ -195,7 +222,10 @@
 		"failedToInitialize": "Failed to initialize. Please try again.",
 		"failedToSave": "Failed to save. Please try again.",
 		"failedToActivate": "Failed to activate hunt. Please try again.",
-		"needActivePlan": "You need an active plan to activate this hunt"
+		"needActivePlan": "You need an active plan to activate this hunt",
+		"failedToGenerateDescription": "Failed to generate description. Please try again or write manually.",
+		"failedToGenerateQualifications": "Failed to generate qualifications. Please try again or write manually.",
+		"completeCurrentStep": "Please complete the current step before proceeding"
 	},
 	"success": {
 		"saved": "Saved successfully",

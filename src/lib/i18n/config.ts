@@ -1,7 +1,7 @@
 // Language configuration for the application
 
 // List of all supported languages
-export const availableLanguages = ['en', 'es', 'et', 'fi', 'fr', 'de'] as const;
+export const availableLanguages = ['en', 'et'] as const;
 
 // Type for supported languages
 export type SupportedLanguage = (typeof availableLanguages)[number];
@@ -12,11 +12,7 @@ export const defaultLanguage: SupportedLanguage = 'en';
 // Language display names in their native languages
 export const languageNames: Record<SupportedLanguage, string> = {
 	en: 'English',
-	et: 'Eesti',
-	es: 'Español',
-	fi: 'Suomi',
-	fr: 'Français',
-	de: 'Deutsch'
+	et: 'Eesti'
 };
 
 // Function to check if a language is supported

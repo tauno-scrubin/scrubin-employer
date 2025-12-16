@@ -6,7 +6,7 @@
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
 	import { Target, Globe, Info } from 'lucide-svelte';
-	import { locale } from '$lib/i18n';
+	import { locale, t } from '$lib/i18n';
 	import { get } from 'svelte/store';
 
 	let {
@@ -21,11 +21,6 @@
 	let isSaving = $state(false);
 
 	// Local state for form fields
-	let preferredCountries = $state<string[]>(
-		requirement.countriesPreferredToSearch ||
-			requirement.huntInstructions?.preferredCountriesToSearch ||
-			[]
-	);
 	let onlyCountries = $state<string[]>(
 		requirement.countriesOnlyToSearch || requirement.huntInstructions?.onlyCountriesToSearch || []
 	);
@@ -49,7 +44,6 @@
 			const updateData: any = {};
 
 			if (field === 'targetCountries') {
-				updateData.countriesPreferredToSearch = preferredCountries;
 				updateData.countriesOnlyToSearch = onlyCountries;
 			} else if (field === 'context') {
 				updateData.companyContext = companyContext;
@@ -58,10 +52,10 @@
 
 			const updated = await scrubinClient.hunt.updateRequirementFields(requirementId, updateData);
 			requirement = { ...requirement, ...updated } as JobRequirementDto;
-			toast.success('Saved successfully');
+			toast.success($t('requirementsV2.success.saved'));
 		} catch (error) {
 			console.error('Failed to save:', error);
-			toast.error('Failed to save. Please try again.');
+			toast.error($t('requirementsV2.errors.failedToSave'));
 		} finally {
 			isSaving = false;
 		}
@@ -73,60 +67,64 @@
 
 	$effect(() => {
 		if (
-			JSON.stringify(preferredCountries) !==
-				JSON.stringify(
-					requirement.countriesPreferredToSearch ||
-						requirement.huntInstructions?.preferredCountriesToSearch ||
-						[]
-				) ||
 			JSON.stringify(onlyCountries) !==
-				JSON.stringify(
-					requirement.countriesOnlyToSearch ||
-						requirement.huntInstructions?.onlyCountriesToSearch ||
-						[]
-				)
+			JSON.stringify(
+				requirement.countriesOnlyToSearch ||
+					requirement.huntInstructions?.onlyCountriesToSearch ||
+					[]
+			)
 		) {
 			saveField('targetCountries');
 		}
 	});
 </script>
 
-<div class="space-y-8">
+<div class="w-full space-y-6">
+	<!-- Info box -->
+	<div class="flex gap-3 rounded-lg border border-blue-200 bg-blue-50 p-4">
+		<Info class="mt-0.5 h-5 w-5 flex-shrink-0 text-blue-600" />
+		<div class="text-sm text-blue-900">
+			<p class="font-medium">{$t('requirementsV2.tips.targeting.title')}</p>
+			<p class="mt-1">
+				{$t('requirementsV2.tips.targeting.description')}
+			</p>
+		</div>
+	</div>
+
 	<div>
-		<h2 class="mb-2 text-2xl font-semibold">Candidate Targeting</h2>
+		<h2 class="mb-2 text-2xl font-semibold">{$t('requirementsV2.steps.targeting.heading')}</h2>
 		<p class="text-sm text-muted-foreground">
-			Configure search preferences to find the most relevant candidates.
+			{$t('requirementsV2.steps.targeting.subheading')}
 		</p>
 	</div>
 
 	<!-- Target Countries Section -->
-	<div class="space-y-6 rounded-lg border border-gray-200 bg-gray-50 p-6">
+	<div class="w-full space-y-6 rounded-lg border border-gray-200 bg-gray-50 p-6">
 		<div class="flex items-center gap-2">
 			<Globe class="h-5 w-5 text-primary" />
-			<h3 class="text-lg font-semibold">Geographic Targeting</h3>
+			<h3 class="text-lg font-semibold">{$t('requirementsV2.sections.geographicTargeting')}</h3>
 		</div>
 
-		<!-- Preferred Countries -->
+		<!-- Country Filter -->
 		<div class="space-y-3">
 			<div>
-				<Label class="text-base font-medium">Preferred Countries</Label>
+				<Label class="text-base font-medium">{$t('requirementsV2.fields.onlyCountries.label')}</Label>
 				<p class="mt-1 text-sm text-muted-foreground">
-					Countries where you'd <strong>prefer</strong> to search for candidates. Candidates from
-					these countries will be prioritized in search results.
+					{$t('requirementsV2.fields.onlyCountries.description')}
 				</p>
 			</div>
 			<ComboboxMulti
 				items={availableCountries.map((c) => ({ value: c.code, label: c.name }))}
-				values={preferredCountries}
-				onValuesChange={(vals) => (preferredCountries = vals)}
-				placeholder="Select preferred countries..."
-				searchPlaceholder="Search countries..."
-				emptyText="No countries found"
+				values={onlyCountries}
+				onValuesChange={(vals) => (onlyCountries = vals)}
+				placeholder={$t('requirementsV2.fields.onlyCountries.placeholder')}
+				searchPlaceholder={$t('requirementsV2.fields.onlyCountries.searchPlaceholder')}
+				emptyText={$t('requirementsV2.fields.onlyCountries.emptyText')}
 				class="w-full bg-white"
 			/>
-			{#if preferredCountries.length > 0}
+			{#if onlyCountries.length > 0}
 				<div class="flex flex-wrap gap-2 pt-2">
-					{#each preferredCountries as countryCode}
+					{#each onlyCountries as countryCode}
 						<span class="rounded-full bg-blue-50 px-3 py-1 text-sm text-blue-700">
 							{availableCountries.find((c) => c.code === countryCode)?.name || countryCode}
 						</span>
@@ -136,74 +134,32 @@
 			<div class="flex gap-2 rounded-md border border-blue-200 bg-blue-50 p-3 text-sm text-blue-800">
 				<Info class="mt-0.5 h-4 w-4 flex-shrink-0" />
 				<p>
-					Selecting preferred countries helps us prioritize candidates from these locations, but
-					we'll still search globally.
-				</p>
-			</div>
-		</div>
-
-		<!-- Only Countries -->
-		<div class="space-y-3">
-			<div>
-				<Label class="text-base font-medium">Only Search in Countries</Label>
-				<p class="mt-1 text-sm text-muted-foreground">
-					Restrict the search to <strong>only</strong> these countries. If specified, candidates from
-					other countries will not be included.
-				</p>
-			</div>
-			<ComboboxMulti
-				items={availableCountries.map((c) => ({ value: c.code, label: c.name }))}
-				values={onlyCountries}
-				onValuesChange={(vals) => (onlyCountries = vals)}
-				placeholder="Select countries to restrict search (optional)..."
-				searchPlaceholder="Search countries..."
-				emptyText="No countries found"
-				class="w-full bg-white"
-			/>
-			{#if onlyCountries.length > 0}
-				<div class="flex flex-wrap gap-2 pt-2">
-					{#each onlyCountries as countryCode}
-						<span class="rounded-full bg-purple-50 px-3 py-1 text-sm text-purple-700">
-							{availableCountries.find((c) => c.code === countryCode)?.name || countryCode}
-						</span>
-					{/each}
-				</div>
-			{/if}
-			<div class="flex gap-2 rounded-md border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800">
-				<Info class="mt-0.5 h-4 w-4 flex-shrink-0" />
-				<p>
-					<strong>Warning:</strong> Restricting to specific countries may significantly limit your candidate
-					pool. Leave empty to search globally.
+					{$t('requirementsV2.fields.onlyCountries.info')}
 				</p>
 			</div>
 		</div>
 	</div>
 
 	<!-- Context Section -->
-	<div class="space-y-6 rounded-lg border border-gray-200 bg-gray-50 p-6">
+	<div class="w-full space-y-6 rounded-lg border border-gray-200 bg-gray-50 p-6">
 		<div class="flex items-center gap-2">
 			<Target class="h-5 w-5 text-primary" />
-			<h3 class="text-lg font-semibold">Additional Context</h3>
+			<h3 class="text-lg font-semibold">{$t('requirementsV2.sections.additionalContext')}</h3>
 		</div>
 
 		<!-- Company Context -->
 		<div class="space-y-3">
 			<div>
-				<Label for="companyContext" class="text-base font-medium">Company Context</Label>
+				<Label for="companyContext" class="text-base font-medium">{$t('requirementsV2.fields.companyContext.label')}</Label>
 				<p class="mt-1 text-sm text-muted-foreground">
-					Provide context about your company that helps candidates understand your organization.
-					This information helps our AI match you with candidates who align with your company
-					culture.
+					{$t('requirementsV2.fields.companyContext.description')}
 				</p>
 			</div>
 			<textarea
 				id="companyContext"
 				bind:value={companyContext}
 				onblur={handleContextBlur}
-				placeholder="Describe your company, industry, size, culture, values, mission, and what makes it a great place to work.
-
-Example:
-We're a fast-growing healthcare technology startup with 50+ employees across Europe. We're passionate about improving patient care through innovative software solutions. Our culture values work-life balance, continuous learning, and collaborative problem-solving..."
+				placeholder={$t('requirementsV2.fields.companyContext.placeholder')}
 				class="min-h-[150px] w-full rounded-md border bg-white p-4 text-base focus:outline-none focus:ring-2 focus:ring-primary"
 				rows="6"
 			></textarea>
@@ -212,36 +168,19 @@ We're a fast-growing healthcare technology startup with 50+ employees across Eur
 		<!-- Hiring Context -->
 		<div class="space-y-3">
 			<div>
-				<Label for="hiringContext" class="text-base font-medium">Hiring Context</Label>
+				<Label for="hiringContext" class="text-base font-medium">{$t('requirementsV2.fields.hiringContext.label')}</Label>
 				<p class="mt-1 text-sm text-muted-foreground">
-					Explain why you're hiring and what the role means for your team. This helps us find
-					candidates who are the right fit for this specific opportunity.
+					{$t('requirementsV2.fields.hiringContext.description')}
 				</p>
 			</div>
 			<textarea
 				id="hiringContext"
 				bind:value={hiringContext}
 				onblur={handleContextBlur}
-				placeholder="Explain why this position exists, team structure, growth opportunities, and what success looks like in this role.
-
-Example:
-We're expanding our engineering team to support our new product launch. The ideal candidate will work closely with our product and design teams to build features that will serve thousands of healthcare providers. This is a high-impact role with significant growth potential..."
+				placeholder={$t('requirementsV2.fields.hiringContext.placeholder')}
 				class="min-h-[150px] w-full rounded-md border bg-white p-4 text-base focus:outline-none focus:ring-2 focus:ring-primary"
 				rows="6"
 			></textarea>
-		</div>
-	</div>
-
-	<!-- Info box -->
-	<div class="flex gap-3 rounded-lg border border-blue-200 bg-blue-50 p-4">
-		<Info class="mt-0.5 h-5 w-5 flex-shrink-0 text-blue-600" />
-		<div class="text-sm text-blue-900">
-			<p class="font-medium">How targeting works</p>
-			<p class="mt-1">
-				Our AI uses all the information you provide to find and rank candidates. Better targeting
-				and context leads to better matches. Don't worry about being too specific - you can always
-				adjust these settings later.
-			</p>
 		</div>
 	</div>
 </div>

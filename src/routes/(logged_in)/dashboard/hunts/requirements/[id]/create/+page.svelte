@@ -63,6 +63,39 @@
 		}
 	});
 
+	// Step validation logic
+	function isStepCompleted(stepIndex: number): boolean {
+		if (!requirement) return false;
+
+		switch (stepIndex) {
+			case 0: // Basic Info
+				return !!(
+					requirement.jobTitle &&
+					requirement.professionsV2 &&
+					requirement.professionsV2.length > 0
+				);
+			case 1: // Location & Salary
+				return !!(requirement.countryIso && requirement.salary?.amountStart);
+			case 2: // Job Details
+				return !!requirement.jobDescription;
+			case 3: // Targeting
+				return true; // Optional step
+			case 4: // Preview
+				return true; // Always accessible if other steps are done
+			default:
+				return false;
+		}
+	}
+
+	// Check if step can be accessed (non-linear navigation)
+	function canAccessStep(stepIndex: number): boolean {
+		if (stepIndex === 0) return true; // First step always accessible
+		if (stepIndex <= currentStep) return true; // Already visited steps
+
+		// Can access if current step is completed
+		return isStepCompleted(currentStep);
+	}
+
 	async function saveAndNext() {
 		if (!requirementId) return;
 		currentStep = Math.min(currentStep + 1, steps.length - 1);
@@ -75,6 +108,10 @@
 	}
 
 	function goToStep(stepIndex: number) {
+		if (!canAccessStep(stepIndex)) {
+			toast.error($t('requirementsV2.errors.completeCurrentStep'));
+			return;
+		}
 		currentStep = stepIndex;
 		window.scrollTo({ top: 0, behavior: 'smooth' });
 	}
@@ -109,7 +146,7 @@
 	}
 </script>
 
-<div class="mx-auto min-h-screen max-w-6xl p-6">
+<div class="mx-auto min-h-screen max-w-4xl p-6">
 	<!-- Header -->
 	<div class="mb-8 flex items-center gap-4">
 		<Button
@@ -129,24 +166,29 @@
 	</div>
 
 	<!-- Stepper -->
-	<div class="mb-10">
+	<div class="mb-6">
 		<div class="flex items-center justify-between">
 			{#each steps as step, index}
+				{@const stepAccessible = canAccessStep(index)}
+				{@const stepCompleted = isStepCompleted(index)}
 				<div class="flex flex-1 items-center">
 					<button
 						onclick={() => goToStep(index)}
-						class="flex flex-col items-center gap-2 transition-all"
-						disabled={index > currentStep}
+						class="flex flex-col items-center gap-2 transition-all {stepAccessible
+							? 'cursor-pointer hover:scale-105'
+							: 'cursor-not-allowed opacity-50'}"
+						disabled={!stepAccessible}
 					>
 						<div
-							class="flex h-10 w-10 items-center justify-center rounded-full border-2 transition-all {index <
-							currentStep
+							class="flex h-10 w-10 items-center justify-center rounded-full border-2 transition-all {stepCompleted
 								? 'border-primary bg-primary text-primary-foreground'
 								: index === currentStep
 									? 'border-primary bg-white text-primary'
-									: 'border-gray-300 bg-white text-gray-400'}"
+									: stepAccessible
+										? 'border-gray-400 bg-white text-gray-600'
+										: 'border-gray-300 bg-white text-gray-400'}"
 						>
-							{#if index < currentStep}
+							{#if stepCompleted}
 								<Check class="h-5 w-5" />
 							{:else}
 								<span class="text-sm font-semibold">{index + 1}</span>
@@ -154,7 +196,7 @@
 						</div>
 						<div class="text-center">
 							<div
-								class="text-xs font-medium {index <= currentStep
+								class="text-xs font-medium {stepAccessible
 									? 'text-gray-900'
 									: 'text-gray-400'}"
 							>
@@ -165,7 +207,7 @@
 					</button>
 					{#if index < steps.length - 1}
 						<div
-							class="mx-2 h-0.5 flex-1 transition-all {index < currentStep
+							class="mx-2 h-0.5 flex-1 transition-all {stepCompleted
 								? 'bg-primary'
 								: 'bg-gray-300'}"
 						></div>
@@ -175,8 +217,36 @@
 		</div>
 	</div>
 
+	<!-- Navigation - Top -->
+	<div class="mb-6 flex items-center justify-between rounded-lg border bg-gray-50 p-4">
+		<Button onclick={goBack} variant="outline" size="sm" disabled={currentStep === 0}>
+			<ArrowLeft class="mr-2 h-4 w-4" />
+			{$t('requirementsV2.navigation.previous')}
+		</Button>
+
+		<div class="text-sm font-medium text-gray-600">
+			{$t('requirementsV2.navigation.step')} {currentStep + 1} {$t('requirementsV2.navigation.of')} {steps.length}
+		</div>
+
+		{#if currentStep < steps.length - 1}
+			<Button onclick={saveAndNext} size="sm">
+				{$t('requirementsV2.navigation.next')}
+				<ArrowRight class="ml-2 h-4 w-4" />
+			</Button>
+		{:else}
+			<Button onclick={handleActivate} disabled={isActivating} size="sm">
+				{#if isActivating}
+					{$t('requirementsV2.navigation.activating')}
+				{:else}
+					<Check class="mr-2 h-4 w-4" />
+					{$t('requirementsV2.navigation.activateHunt')}
+				{/if}
+			</Button>
+		{/if}
+	</div>
+
 	<!-- Step Content -->
-	<div class="mb-8 rounded-lg border bg-white p-8 shadow-sm">
+	<div class="rounded-lg border bg-white p-8 shadow-sm">
 		{#if requirement && requirementId}
 			{#if currentStep === 0}
 				<BasicInfoStep bind:requirement {requirementId} />
@@ -192,8 +262,8 @@
 		{/if}
 	</div>
 
-	<!-- Navigation -->
-	<div class="flex items-center justify-between">
+	<!-- Navigation - Bottom -->
+	<div class="mt-6 flex items-center justify-between">
 		<Button onclick={goBack} variant="outline" disabled={currentStep === 0}>
 			<ArrowLeft class="mr-2 h-4 w-4" />
 			{$t('requirementsV2.navigation.previous')}

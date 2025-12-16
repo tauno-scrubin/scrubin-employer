@@ -8,7 +8,7 @@
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
 	import { MapPin, DollarSign, Info } from 'lucide-svelte';
-	import { locale } from '$lib/i18n';
+	import { locale, t } from '$lib/i18n';
 	import { get } from 'svelte/store';
 
 	let {
@@ -25,7 +25,7 @@
 	let isSaving = $state(false);
 
 	// Local state for form fields
-	let country = $state(requirement.country || '');
+	let country = $state(requirement.countryIso || '');
 	let city = $state(requirement.address?.city || '');
 	let stateProvinceRegion = $state(
 		Array.isArray(requirement.address?.stateProvinceRegion)
@@ -77,10 +77,10 @@
 
 			const updated = await scrubinClient.hunt.updateRequirementFields(requirementId, updateData);
 			requirement = { ...requirement, ...updated } as JobRequirementDto;
-			toast.success('Saved successfully');
+			toast.success($t('requirementsV2.success.saved'));
 		} catch (error) {
 			console.error('Failed to save:', error);
-			toast.error('Failed to save. Please try again.');
+			toast.error($t('requirementsV2.errors.failedToSave'));
 		} finally {
 			isSaving = false;
 		}
@@ -95,142 +95,146 @@
 	}
 </script>
 
-<div class="space-y-8">
+<div class="w-full space-y-6">
+	<!-- Info box -->
+	<div class="flex gap-3 rounded-lg border border-blue-200 bg-blue-50 p-4">
+		<Info class="mt-0.5 h-5 w-5 flex-shrink-0 text-blue-600" />
+		<div class="text-sm text-blue-900">
+			<p class="font-medium">{$t('requirementsV2.tips.salaryTransparency.title')}</p>
+			<p class="mt-1">
+				{$t('requirementsV2.tips.salaryTransparency.description')}
+			</p>
+		</div>
+	</div>
+
 	<div>
-		<h2 class="mb-2 text-2xl font-semibold">Location & Compensation</h2>
+		<h2 class="mb-2 text-2xl font-semibold">{$t('requirementsV2.steps.location.heading')}</h2>
 		<p class="text-sm text-muted-foreground">
-			Specify where the job is located and the compensation details.
+			{$t('requirementsV2.steps.location.subheading')}
 		</p>
 	</div>
 
 	<!-- Location Section -->
-	<div class="space-y-6 rounded-lg border border-gray-200 bg-gray-50 p-6">
+	<div class="space-y-4">
 		<div class="flex items-center gap-2">
-			<MapPin class="h-5 w-5 text-primary" />
-			<h3 class="text-lg font-semibold">Job Location</h3>
+			<h3 class="text-lg font-semibold">{$t('requirementsV2.sections.location')}</h3>
 		</div>
 
-		<!-- Country -->
-		<div class="space-y-2">
-			<Label class="text-base font-medium">
-				Country <span class="text-destructive">*</span>
-			</Label>
-			<p class="text-sm text-muted-foreground">Where is this position based?</p>
-			<Combobox
-				items={availableCountries.map((c) => ({ value: c.code, label: c.name }))}
-				value={country}
-				onValueChange={(value) => {
-					country = value || '';
-					saveField('location');
-				}}
-				placeholder="Select country..."
-				searchPlaceholder="Search countries..."
-				emptyText="No countries found"
-				class="w-full bg-white"
-			/>
+		<!-- Country and City -->
+		<div class="grid grid-cols-2 gap-4">
+			<div class="space-y-2">
+				<Label class="text-base font-medium">
+					{$t('requirementsV2.fields.country.label')} <span class="text-destructive">*</span>
+				</Label>
+				<Combobox
+					items={availableCountries.map((c) => ({ value: c.code, label: c.name }))}
+					value={country}
+					onValueChange={(value) => {
+						country = value || '';
+						saveField('location');
+					}}
+					placeholder={$t('requirementsV2.fields.country.placeholder')}
+					searchPlaceholder={$t('requirementsV2.fields.country.searchPlaceholder')}
+					emptyText={$t('requirementsV2.fields.country.emptyText')}
+					class="w-full bg-white"
+				/>
+			</div>
+
+			<div class="space-y-2">
+				<Label for="city" class="text-base font-medium"
+					>{$t('requirementsV2.fields.city.label')}</Label
+				>
+				<Input
+					id="city"
+					type="text"
+					bind:value={city}
+					onblur={handleLocationBlur}
+					placeholder={$t('requirementsV2.fields.city.placeholder')}
+					class="bg-white text-base"
+				/>
+			</div>
 		</div>
 
-		<!-- City -->
-		<div class="space-y-2">
-			<Label for="city" class="text-base font-medium">City</Label>
-			<p class="text-sm text-muted-foreground">Which city is the job located in?</p>
-			<Input
-				id="city"
-				type="text"
-				bind:value={city}
-				onblur={handleLocationBlur}
-				placeholder="e.g., London, New York, Berlin"
-				class="bg-white text-base"
-			/>
-		</div>
+		<!-- State/Province/Region and Address -->
+		<div class="grid grid-cols-2 gap-4">
+			<div class="space-y-2">
+				<Label for="region" class="text-base font-medium"
+					>{$t('requirementsV2.fields.region.label')}</Label
+				>
+				<Input
+					id="region"
+					type="text"
+					bind:value={stateProvinceRegion}
+					onblur={handleLocationBlur}
+					placeholder={$t('requirementsV2.fields.region.placeholder')}
+					class="bg-white text-base"
+				/>
+			</div>
 
-		<!-- State/Province/Region -->
-		<div class="space-y-2">
-			<Label for="region" class="text-base font-medium">State / Province / Region</Label>
-			<p class="text-sm text-muted-foreground">
-				Specify the state, province, or region (optional). Separate multiple with commas.
-			</p>
-			<Input
-				id="region"
-				type="text"
-				bind:value={stateProvinceRegion}
-				onblur={handleLocationBlur}
-				placeholder="e.g., California, Greater London"
-				class="bg-white text-base"
-			/>
-		</div>
-
-		<!-- Address -->
-		<div class="space-y-2">
-			<Label for="address" class="text-base font-medium">Street Address</Label>
-			<p class="text-sm text-muted-foreground">Full street address (optional but helpful)</p>
-			<Input
-				id="address"
-				type="text"
-				bind:value={address}
-				onblur={handleLocationBlur}
-				placeholder="e.g., 123 Main Street"
-				class="bg-white text-base"
-			/>
+			<div class="space-y-2">
+				<Label for="address" class="text-base font-medium"
+					>{$t('requirementsV2.fields.address.label')}</Label
+				>
+				<Input
+					id="address"
+					type="text"
+					bind:value={address}
+					onblur={handleLocationBlur}
+					placeholder={$t('requirementsV2.fields.address.placeholder')}
+					class="bg-white text-base"
+				/>
+			</div>
 		</div>
 	</div>
 
 	<!-- Salary Section -->
-	<div class="space-y-6 rounded-lg border border-gray-200 bg-gray-50 p-6">
+	<div class="w-full space-y-4">
 		<div class="flex items-center gap-2">
-			<DollarSign class="h-5 w-5 text-primary" />
-			<h3 class="text-lg font-semibold">Compensation</h3>
+			<h3 class="text-lg font-semibold">{$t('requirementsV2.sections.compensation')}</h3>
 		</div>
 
-		<!-- Salary Range -->
+		<!-- Salary Range and Currency -->
 		<div class="space-y-2">
-			<Label class="text-base font-medium">Salary Range</Label>
-			<p class="text-sm text-muted-foreground">
-				Provide a salary range to attract suitable candidates. Transparency helps!
-			</p>
+			<Label class="text-base font-medium">{$t('requirementsV2.fields.salaryRange.label')}</Label>
 			<div class="flex items-center gap-3">
 				<Input
 					type="number"
 					bind:value={salaryStart}
 					onblur={handleSalaryBlur}
 					min="0"
-					placeholder="From"
+					placeholder={$t('requirementsV2.fields.salaryRange.from')}
 					class="flex-1 bg-white text-base"
 				/>
-				<span class="text-muted-foreground">to</span>
+				<span class="text-muted-foreground"
+					>{$t('requirementsV2.fields.salaryRange.to').toLowerCase()}</span
+				>
 				<Input
 					type="number"
 					bind:value={salaryEnd}
 					onblur={handleSalaryBlur}
 					min="0"
-					placeholder="To"
+					placeholder={$t('requirementsV2.fields.salaryRange.to')}
 					class="flex-1 bg-white text-base"
+				/>
+				<DropdownComponent
+					options={availableCurrencies}
+					value={salaryCurrency}
+					showLabelInBrackets={true}
+					onValueChange={(value) => {
+						salaryCurrency = value;
+						saveField('salary');
+					}}
+					placeholder={$t('requirementsV2.fields.currency.placeholder')}
+					optionKey="code"
+					labelKey="name"
+					class="w-32 bg-white"
 				/>
 			</div>
 		</div>
 
-		<!-- Currency -->
-		<div class="space-y-2">
-			<Label class="text-base font-medium">Currency</Label>
-			<DropdownComponent
-				options={availableCurrencies}
-				value={salaryCurrency}
-				showLabelInBrackets={true}
-				onValueChange={(value) => {
-					salaryCurrency = value;
-					saveField('salary');
-				}}
-				placeholder="Select currency..."
-				optionKey="code"
-				labelKey="name"
-				class="w-full bg-white"
-			/>
-		</div>
-
 		<!-- Salary Period -->
 		<div class="space-y-2">
-			<Label class="text-base font-medium">Salary Period</Label>
-			<p class="text-sm text-muted-foreground">How often is the salary paid?</p>
+			<Label class="text-base font-medium">{$t('requirementsV2.fields.salaryPeriod.label')}</Label>
 			<DropdownComponent
 				options={availableSalaryPeriods}
 				value={salaryType}
@@ -238,7 +242,7 @@
 					salaryType = value;
 					saveField('salary');
 				}}
-				placeholder="Select period..."
+				placeholder={$t('requirementsV2.fields.salaryPeriod.placeholder')}
 				optionKey="code"
 				labelKey="name"
 				class="w-full bg-white"
@@ -247,30 +251,17 @@
 
 		<!-- Salary Extra Info -->
 		<div class="space-y-2">
-			<Label for="salaryExtra" class="text-base font-medium">Additional Compensation Details</Label>
-			<p class="text-sm text-muted-foreground">
-				Any extra information about compensation (bonuses, benefits, commission, etc.)
-			</p>
+			<Label for="salaryExtra" class="text-base font-medium"
+				>{$t('requirementsV2.fields.salaryExtra.label')}</Label
+			>
 			<textarea
 				id="salaryExtra"
 				bind:value={salaryExtra}
 				onblur={handleSalaryBlur}
-				placeholder="e.g., Performance bonuses, health insurance, 401k matching, commission structure..."
+				placeholder={$t('requirementsV2.fields.salaryExtra.placeholder')}
 				class="min-h-[100px] w-full rounded-md border bg-white p-3 text-base focus:outline-none focus:ring-2 focus:ring-primary"
 				rows="4"
 			></textarea>
-		</div>
-	</div>
-
-	<!-- Info box -->
-	<div class="flex gap-3 rounded-lg border border-blue-200 bg-blue-50 p-4">
-		<Info class="mt-0.5 h-5 w-5 flex-shrink-0 text-blue-600" />
-		<div class="text-sm text-blue-900">
-			<p class="font-medium">Salary transparency increases applications</p>
-			<p class="mt-1">
-				Being upfront about compensation attracts more qualified candidates and saves time in the
-				hiring process.
-			</p>
 		</div>
 	</div>
 </div>

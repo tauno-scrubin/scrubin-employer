@@ -65,10 +65,10 @@
 
 			const updated = await scrubinClient.hunt.updateRequirementFields(requirementId, updateData);
 			requirement = { ...requirement, ...updated } as JobRequirementDto;
-			toast.success('Saved successfully');
+			toast.success($t('requirementsV2.success.saved'));
 		} catch (error) {
 			console.error('Failed to save:', error);
-			toast.error('Failed to save. Please try again.');
+			toast.error($t('requirementsV2.errors.failedToSave'));
 		} finally {
 			isSaving = false;
 		}
@@ -88,9 +88,7 @@
 	}
 
 	$effect(() => {
-		if (
-			JSON.stringify(selectedProfessions) !== JSON.stringify(requirement.professionsV2 || [])
-		) {
+		if (JSON.stringify(selectedProfessions) !== JSON.stringify(requirement.professionsV2 || [])) {
 			saveField('professions', selectedProfessions);
 		}
 	});
@@ -110,7 +108,18 @@
 	});
 </script>
 
-<div class="space-y-8">
+<div class="w-full space-y-6">
+	<!-- Info box -->
+	<div class="flex gap-3 rounded-lg border border-blue-200 bg-blue-50 p-4">
+		<Info class="mt-0.5 h-5 w-5 flex-shrink-0 text-blue-600" />
+		<div class="text-sm text-blue-900">
+			<p class="font-medium">{$t('requirementsV2.tips.beSpecific.title')}</p>
+			<p class="mt-1">
+				{$t('requirementsV2.tips.beSpecific.description')}
+			</p>
+		</div>
+	</div>
+
 	<div>
 		<h2 class="mb-2 text-2xl font-semibold">{$t('requirementsV2.steps.basic.heading')}</h2>
 		<p class="text-sm text-muted-foreground">
@@ -136,66 +145,56 @@
 		/>
 	</div>
 
-	<!-- Professions -->
+	<!-- Professions & Specialization -->
 	<div class="space-y-2">
-		<Label class="text-base font-medium">
-			{$t('requirementsV2.fields.professions.label')} <span class="text-destructive">*</span>
-		</Label>
-		<p class="text-sm text-muted-foreground">
-			{$t('requirementsV2.fields.professions.description')}
-		</p>
-		<ComboboxMulti
-			items={availableProfessions.map((p) => ({ value: p.code, label: p.name }))}
-			values={selectedProfessions.map(String)}
-			onValuesChange={(vals) => (selectedProfessions = vals.map((v) => Number(v)))}
-			placeholder={$t('requirementsV2.fields.professions.placeholder')}
-			searchPlaceholder={$t('requirementsV2.fields.professions.searchPlaceholder')}
-			emptyText={$t('search.noResults')}
-			class="w-full"
-		/>
-		{#if selectedProfessions.length > 0}
-			<div class="flex flex-wrap gap-2 pt-2">
-				{#each selectedProfessions as profId}
-					<span class="rounded-full bg-blue-50 px-3 py-1 text-sm text-blue-700">
-						{availableProfessions.find((p) => Number(p.code) === profId)?.name ?? profId}
-					</span>
-				{/each}
+		<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+			<!-- Professions -->
+			<div class="space-y-2">
+				<Label class="text-base font-medium">
+					{$t('requirementsV2.fields.professions.label')} <span class="text-destructive">*</span>
+				</Label>
+				<p class="text-sm text-muted-foreground">
+					{$t('requirementsV2.fields.professions.description')}
+				</p>
+				<ComboboxMulti
+					items={availableProfessions.map((p) => ({ value: p.code, label: p.name }))}
+					values={selectedProfessions.map(String)}
+					onValuesChange={(vals) => (selectedProfessions = vals.map((v) => Number(v)))}
+					placeholder={$t('requirementsV2.fields.professions.placeholder')}
+					searchPlaceholder={$t('requirementsV2.fields.professions.searchPlaceholder')}
+					emptyText={$t('search.noResults')}
+					class="w-full"
+				/>
 			</div>
-		{/if}
-	</div>
 
-	<!-- Specialization -->
-	<div class="space-y-2">
-		<Label class="text-base font-medium">Specialization</Label>
-		<p class="text-sm text-muted-foreground">
-			Optionally specify a specialization within the profession to narrow down the search.
-		</p>
-		<Combobox
-			items={availableSpecialties.map((s) => ({ value: s.code, label: s.name }))}
-			value={selectedSpecialization !== null ? String(selectedSpecialization) : undefined}
-			onValueChange={(v) => (selectedSpecialization = v ? Number(v) : null)}
-			placeholder="Select specialization (optional)..."
-			searchPlaceholder="Search specializations..."
-			emptyText="No specializations found"
-			class="w-full"
-		/>
-		{#if selectedSpecialization}
-			<div class="pt-2">
-				<span class="rounded-full bg-purple-50 px-3 py-1 text-sm text-purple-700">
-					{availableSpecialties.find((s) => Number(s.code) === selectedSpecialization)?.name ||
-						selectedSpecialization}
-				</span>
+			<!-- Specialization -->
+			<div class="space-y-2">
+				<Label class="text-base font-medium">
+					{$t('requirementsV2.fields.specialization.label')}
+				</Label>
+				<p class="text-sm text-muted-foreground">
+					{$t('requirementsV2.fields.specialization.description')}
+				</p>
+				<Combobox
+					items={availableSpecialties.map((s) => ({ value: s.code, label: s.name }))}
+					value={selectedSpecialization !== null ? String(selectedSpecialization) : undefined}
+					onValueChange={(v) => (selectedSpecialization = v ? Number(v) : null)}
+					placeholder={$t('requirementsV2.fields.specialization.placeholder')}
+					searchPlaceholder={$t('requirementsV2.fields.specialization.searchPlaceholder')}
+					emptyText={$t('requirementsV2.fields.specialization.emptyText')}
+					class="w-full"
+				/>
 			</div>
-		{/if}
+		</div>
 	</div>
 
 	<!-- Work Experience -->
 	<div class="space-y-2">
 		<Label for="workExperience" class="text-base font-medium">
-			Required Work Experience (years)
+			{$t('requirementsV2.fields.workExperience.label')}
 		</Label>
 		<p class="text-sm text-muted-foreground">
-			Minimum years of relevant work experience required for this position.
+			{$t('requirementsV2.fields.workExperience.description')}
 		</p>
 		<Input
 			id="workExperience"
@@ -203,46 +202,25 @@
 			bind:value={workExperience}
 			onblur={handleWorkExperienceBlur}
 			min="0"
-			placeholder="0"
+			placeholder={$t('requirementsV2.fields.workExperience.placeholder')}
 			class="text-base"
 		/>
 	</div>
 
 	<!-- Languages -->
 	<div class="space-y-2">
-		<Label class="text-base font-medium">Required Languages</Label>
+		<Label class="text-base font-medium">{$t('requirementsV2.fields.languages.label')}</Label>
 		<p class="text-sm text-muted-foreground">
-			Select the languages candidates must be proficient in for this role.
+			{$t('requirementsV2.fields.languages.description')}
 		</p>
 		<ComboboxMulti
 			items={availableLanguages.map((l) => ({ value: l.code, label: l.name }))}
 			values={selectedLanguages}
 			onValuesChange={(vals) => (selectedLanguages = vals)}
-			placeholder="Select languages..."
-			searchPlaceholder="Search languages..."
-			emptyText="No languages found"
+			placeholder={$t('requirementsV2.fields.languages.placeholder')}
+			searchPlaceholder={$t('requirementsV2.fields.languages.searchPlaceholder')}
+			emptyText={$t('requirementsV2.fields.languages.emptyText')}
 			class="w-full"
 		/>
-		{#if selectedLanguages.length > 0}
-			<div class="flex flex-wrap gap-2 pt-2">
-				{#each selectedLanguages as langCode}
-					<span class="rounded-full bg-green-50 px-3 py-1 text-sm text-green-700">
-						{availableLanguages.find((l) => l.code === langCode)?.name || langCode}
-					</span>
-				{/each}
-			</div>
-		{/if}
-	</div>
-
-	<!-- Info box -->
-	<div class="flex gap-3 rounded-lg border border-blue-200 bg-blue-50 p-4">
-		<Info class="mt-0.5 h-5 w-5 flex-shrink-0 text-blue-600" />
-		<div class="text-sm text-blue-900">
-			<p class="font-medium">Tip: Be specific but not too restrictive</p>
-			<p class="mt-1">
-				Providing clear details helps us match you with the right candidates, but being too
-				restrictive might limit your candidate pool.
-			</p>
-		</div>
 	</div>
 </div>

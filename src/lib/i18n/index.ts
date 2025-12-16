@@ -1,30 +1,14 @@
-import { writable, derived } from 'svelte/store';
 import { browser } from '$app/environment';
+import { derived, writable } from 'svelte/store';
 import { availableLanguages, defaultLanguage, isLanguageSupported } from './config';
-import en from './locales/en/index.json';
-import es from './locales/es/index.json';
-import et from './locales/et/index.json';
-import fi from './locales/fi/index.json';
-import fr from './locales/fr/index.json';
-import de from './locales/de/index.json';
-import enHuntDetails from './locales/en/huntDetails.json';
-import esHuntDetails from './locales/es/huntDetails.json';
-import etHuntDetails from './locales/et/huntDetails.json';
-import fiHuntDetails from './locales/fi/huntDetails.json';
-import frHuntDetails from './locales/fr/huntDetails.json';
-import deHuntDetails from './locales/de/huntDetails.json';
 import enFaq from './locales/en/faq.json';
-import esFaq from './locales/es/faq.json';
-import etFaq from './locales/et/faq.json';
-import fiFaq from './locales/fi/faq.json';
-import frFaq from './locales/fr/faq.json';
-import deFaq from './locales/de/faq.json';
+import enHuntDetails from './locales/en/huntDetails.json';
+import en from './locales/en/index.json';
 import enRequirementsV2 from './locales/en/requirementsV2.json';
-import esRequirementsV2 from './locales/es/requirementsV2.json';
+import etFaq from './locales/et/faq.json';
+import etHuntDetails from './locales/et/huntDetails.json';
+import et from './locales/et/index.json';
 import etRequirementsV2 from './locales/et/requirementsV2.json';
-import fiRequirementsV2 from './locales/fi/requirementsV2.json';
-import frRequirementsV2 from './locales/fr/requirementsV2.json';
-import deRequirementsV2 from './locales/de/requirementsV2.json';
 
 // Define recursive types properly to avoid circular references
 interface TranslationObject {
@@ -41,11 +25,7 @@ function mergeTranslations(...objs: TranslationObject[]): TranslationObject {
 // Create a map of all translations
 const translations: Record<string, TranslationObject> = {
 	en: mergeTranslations(en, enHuntDetails, enFaq, enRequirementsV2),
-	es: mergeTranslations(es, esHuntDetails, esFaq, esRequirementsV2),
-	et: mergeTranslations(et, etHuntDetails, etFaq, etRequirementsV2),
-	fi: mergeTranslations(fi, fiHuntDetails, fiFaq, fiRequirementsV2),
-	fr: mergeTranslations(fr, frHuntDetails, frFaq, frRequirementsV2),
-	de: mergeTranslations(de, deHuntDetails, deFaq, deRequirementsV2)
+	et: mergeTranslations(et, etHuntDetails, etFaq, etRequirementsV2)
 };
 
 // Get initial locale based on:

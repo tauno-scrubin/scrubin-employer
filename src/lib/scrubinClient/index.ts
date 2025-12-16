@@ -1532,6 +1532,22 @@ class HuntResource extends BaseResource {
 		) as Promise<ChatSessionResponse>;
 	}
 
+	async generateJobDescription(id: number): Promise<{ jobDescription: string }> {
+		const url = new URL(`${this.path}/requirements/${id}/ai/job-description`, this.client.baseUrl);
+		return this.request<{ jobDescription: string }>(
+			'POST',
+			url.toString()
+		) as Promise<{ jobDescription: string }>;
+	}
+
+	async generateJobQualifications(id: number): Promise<{ jobRequiredQualifications: string }> {
+		const url = new URL(`${this.path}/requirements/${id}/ai/qualifications`, this.client.baseUrl);
+		return this.request<{ jobRequiredQualifications: string }>(
+			'POST',
+			url.toString()
+		) as Promise<{ jobRequiredQualifications: string }>;
+	}
+
 	async getChatSession(
 		sessionId: string,
 		page: number = 0,

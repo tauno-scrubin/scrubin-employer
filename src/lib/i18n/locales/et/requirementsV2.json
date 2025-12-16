@@ -1,205 +1,235 @@
 {
 	"requirementsV2": {
-		"title": "Create New Job Hunt",
-		"subtitle": "Fill out the information step by step to create your job hunt",
+		"title": "Loo uus sihtotsing",
+		"subtitle": "Täida informatsioon samm-sammult, et luua oma tööpakkumine",
 		"steps": {
 			"basic": {
-				"title": "Basic Info",
-				"description": "Job title and profession",
-				"heading": "Basic Information",
-				"subheading": "Start by providing the essential details about the position you're hiring for."
+				"title": "Põhiinfo",
+				"description": "Ametinimetus ja amet",
+				"heading": "Põhiline informatsioon",
+				"subheading": "Alusta, andes esmatähtsad detailid positsiooni kohta, mille täitmiseks otsite töötajat."
 			},
 			"location": {
-				"title": "Location & Salary",
-				"description": "Where and compensation",
-				"heading": "Location & Compensation",
-				"subheading": "Specify where the job is located and the compensation details."
+				"title": "Asukoht ja palk",
+				"description": "Kus ja hüvitis",
+				"heading": "Asukoht ja hüvitis",
+				"subheading": "Määra, kus töö asub ja hüvitise detailid."
 			},
 			"details": {
-				"title": "Job Details",
-				"description": "Description and requirements",
-				"heading": "Job Details",
-				"subheading": "Provide detailed information about the role to attract the right candidates."
+				"title": "Töö detailid",
+				"description": "Kirjeldus ja nõuded",
+				"heading": "Töö detailid",
+				"subheading": "Anna üksikasjalik informatsioon rolli kohta, et meelitada õigeid kandidaate."
 			},
 			"targeting": {
-				"title": "Targeting",
-				"description": "Search preferences",
-				"heading": "Candidate Targeting",
-				"subheading": "Configure search preferences to find the most relevant candidates."
+				"title": "Sihtmääramine",
+				"description": "Otsingu eelistused",
+				"heading": "Kandidaatide sihtmääramine",
+				"subheading": "Konfigureeri otsingu eelistused, et leida kõige asjakohasemad kandidaadid."
 			},
 			"preview": {
-				"title": "Preview",
-				"description": "Review and activate",
-				"heading": "Review Your Job Hunt",
-				"subheading": "Review all the details before activating your hunt. You can go back to any step to make changes."
+				"title": "Eelvaade",
+				"description": "Vaata üle ja aktiveeri",
+				"heading": "Vaata oma tööpakkumine üle",
+				"subheading": "Vaata kõik detailid üle enne oma pakkumise aktiveerimist. Saad minna tagasi mistahes sammu juurde, et teha muudatusi."
 			}
 		},
 		"navigation": {
-			"previous": "Previous",
-			"next": "Next",
-			"activateHunt": "Activate Hunt",
-			"activating": "Activating..."
+			"previous": "Eelmine",
+			"next": "Järgmine",
+			"activateHunt": "Aktiveeri pakkumine",
+			"activating": "Aktiveerimine...",
+			"step": "Samm",
+			"of": "/"
 		},
 		"fields": {
 			"jobTitle": {
-				"label": "Job Title",
-				"placeholder": "e.g., Senior Software Engineer, Registered Nurse, Marketing Manager",
-				"description": "What is the official title for this position? Be specific and clear."
+				"label": "Ametinimetus",
+				"placeholder": "nt Vanem tarkvarainsener, Registreeritud õde, Turundusjuht",
+				"description": "Mis on selle positsiooni ametlik nimetus? Ole täpne ja selge."
 			},
 			"professions": {
-				"label": "Professions",
-				"placeholder": "Select professions...",
-				"searchPlaceholder": "Search professions...",
-				"description": "Select one or more professions that best match this role. This helps us find relevant candidates."
+				"label": "Ametid",
+				"placeholder": "Vali ametid...",
+				"searchPlaceholder": "Otsi ameteid...",
+				"description": "Vali üks või mitu ametit, mis sobivad selle rolliga kõige paremini. See aitab meil leida asjakohaseid kandidaate."
 			},
 			"specialization": {
-				"label": "Specialization",
-				"placeholder": "Select specialization (optional)...",
-				"searchPlaceholder": "Search specializations...",
-				"description": "Optionally specify a specialization within the profession to narrow down the search."
+				"label": "Spetsialiseerumine",
+				"placeholder": "Vali spetsialiseerumine (valikuline)...",
+				"searchPlaceholder": "Otsi spetsialiseerumisi...",
+				"emptyText": "Spetsialiseerumisi ei leitud",
+				"description": "Valikuliselt määra spetsialiseerumine ameti raames, et kitsendada otsingut."
 			},
 			"workExperience": {
-				"label": "Required Work Experience (years)",
+				"label": "Nõutav töökogemus (aastad)",
 				"placeholder": "0",
-				"description": "Minimum years of relevant work experience required for this position."
+				"description": "Minimaalne asjakohase töökogemuse aastate arv, mis on nõutud sellele positsioonile."
 			},
 			"languages": {
-				"label": "Required Languages",
-				"placeholder": "Select languages...",
-				"searchPlaceholder": "Search languages...",
-				"description": "Select the languages candidates must be proficient in for this role."
+				"label": "Nõutavad keeled",
+				"placeholder": "Vali keeled...",
+				"searchPlaceholder": "Otsi keeli...",
+				"emptyText": "Keeli ei leitud",
+				"description": "Vali keeled, milles kandidaadid peavad selle rolli jaoks oskama."
 			},
 			"country": {
-				"label": "Country",
-				"placeholder": "Select country...",
-				"searchPlaceholder": "Search countries...",
-				"description": "Where is this position based?"
+				"label": "Riik",
+				"placeholder": "Vali riik...",
+				"searchPlaceholder": "Otsi riike...",
+				"emptyText": "Riike ei leitud",
+				"description": "Kus see positsioon asub?"
 			},
 			"city": {
-				"label": "City",
-				"placeholder": "e.g., London, New York, Berlin",
-				"description": "Which city is the job located in?"
+				"label": "Linn",
+				"placeholder": "nt London, New York, Berliin",
+				"description": "Millises linnas töö asub?"
 			},
 			"region": {
-				"label": "State / Province / Region",
-				"placeholder": "e.g., California, Greater London",
-				"description": "Specify the state, province, or region (optional). Separate multiple with commas."
+				"label": "Maakond / Provints / Regioon",
+				"placeholder": "nt California, Suur-London",
+				"description": "Määra maakond, provints või regioon (valikuline). Erista mitu komaga."
 			},
 			"address": {
-				"label": "Street Address",
-				"placeholder": "e.g., 123 Main Street",
-				"description": "Full street address (optional but helpful)"
+				"label": "Tänavaadress",
+				"placeholder": "nt Vabaduse väljak 7",
+				"description": "Täielik tänavaadress (valikuline, kuid kasulik)"
 			},
 			"salaryRange": {
-				"label": "Salary Range",
-				"from": "From",
-				"to": "To",
-				"description": "Provide a salary range to attract suitable candidates. Transparency helps!"
+				"label": "Palgavahemik",
+				"from": "Alates",
+				"to": "Kuni",
+				"description": "Anna palgavahemik, et meelitada sobivaid kandidaate. Läbipaistvus aitab!"
 			},
 			"currency": {
-				"label": "Currency",
-				"placeholder": "Select currency..."
+				"label": "Valuuta",
+				"placeholder": "Vali valuuta..."
 			},
 			"salaryPeriod": {
-				"label": "Salary Period",
-				"placeholder": "Select period...",
-				"description": "How often is the salary paid?"
+				"label": "Palga periood",
+				"placeholder": "Vali periood...",
+				"description": "Kui tihti palka makstakse?"
 			},
 			"salaryExtra": {
-				"label": "Additional Compensation Details",
-				"placeholder": "e.g., Performance bonuses, health insurance, 401k matching, commission structure...",
-				"description": "Any extra information about compensation (bonuses, benefits, commission, etc.)"
+				"label": "Täiendavad hüvitise üksikasjad",
+				"placeholder": "nt Tulemusboonused, tervisekindlustus, lisatasud, komisjonitasu struktuur...",
+				"description": "Iga lisainformatsioon hüvitise kohta (boonused, hüved, komissjon jne)"
 			},
 			"jobDescription": {
-				"label": "Job Description",
-				"placeholder": "Describe the job role, main responsibilities, day-to-day tasks, team structure, growth opportunities, and what makes this role unique. Be detailed and engaging to attract top talent.",
-				"description": "Describe the role, responsibilities, and what makes this opportunity exciting."
+				"label": "Töö kirjeldus",
+				"placeholder": "Kirjelda töörolli, peamisi vastutusi, igapäevaseid ülesandeid, meeskonna struktuuri, kasvuvõimalusi ja seda, mis teeb selle rolli ainulaadseks. Ole detailne ja köitev, et meelitada parimaid talente.\n\nNäide:\nOtsime andekust vanemat tarkvarainseneeri, et liituda meie kasvava insenerimeeskonnaga. Sa töötad tipptasemel projektide kallal, mis mõjutavad miljoneid kasutajaid...\n\nPõhilised vastutused:\n• Skaleeritavate tagasüsteemide projekteerimine ja rakendamine\n• Koostöö valdkondadevaheliste meeskondadega\n• Juuniorarendajate juhendamine\n...",
+				"description": "Kirjelda rolli, vastutusi ja seda, mis teeb selle võimaluse põnevaks."
 			},
 			"jobRequiredQualifications": {
-				"label": "Required Qualifications",
-				"placeholder": "List the essential qualifications, certifications, skills, and experience candidates must have. Be specific but realistic.",
-				"description": "List the must-have skills, experience, and qualifications for this role."
+				"label": "Nõutavad kvalifikatsioonid",
+				"placeholder": "Loetleta olulised kvalifikatsioonid, sertifikaadid, oskused ja kogemus, mis kandidaatidel peab olema. Ole täpne, kuid realistlik.\n\nNäide:\n• Bakalaureusekraad arvutiteaduses või seotud valdkonnas\n• 5+ aastat professionaalse tarkvaraarenduse kogemust\n• Tugev oskus Python'is ja JavaScript'is\n• Kogemus pilvplatvormidega (AWS, GCP või Azure)\n• Suurepärased probleemilahendamise ja suhtlemisoskused\n• Kogemus tehniliste projektide juhtimisel ja teiste mentoreerimises\n...",
+				"description": "Loetleta hädavajalikud oskused, kogemus ja kvalifikatsioonid selle rolli jaoks."
 			},
 			"preferredCountries": {
-				"label": "Preferred Countries",
-				"placeholder": "Select preferred countries...",
-				"searchPlaceholder": "Search countries...",
-				"description": "Countries where you'd prefer to search for candidates. Candidates from these countries will be prioritized in search results.",
-				"info": "Selecting preferred countries helps us prioritize candidates from these locations, but we'll still search globally."
+				"label": "Eelistatud riigid",
+				"placeholder": "Vali eelistatud riigid...",
+				"searchPlaceholder": "Otsi riike...",
+				"description": "Riigid, kust sa eelistaksid kandidaate otsida. Nendest riikidest pärit kandidaadid prioriseeritakse otsingutulemites.",
+				"info": "Eelistatud riikide valimine aitab meil prioriseerida kandidaate nendest asukohtadest, kuid otsime siiski üleilmselt."
 			},
 			"onlyCountries": {
-				"label": "Only Search in Countries",
-				"placeholder": "Select countries to restrict search (optional)...",
-				"searchPlaceholder": "Search countries...",
-				"description": "Restrict the search to only these countries. If specified, candidates from other countries will not be included.",
-				"warning": "Warning: Restricting to specific countries may significantly limit your candidate pool. Leave empty to search globally."
+				"label": "Filtreeri riigi järgi",
+				"placeholder": "Vali riigid (valikuline)...",
+				"searchPlaceholder": "Otsi riike...",
+				"emptyText": "Riike ei leitud",
+				"description": "Vali konkreetsed riigid, et piirata oma otsingut. Jäta tühjaks, et otsida üleilmselt.",
+				"info": "Kui riike ei ole valitud, otsime üleilmselt. Konkreetsete riikide valimine piirab otsingut ainult nende asukohtadega.",
+				"warning": "Hoiatus: Konkreetsetele riikidele piiramine võib oluliselt piirata teie kandidaatide gruppi. Jäta tühjaks, et otsida üleilmselt."
 			},
 			"companyContext": {
-				"label": "Company Context",
-				"placeholder": "Describe your company, industry, size, culture, values, mission, and what makes it a great place to work.",
-				"description": "Provide context about your company that helps candidates understand your organization. This information helps our AI match you with candidates who align with your company culture."
+				"label": "Ettevõtte kontekst",
+				"placeholder": "Kirjelda oma ettevõtet, tööstusharu, suurust, kultuuri, väärtusi, missiooni ja seda, mis teeb sellest hea töökoha.\n\nNäide:\nOleme kiiresti kasvav tervishoiutehnoloogia idufirma 50+ töötajaga üle Euroopa. Oleme kirglikud patsiendi hoolduse parandamise suhtes läbi innovaatiliste tarkvaralahenduste. Meie kultuur väärtustab töö ja eraelu tasakaalu, pidevat õppimist ja koostööl põhinevat probleemilahendust...",
+				"description": "Anna konteksti oma ettevõtte kohta, mis aitab kandidaatidel mõista teie organisatsiooni. See informatsioon aitab meie AI-l sobitada teid kandidaatidega, kes on kooskõlas teie ettevõtte kultuuriga."
 			},
 			"hiringContext": {
-				"label": "Hiring Context",
-				"placeholder": "Explain why this position exists, team structure, growth opportunities, and what success looks like in this role.",
-				"description": "Explain why you're hiring and what the role means for your team. This helps us find candidates who are the right fit for this specific opportunity."
+				"label": "Värbamise kontekst",
+				"placeholder": "Selgita, miks see positsioon eksisteerib, meeskonna struktuur, kasvuvõimalused ja kuidas edu selles rollis välja näeb.\n\nNäide:\nLaiendame oma insenerimeeskonda, et toetada meie uue toote lanseerimist. Ideaalne kandidaat töötab tihedalt meie toote- ja disainimeeskondadega, et luua funktsioone, mis teenindavad tuhandeid tervishoiuteenuse osutajaid. See on suure mõjuga roll oluliste kasvuvõimalustega...",
+				"description": "Selgita, miks sa värbad ja mida roll tähendab teie meeskonna jaoks. See aitab meil leida kandidaate, kes sobivad sellele konkreetsele võimalusele."
 			}
 		},
 		"sections": {
-			"location": "Job Location",
-			"compensation": "Compensation",
-			"geographicTargeting": "Geographic Targeting",
-			"additionalContext": "Additional Context"
+			"location": "Töö asukoht",
+			"compensation": "Hüvitis",
+			"geographicTargeting": "Geograafiline sihtmääramine",
+			"additionalContext": "Täiendav kontekst"
 		},
 		"aiGenerate": {
-			"button": "AI Generate",
-			"generating": "Generating...",
-			"description": "Click the \"AI Generate\" buttons to automatically create professional descriptions and qualifications based on the information you've provided. You can always edit the generated content to fit your needs.",
-			"enableTip": "Add a job title in the first step to enable AI generation"
+			"button": "AI genereerimine",
+			"generating": "Genereerimine...",
+			"title": "AI abi saadaval!",
+			"description": "Klõpsa \"AI genereerimine\" nuppudel, et automaatselt luua professionaalsed kirjeldused ja kvalifikatsioonid, mis põhinevad sinu poolt antud informatsioonil. Saad alati muuta genereeritud sisu, et see sobiks sinu vajadustega.",
+			"enableTip": "Lisa ametinimetus esimeses sammus, et lubada AI genereerimine"
 		},
 		"tips": {
 			"beSpecific": {
-				"title": "Tip: Be specific but not too restrictive",
-				"description": "Providing clear details helps us match you with the right candidates, but being too restrictive might limit your candidate pool."
+				"title": "Nõuanne: Ole täpne, kuid mitte liiga piirav",
+				"description": "Selgete detailide andmine aitab meil sobitada sind õigete kandidaatidega, kuid liiga piirav olemine võib piirata sinu kandidaatide gruppi."
 			},
 			"salaryTransparency": {
-				"title": "Salary transparency increases applications",
-				"description": "Being upfront about compensation attracts more qualified candidates and saves time in the hiring process."
+				"title": "Palga läbipaistvus suurendab kandideerimisi",
+				"description": "Hüvitise kohta avameelsus meelitab rohkem kvalifitseeritud kandidaate ja säästab aega värbamisprotsessis."
 			},
 			"targeting": {
-				"title": "How targeting works",
-				"description": "Our AI uses all the information you provide to find and rank candidates. Better targeting and context leads to better matches. Don't worry about being too specific - you can always adjust these settings later."
+				"title": "Kuidas sihtmääramine töötab",
+				"description": "Meie AI kasutab kogu sinu poolt antud informatsiooni, et leida ja järjestada kandidaate. Parem sihtmääramine ja kontekst viib paremate sobivusteni. Ära muretse liiga konkreetseks olemise pärast - saad neid seadeid alati hiljem muuta."
 			}
 		},
 		"preview": {
 			"readyToActivate": {
-				"title": "Ready to activate!",
-				"description": "All required information has been provided. Click \"Activate Hunt\" to start finding candidates."
+				"title": "Valmis aktiveerimiseks!",
+				"description": "Kogu nõutud informatsioon on esitatud. Klõpsa \"Aktiveeri pakkumine\", et alustada kandidaatide leidmist."
 			},
 			"missingInfo": {
-				"title": "Missing required information",
-				"description": "Please complete the following:"
+				"title": "Puudub nõutud informatsioon",
+				"description": "Palun täitke järgmine:"
 			},
-			"potentialReach": "Potential Candidate Reach",
-			"reachDescription": "candidates match your requirements and will be notified about this opportunity",
-			"jobOverview": "Job Overview",
-			"locationSection": "Location",
-			"compensationSection": "Compensation",
-			"jobDetailsSection": "Job Details",
-			"targetingSection": "Targeting & Context",
-			"notSpecified": "Not specified",
-			"notProvided": "Not provided",
-			"years": "years"
+			"missingFields": {
+				"jobTitle": "Ametinimetus",
+				"professions": "Ametid",
+				"country": "Riik",
+				"jobDescription": "Töö kirjeldus"
+			},
+			"potentialReach": "Potentsiaalne kandidaatide ulatus",
+			"reachDescription": "kandidaati sobivad teie nõuetega ja teavitatakse sellest võimalusest",
+			"jobOverview": "Töö ülevaade",
+			"fields": {
+				"jobTitle": "Ametinimetus",
+				"professions": "Ametid",
+				"specialization": "Spetsialiseerumine",
+				"requiredExperience": "Nõutav kogemus",
+				"requiredLanguages": "Nõutavad keeled",
+				"description": "Kirjeldus",
+				"requiredQualifications": "Nõutavad kvalifikatsioonid",
+				"preferredCountries": "Eelistatud riigid",
+				"onlySearchIn": "Otsi ainult",
+				"companyContext": "Ettevõtte kontekst",
+				"hiringContext": "Värbamise kontekst"
+			},
+			"locationSection": "Asukoht",
+			"compensationSection": "Hüvitis",
+			"jobDetailsSection": "Töö detailid",
+			"targetingSection": "Sihtmääramine ja kontekst",
+			"notSpecified": "Ei ole määratud",
+			"notProvided": "Ei ole esitatud",
+			"years": "aastat"
 		},
 		"errors": {
-			"failedToInitialize": "Failed to initialize. Please try again.",
-			"failedToSave": "Failed to save. Please try again.",
-			"failedToActivate": "Failed to activate hunt. Please try again.",
-			"needActivePlan": "You need an active plan to activate this hunt"
+			"failedToInitialize": "Initsialiseerimine ebaõnnestus. Palun proovi uuesti.",
+			"failedToSave": "Salvestamine ebaõnnestus. Palun proovi uuesti.",
+			"failedToActivate": "Pakkumise aktiveerimine ebaõnnestus. Palun proovi uuesti.",
+			"needActivePlan": "Selle pakkumise aktiveerimiseks vajad aktiivset plaani",
+			"failedToGenerateDescription": "Kirjelduse genereerimine ebaõnnestus. Palun proovi uuesti või kirjuta käsitsi.",
+			"failedToGenerateQualifications": "Kvalifikatsioonide genereerimine ebaõnnestus. Palun proovi uuesti või kirjuta käsitsi.",
+			"completeCurrentStep": "Palun täida praegune samm enne jätkamist"
 		},
 		"success": {
-			"saved": "Saved successfully",
-			"activated": "Hunt activated successfully!"
+			"saved": "Edukalt salvestatud",
+			"activated": "Pakkumine edukalt aktiveeritud!"
 		}
 	}
 }
