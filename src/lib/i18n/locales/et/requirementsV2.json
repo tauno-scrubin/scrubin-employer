@@ -45,7 +45,7 @@
 		"fields": {
 			"jobTitle": {
 				"label": "Ametinimetus",
-				"placeholder": "nt Vanem tarkvarainsener, Registreeritud õde, Turundusjuht",
+				"placeholder": "nt Õde (intensiivravi), Füsioterapeut, Radiograaf, Hooldusassistent",
 				"description": "Mis on selle positsiooni ametlik nimetus? Ole täpne ja selge."
 			},
 			"professions": {
@@ -112,17 +112,17 @@
 			},
 			"salaryExtra": {
 				"label": "Täiendavad hüvitise üksikasjad",
-				"placeholder": "nt Tulemusboonused, tervisekindlustus, lisatasud, komisjonitasu struktuur...",
-				"description": "Iga lisainformatsioon hüvitise kohta (boonused, hüved, komissjon jne)"
+				"placeholder": "nt Vahetuse lisatasud, öö- ja nädalavahetuse lisatasu, valve tasu, ületunnitasu, kolimistoetus, täiendkoolituse eelarve...",
+				"description": "Iga lisainfo hüvitise kohta (vahetuse lisatasud, ületunnid, hüved, kolimistoetus, koolitus jne)"
 			},
 			"jobDescription": {
 				"label": "Töö kirjeldus",
-				"placeholder": "Kirjelda töörolli, peamisi vastutusi, igapäevaseid ülesandeid, meeskonna struktuuri, kasvuvõimalusi ja seda, mis teeb selle rolli ainulaadseks. Ole detailne ja köitev, et meelitada parimaid talente.\n\nNäide:\nOtsime andekust vanemat tarkvarainseneeri, et liituda meie kasvava insenerimeeskonnaga. Sa töötad tipptasemel projektide kallal, mis mõjutavad miljoneid kasutajaid...\n\nPõhilised vastutused:\n• Skaleeritavate tagasüsteemide projekteerimine ja rakendamine\n• Koostöö valdkondadevaheliste meeskondadega\n• Juuniorarendajate juhendamine\n...",
+				"placeholder": "Kirjelda rolli, peamisi vastutusi, vahetuste korraldust, patsiendiprofiili, meeskonna struktuuri, arenguvõimalusi ja seda, mis teeb selle töökoha eriliseks. Ole detailne ja köitev, et meelitada häid tervishoiutöötajaid.\n\nNäide:\nOtsime registreeritud õde meie kirurgiaosakonda. Pakud turvalist ja hoolivat patsiendihooldust multidistsiplinaarses meeskonnas.\n\nPõhivastutused:\n• Patsiendi seisundi hindamine, eluliste näitajate jälgimine ja dokumenteerimine\n• Ravimite ja raviprotseduuride teostamine vastavalt juhistele\n• Koostöö arstide ja teiste spetsialistidega raviplaani elluviimisel\n• Patsiendi ja lähedaste nõustamine ning väljakirjutamise juhendamine\n• Infektsioonikontrolli, konfidentsiaalsuse ja patsiendiohutuse nõuete järgimine\n...",
 				"description": "Kirjelda rolli, vastutusi ja seda, mis teeb selle võimaluse põnevaks."
 			},
 			"jobRequiredQualifications": {
 				"label": "Nõutavad kvalifikatsioonid",
-				"placeholder": "Loetleta olulised kvalifikatsioonid, sertifikaadid, oskused ja kogemus, mis kandidaatidel peab olema. Ole täpne, kuid realistlik.\n\nNäide:\n• Bakalaureusekraad arvutiteaduses või seotud valdkonnas\n• 5+ aastat professionaalse tarkvaraarenduse kogemust\n• Tugev oskus Python'is ja JavaScript'is\n• Kogemus pilvplatvormidega (AWS, GCP või Azure)\n• Suurepärased probleemilahendamise ja suhtlemisoskused\n• Kogemus tehniliste projektide juhtimisel ja teiste mentoreerimises\n...",
+				"placeholder": "Loetle nõutavad kvalifikatsioonid, kutse-/registratsiooniõigus, sertifikaadid, oskused ja kogemus. Ole täpne, kuid realistlik.\n\nNäide:\n• Kehtiv kutse-/registratsiooniõigus [riigis] (vastavalt rollile)\n• 2+ aastat asjakohast kliinilist töökogemust (statsionaar/erakorraline/ICU vastavalt rollile)\n• BLS kohustuslik; ACLS/ALS eelis (rollist sõltuv)\n• Kogemus digilooga / EHR süsteemidega ja korrektse dokumenteerimisega\n• Väga hea suhtlemis- ja meeskonnatööoskus\n• Patsiendiohutuse, konfidentsiaalsuse ja kvaliteedi väärtustamine\n...",
 				"description": "Loetleta hädavajalikud oskused, kogemus ja kvalifikatsioonid selle rolli jaoks."
 			},
 			"preferredCountries": {
@@ -143,12 +143,12 @@
 			},
 			"companyContext": {
 				"label": "Ettevõtte kontekst",
-				"placeholder": "Kirjelda oma ettevõtet, tööstusharu, suurust, kultuuri, väärtusi, missiooni ja seda, mis teeb sellest hea töökoha.\n\nNäide:\nOleme kiiresti kasvav tervishoiutehnoloogia idufirma 50+ töötajaga üle Euroopa. Oleme kirglikud patsiendi hoolduse parandamise suhtes läbi innovaatiliste tarkvaralahenduste. Meie kultuur väärtustab töö ja eraelu tasakaalu, pidevat õppimist ja koostööl põhinevat probleemilahendust...",
+				"placeholder": "Kirjelda oma tervishoiuasutust, teenuseid, patsiendiprofiili, suurust, kultuuri, väärtusi, missiooni ja seda, mis teeb sellest hea töökoha.\n\nNäide:\nOleme piirkondlik haigla, mis pakub nii statsionaarset kui ambulatoorset ravi. Keskendume patsiendikesksele ravile, meeskonnatööle ja pidevale kvaliteedi parandamisele. Toetame töötajate arengut sisseelamisprogrammide, tasustatud täiendkoolituste ja kliinilise supervisiooniga...",
 				"description": "Anna konteksti oma ettevõtte kohta, mis aitab kandidaatidel mõista teie organisatsiooni. See informatsioon aitab meie AI-l sobitada teid kandidaatidega, kes on kooskõlas teie ettevõtte kultuuriga."
 			},
 			"hiringContext": {
 				"label": "Värbamise kontekst",
-				"placeholder": "Selgita, miks see positsioon eksisteerib, meeskonna struktuur, kasvuvõimalused ja kuidas edu selles rollis välja näeb.\n\nNäide:\nLaiendame oma insenerimeeskonda, et toetada meie uue toote lanseerimist. Ideaalne kandidaat töötab tihedalt meie toote- ja disainimeeskondadega, et luua funktsioone, mis teenindavad tuhandeid tervishoiuteenuse osutajaid. See on suure mõjuga roll oluliste kasvuvõimalustega...",
+				"placeholder": "Selgita, miks see positsioon on avatud, kuidas meeskond on üles ehitatud, vahetuste korraldus, arenguvõimalused ja kuidas edu selles rollis välja näeb.\n\nNäide:\nSuurendame oma osakonna meeskonda seoses kasvava patsientide mahuga ja sooviga parandada raviprotsesside järjepidevust. Ideaalne kandidaat töötab tihedalt koos õdede, arstide ja teiste spetsialistidega, et tagada kõrge kvaliteediga ja turvaline patsiendihooldus. Edu tähendab head kliinilist otsustusvõimet, korrektset dokumenteerimist ja tugevat koostööd multidistsiplinaarses meeskonnas...",
 				"description": "Selgita, miks sa värbad ja mida roll tähendab teie meeskonna jaoks. See aitab meil leida kandidaate, kes sobivad sellele konkreetsele võimalusele."
 			}
 		},

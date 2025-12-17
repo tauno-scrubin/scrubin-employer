@@ -45,7 +45,7 @@
 	"fields": {
 		"jobTitle": {
 			"label": "Job Title",
-			"placeholder": "e.g., Senior Software Engineer, Registered Nurse, Marketing Manager",
+			"placeholder": "e.g., Registered Nurse (ICU), Physiotherapist, Radiographer, Care Assistant",
 			"description": "What is the official title for this position? Be specific and clear."
 		},
 		"professions": {
@@ -112,17 +112,17 @@
 		},
 		"salaryExtra": {
 			"label": "Additional Compensation Details",
-			"placeholder": "e.g., Performance bonuses, health insurance, 401k matching, commission structure...",
-			"description": "Any extra information about compensation (bonuses, benefits, commission, etc.)"
+			"placeholder": "e.g., shift differentials, on-call allowance, overtime rates, relocation support, continuing education budget...",
+			"description": "Any extra information about compensation (shift allowances, overtime, benefits, relocation, CPD/CME, etc.)"
 		},
 		"jobDescription": {
 			"label": "Job Description",
-			"placeholder": "Describe the job role, main responsibilities, day-to-day tasks, team structure, growth opportunities, and what makes this role unique. Be detailed and engaging to attract top talent.\n\nExample:\nWe're seeking a talented Senior Software Engineer to join our growing engineering team. You'll be working on cutting-edge projects that impact millions of users...\n\nKey Responsibilities:\n• Design and implement scalable backend services\n• Collaborate with cross-functional teams\n• Mentor junior developers\n...",
+			"placeholder": "Describe the clinical role, main responsibilities, shift pattern, patient population, team structure, growth opportunities, and what makes this workplace unique. Be detailed and engaging to attract great healthcare professionals.\n\nExample:\nWe're looking for a Registered Nurse to join our medical-surgical ward. You'll deliver safe, compassionate patient care as part of a multidisciplinary team.\n\nKey Responsibilities:\n• Assess patients, monitor vital signs, and document care\n• Administer medications and treatments according to protocols\n• Coordinate care with physicians and allied health\n• Educate patients and families on care plans and discharge instructions\n• Follow infection prevention, safeguarding, and patient safety procedures\n...",
 			"description": "Describe the role, responsibilities, and what makes this opportunity exciting."
 		},
 		"jobRequiredQualifications": {
 			"label": "Required Qualifications",
-			"placeholder": "List the essential qualifications, certifications, skills, and experience candidates must have. Be specific but realistic.\n\nExample:\n• Bachelor's degree in Computer Science or related field\n• 5+ years of professional software development experience\n• Strong proficiency in Python and JavaScript\n• Experience with cloud platforms (AWS, GCP, or Azure)\n• Excellent problem-solving and communication skills\n• Experience leading technical projects and mentoring others\n...",
+			"placeholder": "List the essential qualifications, registrations, certifications, skills, and experience candidates must have. Be specific but realistic.\n\nExample:\n• Active professional license/registration (as applicable in your country)\n• 2+ years of relevant clinical experience (acute care/ICU preferred where relevant)\n• BLS required; ACLS/ALS preferred (role dependent)\n• Experience with electronic health records (EHR) and clinical documentation\n• Strong communication, teamwork, and patient-centered mindset\n• Commitment to patient safety, confidentiality, and quality of care\n...",
 			"description": "List the must-have skills, experience, and qualifications for this role."
 		},
 		"preferredCountries": {
@@ -143,12 +143,12 @@
 		},
 		"companyContext": {
 			"label": "Company Context",
-			"placeholder": "Describe your company, industry, size, culture, values, mission, and what makes it a great place to work.\n\nExample:\nWe're a fast-growing healthcare technology startup with 50+ employees across Europe. We're passionate about improving patient care through innovative software solutions. Our culture values work-life balance, continuous learning, and collaborative problem-solving...",
+			"placeholder": "Describe your organization, services, patient population, size, culture, values, mission, and what makes it a great place to deliver care.\n\nExample:\nWe're a regional hospital serving our local community with inpatient and outpatient services. We focus on patient-centered care, multidisciplinary teamwork, and continuous quality improvement. We support professional development through paid training, clinical supervision, and clear career pathways...",
 			"description": "Provide context about your company that helps candidates understand your organization. This information helps our AI match you with candidates who align with your company culture."
 		},
 		"hiringContext": {
 			"label": "Hiring Context",
-			"placeholder": "Explain why this position exists, team structure, growth opportunities, and what success looks like in this role.\n\nExample:\nWe're expanding our engineering team to support our new product launch. The ideal candidate will work closely with our product and design teams to build features that will serve thousands of healthcare providers. This is a high-impact role with significant growth potential...",
+			"placeholder": "Explain why this position exists, team structure, shift arrangements, growth opportunities, and what success looks like in this role.\n\nExample:\nWe're expanding our ward team to support increased patient volume and improve continuity of care. The ideal candidate will work closely with nurses, physicians, and allied health professionals to deliver high-quality, safe patient care. Success looks like excellent clinical judgement, clear documentation, and strong collaboration across the multidisciplinary team...",
 			"description": "Explain why you're hiring and what the role means for your team. This helps us find candidates who are the right fit for this specific opportunity."
 		}
 	},
