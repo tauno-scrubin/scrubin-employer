@@ -195,6 +195,8 @@
 				"jobDescription": "Töö kirjeldus"
 			},
 			"potentialReach": "Potentsiaalne kandidaatide ulatus",
+			"potentialReachTooltipTitle": "Potentsiaalne kandidaatide ulatus",
+			"potentialReachTooltipDescription": "Kandidaatide arv, kes sobivad teie töönõuetega",
 			"reachDescription": "kandidaati sobivad teie nõuetega ja teavitatakse sellest võimalusest",
 			"jobOverview": "Töö ülevaade",
 			"fields": {

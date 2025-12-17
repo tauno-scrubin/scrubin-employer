@@ -1,12 +1,13 @@
 <script lang="ts">
-	import { Label } from '$lib/components/ui/label';
 	import { ComboboxMulti } from '$lib/components/ui/combobox-multi';
-	import { scrubinClient } from '@/scrubinClient/client';
-	import type { JobRequirementDto, CodeNamePair } from '@/scrubinClient';
+	import { Label } from '$lib/components/ui/label';
+	import { locale, t } from '$lib/i18n';
+	import type { JobRequirementDto } from '@/scrubinClient';
+	import { scrubinClient, currentUserCompany } from '@/scrubinClient/client';
+	import type { CodeNamePair } from '@/scrubinClient/models';
+	import { Info } from 'lucide-svelte';
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
-	import { Target, Globe, Info } from 'lucide-svelte';
-	import { locale, t } from '$lib/i18n';
 	import { get } from 'svelte/store';
 
 	let {
@@ -25,7 +26,10 @@
 		requirement.countriesOnlyToSearch || requirement.huntInstructions?.onlyCountriesToSearch || []
 	);
 	let companyContext = $state(
-		requirement.companyContext || requirement.huntInstructions?.companyContext || ''
+		requirement.companyContext ||
+		requirement.huntInstructions?.companyContext ||
+		get(currentUserCompany)?.description ||
+		''
 	);
 	let hiringContext = $state(
 		requirement.hiringContext || requirement.huntInstructions?.hiringContext || ''
@@ -79,31 +83,25 @@
 	});
 </script>
 
-<div class="w-full space-y-6">
+<div class="w-full space-y-4">
 	<!-- Info box -->
-	<div class="flex gap-3 rounded-lg border border-blue-200 bg-blue-50 p-4">
-		<Info class="mt-0.5 h-5 w-5 flex-shrink-0 text-blue-600" />
-		<div class="text-sm text-blue-900">
-			<p class="font-medium">{$t('requirementsV2.tips.targeting.title')}</p>
-			<p class="mt-1">
-				{$t('requirementsV2.tips.targeting.description')}
-			</p>
-		</div>
+	<div class="flex items-center gap-2 rounded-md border border-blue-200 bg-blue-50 p-2.5">
+		<Info class="h-4 w-4 flex-shrink-0 text-blue-600" />
+		<p class="text-xs text-blue-800">
+			{$t('requirementsV2.tips.targeting.description')}
+		</p>
 	</div>
 
-	<div>
-		<h2 class="mb-2 text-2xl font-semibold">{$t('requirementsV2.steps.targeting.heading')}</h2>
-		<p class="text-sm text-muted-foreground">
+	<div class="space-y-0.5">
+		<h2 class="text-xl font-semibold">{$t('requirementsV2.steps.targeting.heading')}</h2>
+		<p class="text-xs text-muted-foreground">
 			{$t('requirementsV2.steps.targeting.subheading')}
 		</p>
 	</div>
 
 	<!-- Target Countries Section -->
-	<div class="w-full space-y-6 rounded-lg border border-gray-200 bg-gray-50 p-6">
-		<div class="flex items-center gap-2">
-			<Globe class="h-5 w-5 text-primary" />
-			<h3 class="text-lg font-semibold">{$t('requirementsV2.sections.geographicTargeting')}</h3>
-		</div>
+	<div class="w-full space-y-4">
+		<h3 class="text-lg font-semibold">{$t('requirementsV2.sections.geographicTargeting')}</h3>
 
 		<!-- Country Filter -->
 		<div class="space-y-3">
@@ -122,15 +120,6 @@
 				emptyText={$t('requirementsV2.fields.onlyCountries.emptyText')}
 				class="w-full bg-white"
 			/>
-			{#if onlyCountries.length > 0}
-				<div class="flex flex-wrap gap-2 pt-2">
-					{#each onlyCountries as countryCode}
-						<span class="rounded-full bg-blue-50 px-3 py-1 text-sm text-blue-700">
-							{availableCountries.find((c) => c.code === countryCode)?.name || countryCode}
-						</span>
-					{/each}
-				</div>
-			{/if}
 			<div class="flex gap-2 rounded-md border border-blue-200 bg-blue-50 p-3 text-sm text-blue-800">
 				<Info class="mt-0.5 h-4 w-4 flex-shrink-0" />
 				<p>
@@ -141,11 +130,8 @@
 	</div>
 
 	<!-- Context Section -->
-	<div class="w-full space-y-6 rounded-lg border border-gray-200 bg-gray-50 p-6">
-		<div class="flex items-center gap-2">
-			<Target class="h-5 w-5 text-primary" />
-			<h3 class="text-lg font-semibold">{$t('requirementsV2.sections.additionalContext')}</h3>
-		</div>
+	<div class="w-full space-y-4">
+		<h3 class="text-lg font-semibold">{$t('requirementsV2.sections.additionalContext')}</h3>
 
 		<!-- Company Context -->
 		<div class="space-y-3">

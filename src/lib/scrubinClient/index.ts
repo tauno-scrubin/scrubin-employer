@@ -3,6 +3,7 @@ import { PUBLIC_ORIGIN } from '$env/static/public';
 import type { CodeNamePair } from '@/scrubinClient/models';
 import { decodeToken } from '@/utils/tokenUtil';
 import { redirect } from '@sveltejs/kit';
+import type { CookieSerializeOptions } from 'cookie';
 
 // ─── INTERFACES ───────────────────────────────────────────────────────────────
 
@@ -129,7 +130,6 @@ export interface Requirements {
 	activePlans: PlanType[];
 	requirements: {
 		id: number;
-
 		jobTitle: string;
 		professions: string[];
 		specialization: string;
@@ -244,6 +244,7 @@ export interface ExtrasDto {
 
 export interface JobRequirementDto {
 	id: number;
+	huntId?: number;
 	jobTitle?: string;
 	professions?: string[];
 	professionsV2: number[];
@@ -753,30 +754,34 @@ class AuthStore {
 
 	private setCookie(value: string): void {
 		if (typeof document !== 'undefined') {
-			// Use PUBLIC_ORIGIN to determine if we're in localhost or production
+			const domain = this.getDomain();
 			const isLocalhost = PUBLIC_ORIGIN.includes('localhost');
 
 			// Clear any existing cookies with different domains first
 			document.cookie = 'scrubin_auth=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
-			if (!isLocalhost) {
-				document.cookie =
-					'scrubin_auth=; path=/; domain=scrubin.io; expires=Thu, 01 Jan 1970 00:00:00 GMT';
-				document.cookie =
-					'scrubin_auth=; path=/; domain=.scrubin.io; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+
+			if (!isLocalhost && domain) {
+				// Clear cookies for the specific domain variants
+				const baseDomain = domain.startsWith('.') ? domain.substring(1) : domain;
+				document.cookie = `scrubin_auth=; path=/; domain=${baseDomain}; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+				document.cookie = `scrubin_auth=; path=/; domain=.${baseDomain}; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
 			}
 
 			// Set the new cookie with appropriate domain
-			if (isLocalhost) {
-				// For localhost, don't set a domain (defaults to current hostname)
+			if (isLocalhost || !domain) {
+				// For localhost or when no domain detected, don't set a domain (defaults to current hostname)
 				document.cookie = `scrubin_auth=${value}; path=/; SameSite=Lax`;
 			} else {
-				// For production, use .scrubin.io domain
-				document.cookie = `scrubin_auth=${value}; path=/; domain=.scrubin.io; SameSite=Lax`;
+				// For production, use the detected domain
+				document.cookie = `scrubin_auth=${value}; path=/; domain=${domain}; SameSite=Lax`;
 			}
 		}
 	}
 
-	async refresh(baseUrl: string): Promise<boolean> {
+	async refresh(
+		baseUrl: string,
+		serverCookies?: { set: (name: string, value: string, opts: (CookieSerializeOptions & { path: string })) => void }
+	): Promise<boolean> {
 		if (!this.rToken) {
 			throw new Error('No refresh token available');
 		}
@@ -796,6 +801,22 @@ class AuthStore {
 		const data: AuthResponse = await response.json();
 		this.setRefreshToken(data.refresh_token);
 		this.setAccessToken(data.access_token);
+
+		// If server-side cookie setting is available, update the cookie
+		if (serverCookies) {
+			const cookieValue = JSON.stringify({
+				jwt: data.access_token,
+				refresh: data.refresh_token
+			});
+			serverCookies.set('scrubin_auth', cookieValue, {
+				path: '/',
+				httpOnly: false,
+				secure: process.env.NODE_ENV === 'production',
+				sameSite: 'lax' as const,
+				maxAge: 60 * 60 * 24 * 7 // 7 days
+			});
+		}
+
 		return true;
 	}
 
@@ -803,16 +824,16 @@ class AuthStore {
 		this.refreshToken = null;
 		this.accessToken = null;
 		if (typeof document !== 'undefined') {
+			const domain = this.getDomain();
 			const isLocalhost = PUBLIC_ORIGIN.includes('localhost');
 
 			// Clear cookies from all possible domains
 			document.cookie = 'scrubin_auth=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
 
-			if (!isLocalhost) {
-				document.cookie =
-					'scrubin_auth=; path=/; domain=scrubin.io; expires=Thu, 01 Jan 1970 00:00:00 GMT';
-				document.cookie =
-					'scrubin_auth=; path=/; domain=.scrubin.io; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+			if (!isLocalhost && domain) {
+				const baseDomain = domain.startsWith('.') ? domain.substring(1) : domain;
+				document.cookie = `scrubin_auth=; path=/; domain=${baseDomain}; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+				document.cookie = `scrubin_auth=; path=/; domain=${domain}; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
 			}
 		}
 	}
@@ -820,9 +841,33 @@ class AuthStore {
 	private getDomain(): string {
 		// Use PUBLIC_ORIGIN environment variable to determine domain setting
 		// - localhost (dev): no domain = cookie works for current hostname
-		// - production domains: .scrubin.io = cookie works for all subdomains
+		// - production domains: extract domain from PUBLIC_ORIGIN (e.g., .scrubin.io, .scrubin.uk, .scrubin.ch, .scrubin.au)
 		const isLocalhost = PUBLIC_ORIGIN.includes('localhost');
-		return isLocalhost ? '' : '.scrubin.io';
+
+		if (isLocalhost) {
+			return '';
+		}
+
+		try {
+			const url = new URL(PUBLIC_ORIGIN);
+			const hostname = url.hostname;
+
+			// Extract the base domain (e.g., "scrubin.io" from "app.scrubin.io" or "scrubin.io")
+			const parts = hostname.split('.');
+
+			if (parts.length >= 2) {
+				// Get the last two parts (domain + TLD)
+				const baseDomain = parts.slice(-2).join('.');
+				return `.${baseDomain}`;
+			}
+
+			// Fallback: use the full hostname with a dot prefix
+			return `.${hostname}`;
+		} catch (error) {
+			console.warn('Failed to parse PUBLIC_ORIGIN for domain extraction:', error);
+			// Fallback to no domain (current hostname)
+			return '';
+		}
 	}
 
 	exportToCookie(options: { secure?: boolean; httpOnly?: boolean; domain?: string } = {}): string {
@@ -1225,6 +1270,11 @@ class HuntResource extends BaseResource {
 			'GET',
 			url.toString()
 		) as Promise<HuntCandidatesResponse>;
+	}
+
+	async getRequirementById(id: number): Promise<JobRequirementDto> {
+		const url = new URL(`/api/v2/hunt/requirements/${id}`, this.client.baseUrl);
+		return this.request<JobRequirementDto>('GET', url.toString()) as Promise<JobRequirementDto>;
 	}
 
 	// POST /api/v1/hunt/requirements/{id}/create-hunt
@@ -1712,6 +1762,7 @@ export class ScrubinClient {
 	public company: CompanyResource;
 	public hunt: HuntResource;
 	public data: DataResource;
+	public clientIP?: string; // Store client IP for server-side requests
 
 	constructor(public baseUrl: string) {
 		this.authStore = new AuthStore();
@@ -1721,6 +1772,11 @@ export class ScrubinClient {
 		this.data = new DataResource(this);
 
 		this.cleanupDuplicateCookies();
+	}
+
+	// Set client IP for forwarding in all requests (server-side only)
+	setClientIP(ip: string): void {
+		this.clientIP = ip;
 	}
 
 	private cleanupDuplicateCookies(): void {
@@ -1743,7 +1799,9 @@ export class ScrubinClient {
 		}
 	}
 
-	public async ensureAuth(): Promise<boolean> {
+	public async ensureAuth(serverCookies?: {
+		set: (name: string, value: string, opts: (CookieSerializeOptions & { path: string })) => void;
+	}): Promise<boolean> {
 		// Add a buffer time (e.g., 60 seconds) to refresh before actual expiration
 		const shouldRefresh = () => {
 			if (!this.authStore.token) return false;
@@ -1777,9 +1835,9 @@ export class ScrubinClient {
 		// If token is invalid or about to expire, refresh it
 		if (!this.authStore.isValid || shouldRefresh()) {
 			try {
-				await this.authStore.refresh(this.baseUrl);
+				await this.authStore.refresh(this.baseUrl, serverCookies);
 			} catch (error) {
-				console.error('Token refresh failed', error);
+				console.error('Token refresh failed:', error);
 				return false;
 			}
 		}
@@ -1787,13 +1845,24 @@ export class ScrubinClient {
 		return !!this.authStore.token;
 	}
 
-	async authWithToken(token: string): Promise<AuthResponse> {
+	async authWithToken(
+		token: string,
+		serverCookies?: {
+			set: (name: string, value: string, opts: (CookieSerializeOptions & { path: string })) => void;
+		}
+	): Promise<AuthResponse> {
 		const headers: Record<string, string> = {
 			Origin: PUBLIC_ORIGIN,
 			'Content-Type': 'application/json',
 			Accept: '*/*',
 			Authorization: `Bearer ${token}`
 		};
+
+		// Forward client IP if available (server-side only)
+		if (this.clientIP) {
+			headers['X-Forwarded-For'] = this.clientIP;
+			headers['X-Real-IP'] = this.clientIP;
+		}
 
 		try {
 			const response = await fetch(`${this.baseUrl}/api/v1/auth/token`, {
@@ -1814,8 +1883,24 @@ export class ScrubinClient {
 
 			const data: AuthResponse = await response.json();
 
+			// Set tokens in authStore
 			this.authStore.setRefreshToken(data.refresh_token);
 			this.authStore.setAccessToken(data.access_token);
+
+			// If server-side cookie setting is available, set the cookie
+			if (serverCookies) {
+				const cookieValue = JSON.stringify({
+					jwt: data.access_token,
+					refresh: data.refresh_token
+				});
+				serverCookies.set('scrubin_auth', cookieValue, {
+					path: '/',
+					httpOnly: false,
+					secure: process.env.NODE_ENV === 'production',
+					sameSite: 'lax' as const,
+					maxAge: 60 * 60 * 24 * 7 // 7 days
+				});
+			}
 
 			return data;
 		} catch (error) {

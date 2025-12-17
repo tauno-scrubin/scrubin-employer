@@ -17,7 +17,7 @@
 	import { scrubinClient } from '@/scrubinClient/client';
 	import type { JobRequirementDto } from '@/scrubinClient';
 	import { toast } from 'svelte-sonner';
-	import { Sparkles, FileText, Info, Loader2 } from 'lucide-svelte';
+	import { Sparkles, Info, Loader2 } from 'lucide-svelte';
 	import { t } from '$lib/i18n';
 	import { onMount, onDestroy } from 'svelte';
 
@@ -324,39 +324,33 @@
 	}
 </style>
 
-<div class="w-full space-y-6">
+<div class="w-full space-y-4">
 	<!-- Info box -->
-	<div class="flex gap-3 rounded-lg border border-blue-200 bg-blue-50 p-4">
-		<Info class="mt-0.5 h-5 w-5 flex-shrink-0 text-blue-600" />
-		<div class="text-sm text-blue-900">
-			<p class="font-medium">{$t('requirementsV2.aiGenerate.title')}</p>
-			<p class="mt-1">
-				{$t('requirementsV2.aiGenerate.description')}
-			</p>
-		</div>
+	<div class="flex items-center gap-2 rounded-md border border-blue-200 bg-blue-50 p-2.5">
+		<Info class="h-4 w-4 flex-shrink-0 text-blue-600" />
+		<p class="text-xs text-blue-800">
+			{$t('requirementsV2.aiGenerate.description')}
+		</p>
 	</div>
 
-	<div>
-		<h2 class="mb-2 text-2xl font-semibold">{$t('requirementsV2.steps.details.heading')}</h2>
-		<p class="text-sm text-muted-foreground">
+	<div class="space-y-0.5">
+		<h2 class="text-xl font-semibold">{$t('requirementsV2.steps.details.heading')}</h2>
+		<p class="text-xs text-muted-foreground">
 			{$t('requirementsV2.steps.details.subheading')}
 		</p>
 	</div>
 
 	<!-- Job Description -->
-	<div class="w-full space-y-4 rounded-lg border border-gray-200 bg-gray-50 p-6">
+	<div class="w-full space-y-3">
 		<div class="flex items-center justify-between">
-			<div class="flex items-center gap-2">
-				<FileText class="h-5 w-5 text-primary" />
-				<div>
-					<Label class="text-base font-medium">
-						{$t('requirementsV2.fields.jobDescription.label')}
-						<span class="text-destructive">*</span>
-					</Label>
-					<p class="text-sm text-muted-foreground">
-						{$t('requirementsV2.fields.jobDescription.description')}
-					</p>
-				</div>
+			<div>
+				<Label class="text-base font-medium">
+					{$t('requirementsV2.fields.jobDescription.label')}
+					<span class="text-destructive">*</span>
+				</Label>
+				<p class="text-sm text-muted-foreground">
+					{$t('requirementsV2.fields.jobDescription.description')}
+				</p>
 			</div>
 			<Button
 				onclick={generateDescription}
@@ -401,18 +395,15 @@
 	</div>
 
 	<!-- Required Qualifications -->
-	<div class="w-full space-y-4 rounded-lg border border-gray-200 bg-gray-50 p-6">
+	<div class="w-full space-y-3">
 		<div class="flex items-center justify-between">
-			<div class="flex items-center gap-2">
-				<FileText class="h-5 w-5 text-primary" />
-				<div>
-					<Label class="text-base font-medium"
-						>{$t('requirementsV2.fields.jobRequiredQualifications.label')}</Label
-					>
-					<p class="text-sm text-muted-foreground">
-						{$t('requirementsV2.fields.jobRequiredQualifications.description')}
-					</p>
-				</div>
+			<div>
+				<Label class="text-base font-medium"
+					>{$t('requirementsV2.fields.jobRequiredQualifications.label')}</Label
+				>
+				<p class="text-sm text-muted-foreground">
+					{$t('requirementsV2.fields.jobRequiredQualifications.description')}
+				</p>
 			</div>
 			<Button
 				onclick={generateQualifications}

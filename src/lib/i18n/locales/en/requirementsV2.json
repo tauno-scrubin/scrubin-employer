@@ -195,6 +195,8 @@
 			"jobDescription": "Job Description"
 		},
 		"potentialReach": "Potential Candidate Reach",
+		"potentialReachTooltipTitle": "Potential Candidate Reach",
+		"potentialReachTooltipDescription": "Number of candidates who match your job requirements",
 		"reachDescription": "candidates match your requirements and will be notified about this opportunity",
 		"jobOverview": "Job Overview",
 		"fields": {

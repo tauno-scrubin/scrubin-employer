@@ -6,9 +6,10 @@
 	import type { JobRequirementDto } from '@/scrubinClient';
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
-	import { ArrowLeft, ArrowRight, Check } from 'lucide-svelte';
+	import { ArrowLeft, ArrowRight, Check, Users, Loader2, Info } from 'lucide-svelte';
 	import { visible } from '@/components/dashboard/overlay';
 	import { t } from '$lib/i18n';
+	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
 
 	// Step components
 	import BasicInfoStep from '$lib/components/requirements/v2/BasicInfoStep.svelte';
@@ -32,6 +33,25 @@
 	let isSaving = $state(false);
 	let isActivating = $state(false);
 
+	// Potential reach state
+	let potentialReach = $state<number | null>(null);
+	let isLoadingReach = $state(false);
+	let reachRequestId = $state(0);
+	let debounceTimer: ReturnType<typeof setTimeout> | null = null;
+
+	// Track fields that affect potential reach
+	const reachDependencies = $derived({
+		professions: requirement?.professionsV2 || [],
+		specialization: requirement?.specializationV2 || null,
+		workExperience: requirement?.jobRequiredWorkExperience || 0,
+		targetCountries: requirement?.countriesOnlyToSearch || []
+	});
+
+	// Only show reach after profession is filled
+	const shouldShowReach = $derived(
+		requirement?.professionsV2 && requirement.professionsV2.length > 0
+	);
+
 	onMount(async () => {
 		visible.set(true);
 		try {
@@ -40,8 +60,15 @@
 			if (idParam) {
 				// Load existing requirement
 				requirementId = parseInt(idParam);
-				const session = await scrubinClient.hunt.getRequirementChatResult(requirementId);
-				requirement = session.currentRequirements;
+				requirement = await scrubinClient.hunt.getRequirementById(requirementId);
+				const hunt = requirement.huntId ? await scrubinClient.hunt.getHuntById(requirement.huntId) : null;
+
+				if (hunt) {
+					if (hunt.status === 'ACTIVE' || hunt.status === 'PAUSED') {
+						goto(`/dashboard/hunts/${hunt.huntId}`);
+						return;
+					}
+				}
 			} else {
 				// Create new requirement
 				const session = await scrubinClient.hunt.requirementsChat({
@@ -61,6 +88,53 @@
 		} finally {
 			visible.set(false);
 		}
+	});
+
+	// Fetch potential reach when relevant fields change
+	$effect(() => {
+		// Only fetch if professions are set and we have a requirementId
+		if (!shouldShowReach || !requirementId) {
+			potentialReach = null;
+			return;
+		}
+
+		// Track dependencies to trigger re-runs
+		reachDependencies;
+
+		// Clear existing timer
+		if (debounceTimer) {
+			clearTimeout(debounceTimer);
+		}
+
+		// Debounce the API call
+		debounceTimer = setTimeout(async () => {
+			const currentRequestId = ++reachRequestId;
+			isLoadingReach = true;
+
+			try {
+				const result = await scrubinClient.hunt.getRequirementReach(requirementId);
+
+				// Only update if this is still the latest request (handles race conditions)
+				if (currentRequestId === reachRequestId) {
+					potentialReach = result.potentialReach;
+				}
+			} catch (error) {
+				// Fail silently as per requirements
+				console.error('Failed to fetch potential reach:', error);
+			} finally {
+				// Only update loading state if this is still the latest request
+				if (currentRequestId === reachRequestId) {
+					isLoadingReach = false;
+				}
+			}
+		}, 500); // 500ms debounce delay
+
+		// Cleanup function
+		return () => {
+			if (debounceTimer) {
+				clearTimeout(debounceTimer);
+			}
+		};
 	});
 
 	// Step validation logic
@@ -144,101 +218,140 @@
 			isActivating = false;
 		}
 	}
+
+	function formatNumber(num: number): string {
+		return num >= 1000 ? num.toLocaleString('en-US').replace(/,/g, ' ') : num.toString();
+	}
 </script>
 
 <div class="mx-auto min-h-screen max-w-4xl p-6">
-	<!-- Header -->
-	<div class="mb-8 flex items-center gap-4">
-		<Button
-			onclick={() => goto('/dashboard/hunts')}
-			variant="outline"
-			size="icon"
-			class="h-9 w-9"
-		>
-			<ArrowLeft class="h-4 w-4" />
-		</Button>
-		<div>
-			<h1 class="text-3xl font-bold tracking-tight">{$t('requirementsV2.title')}</h1>
-			<p class="text-sm text-muted-foreground">
-				{$t('requirementsV2.subtitle')}
-			</p>
+	<!-- Header with Integrated Stepper -->
+	<div class="mb-4 rounded-lg bg-white p-4 shadow-sm ring-1 ring-gray-100">
+		<div class="mb-4 flex items-center gap-3">
+			<Button
+				onclick={() => goto('/dashboard/hunts')}
+				variant="outline"
+				size="icon"
+				class="h-8 w-8"
+			>
+				<ArrowLeft class="h-4 w-4" />
+			</Button>
+			<div>
+				<h1 class="text-2xl font-bold tracking-tight">{$t('requirementsV2.title')}</h1>
+				<p class="text-xs text-muted-foreground">
+					{$t('requirementsV2.subtitle')}
+				</p>
+			</div>
 		</div>
-	</div>
 
-	<!-- Stepper -->
-	<div class="mb-6">
-		<div class="flex items-center justify-between">
+		<!-- Compact Stepper with Names -->
+		<div class="flex items-start">
 			{#each steps as step, index}
 				{@const stepAccessible = canAccessStep(index)}
 				{@const stepCompleted = isStepCompleted(index)}
-				<div class="flex flex-1 items-center">
-					<button
-						onclick={() => goToStep(index)}
-						class="flex flex-col items-center gap-2 transition-all {stepAccessible
-							? 'cursor-pointer hover:scale-105'
-							: 'cursor-not-allowed opacity-50'}"
-						disabled={!stepAccessible}
-					>
-						<div
-							class="flex h-10 w-10 items-center justify-center rounded-full border-2 transition-all {stepCompleted
-								? 'border-primary bg-primary text-primary-foreground'
+
+				<!-- Step circle and label -->
+				<div class="flex flex-1 flex-col items-center gap-2">
+					<div class="flex w-full items-center">
+						<!-- Left half line -->
+						{#if index > 0}
+							<div
+								class="h-[2px] flex-1 transition-all duration-300 {isStepCompleted(index - 1)
+									? 'bg-primary'
+									: 'bg-gray-200'}"
+							></div>
+						{:else}
+							<!-- Invisible spacer for first step to center the circle -->
+							<div class="h-[2px] flex-1 opacity-0"></div>
+						{/if}
+
+						<!-- Step circle -->
+						<button
+							onclick={() => goToStep(index)}
+							class="relative flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border-2 transition-all {stepCompleted
+								? 'border-primary bg-primary text-primary-foreground shadow-sm'
 								: index === currentStep
-									? 'border-primary bg-white text-primary'
+									? 'border-primary bg-primary text-primary-foreground shadow-md ring-4 ring-primary/30'
 									: stepAccessible
-										? 'border-gray-400 bg-white text-gray-600'
-										: 'border-gray-300 bg-white text-gray-400'}"
+										? 'border-gray-300 bg-white text-gray-600 hover:border-primary/50'
+										: 'border-gray-200 bg-gray-50 text-gray-400 cursor-not-allowed'}"
+							disabled={!stepAccessible}
 						>
 							{#if stepCompleted}
-								<Check class="h-5 w-5" />
+								<Check class="h-4 w-4" />
 							{:else}
-								<span class="text-sm font-semibold">{index + 1}</span>
+								<span class="text-xs font-bold">{index + 1}</span>
 							{/if}
-						</div>
-						<div class="text-center">
+						</button>
+
+						<!-- Right half line -->
+						{#if index < steps.length - 1}
 							<div
-								class="text-xs font-medium {stepAccessible
-									? 'text-gray-900'
-									: 'text-gray-400'}"
-							>
-								{step.title}
-							</div>
-							<div class="text-[10px] text-gray-500">{step.description}</div>
-						</div>
-					</button>
-					{#if index < steps.length - 1}
-						<div
-							class="mx-2 h-0.5 flex-1 transition-all {stepCompleted
-								? 'bg-primary'
-								: 'bg-gray-300'}"
-						></div>
-					{/if}
+								class="h-[2px] flex-1 transition-all duration-300 {stepCompleted
+									? 'bg-primary'
+									: 'bg-gray-200'}"
+							></div>
+						{:else}
+							<!-- Invisible spacer for last step to center the circle -->
+							<div class="h-[2px] flex-1 opacity-0"></div>
+						{/if}
+					</div>
+
+					<span
+						class="max-w-[80px] text-center text-[10px] leading-tight transition-all {stepAccessible
+							? index === currentStep
+								? 'font-bold text-primary'
+								: 'font-medium text-gray-600'
+							: 'font-medium text-gray-400'}"
+					>
+						{step.title}
+					</span>
 				</div>
 			{/each}
 		</div>
 	</div>
 
-	<!-- Navigation - Top -->
-	<div class="mb-6 flex items-center justify-between rounded-lg border bg-gray-50 p-4">
+	<!-- Sticky Navigation Bar -->
+	<div class="sticky top-0 z-10 mb-4 flex items-center justify-between rounded-lg bg-gradient-to-r from-gray-50 to-gray-100/50 p-3 shadow-sm ring-1 ring-gray-200/50 backdrop-blur-sm">
 		<Button onclick={goBack} variant="outline" size="sm" disabled={currentStep === 0}>
-			<ArrowLeft class="mr-2 h-4 w-4" />
+			<ArrowLeft class="mr-1.5 h-3.5 w-3.5" />
 			{$t('requirementsV2.navigation.previous')}
 		</Button>
 
-		<div class="text-sm font-medium text-gray-600">
-			{$t('requirementsV2.navigation.step')} {currentStep + 1} {$t('requirementsV2.navigation.of')} {steps.length}
-		</div>
+		<!-- Potential reach indicator (compact) -->
+		{#if shouldShowReach}
+			<Tooltip.Root>
+				<Tooltip.Trigger>
+					<div class="flex items-center gap-1.5 rounded-md bg-white px-2.5 py-1 text-xs shadow-sm ring-1 ring-gray-200/50 transition-all hover:shadow-md">
+						<Users class="h-3.5 w-3.5 text-blue-600" />
+						<span class="font-semibold text-gray-800">
+							{potentialReach !== null ? formatNumber(potentialReach) : '—'}
+						</span>
+						{#if isLoadingReach}
+							<Loader2 class="h-3 w-3 animate-spin text-blue-500" />
+						{/if}
+					</div>
+				</Tooltip.Trigger>
+				<Tooltip.Content side="bottom">
+					<p class="text-sm">
+						<span class="font-medium">{$t('requirementsV2.preview.potentialReachTooltipTitle')}</span><br />
+						{$t('requirementsV2.preview.potentialReachTooltipDescription')}
+					</p>
+				</Tooltip.Content>
+			</Tooltip.Root>
+		{/if}
 
 		{#if currentStep < steps.length - 1}
 			<Button onclick={saveAndNext} size="sm">
 				{$t('requirementsV2.navigation.next')}
-				<ArrowRight class="ml-2 h-4 w-4" />
+				<ArrowRight class="ml-1.5 h-3.5 w-3.5" />
 			</Button>
 		{:else}
 			<Button onclick={handleActivate} disabled={isActivating} size="sm">
 				{#if isActivating}
 					{$t('requirementsV2.navigation.activating')}
 				{:else}
-					<Check class="mr-2 h-4 w-4" />
+					<Check class="mr-1.5 h-3.5 w-3.5" />
 					{$t('requirementsV2.navigation.activateHunt')}
 				{/if}
 			</Button>
@@ -246,7 +359,7 @@
 	</div>
 
 	<!-- Step Content -->
-	<div class="rounded-lg border bg-white p-8 shadow-sm">
+	<div class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm ring-1 ring-gray-100/50">
 		{#if requirement && requirementId}
 			{#if currentStep === 0}
 				<BasicInfoStep bind:requirement {requirementId} />
@@ -259,30 +372,6 @@
 			{:else if currentStep === 4}
 				<PreviewStep {requirement} {requirementId} />
 			{/if}
-		{/if}
-	</div>
-
-	<!-- Navigation - Bottom -->
-	<div class="mt-6 flex items-center justify-between">
-		<Button onclick={goBack} variant="outline" disabled={currentStep === 0}>
-			<ArrowLeft class="mr-2 h-4 w-4" />
-			{$t('requirementsV2.navigation.previous')}
-		</Button>
-
-		{#if currentStep < steps.length - 1}
-			<Button onclick={saveAndNext}>
-				{$t('requirementsV2.navigation.next')}
-				<ArrowRight class="ml-2 h-4 w-4" />
-			</Button>
-		{:else}
-			<Button onclick={handleActivate} disabled={isActivating}>
-				{#if isActivating}
-					{$t('requirementsV2.navigation.activating')}
-				{:else}
-					<Check class="mr-2 h-4 w-4" />
-					{$t('requirementsV2.navigation.activateHunt')}
-				{/if}
-			</Button>
 		{/if}
 	</div>
 </div>

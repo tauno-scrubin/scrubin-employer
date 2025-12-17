@@ -95,27 +95,24 @@
 	}
 </script>
 
-<div class="w-full space-y-6">
+<div class="w-full space-y-4">
 	<!-- Info box -->
-	<div class="flex gap-3 rounded-lg border border-blue-200 bg-blue-50 p-4">
-		<Info class="mt-0.5 h-5 w-5 flex-shrink-0 text-blue-600" />
-		<div class="text-sm text-blue-900">
-			<p class="font-medium">{$t('requirementsV2.tips.salaryTransparency.title')}</p>
-			<p class="mt-1">
-				{$t('requirementsV2.tips.salaryTransparency.description')}
-			</p>
-		</div>
+	<div class="flex items-center gap-2 rounded-md border border-blue-200 bg-blue-50 p-2.5">
+		<Info class="h-4 w-4 flex-shrink-0 text-blue-600" />
+		<p class="text-xs text-blue-800">
+			{$t('requirementsV2.tips.salaryTransparency.description')}
+		</p>
 	</div>
 
-	<div>
-		<h2 class="mb-2 text-2xl font-semibold">{$t('requirementsV2.steps.location.heading')}</h2>
-		<p class="text-sm text-muted-foreground">
+	<div class="space-y-0.5">
+		<h2 class="text-xl font-semibold">{$t('requirementsV2.steps.location.heading')}</h2>
+		<p class="text-xs text-muted-foreground">
 			{$t('requirementsV2.steps.location.subheading')}
 		</p>
 	</div>
 
 	<!-- Location Section -->
-	<div class="space-y-4">
+	<div class="space-y-3">
 		<div class="flex items-center gap-2">
 			<h3 class="text-lg font-semibold">{$t('requirementsV2.sections.location')}</h3>
 		</div>
@@ -188,7 +185,7 @@
 	</div>
 
 	<!-- Salary Section -->
-	<div class="w-full space-y-4">
+	<div class="w-full space-y-3">
 		<div class="flex items-center gap-2">
 			<h3 class="text-lg font-semibold">{$t('requirementsV2.sections.compensation')}</h3>
 		</div>

@@ -35,8 +35,6 @@
 	let availableSpecialties = $state<CodeNamePair[]>([]);
 	let availableLanguages = $state<CodeNamePair[]>([]);
 	let availableSalaryPeriods = $state<CodeNamePair[]>([]);
-	let potentialReach = $state<number | null>(null);
-	let isLoadingReach = $state(true);
 
 	onMount(async () => {
 		const lang = get(locale);
@@ -52,16 +50,6 @@
 		availableSpecialties = specialties;
 		availableLanguages = languages;
 		availableSalaryPeriods = salaryPeriods;
-
-		// Load potential reach
-		try {
-			const reach = await scrubinClient.hunt.getRequirementReach(requirementId);
-			potentialReach = reach.potentialReach;
-		} catch (error) {
-			console.error('Failed to load potential reach:', error);
-		} finally {
-			isLoadingReach = false;
-		}
 	});
 
 	function hasMarkdownSyntax(text: string): boolean {
@@ -131,10 +119,10 @@
 	});
 </script>
 
-<div class="w-full space-y-6">
-	<div>
-		<h2 class="mb-2 text-2xl font-semibold">{$t('requirementsV2.steps.preview.heading')}</h2>
-		<p class="text-sm text-muted-foreground">
+<div class="w-full space-y-4">
+	<div class="space-y-0.5">
+		<h2 class="text-xl font-semibold">{$t('requirementsV2.steps.preview.heading')}</h2>
+		<p class="text-xs text-muted-foreground">
 			{$t('requirementsV2.steps.preview.subheading')}
 		</p>
 	</div>
@@ -165,30 +153,12 @@
 		</div>
 	{/if}
 
-	<!-- Potential Reach -->
-	{#if potentialReach !== null && !isLoadingReach}
-		<div class="rounded-lg border border-blue-200 bg-blue-50 p-4">
-			<div class="flex items-center gap-3">
-				<Users class="h-6 w-6 text-blue-600" />
-				<div>
-					<p class="font-semibold text-blue-900">{$t('requirementsV2.preview.potentialReach')}</p>
-					<p class="text-2xl font-bold text-blue-600">{formatNumber(potentialReach)}</p>
-					<p class="text-sm text-blue-700">
-						{$t('requirementsV2.preview.reachDescription')}
-					</p>
-				</div>
-			</div>
-		</div>
-	{/if}
-
 	<!-- Job Overview -->
-	<div class="w-full space-y-4 bg-white p-6">
-		<div class="flex items-center gap-2">
-			<h3 class="text-xl font-semibold">{$t('requirementsV2.preview.jobOverview')}</h3>
-		</div>
+	<div class="w-full space-y-3">
+		<h3 class="text-base font-semibold">{$t('requirementsV2.preview.jobOverview')}</h3>
 		<Separator />
 
-		<div class="space-y-4">
+		<div class="space-y-3">
 			<div>
 				<p class="text-sm font-medium text-muted-foreground">
 					{$t('requirementsV2.preview.fields.jobTitle')}
@@ -254,10 +224,8 @@
 	<!-- Location & Salary -->
 	<div class="grid w-full gap-4 md:grid-cols-2">
 		<!-- Location -->
-		<div class="w-full space-y-4 bg-white p-6">
-			<div class="flex items-center gap-2">
-				<h3 class="text-lg font-semibold">{$t('requirementsV2.preview.locationSection')}</h3>
-			</div>
+		<div class="w-full space-y-3">
+			<h3 class="text-base font-semibold">{$t('requirementsV2.preview.locationSection')}</h3>
 			<Separator />
 			<div class="space-y-2">
 				{#if requirement.country}
@@ -279,10 +247,8 @@
 		</div>
 
 		<!-- Salary -->
-		<div class="w-full space-y-4 bg-white p-6">
-			<div class="flex items-center gap-2">
-				<h3 class="text-lg font-semibold">{$t('requirementsV2.preview.compensationSection')}</h3>
-			</div>
+		<div class="w-full space-y-3">
+			<h3 class="text-base font-semibold">{$t('requirementsV2.preview.compensationSection')}</h3>
 			<Separator />
 			<div class="space-y-2">
 				{#if requirement.salary?.amountStart || requirement.salary?.amountEnd}
@@ -315,17 +281,17 @@
 
 	<!-- Job Details -->
 	{#if requirement.jobDescription || requirement.jobRequiredQualifications}
-		<div class="w-full space-y-4 bg-white p-6">
+		<div class="w-full space-y-3">
 			<div class="flex items-center gap-2">
-				<GraduationCap class="h-5 w-5 text-primary" />
-				<h3 class="text-lg font-semibold">{$t('requirementsV2.preview.jobDetailsSection')}</h3>
+				<GraduationCap class="h-4 w-4 text-primary" />
+				<h3 class="text-base font-semibold">{$t('requirementsV2.preview.jobDetailsSection')}</h3>
 			</div>
 			<Separator />
 
-			<!-- TODO still markdown not correctly converting to html -->
+		
 			{#if requirement.jobDescription}
 				<div>
-					<p class="mb-2 text-sm font-medium text-muted-foreground">
+					<p class="mb-4 text-sm font-medium">
 						{$t('requirementsV2.preview.fields.description')}
 					</p>
 					{#if hasMarkdownSyntax(requirement.jobDescription)}
@@ -340,7 +306,7 @@
 
 			{#if requirement.jobRequiredQualifications}
 				<div>
-					<p class="mb-2 text-sm font-medium text-muted-foreground">
+					<p class="pt-8 mb-4 text-sm font-medium">
 						{$t('requirementsV2.preview.fields.requiredQualifications')}
 					</p>
 					{#if hasMarkdownSyntax(requirement.jobRequiredQualifications)}
@@ -357,10 +323,10 @@
 
 	<!-- Targeting -->
 	{#if requirement.countriesPreferredToSearch?.length || requirement.countriesOnlyToSearch?.length || requirement.companyContext || requirement.hiringContext}
-		<div class="w-full space-y-4 rounded-lg border bg-white p-6 shadow-sm">
+		<div class="w-full space-y-3 rounded-lg border bg-white p-4 shadow-sm">
 			<div class="flex items-center gap-2">
-				<Target class="h-5 w-5 text-primary" />
-				<h3 class="text-lg font-semibold">{$t('requirementsV2.preview.targetingSection')}</h3>
+				<Target class="h-4 w-4 text-primary" />
+				<h3 class="text-base font-semibold">{$t('requirementsV2.preview.targetingSection')}</h3>
 			</div>
 			<Separator />
 

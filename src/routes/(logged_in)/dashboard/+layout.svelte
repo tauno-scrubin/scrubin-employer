@@ -1,10 +1,10 @@
 <script lang="ts">
+	import { t } from '$lib/i18n';
 	import AppSidebar from '@/components/app-sidebar.svelte';
 	import AnalyzingOverlay from '@/components/dashboard/analyzingOverlay.svelte';
 	import * as Sidebar from '@/components/ui/sidebar';
 	import { Toaster } from '@/components/ui/sonner';
 	import { currentUser, currentUserCompany, scrubinClient } from '@/scrubinClient/client.js';
-	import { t } from '$lib/i18n';
 	import { ModeWatcher, setMode } from 'mode-watcher';
 	import { onMount } from 'svelte';
 
@@ -17,21 +17,9 @@
 	setMode('light');
 
 	onMount(async () => {
-		await checkAuth();
+		await scrubinClient.ensureAuth();
+		isAuthenticatedState = true;
 	});
-
-	async function checkAuth() {
-		try {
-			const isAuthenticated = await scrubinClient.ensureAuth();
-			isAuthenticatedState = isAuthenticated;
-			if (!isAuthenticated) {
-				window.location.href = 'https://auth.scrubin.io/';
-			}
-		} catch (error) {
-			isAuthenticatedState = false;
-			window.location.href = 'https://auth.scrubin.io/';
-		}
-	}
 </script>
 
 <svelte:head>

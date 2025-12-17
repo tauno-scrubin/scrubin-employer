@@ -7,6 +7,19 @@
 	import { Separator } from '$lib/components/ui/separator';
 	import DropdownComponent from '$lib/components/dropdownComponent.svelte';
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
+	import MarkdownToolbar from '$lib/components/ui/markdown-toolbar/MarkdownToolbar.svelte';
+	import {
+		markdownToHtml as mdToHtml,
+		htmlToMarkdown,
+		toggleBold,
+		toggleItalic,
+		toggleHeading,
+		insertUnorderedList,
+		insertOrderedList,
+		insertLink,
+		insertCode,
+		setupKeyboardShortcuts
+	} from '$lib/components/ui/markdown-toolbar/markdownEditor';
 	import { locale, t } from '$lib/i18n';
 	import type {
 		CompanyPlanSummary,
@@ -17,8 +30,7 @@
 	import { scrubinClient } from '@/scrubinClient/client';
 	import type { CodeNamePair } from '@/scrubinClient/models';
 	import { AlertCircle, Check, Info, Loader2, Pen, Users, X } from 'lucide-svelte';
-	import showdown from 'showdown';
-	import { onMount } from 'svelte';
+	import { onMount, onDestroy } from 'svelte';
 	import { toast } from 'svelte-sonner';
 	import { get } from 'svelte/store';
 
@@ -87,6 +99,14 @@
 	});
 
 	let isSaving = $state(false);
+
+	// Rich text editor refs
+	let descriptionEditor: HTMLDivElement;
+	let qualificationsEditor: HTMLDivElement;
+
+	// Cleanup functions for keyboard shortcuts
+	let cleanupDescriptionShortcuts: (() => void) | null = null;
+	let cleanupQualificationsShortcuts: (() => void) | null = null;
 
 	onMount(async () => {
 		const lang = get(locale);
@@ -223,6 +243,25 @@
 			(key) => (editableFields[key as keyof typeof editableFields] = false)
 		);
 		editableFields[field] = true;
+
+		// Initialize editor content after DOM updates
+		setTimeout(() => {
+			if (field === 'jobDescription' && descriptionEditor) {
+				descriptionEditor.innerHTML = mdToHtml(editValues.jobDescription);
+				// Setup keyboard shortcuts
+				cleanupDescriptionShortcuts = setupKeyboardShortcuts(descriptionEditor, {
+					onBold: descriptionBold,
+					onItalic: descriptionItalic
+				});
+			} else if (field === 'jobRequiredQualifications' && qualificationsEditor) {
+				qualificationsEditor.innerHTML = mdToHtml(editValues.jobRequiredQualifications);
+				// Setup keyboard shortcuts
+				cleanupQualificationsShortcuts = setupKeyboardShortcuts(qualificationsEditor, {
+					onBold: qualificationsBold,
+					onItalic: qualificationsItalic
+				});
+			}
+		}, 0);
 	}
 
 	function cancelEditing(field: keyof typeof editableFields) {
@@ -255,15 +294,101 @@
 				requirements.huntInstructions?.preferredCountriesToSearch || [];
 			editValues.huntOnlyCountries = requirements.huntInstructions?.onlyCountriesToSearch || [];
 		}
+
+		// Cleanup keyboard shortcuts for markdown editors
+		if (field === 'jobDescription' && cleanupDescriptionShortcuts) {
+			cleanupDescriptionShortcuts();
+			cleanupDescriptionShortcuts = null;
+		}
+		if (field === 'jobRequiredQualifications' && cleanupQualificationsShortcuts) {
+			cleanupQualificationsShortcuts();
+			cleanupQualificationsShortcuts = null;
+		}
+
 		editableFields[field] = false;
 	}
 
-	function markdownToHtml(markdown: string): string {
-		if (!markdown) return '';
-		const converter = new showdown.Converter({ flavor: 'github' });
-		converter.setOption('simpleLineBreaks', true);
-		return converter.makeHtml(markdown);
+	// Toolbar handlers for description editor
+	function descriptionBold() {
+		toggleBold(descriptionEditor);
 	}
+
+	function descriptionItalic() {
+		toggleItalic(descriptionEditor);
+	}
+
+	function descriptionHeading() {
+		toggleHeading(descriptionEditor);
+	}
+
+	function descriptionUnorderedList() {
+		insertUnorderedList(descriptionEditor);
+	}
+
+	function descriptionOrderedList() {
+		insertOrderedList(descriptionEditor);
+	}
+
+	function descriptionLink() {
+		insertLink(descriptionEditor);
+	}
+
+	function descriptionCode() {
+		insertCode(descriptionEditor);
+	}
+
+	// Toolbar handlers for qualifications editor
+	function qualificationsBold() {
+		toggleBold(qualificationsEditor);
+	}
+
+	function qualificationsItalic() {
+		toggleItalic(qualificationsEditor);
+	}
+
+	function qualificationsHeading() {
+		toggleHeading(qualificationsEditor);
+	}
+
+	function qualificationsUnorderedList() {
+		insertUnorderedList(qualificationsEditor);
+	}
+
+	function qualificationsOrderedList() {
+		insertOrderedList(qualificationsEditor);
+	}
+
+	function qualificationsLink() {
+		insertLink(qualificationsEditor);
+	}
+
+	function qualificationsCode() {
+		insertCode(qualificationsEditor);
+	}
+
+	function handleDescriptionBlur() {
+		if (!descriptionEditor) return;
+
+		const markdown = htmlToMarkdown(descriptionEditor.innerHTML);
+		editValues.jobDescription = markdown;
+	}
+
+	function handleQualificationsBlur() {
+		if (!qualificationsEditor) return;
+
+		const markdown = htmlToMarkdown(qualificationsEditor.innerHTML);
+		editValues.jobRequiredQualifications = markdown;
+	}
+
+	onDestroy(() => {
+		// Cleanup keyboard shortcuts
+		if (cleanupDescriptionShortcuts) {
+			cleanupDescriptionShortcuts();
+		}
+		if (cleanupQualificationsShortcuts) {
+			cleanupQualificationsShortcuts();
+		}
+	});
 
 	function formatNumber(num: number): string {
 		if (num >= 1000) {
@@ -1015,11 +1140,21 @@
 						</div>
 						{#if editableFields.jobDescription}
 							<div class="flex w-full flex-col gap-2">
-								<textarea
-									value={editValues.jobDescription}
-									onchange={(e) => (editValues.jobDescription = e.currentTarget.value)}
-									class="min-h-[100px] w-full rounded-md border p-2 text-sm"
-								></textarea>
+								<MarkdownToolbar
+									onBold={descriptionBold}
+									onItalic={descriptionItalic}
+									onHeading={descriptionHeading}
+									onUnorderedList={descriptionUnorderedList}
+									onOrderedList={descriptionOrderedList}
+									onLink={descriptionLink}
+									onCode={descriptionCode}
+								/>
+								<div
+									bind:this={descriptionEditor}
+									contenteditable="true"
+									onblur={handleDescriptionBlur}
+									class="markdown-editor min-h-[250px] w-full max-w-none rounded-md border bg-white p-4 focus:outline-none focus:ring-2 focus:ring-primary"
+								></div>
 								<div class="flex justify-end gap-2">
 									<Button
 										size="icon"
@@ -1040,12 +1175,10 @@
 						{:else}
 							<div
 								class="w-full max-w-full overflow-hidden {requirements.jobDescription
-									? 'prose text-gray-900'
+									? 'prose max-w-none text-sm text-gray-900'
 									: 'text-gray-500'}"
 							>
-								<div class="max-w-full overflow-x-auto whitespace-pre-wrap break-all">
-									{@html markdownToHtml(requirements.jobDescription || $t('hunt.notSpecified'))}
-								</div>
+								{@html mdToHtml(requirements.jobDescription || $t('hunt.notSpecified'))}
 							</div>
 						{/if}
 					</div>
@@ -1064,11 +1197,21 @@
 						</div>
 						{#if editableFields.jobRequiredQualifications}
 							<div class="flex w-full flex-col gap-2">
-								<textarea
-									value={editValues.jobRequiredQualifications}
-									onchange={(e) => (editValues.jobRequiredQualifications = e.currentTarget.value)}
-									class="min-h-[100px] w-full rounded-md border p-2 text-sm"
-								></textarea>
+								<MarkdownToolbar
+									onBold={qualificationsBold}
+									onItalic={qualificationsItalic}
+									onHeading={qualificationsHeading}
+									onUnorderedList={qualificationsUnorderedList}
+									onOrderedList={qualificationsOrderedList}
+									onLink={qualificationsLink}
+									onCode={qualificationsCode}
+								/>
+								<div
+									bind:this={qualificationsEditor}
+									contenteditable="true"
+									onblur={handleQualificationsBlur}
+									class="markdown-editor min-h-[200px] w-full max-w-none rounded-md border bg-white p-4 focus:outline-none focus:ring-2 focus:ring-primary"
+								></div>
 								<div class="flex justify-end gap-2">
 									<Button
 										size="icon"
@@ -1089,14 +1232,11 @@
 							</div>
 						{:else}
 							<div
-								class="w-full max-w-full overflow-hidden text-sm {requirements.jobRequiredQualifications
-									? 'text-gray-900'
+								class="w-full max-w-full overflow-hidden {requirements.jobRequiredQualifications
+									? 'prose max-w-none text-sm text-gray-900'
 									: 'text-gray-500'}"
-								style="white-space: pre-line;"
 							>
-								<div class="max-w-full overflow-x-auto break-all">
-									{requirements.jobRequiredQualifications || $t('hunt.notSpecified')}
-								</div>
+								{@html mdToHtml(requirements.jobRequiredQualifications || $t('hunt.notSpecified'))}
 							</div>
 						{/if}
 					</div>
@@ -1214,3 +1354,106 @@
 		</div>
 	</div>
 {/if}
+
+<style>
+	/* Markdown editor styles - using :global to ensure proper specificity */
+	:global(.markdown-editor) {
+		font-size: 16px;
+		line-height: 1.6;
+		color: #1f2937;
+	}
+
+	:global(.markdown-editor:focus) {
+		outline: none;
+	}
+
+	:global(.markdown-editor h1) {
+		font-size: 2em;
+		font-weight: 700;
+		line-height: 1.2;
+		margin-top: 0.67em;
+		margin-bottom: 0.67em;
+		color: #111827;
+	}
+
+	:global(.markdown-editor h2) {
+		font-size: 1.5em;
+		font-weight: 600;
+		line-height: 1.3;
+		margin-top: 0.83em;
+		margin-bottom: 0.83em;
+		color: #111827;
+	}
+
+	:global(.markdown-editor h3) {
+		font-size: 1.25em;
+		font-weight: 600;
+		line-height: 1.4;
+		margin-top: 1em;
+		margin-bottom: 1em;
+		color: #111827;
+	}
+
+	:global(.markdown-editor ul) {
+		list-style-type: disc;
+		list-style-position: outside;
+		margin-left: 1.5em;
+		margin-top: 0.5em;
+		margin-bottom: 0.5em;
+		padding-left: 0.5em;
+	}
+
+	:global(.markdown-editor ol) {
+		list-style-type: decimal;
+		list-style-position: outside;
+		margin-left: 1.5em;
+		margin-top: 0.5em;
+		margin-bottom: 0.5em;
+		padding-left: 0.5em;
+	}
+
+	:global(.markdown-editor li) {
+		display: list-item;
+		margin-bottom: 0.25em;
+		line-height: 1.6;
+	}
+
+	:global(.markdown-editor p) {
+		margin-bottom: 0.75em;
+		line-height: 1.6;
+	}
+
+	:global(.markdown-editor strong),
+	:global(.markdown-editor b) {
+		font-weight: 700;
+	}
+
+	:global(.markdown-editor em),
+	:global(.markdown-editor i) {
+		font-style: italic;
+	}
+
+	:global(.markdown-editor code) {
+		background-color: #f3f4f6;
+		padding: 0.125rem 0.375rem;
+		border-radius: 0.25rem;
+		font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+		font-size: 0.875em;
+		color: #dc2626;
+	}
+
+	:global(.markdown-editor a) {
+		color: #2563eb;
+		text-decoration: underline;
+	}
+
+	:global(.markdown-editor a:hover) {
+		color: #1d4ed8;
+	}
+
+	/* Ensure empty elements are visible */
+	:global(.markdown-editor p:empty:before),
+	:global(.markdown-editor li:empty:before) {
+		content: '\200B'; /* Zero-width space */
+	}
+</style>
