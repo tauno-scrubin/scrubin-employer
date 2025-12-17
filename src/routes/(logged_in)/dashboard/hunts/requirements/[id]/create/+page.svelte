@@ -20,16 +20,36 @@
 
 	// Step configuration
 	const steps = $derived([
-		{ id: 'basic', title: $t('requirementsV2.steps.basic.title'), description: $t('requirementsV2.steps.basic.description') },
-		{ id: 'location', title: $t('requirementsV2.steps.location.title'), description: $t('requirementsV2.steps.location.description') },
-		{ id: 'details', title: $t('requirementsV2.steps.details.title'), description: $t('requirementsV2.steps.details.description') },
-		{ id: 'targeting', title: $t('requirementsV2.steps.targeting.title'), description: $t('requirementsV2.steps.targeting.description') },
-		{ id: 'preview', title: $t('requirementsV2.steps.preview.title'), description: $t('requirementsV2.steps.preview.description') }
+		{
+			id: 'basic',
+			title: $t('requirementsV2.steps.basic.title'),
+			description: $t('requirementsV2.steps.basic.description')
+		},
+		{
+			id: 'location',
+			title: $t('requirementsV2.steps.location.title'),
+			description: $t('requirementsV2.steps.location.description')
+		},
+		{
+			id: 'details',
+			title: $t('requirementsV2.steps.details.title'),
+			description: $t('requirementsV2.steps.details.description')
+		},
+		{
+			id: 'targeting',
+			title: $t('requirementsV2.steps.targeting.title'),
+			description: $t('requirementsV2.steps.targeting.description')
+		},
+		{
+			id: 'preview',
+			title: $t('requirementsV2.steps.preview.title'),
+			description: $t('requirementsV2.steps.preview.description')
+		}
 	]);
 
 	let currentStep = $state(0);
-	let requirement: JobRequirementDto | null = $state(null);
-	let requirementId: number | null = $state(null);
+	let requirement = $state<JobRequirementDto | null>(null);
+	let requirementId = $state<number | null>(null);
 	let isSaving = $state(false);
 	let isActivating = $state(false);
 
@@ -61,7 +81,9 @@
 				// Load existing requirement
 				requirementId = parseInt(idParam);
 				requirement = await scrubinClient.hunt.getRequirementById(requirementId);
-				const hunt = requirement.huntId ? await scrubinClient.hunt.getHuntById(requirement.huntId) : null;
+				const hunt = requirement.huntId
+					? await scrubinClient.hunt.getHuntById(requirement.huntId)
+					: null;
 
 				if (hunt) {
 					if (hunt.status === 'ACTIVE' || hunt.status === 'PAUSED') {
@@ -112,7 +134,8 @@
 			isLoadingReach = true;
 
 			try {
-				const result = await scrubinClient.hunt.getRequirementReach(requirementId);
+				// requirementId is guaranteed non-null here by the guard above
+				const result = await scrubinClient.hunt.getRequirementReach(requirementId!);
 
 				// Only update if this is still the latest request (handles race conditions)
 				if (currentRequestId === reachRequestId) {
@@ -274,7 +297,7 @@
 									? 'border-primary bg-primary text-primary-foreground shadow-md ring-4 ring-primary/30'
 									: stepAccessible
 										? 'border-gray-300 bg-white text-gray-600 hover:border-primary/50'
-										: 'border-gray-200 bg-gray-50 text-gray-400 cursor-not-allowed'}"
+										: 'cursor-not-allowed border-gray-200 bg-gray-50 text-gray-400'}"
 							disabled={!stepAccessible}
 						>
 							{#if stepCompleted}
@@ -312,7 +335,9 @@
 	</div>
 
 	<!-- Sticky Navigation Bar -->
-	<div class="sticky top-0 z-10 mb-4 flex items-center justify-between rounded-lg bg-gradient-to-r from-gray-50 to-gray-100/50 p-3 shadow-sm ring-1 ring-gray-200/50 backdrop-blur-sm">
+	<div
+		class="sticky top-0 z-10 mb-4 flex items-center justify-between rounded-lg bg-gradient-to-r from-gray-50 to-gray-100/50 p-3 shadow-sm ring-1 ring-gray-200/50 backdrop-blur-sm"
+	>
 		<Button onclick={goBack} variant="outline" size="sm" disabled={currentStep === 0}>
 			<ArrowLeft class="mr-1.5 h-3.5 w-3.5" />
 			{$t('requirementsV2.navigation.previous')}
@@ -322,7 +347,9 @@
 		{#if shouldShowReach}
 			<Tooltip.Root>
 				<Tooltip.Trigger>
-					<div class="flex items-center gap-1.5 rounded-md bg-white px-2.5 py-1 text-xs shadow-sm ring-1 ring-gray-200/50 transition-all hover:shadow-md">
+					<div
+						class="flex items-center gap-1.5 rounded-md bg-white px-2.5 py-1 text-xs shadow-sm ring-1 ring-gray-200/50 transition-all hover:shadow-md"
+					>
 						<Users class="h-3.5 w-3.5 text-blue-600" />
 						<span class="font-semibold text-gray-800">
 							{potentialReach !== null ? formatNumber(potentialReach) : '—'}
@@ -334,7 +361,9 @@
 				</Tooltip.Trigger>
 				<Tooltip.Content side="bottom">
 					<p class="text-sm">
-						<span class="font-medium">{$t('requirementsV2.preview.potentialReachTooltipTitle')}</span><br />
+						<span class="font-medium"
+							>{$t('requirementsV2.preview.potentialReachTooltipTitle')}</span
+						><br />
 						{$t('requirementsV2.preview.potentialReachTooltipDescription')}
 					</p>
 				</Tooltip.Content>
