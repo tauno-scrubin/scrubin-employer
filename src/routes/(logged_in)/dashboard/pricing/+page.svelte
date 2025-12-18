@@ -9,12 +9,13 @@
 	import { scrubinClient } from '@/scrubinClient/client.js';
 	import type {
 		AvailablePlan,
+		Company,
 		CompanyBilling,
 		CompanyPlanDetails,
 		CompanyPlanSummary,
 		InvoiceDto
 	} from '@/scrubinClient/index.js';
-	import { BadgeCheck, InfoIcon, Loader2, Send, Sparkles, Stethoscope, Users } from 'lucide-svelte';
+	import { BadgeCheck, Calendar, Info, InfoIcon, Loader2, Send, Sparkles, Stethoscope, Users } from 'lucide-svelte';
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
 
@@ -26,6 +27,7 @@
 	let billing: CompanyBilling | null = $state(null);
 	let subscriptions: Array<{ id: string; status: string }> = $state([]);
 	let invoices = $state<InvoiceDto[]>([]);
+	let companyInfo: Company | null = $state(null);
 
 	// Contact dialog state
 	let contactDialogOpen = $state(false);
@@ -52,15 +54,48 @@
 		}
 	};
 
+	const getPaymentTerms = (): { schedule: string; installments: string; tax: string } | null => {
+		if (!companyInfo) return null;
+
+		const country = companyInfo.country;
+		let countryKey = 'OTHER';
+
+		// Map country to specific key
+		if (country === 'Estonia') {
+			countryKey = 'EE';
+		} else if (country === 'United Kingdom') {
+			countryKey = 'UK';
+		} else if (country === 'Australia') {
+			countryKey = 'AU';
+		}
+
+		// Access translation keys individually
+		const schedule = $t(`pricing.planSelection.paymentTerms.${countryKey}.paymentSchedule`);
+		const installments = $t(`pricing.planSelection.paymentTerms.${countryKey}.installments`);
+		const tax = $t(`pricing.planSelection.paymentTerms.${countryKey}.taxInfo`);
+
+		// Check if any translation was found (if not, it returns the key itself)
+		if (schedule && !schedule.includes('pricing.planSelection.paymentTerms')) {
+			return {
+				schedule,
+				installments,
+				tax
+			};
+		}
+		return null;
+	};
+
 	onMount(async () => {
 		try {
-			const [active, bill] = await Promise.all([
+			const [active, bill, company] = await Promise.all([
 				scrubinClient.company.getActivePlans(),
-				scrubinClient.company.getBilling()
+				scrubinClient.company.getBilling(),
+				scrubinClient.company.getCompany()
 			]);
 
 			activePlans = active;
 			billing = bill;
+			companyInfo = company;
 
 			if (bill?.stripeCustomerId) {
 				scrubinClient.company
@@ -134,6 +169,7 @@
 	<p class="text-base text-muted-foreground">
 		{$t('pricing.subtitle')}
 	</p>
+
 	{#if error}
 		<div
 			class="mb-6 rounded-lg border border-destructive bg-destructive/10 p-4 text-sm text-destructive sm:mb-8"
@@ -403,6 +439,77 @@
 				onCustomPlanRequested={handleCustomPlanRequested}
 				onSubscriptionCreated={refreshActivePlans}
 			/>
+		{/if}
+
+		<!-- Payment Terms and Policies Section -->
+		{#if activePlans.length === 0}
+			<div class="w-full rounded-lg border border-border bg-muted/20 p-4 sm:p-6">
+				<div class="space-y-6">
+					<!-- Payment Terms -->
+					{#if getPaymentTerms()}
+						{@const paymentTerms = getPaymentTerms()!}
+						<div>
+							<div class="mb-3 flex items-center gap-2">
+								<Info class="h-4 w-4 text-muted-foreground" />
+								<h3 class="text-sm font-medium text-foreground">
+									{$t('pricing.planSelection.paymentTermsTitle') || 'Payment Terms'}
+								</h3>
+							</div>
+							<div class="grid gap-4 md:grid-cols-3">
+								{#if paymentTerms.schedule}
+									<div class="space-y-2">
+										<div class="flex items-center gap-2">
+											<Calendar class="h-4 w-4 text-blue-500" />
+											<h4 class="text-sm font-medium text-muted-foreground">
+												{$t('pricing.planSelection.paymentSchedule') || 'Payment Schedule'}
+											</h4>
+										</div>
+										<p class="text-sm text-muted-foreground">{paymentTerms.schedule}</p>
+									</div>
+								{/if}
+							</div>
+						</div>
+					{/if}
+
+					<!-- Terms and Policies -->
+					<div>
+						<div class="mb-3 flex items-center gap-2">
+							<InfoIcon class="h-4 w-4 text-muted-foreground" />
+							<h3 class="text-sm font-medium text-foreground">
+								{$t('pricing.termsAndPolicies') || 'Terms and Policies'}
+							</h3>
+						</div>
+						<div class="flex flex-wrap gap-x-2 gap-y-1 text-sm">
+							<a
+								href={$t('pricing.planSelection.hiringTermsUrl')}
+								target="_blank"
+								rel="noopener noreferrer"
+								class="font-medium text-primary underline hover:text-primary/80"
+							>
+								{$t('pricing.planSelection.hiringTerms') || 'Hiring Terms and Conditions'}
+							</a>
+							<span class="text-muted-foreground">•</span>
+							<a
+								href={$t('pricing.planSelection.privacyPolicyUrl')}
+								target="_blank"
+								rel="noopener noreferrer"
+								class="font-medium text-primary underline hover:text-primary/80"
+							>
+								{$t('pricing.planSelection.privacyPolicy') || 'Privacy Policy'}
+							</a>
+							<span class="text-muted-foreground">•</span>
+							<a
+								href={$t('pricing.planSelection.termsOfServiceUrl')}
+								target="_blank"
+								rel="noopener noreferrer"
+								class="font-medium text-primary underline hover:text-primary/80"
+							>
+								{$t('pricing.planSelection.termsOfService') || 'Terms of Service'}
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
 		{/if}
 
 		<!-- Invoices Section - Always at the bottom -->

@@ -496,54 +496,6 @@
 			{/each}
 		</div>
 
-		<!-- Global Payment Terms Section -->
-		{#if getPaymentTerms()}
-			{@const paymentTerms = getPaymentTerms()!}
-			<div class="w-full space-y-4 rounded-lg border border-border bg-muted/20 p-6">
-				<div class="flex items-center gap-2">
-					<Info class="h-4 w-4 text-muted-foreground" />
-					<h3 class="text-sm font-medium text-muted-foreground">
-						{$t('pricing.planSelection.paymentTermsTitle')}
-					</h3>
-				</div>
-				<div class="grid gap-4 md:grid-cols-3">
-					{#if paymentTerms.schedule}
-						<div class="space-y-2">
-							<div class="flex items-center gap-2">
-								<Calendar class="h-4 w-4 text-blue-500" />
-								<h4 class="text-sm font-medium text-muted-foreground">
-									{$t('pricing.planSelection.paymentSchedule')}
-								</h4>
-							</div>
-							<p class="text-sm text-muted-foreground">{paymentTerms.schedule}</p>
-						</div>
-					{/if}
-					<!-- {#if paymentTerms.installments}
-						<div class="space-y-2">
-							<div class="flex items-center gap-2">
-								<CreditCard class="h-4 w-4 text-green-500" />
-								<h4 class="text-sm font-medium text-muted-foreground">
-									{$t('pricing.planSelection.installments')}
-								</h4>
-							</div>
-							<p class="text-sm text-muted-foreground">{paymentTerms.installments}</p>
-						</div>
-					{/if}
-					{#if paymentTerms.tax}
-						<div class="space-y-2">
-							<div class="flex items-center gap-2">
-								<Receipt class="h-4 w-4 text-purple-500" />
-								<h4 class="text-sm font-medium text-muted-foreground">
-									{$t('pricing.planSelection.taxInfo')}
-								</h4>
-							</div>
-							<p class="text-sm text-muted-foreground">{paymentTerms.tax}</p>
-						</div>
-					{/if} -->
-				</div>
-			</div>
-		{/if}
-
 		<!-- Coupon Code Input -->
 		{#if selectedPlan}
 			<div class="mx-auto max-w-md space-y-2">

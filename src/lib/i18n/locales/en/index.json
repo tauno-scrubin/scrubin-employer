@@ -476,6 +476,7 @@
 	"pricing": {
 		"title": "Choose Your Recruitment Plan",
 		"subtitle": "Flexible pricing designed for healthcare organisations of all sizes — from small GP clinics to large groups or hospitals. Every plan includes verified candidates, AI-assisted sourcing, and smart matching based on both sides' wants, needs, preferences, skills, and role requirements.",
+		"termsAndPolicies": "Terms and Policies",
 		"activePlans": {
 			"title": "Your Active Plans",
 			"activeSince": "Active since",

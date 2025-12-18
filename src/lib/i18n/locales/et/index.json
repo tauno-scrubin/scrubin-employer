@@ -471,6 +471,7 @@
 	"pricing": {
 		"title": "Vali oma värbamisplaan",
 		"subtitle": "Paindlik hinnastamine tervishoiuorganisatsioonidele kõikidest suurustest — väikestest perearsti kabinettidest kuni suurte gruppide või haiglateni. Iga plaan sisaldab kontrollitud kandidaate, AI-abilist otsingul ja nutikat sobivust mõlema poole soovide, vajaduste, eelistuste, oskuste ja rollinõuete põhjal.",
+		"termsAndPolicies": "Tingimused ja poliitikad",
 		"activePlans": {
 			"title": "Sinu aktiivsed paketid",
 			"activeSince": "Aktiivne alates",
