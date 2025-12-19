@@ -74,22 +74,21 @@
 					placeholder={$t('dashboard.searchView.searchPlaceholder')}
 					class="flex-1 resize-none border-0 bg-transparent p-0 px-0 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
 				/>
-
-				{#if inputFocused}
-					<div
-						transition:slide={{ delay: 100, duration: 200 }}
-						class="flex w-full items-end justify-between gap-2"
-					>
-						<span class="text-xs text-gray-400">{searchText.length}/5000</span>
-						<div class="flex items-center gap-2">
-							<Button
-								type="submit"
-								variant="default"
-								class="h-10 w-10 rounded-full bg-blue-600 p-0 transition-all duration-200 hover:bg-blue-700"
-							>
-								{#if isLoading}
-									<Loader2 class="h-5 w-5 animate-spin" />
-								{:else}
+				<div
+					transition:slide={{ delay: 100, duration: 200 }}
+					class="flex w-full items-end justify-between gap-2"
+				>
+					<span class="text-xs text-gray-400">{searchText.length}/5000</span>
+					<div class="flex items-center gap-2">
+						<Button
+							type="submit"
+							variant="default"
+							class="h-10 rounded-full bg-blue-600 px-6 transition-all duration-200 hover:bg-blue-700"
+						>
+							{#if isLoading}
+								<Loader2 class="h-5 w-5 animate-spin" />
+							{:else}
+								<div class="flex items-center gap-2">
 									<svg
 										xmlns="http://www.w3.org/2000/svg"
 										width="20"
@@ -104,12 +103,21 @@
 										<path d="M22 2L11 13"></path>
 										<path d="M22 2l-7 20-4-9-9-4 20-7z"></path>
 									</svg>
-								{/if}
-							</Button>
-						</div>
+									<span>{$t('dashboard.searchView.search')}</span>
+								</div>
+							{/if}
+						</Button>
 					</div>
-				{/if}
+				</div>
 			</form>
 		</div>
+
+		<!-- Description with FAQ link -->
+		<p class="mt-3 text-left text-sm text-gray-600">
+			{$t('dashboard.searchView.howScrubinWorks')}
+			<a href="/dashboard/faq" class="text-blue-600 hover:underline">
+				{$t('dashboard.searchView.readHere')}
+			</a>
+		</p>
 	</div>
 </div>

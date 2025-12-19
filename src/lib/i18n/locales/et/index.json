@@ -126,7 +126,10 @@
 			"noMatchesFound": "Vasteid ei leitud",
 			"noMatchesDescription": "Me ei leidnud sinu kriteeriumitele vastavaid tervishoiutöötajaid. Proovi kohandada otsingut või laiendada nõudmisi.",
 			"pleaseSelectCandidate": "Palun vali vähemalt üks kandidaat",
-			"errorAnalyzingRequirements": "Viga nõuete analüüsimisel: "
+			"errorAnalyzingRequirements": "Viga nõuete analüüsimisel: ",
+			"howScrubinWorks": "Soovid teada kuidas Scrubin töötab?",
+			"readHere": "Loe siit lähemalt",
+			"search": "Otsi"
 		},
 		"pricing": {
 			"perMonth": "/kuu"

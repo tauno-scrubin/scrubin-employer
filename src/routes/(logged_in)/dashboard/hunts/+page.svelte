@@ -1,8 +1,8 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
+	import { onMount } from 'svelte';
 
-	import HuntsList from "@/components/dashboard/huntsList.svelte";
-
+	onMount(() => {
+		goto('/dashboard');
+	});
 </script>
-<div class="space-y-2 max-w-screen-xl mx-auto w-full">
-<HuntsList />
-</div>

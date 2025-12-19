@@ -1,26 +1,20 @@
 <script lang="ts">
-	import { Card } from '$lib/components/ui/card';
 	import { Badge } from '$lib/components/ui/badge';
-	import { Separator } from '$lib/components/ui/separator';
-	import { scrubinClient } from '@/scrubinClient/client';
-	import type { JobRequirementDto } from '@/scrubinClient';
-	import { onMount } from 'svelte';
-	import {
-		Briefcase,
-		MapPin,
-		DollarSign,
-		GraduationCap,
-		Globe,
-		Users,
-		Building,
-		Target,
-		AlertCircle,
-		CheckCircle
-	} from 'lucide-svelte';
-	import { locale, t } from '$lib/i18n';
-	import { get } from 'svelte/store';
 	import { markdownToHtml } from '$lib/components/ui/markdown-toolbar/markdownEditor';
+	import { Separator } from '$lib/components/ui/separator';
+	import { locale, t } from '$lib/i18n';
+
+	import type { CompanyPlanSummary, JobRequirementDto } from '@/scrubinClient';
+	import { scrubinClient } from '@/scrubinClient/client';
 	import type { CodeNamePair } from '@/scrubinClient/models';
+	import {
+		AlertCircle,
+		CheckCircle,
+		GraduationCap,
+		Target
+	} from 'lucide-svelte';
+	import { onMount } from 'svelte';
+	import { get } from 'svelte/store';
 
 	let {
 		requirement,
@@ -35,21 +29,24 @@
 	let availableSpecialties = $state<CodeNamePair[]>([]);
 	let availableLanguages = $state<CodeNamePair[]>([]);
 	let availableSalaryPeriods = $state<CodeNamePair[]>([]);
+	let companyActivePlans = $state<CompanyPlanSummary[]>([]);
 
 	onMount(async () => {
 		const lang = get(locale);
-		const [countries, professions, specialties, languages, salaryPeriods] = await Promise.all([
+		const [countries, professions, specialties, languages, salaryPeriods, plans] = await Promise.all([
 			scrubinClient.data.getCountries(lang),
 			scrubinClient.data.getProfessions(lang),
 			scrubinClient.data.getSpecialties(lang),
 			scrubinClient.data.getLanguages(lang),
-			scrubinClient.data.getSalaryPeriods(lang)
+			scrubinClient.data.getSalaryPeriods(lang),
+			scrubinClient.company.getActivePlans()
 		]);
 		availableCountries = countries;
 		availableProfessions = professions;
 		availableSpecialties = specialties;
 		availableLanguages = languages;
 		availableSalaryPeriods = salaryPeriods;
+		companyActivePlans = plans;
 	});
 
 	function hasMarkdownSyntax(text: string): boolean {

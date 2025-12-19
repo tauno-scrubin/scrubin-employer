@@ -126,7 +126,10 @@
 			"noMatchesFound": "No matches found",
 			"noMatchesDescription": "We couldn't find any healthcare workers matching your criteria. Try adjusting your search parameters or broadening your requirements.",
 			"pleaseSelectCandidate": "Please select at least one candidate",
-			"errorAnalyzingRequirements": "Error analyzing requirements: "
+			"errorAnalyzingRequirements": "Error analyzing requirements: ",
+			"howScrubinWorks": "Learn how Scrubin works,",
+			"readHere": "read here",
+			"search": "Search"
 		},
 		"pricing": {
 			"perMonth": "/month"
