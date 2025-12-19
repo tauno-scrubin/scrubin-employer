@@ -79,9 +79,9 @@
 			"button": "Aktiveeri otsing"
 		},
 		"planRequired": {
-			"title": "Planeerimine nõutav",
-			"description": "Peate esmalt aktiveerima plaani Hinnad vahekaardil, et alustada otsingut.",
-			"button": "Mine Hinnadesse"
+			"title": "Jätkamiseks aktiveeri värbamisplaan",
+			"description": "Sihtotsingu aktiveerimiseks vali esmalt Hinnastamise lehelt värbamisplaan.",
+			"button": "Vali värbamisplaan"
 		},
 		"fields": {
 			"targetCountries": "Sihtriigid",

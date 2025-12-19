@@ -80,9 +80,9 @@
 			"button": "Activate Hunt"
 		},
 		"planRequired": {
-			"title": "Plan required",
+			"title": "Active plan is required",
 			"description": "You must first activate a plan in the Pricing tab to start your hunt.",
-			"button": "Go to Pricing"
+			"button": "Choose your plan"
 		},
 		"fields": {
 			"targetCountries": "Target countries",

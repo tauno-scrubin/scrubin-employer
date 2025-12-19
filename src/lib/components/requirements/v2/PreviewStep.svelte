@@ -11,7 +11,10 @@
 		AlertCircle,
 		CheckCircle,
 		GraduationCap,
-		Target
+		Target,
+
+		TriangleAlert
+
 	} from 'lucide-svelte';
 	import { onMount } from 'svelte';
 	import { get } from 'svelte/store';
@@ -125,7 +128,7 @@
 	</div>
 
 	<!-- Completeness Status -->
-	{#if isComplete}
+	{#if isComplete && companyActivePlans.some((p) => p.planActive)}
 		<div class="flex items-center gap-3 rounded-lg border border-green-200 bg-green-50 p-4">
 			<CheckCircle class="h-6 w-6 text-green-600" />
 			<div>
@@ -137,7 +140,8 @@
 				</p>
 			</div>
 		</div>
-	{:else}
+	{/if}
+	{#if !isComplete}
 		<div class="flex items-center gap-3 rounded-lg border border-amber-200 bg-amber-50 p-4">
 			<AlertCircle class="h-6 w-6 text-amber-600" />
 			<div>
@@ -146,6 +150,27 @@
 					{$t('requirementsV2.preview.missingInfo.description')}
 					<strong>{missingFields().join(', ')}</strong>
 				</p>
+			</div>
+		</div>
+		{/if}
+
+	<!-- Plan Required Notification -->
+	{#if isComplete && companyActivePlans.length === 0}
+		<div class="flex items-center gap-3 rounded-lg border yellow-red-200 bg-yellow-50 p-4">
+			<TriangleAlert class="h-6 w-6 text-yellow-600" />
+			<div class="flex-1">
+				<p class="font-semibold text-yellow-900">
+					{$t('requirementsDetails.planRequired.title')}
+				</p>
+				<p class="text-sm text-yellow-700">
+					{$t('requirementsDetails.planRequired.description')}
+				</p>
+				<a
+					href="/dashboard/pricing"
+					class="mt-2 inline-block text-sm font-medium text-yellow-900 underline hover:text-yellow-950"
+				>
+					{$t('requirementsDetails.planRequired.button')}
+				</a>
 			</div>
 		</div>
 	{/if}
