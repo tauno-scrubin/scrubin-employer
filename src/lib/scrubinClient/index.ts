@@ -477,6 +477,28 @@ export interface HuntPaymentResponse extends PaymentIntent {
 	paymentStatus?: string;
 }
 
+// Card management interfaces
+export interface PaymentMethodDto {
+	id: string;
+	card: {
+		brand: string;
+		last4: string;
+		expMonth: number;
+		expYear: number;
+	};
+	isDefault: boolean;
+	created: number;
+}
+
+export interface CreatePaymentMethodRequest {
+	paymentMethodId: string;
+	setAsDefault?: boolean;
+}
+
+export interface UpdateSubscriptionPaymentMethodRequest {
+	paymentMethodId: string;
+}
+
 // Add new interfaces for the huntable details
 export interface WorkExperience {
 	company: string;
@@ -661,6 +683,7 @@ export interface CompanyPlanSummary {
 	id: number;
 	planType: string;
 	planActive: boolean;
+	stripeSubscription?: string;
 	dateStarted: string;
 	dateEnded: string | null;
 	termsUrl?: string;
@@ -1108,6 +1131,32 @@ class CompanyResource extends BaseResource {
 	async getStripeInvoices(): Promise<InvoiceDto[]> {
 		const url = new URL(`${this.path}/billing/stripe/invoices`, this.client.baseUrl);
 		return this.request<InvoiceDto[]>('GET', url.toString()) as Promise<InvoiceDto[]>;
+	}
+
+	// Card management methods
+	async getPaymentMethods(): Promise<PaymentMethodDto[]> {
+		const url = new URL(`${this.path}/billing/payment-methods`, this.client.baseUrl);
+		return this.request<PaymentMethodDto[]>('GET', url.toString()) as Promise<PaymentMethodDto[]>;
+	}
+
+	async addPaymentMethod(data: CreatePaymentMethodRequest): Promise<PaymentMethodDto> {
+		const url = new URL(`${this.path}/billing/payment-methods`, this.client.baseUrl);
+		return this.request<PaymentMethodDto>('POST', url.toString(), data) as Promise<PaymentMethodDto>;
+	}
+
+	async removePaymentMethod(paymentMethodId: string): Promise<void> {
+		const url = new URL(`${this.path}/billing/payment-methods/${paymentMethodId}`, this.client.baseUrl);
+		return this.request<void>('DELETE', url.toString(), undefined, true) as Promise<void>;
+	}
+
+	async setDefaultPaymentMethod(paymentMethodId: string): Promise<void> {
+		const url = new URL(`${this.path}/billing/payment-methods/${paymentMethodId}/default`, this.client.baseUrl);
+		return this.request<void>('PATCH', url.toString(), undefined, true) as Promise<void>;
+	}
+
+	async updateSubscriptionPaymentMethod(subscriptionId: string, data: UpdateSubscriptionPaymentMethodRequest): Promise<void> {
+		const url = new URL(`${this.path}/billing/subscriptions/${subscriptionId}/payment-method`, this.client.baseUrl);
+		return this.request<void>('PATCH', url.toString(), data, true) as Promise<void>;
 	}
 
 	async getActivePlans(): Promise<CompanyPlanSummary[]> {

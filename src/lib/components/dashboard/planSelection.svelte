@@ -31,6 +31,7 @@
 		Zap
 	} from 'lucide-svelte';
 	import { toast } from 'svelte-sonner';
+	import CardManagement from '$lib/components/billing/cardManagement.svelte';
 
 	// Props
 	interface Props {
@@ -52,8 +53,10 @@
 	let confirmationDialogOpen = $state(false);
 	let planToSubscribe: AvailablePlan | null = $state(null);
 	let selectedPaymentMethod = $state<'card' | 'invoice'>('card');
+	let selectedCardId = $state<string>('');
 	let companyInfo: Company | null = $state(null);
 	let termsAccepted = $state(false);
+	let hasSavedCards = $state(false);
 
 	// Enterprise contact dialog state
 	let contactDialogOpen = $state(false);
@@ -165,6 +168,15 @@
 
 			availablePlans = plans;
 			paymentMethods = response.paymentMethods;
+
+			// Check if user has saved cards
+			try {
+				const cards = await scrubinClient.company.getPaymentMethods();
+				hasSavedCards = cards.length > 0;
+			} catch (err) {
+				console.warn('Could not fetch payment methods:', err);
+				hasSavedCards = false;
+			}
 		} catch (err) {
 			error = (err as Error).message;
 			console.error('Failed to fetch available plans:', err);
@@ -178,12 +190,67 @@
 		onPlanSelected?.(plan);
 	};
 
-	const handleSubscribe = (plan: AvailablePlan) => {
+	const createSubscriptionWithCheckout = async (plan: AvailablePlan) => {
+		if (!plan.planId) {
+			toast.error($t('pricing.planSelection.toast.planNotAvailable'));
+			return;
+		}
+
+		try {
+			isCreatingSubscription = true;
+
+			const subscriptionData: CreateSubscriptionRequest = {
+				planId: plan.planId,
+				paymentMethod: 'card',
+				// No stripePaymentMethodId - backend will return checkoutUrl
+				couponCode: couponCode.trim() || undefined,
+				termsUrl: $t('pricing.planSelection.hiringTermsUrl'),
+				privacyPolicyUrl: $t('pricing.planSelection.privacyPolicyUrl'),
+				termsOfServiceUrl: $t('pricing.planSelection.termsOfServiceUrl'),
+				acceptanceDate: new Date().toISOString()
+			};
+
+			const response = await scrubinClient.company.createSubscription(subscriptionData);
+
+			if (response.checkoutUrl) {
+				// Redirect to Stripe checkout
+				const currentUrl = new URL(window.location.href);
+				const successUrl = `${currentUrl.origin}/dashboard/pricing?subscription=success`;
+				const cancelUrl = `${currentUrl.origin}/dashboard/pricing?subscription=cancelled`;
+
+				const checkoutUrl = new URL(response.checkoutUrl);
+				checkoutUrl.searchParams.set('success_url', successUrl);
+				checkoutUrl.searchParams.set('cancel_url', cancelUrl);
+
+				window.location.href = checkoutUrl.toString();
+			} else {
+				// Unexpected: backend should always return checkoutUrl when no payment method provided
+				toast.error('Unable to process payment. Please try again.');
+			}
+		} catch (err) {
+			const errorMessage = err instanceof Error ? err.message : 'Failed to create subscription';
+			toast.error(errorMessage);
+			console.error('Subscription creation failed:', err);
+		} finally {
+			isCreatingSubscription = false;
+		}
+	};
+
+	const handleSubscribe = async (plan: AvailablePlan) => {
 		planToSubscribe = plan;
 		// Set default payment method based on available methods
 		selectedPaymentMethod = paymentMethods.includes('card')
 			? 'card'
 			: (paymentMethods[0] as 'card' | 'invoice');
+
+		// If card payment but no saved cards, redirect to Stripe Checkout immediately
+		if (selectedPaymentMethod === 'card' && !hasSavedCards) {
+			await createSubscriptionWithCheckout(plan);
+			return;
+		}
+
+		// Otherwise show confirmation dialog for card selection or invoice
+		selectedCardId = '';
 		termsAccepted = false;
 		confirmationDialogOpen = true;
 	};
@@ -194,6 +261,12 @@
 			return;
 		}
 
+		// Validate card selection for card payments
+		if (selectedPaymentMethod === 'card' && !selectedCardId) {
+			toast.error($t('pricing.planSelection.toast.selectCard') || 'Please select a payment card');
+			return;
+		}
+
 		try {
 			isCreatingSubscription = true;
 			confirmationDialogOpen = false;
@@ -201,6 +274,7 @@
 			const subscriptionData: CreateSubscriptionRequest = {
 				planId: planToSubscribe.planId,
 				paymentMethod: selectedPaymentMethod,
+				stripePaymentMethodId: selectedPaymentMethod === 'card' ? selectedCardId : undefined,
 				couponCode: couponCode.trim() || undefined,
 				termsUrl: $t('pricing.planSelection.hiringTermsUrl'),
 				privacyPolicyUrl: $t('pricing.planSelection.privacyPolicyUrl'),
@@ -208,25 +282,11 @@
 				acceptanceDate: new Date().toISOString()
 			};
 
-			const response = await scrubinClient.company.createSubscription(subscriptionData);
+			await scrubinClient.company.createSubscription(subscriptionData);
 
-			if (selectedPaymentMethod === 'card' && response.checkoutUrl) {
-				// Redirect to Stripe checkout for card payments
-				// Add success/cancel URLs to maintain session context
-				const currentUrl = new URL(window.location.href);
-				const successUrl = `${currentUrl.origin}/dashboard/pricing?subscription=success`;
-				const cancelUrl = `${currentUrl.origin}/dashboard/pricing?subscription=cancelled`;
-
-				const checkoutUrl = new URL(response.checkoutUrl);
-				checkoutUrl.searchParams.set('success_url', successUrl);
-				checkoutUrl.searchParams.set('cancel_url', cancelUrl);
-
-				window.location.href = checkoutUrl.toString();
-			} else if (selectedPaymentMethod === 'invoice') {
-				// For invoice payments, trigger parent component to refresh active plans
-				onSubscriptionCreated?.();
-				toast.success($t('pricing.planSelection.toast.subscriptionCreated'));
-			}
+			// With saved card or invoice, subscription completes in-app
+			onSubscriptionCreated?.();
+			toast.success($t('pricing.planSelection.toast.subscriptionCreated'));
 		} catch (err) {
 			const errorMessage = err instanceof Error ? err.message : 'Failed to create subscription';
 			toast.error(errorMessage);
@@ -533,11 +593,11 @@
 					{$t('pricing.planSelection.confirmDescriptionFree')}
 				{/if}
 			</Dialog.Description>
-		</Dialog.Header>
+	</Dialog.Header>
 
-		{#if planToSubscribe}
-			<div class="py-4">
-				<div class="rounded-md bg-muted/50 p-4">
+	{#if planToSubscribe}
+		<div class="max-h-[60vh] overflow-y-auto py-4">
+			<div class="rounded-md bg-muted/50 p-4">
 					<div class="mb-2 flex items-center gap-2">
 						<AlertCircle class="h-4 w-4 text-primary" />
 						<span class="text-sm font-medium">{$t('pricing.planSelection.planDetails')}</span>
@@ -629,6 +689,22 @@
 								</label>
 							{/each}
 						</div>
+					</div>
+				{/if}
+
+				<!-- Card Selection (only shown when card payment is selected) -->
+				{#if selectedPaymentMethod === 'card'}
+					<div class="mt-4 space-y-3">
+						<div class="text-sm font-medium">
+							{$t('pricing.planSelection.selectCard') || 'Select Payment Card'}
+						</div>
+						<CardManagement
+							mode="selector"
+							bind:selectedCardId={selectedCardId}
+							onCardSelected={(cardId) => {
+								selectedCardId = cardId;
+							}}
+						/>
 					</div>
 				{/if}
 

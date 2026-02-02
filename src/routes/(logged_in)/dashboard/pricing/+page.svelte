@@ -1,12 +1,16 @@
 <script lang="ts">
-	import PlanSelection from '$lib/components/dashboard/planSelection.svelte';
+	import { onMount } from 'svelte';
+	import { toast } from 'svelte-sonner';
+	import { BadgeCheck, Calendar, CreditCard, Info, InfoIcon, Loader2, Send, Sparkles, Stethoscope, Users } from 'lucide-svelte';
+	import { t } from '$lib/i18n';
+	import { scrubinClient } from '@/scrubinClient/client.js';
 	import { getCurrencySymbol } from '$lib/components/payment/payments';
 	import { Button } from '$lib/components/ui/button';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import { Label } from '$lib/components/ui/label';
 	import { Textarea } from '$lib/components/ui/textarea';
-	import { t } from '$lib/i18n';
-	import { scrubinClient } from '@/scrubinClient/client.js';
+	import PlanSelection from '$lib/components/dashboard/planSelection.svelte';
+	import PaymentMethodsDialog from '$lib/components/billing/paymentMethodsDialog.svelte';
 	import type {
 		AvailablePlan,
 		Company,
@@ -15,9 +19,6 @@
 		CompanyPlanSummary,
 		InvoiceDto
 	} from '@/scrubinClient/index.js';
-	import { BadgeCheck, Calendar, Info, InfoIcon, Loader2, Send, Sparkles, Stethoscope, Users } from 'lucide-svelte';
-	import { onMount } from 'svelte';
-	import { toast } from 'svelte-sonner';
 
 	// State
 	let activePlans = $state<CompanyPlanSummary[]>([]);
@@ -33,6 +34,9 @@
 	let contactDialogOpen = $state(false);
 	let contactMessage = $state('');
 	let isSending = $state(false);
+
+	// Payment methods dialog state
+	let paymentMethodsDialogOpen = $state(false);
 
 	// Fetch plan details for a specific plan ID
 	const fetchPlanDetails = async (planId: number) => {
@@ -209,12 +213,15 @@
 						{$t('pricing.activePlans.title')}
 					</h2>
 				</div>
-				<div class="space-y-6">
-					{#each activePlans as plan}
-						<div class="overflow-hidden rounded-xl border border-border">
-							<div class="p-6 sm:p-8">
-								<div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-									<div class="flex-1">
+			<div class="space-y-6">
+				{#each activePlans as plan}
+					{@const currentPlanDetails = planDetails.find((d) => d.id === plan.id)}
+					{@const paymentMethod = currentPlanDetails?.planPaymentMethod?.toLowerCase()}
+					{@const hasMatchingSubscription = plan.stripeSubscription && subscriptions.some(sub => sub.id === plan.stripeSubscription)}
+					<div class="rounded-xl border border-border">
+						<div class="p-6 sm:p-8">
+							<div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+								<div class="flex-1">
 										<div class="mb-3 flex items-center gap-3">
 											<div class="rounded-full bg-green-100 p-2">
 												<BadgeCheck class="h-5 w-5 text-green-600 sm:h-6 sm:w-6" />
@@ -229,14 +236,14 @@
 													{$t('pricing.activePlans.activeSince')}
 													{new Date(plan.dateStarted).toLocaleDateString()}
 												</p>
-											</div>
 										</div>
+									</div>
 
-										{#if planDetails.find((d) => d.id === plan.id)}
-											{@const pd = planDetails.find((d) => d.id === plan.id)!}
-											{@const planActivationDate = new Date(plan.dateStarted)}
-											{@const isOldSuccessFee = planActivationDate < new Date('2024-10-21')}
-											{@const isOldStartFee = planActivationDate < new Date('2024-10-22')}
+									{#if currentPlanDetails}
+										{@const pd = currentPlanDetails}
+										{@const planActivationDate = new Date(plan.dateStarted)}
+										{@const isOldSuccessFee = planActivationDate < new Date('2024-10-21')}
+										{@const isOldStartFee = planActivationDate < new Date('2024-10-22')}
 
 											<!-- Custom Plan Description -->
 											{#if pd.customPlanDescription}
@@ -416,14 +423,27 @@
 											</div>
 										{/if}
 									</div>
-									<Button
-										variant="outline"
-										size="sm"
-										onclick={() => handleEndPlan()}
-										class="w-full flex-shrink-0 hover:bg-destructive/10 hover:text-destructive sm:w-auto"
-									>
-										{$t('pricing.activePlans.endPlan')}
-									</Button>
+									<div class="flex flex-col gap-2 sm:flex-row">
+										{#if hasMatchingSubscription}
+											<Button
+												variant="outline"
+												size="sm"
+												onclick={() => (paymentMethodsDialogOpen = true)}
+												class="w-full flex-shrink-0 sm:w-auto"
+											>
+												<CreditCard class="mr-2 h-4 w-4" />
+												{$t('pricing.activePlans.managePaymentMethods') || 'Manage Payment Methods'}
+											</Button>
+										{/if}
+										<Button
+											variant="outline"
+											size="sm"
+											onclick={() => handleEndPlan()}
+											class="w-full flex-shrink-0 hover:bg-destructive/10 hover:text-destructive sm:w-auto"
+										>
+											{$t('pricing.activePlans.endPlan')}
+										</Button>
+									</div>
 								</div>
 							</div>
 						</div>
@@ -636,3 +656,6 @@
 		</form>
 	</Dialog.Content>
 </Dialog.Root>
+
+<!-- Payment Methods Dialog -->
+<PaymentMethodsDialog bind:open={paymentMethodsDialogOpen} />

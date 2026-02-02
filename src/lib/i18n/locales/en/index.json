@@ -488,6 +488,7 @@
 			"baseFee": "Base fee",
 			"viewSuccessFees": "View success fees",
 			"endPlan": "End Plan",
+			"managePaymentMethods": "Manage Payment Methods",
 			"doctorsTitle": "Doctors",
 			"otherProfessionalsTitle": "Nurses and other healthcare professionals",
 			"startFee": "Start fee",
@@ -567,7 +568,38 @@
 			"downloadPdf": "Download PDF",
 			"viewOnline": "View online"
 		},
+		"cardManagement": {
+			"sectionTitle": "Payment Methods",
+			"title": "Payment Methods",
+			"description": "Manage your saved payment methods",
+			"manageCards": "Manage Payment Methods",
+			"manageCardsDescription": "Add, remove, or set your default payment method",
+			"addCard": "Add Card",
+			"addFirstCard": "Add your first card",
+			"addAnotherCard": "Add Another Card",
+			"noCards": "No payment methods saved",
+			"noCardsSelector": "No saved cards. Add one to continue.",
+			"default": "Default",
+			"expires": "Expires",
+			"setDefault": "Set Default",
+			"cancel": "Cancel",
+			"adding": "Adding...",
+			"addCardTitle": "Add Payment Card",
+			"addCardDescription": "Enter your card details. Your information is securely processed by Stripe.",
+			"cardNumber": "Card Number",
+			"expiryDate": "Expiry Date",
+			"cvc": "CVC",
+			"secureInfo": "Your card details are encrypted and never stored on our servers.",
+			"loadError": "Failed to load payment methods",
+			"stripeNotLoaded": "Payment system not ready",
+			"cardAdded": "Card added successfully",
+			"cardRemoved": "Card removed successfully",
+			"defaultSet": "Default card updated",
+			"cannotRemoveDefault": "Cannot remove default payment method",
+			"cannotRemoveLast": "Cannot remove the only payment method"
+		},
 		"planSelection": {
+			"selectCard": "Select Payment Card",
 			"paymentInfo": "Split payment: 50% when candidate signs, 50% when they start",
 			"terms": "By confirming, you agree to our <a href='https://scrubin.io/terms-and-conditions' target='_blank'>Terms of Service</a> and <a href='https://scrubin.io/privacy-policy' target='_blank'>Privacy Policy</a>",
 			"hiringTermsUrl": "https://drive.google.com/file/d/1qZYhxByRASYr3RErdxCBg4Ci6Smifib8/view?usp=sharing",
@@ -685,7 +717,8 @@
 				"subscriptionCreated": "Subscription created successfully!",
 				"messageSent": "Message sent! We will get back to you shortly.",
 				"enterMessage": "Please enter a message",
-				"failedToSend": "Failed to send message"
+				"failedToSend": "Failed to send message",
+				"selectCard": "Please select a payment card"
 			}
 		}
 	}

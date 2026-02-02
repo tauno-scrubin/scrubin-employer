@@ -483,6 +483,7 @@
 			"baseFee": "Baastasu",
 			"viewSuccessFees": "Vaata tulemustasuid",
 			"endPlan": "Lõpeta pakett",
+			"managePaymentMethods": "Halda makseviise",
 			"doctorsTitle": "Arstid",
 			"otherProfessionalsTitle": "Teised tervishoiutöötajad",
 			"startFee": "Alustustasu",
@@ -562,7 +563,38 @@
 			"downloadPdf": "Laadi PDF",
 			"viewOnline": "Vaata veebis"
 		},
+		"cardManagement": {
+			"sectionTitle": "Makseviisid",
+			"title": "Makseviisid",
+			"description": "Halda salvestatud makseviise",
+			"manageCards": "Halda makseviise",
+			"manageCardsDescription": "Lisa, eemalda või määra vaikimisi makseviis",
+			"addCard": "Lisa kaart",
+			"addFirstCard": "Lisa oma esimene kaart",
+			"addAnotherCard": "Lisa teine kaart",
+			"noCards": "Makseviisid puuduvad",
+			"noCardsSelector": "Salvestatud kaarte pole. Lisa kaart jätkamiseks.",
+			"default": "Vaikimisi",
+			"expires": "Aegub",
+			"setDefault": "Määra vaikimisi",
+			"cancel": "Tühista",
+			"adding": "Lisan...",
+			"addCardTitle": "Lisa maksekaart",
+			"addCardDescription": "Sisesta oma kaardi andmed. Sinu teave töödeldakse turvaliselt Stripe'i kaudu.",
+			"cardNumber": "Kaardi number",
+			"expiryDate": "Kehtivusaeg",
+			"cvc": "CVC",
+			"secureInfo": "Sinu kaardi andmed on krüpteeritud ega salvestata meie serverites.",
+			"loadError": "Makseviisid ei laadunud",
+			"stripeNotLoaded": "Maksesüsteem pole valmis",
+			"cardAdded": "Kaart edukalt lisatud",
+			"cardRemoved": "Kaart edukalt eemaldatud",
+			"defaultSet": "Vaikimisi kaart uuendatud",
+			"cannotRemoveDefault": "Vaikimisi makseviisi ei saa eemaldada",
+			"cannotRemoveLast": "Ainsat makseviisi ei saa eemaldada"
+		},
 		"planSelection": {
+			"selectCard": "Vali maksekaart",
 			"paymentInfo": "Jagatud makse: 50% kandidaadi allkirjastamisel, 50% töö alustamisel",
 			"recommended": "Soovitatud",
 			"mostPopular": "Kõige populaarsem",
@@ -680,7 +712,8 @@
 				"subscriptionCreated": "Tellimus loodud edukalt!",
 				"messageSent": "Sõnum saadetud! Võtame peagi ühendust.",
 				"enterMessage": "Palun sisesta sõnum",
-				"failedToSend": "Sõnumi saatmine ebaõnnestus"
+				"failedToSend": "Sõnumi saatmine ebaõnnestus",
+				"selectCard": "Palun vali maksekaart"
 			}
 		}
 	}
