@@ -171,8 +171,8 @@
 				"description": "Kandidaadid, kes on huvi näidanud"
 			},
 			"under_review": {
-				"label": "Ülevaatamisel",
-				"description": "Kandidaadid, keda teie meeskond ülevaatab"
+				"label": "Vestluses",
+				"description": "Kandidaadid, kellega olete aktiivses vestluses"
 			},
 			"meeting_scheduled": {
 				"label": "Kohtumine plaanitud",

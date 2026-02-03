@@ -172,8 +172,8 @@
 				"description": "Candidates who showed interest"
 			},
 			"under_review": {
-				"label": "Under Review",
-				"description": "Candidates being reviewed by your team"
+				"label": "In conversation",
+				"description": "Candidates you're in active conversation with"
 			},
 			"meeting_scheduled": {
 				"label": "Meeting Scheduled",

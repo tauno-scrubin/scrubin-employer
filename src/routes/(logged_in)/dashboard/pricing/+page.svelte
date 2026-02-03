@@ -220,233 +220,234 @@
 					{@const hasMatchingSubscription = plan.stripeSubscription && subscriptions.some(sub => sub.id === plan.stripeSubscription)}
 					<div class="rounded-xl border border-border">
 						<div class="p-6 sm:p-8">
-							<div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-								<div class="flex-1">
-										<div class="mb-3 flex items-center gap-3">
-											<div class="rounded-full bg-green-100 p-2">
-												<BadgeCheck class="h-5 w-5 text-green-600 sm:h-6 sm:w-6" />
-											</div>
-											<div>
-												<h3 class="text-lg font-bold text-foreground sm:text-xl">
-													{plan.planType === 'success_fee'
-														? $t('pricing.planSelection.successFee')
-														: plan.planType.replace('_', ' ').toUpperCase()}
-												</h3>
-												<p class="text-sm text-muted-foreground">
-													{$t('pricing.activePlans.activeSince')}
-													{new Date(plan.dateStarted).toLocaleDateString()}
-												</p>
-										</div>
+							<!-- Plan Header -->
+							<div class="mb-6">
+								<div class="mb-3 flex items-center gap-3">
+									<div class="rounded-full bg-green-100 p-2">
+										<BadgeCheck class="h-5 w-5 text-green-600 sm:h-6 sm:w-6" />
 									</div>
-
-									{#if currentPlanDetails}
-										{@const pd = currentPlanDetails}
-										{@const planActivationDate = new Date(plan.dateStarted)}
-										{@const isOldSuccessFee = planActivationDate < new Date('2024-10-21')}
-										{@const isOldStartFee = planActivationDate < new Date('2024-10-22')}
-
-											<!-- Custom Plan Description -->
-											{#if pd.customPlanDescription}
-												<div class="mt-4 rounded-xl border border-primary/10 bg-primary/5 p-4">
-													<div class="mb-2 flex items-center gap-2">
-														<Sparkles class="h-4 w-4 text-primary" />
-														<h4 class="text-sm font-semibold text-primary">
-															{$t('pricing.activePlans.customPlanDetails')}
-														</h4>
-													</div>
-													<p class="text-sm leading-relaxed text-foreground/80">
-														{pd.customPlanDescription}
-													</p>
-												</div>
-											{/if}
-
-											<!-- General Fee / Base Fee -->
-											<div class="mt-4 grid gap-3 sm:grid-cols-2">
-												{#if pd.pricingGeneral}
-													<div class="rounded-lg border border-border/50 bg-muted/30 p-4">
-														<p class="text-xs font-medium text-muted-foreground">
-															{isOldStartFee
-																? $t('pricing.activePlans.generalFee')
-																: $t('pricing.activePlans.baseFee')}
-														</p>
-														<p class="mt-1 text-lg font-bold text-foreground">
-															{pd.pricingGeneral.amount}
-															{getCurrencySymbol(pd.pricingGeneral.currency)}
-														</p>
-														<p class="text-xs text-muted-foreground">
-															{$t('pricing.availablePlans.vatLabel', { percentage: '24' })}
-														</p>
-													</div>
-												{:else if pd.pricingSuccess && !isOldStartFee}
-													<!-- For new success fee plans, show base fee from startFee -->
-													<div class="rounded-lg border border-border/50 bg-muted/30 p-4">
-														<p class="text-xs font-medium text-muted-foreground">
-															{$t('pricing.activePlans.baseFee')}
-														</p>
-														<p class="mt-1 text-lg font-bold text-foreground">
-															{pd.pricingSuccess.doctor.startFee.amount}
-															{getCurrencySymbol(pd.pricingSuccess.doctor.startFee.currency)}
-														</p>
-														<p class="text-xs text-muted-foreground">
-															{$t('pricing.availablePlans.vatLabel', { percentage: '24' })}
-														</p>
-													</div>
-												{/if}
-											</div>
-
-											<!-- Success Fees -->
-											{#if pd.pricingSuccess}
-												<div class="mt-4 space-y-4">
-													<h4 class="text-sm font-semibold text-foreground">
-														{$t('pricing.activePlans.viewSuccessFees')}
-													</h4>
-
-													<div class="grid gap-3 sm:grid-cols-2">
-														<!-- Doctors Section -->
-														<div class="rounded-lg border border-border/50 bg-muted/30 p-4">
-															<div class="mb-2 flex items-center gap-2">
-																<Stethoscope class="h-4 w-4 text-primary" />
-																<p class="text-xs font-medium text-muted-foreground">
-																	{$t('pricing.activePlans.doctorsTitle')}
-																</p>
-															</div>
-															{#if isOldStartFee}
-																<div class="mb-2">
-																	<p class="text-xs text-muted-foreground">
-																		{$t('pricing.activePlans.startFee')}
-																	</p>
-																	<p class="text-base font-semibold text-foreground">
-																		{pd.pricingSuccess.doctor.startFee.amount}
-																		{getCurrencySymbol(pd.pricingSuccess.doctor.startFee.currency)}
-																	</p>
-																</div>
-															{/if}
-															<p class="text-lg font-bold text-foreground">
-																{pd.pricingSuccess.doctor.successFee.amount}
-																{getCurrencySymbol(pd.pricingSuccess.doctor.successFee.currency)}
-															</p>
-														</div>
-
-														<!-- Other Professionals Section -->
-														<div class="rounded-lg border border-border/50 bg-muted/30 p-4">
-															<div class="mb-2 flex items-center gap-2">
-																<Users class="h-4 w-4 text-primary" />
-																<p class="text-xs font-medium text-muted-foreground">
-																	{$t('pricing.activePlans.otherProfessionalsTitle')}
-																</p>
-															</div>
-															{#if isOldStartFee}
-																<div class="mb-2">
-																	<p class="text-xs text-muted-foreground">
-																		{$t('pricing.activePlans.startFee')}
-																	</p>
-																	<p class="text-base font-semibold text-foreground">
-																		{pd.pricingSuccess.other.startFee.amount}
-																		{getCurrencySymbol(pd.pricingSuccess.other.startFee.currency)}
-																	</p>
-																</div>
-															{/if}
-															<p class="text-lg font-bold text-foreground">
-																{pd.pricingSuccess.other.successFee.amount}
-																{getCurrencySymbol(pd.pricingSuccess.other.successFee.currency)}
-															</p>
-														</div>
-													</div>
-
-													<p class="text-xs text-muted-foreground">
-														{$t('pricing.activePlans.perHiredCandidate')}
-													</p>
-
-													<!-- Success Fee Notice -->
-													<div
-														class="flex items-start gap-3 rounded-lg border border-blue-200 bg-blue-50 p-4"
-													>
-														<InfoIcon class="h-5 w-5 flex-shrink-0 text-blue-600" />
-														<p class="text-sm leading-relaxed text-blue-900">
-															{isOldSuccessFee
-																? $t('pricing.availablePlans.successFeeNotice')
-																: $t('pricing.planSelection.paymentInfo')}
-														</p>
-													</div>
-												</div>
-											{/if}
-										{/if}
-
-										<!-- Accepted Terms -->
-										{#if plan.acceptanceDate}
-											<div class="mt-4 rounded-lg border border-border/50 bg-muted/30 p-4">
-												<div class="flex items-center gap-2">
-													<InfoIcon class="h-4 w-4 text-muted-foreground" />
-													<p class="text-xs font-medium text-muted-foreground">
-														{$t('pricing.activePlans.acceptedTerms') || 'Terms Accepted'}
-													</p>
-												</div>
-												<div class="mt-2 space-y-2">
-													<div class="flex flex-wrap gap-x-2 gap-y-1 text-sm">
-														{#if plan.termsUrl}
-															<a
-																href={plan.termsUrl}
-																target="_blank"
-																rel="noopener noreferrer"
-																class="font-medium text-primary underline hover:text-primary/80"
-															>
-																{$t('pricing.activePlans.viewTerms') || 'View Hiring Terms & Conditions'}
-															</a>
-														{/if}
-														{#if plan.privacyPolicyUrl}
-														{#if plan.termsUrl}<span class="text-muted-foreground">•</span>{/if}
-															<a
-																href={plan.privacyPolicyUrl}
-																target="_blank"
-																rel="noopener noreferrer"
-																class="font-medium text-primary underline hover:text-primary/80"
-															>
-																{$t('pricing.planSelection.privacyPolicy') || 'Privacy Policy'}
-															</a>
-														{/if}
-														{#if plan.termsOfServiceUrl}
-															<span class="text-muted-foreground">•</span>
-															<a
-																href={plan.termsOfServiceUrl}
-																target="_blank"
-																rel="noopener noreferrer"
-																class="font-medium text-primary underline hover:text-primary/80"
-															>
-																{$t('pricing.planSelection.termsOfService') || 'Terms of Service'}
-															</a>
-														{/if}
-													</div>
-													<p class="text-xs text-muted-foreground">
-														{$t('pricing.activePlans.acceptedOn') || 'Accepted on'}: {new Date(plan.acceptanceDate).toLocaleString()}
-													</p>
-												</div>
-											</div>
-										{/if}
-									</div>
-									<div class="flex flex-col gap-2 sm:flex-row">
-										{#if hasMatchingSubscription}
-											<Button
-												variant="outline"
-												size="sm"
-												onclick={() => (paymentMethodsDialogOpen = true)}
-												class="w-full flex-shrink-0 sm:w-auto"
-											>
-												<CreditCard class="mr-2 h-4 w-4" />
-												{$t('pricing.activePlans.managePaymentMethods') || 'Manage Payment Methods'}
-											</Button>
-										{/if}
-										<Button
-											variant="outline"
-											size="sm"
-											onclick={() => handleEndPlan()}
-											class="w-full flex-shrink-0 hover:bg-destructive/10 hover:text-destructive sm:w-auto"
-										>
-											{$t('pricing.activePlans.endPlan')}
-										</Button>
+									<div>
+										<h3 class="text-lg font-bold text-foreground sm:text-xl">
+											{plan.planType === 'success_fee'
+												? $t('pricing.planSelection.successFee')
+												: plan.planType.replace('_', ' ').toUpperCase()}
+										</h3>
+										<p class="text-sm text-muted-foreground">
+											{$t('pricing.activePlans.activeSince')}
+											{new Date(plan.dateStarted).toLocaleDateString()}
+										</p>
 									</div>
 								</div>
+
+								{#if currentPlanDetails}
+									{@const pd = currentPlanDetails}
+									{@const planActivationDate = new Date(plan.dateStarted)}
+									{@const isOldSuccessFee = planActivationDate < new Date('2024-10-21')}
+									{@const isOldStartFee = planActivationDate < new Date('2024-10-22')}
+
+									<!-- Custom Plan Description -->
+									{#if pd.customPlanDescription}
+										<div class="mt-4 rounded-xl border border-primary/10 bg-primary/5 p-4">
+											<div class="mb-2 flex items-center gap-2">
+												<Sparkles class="h-4 w-4 text-primary" />
+												<h4 class="text-sm font-semibold text-primary">
+													{$t('pricing.activePlans.customPlanDetails')}
+												</h4>
+											</div>
+											<p class="text-sm leading-relaxed text-foreground/80">
+												{pd.customPlanDescription}
+											</p>
+										</div>
+									{/if}
+
+									<!-- General Fee / Base Fee -->
+									<div class="mt-4 grid gap-3 sm:grid-cols-2">
+										{#if pd.pricingGeneral}
+											<div class="rounded-lg border border-border/50 bg-muted/30 p-4">
+												<p class="text-xs font-medium text-muted-foreground">
+													{isOldStartFee
+														? $t('pricing.activePlans.generalFee')
+														: $t('pricing.activePlans.baseFee')}
+												</p>
+												<p class="mt-1 text-lg font-bold text-foreground">
+													{pd.pricingGeneral.amount}
+													{getCurrencySymbol(pd.pricingGeneral.currency)}
+												</p>
+												<p class="text-xs text-muted-foreground">
+													{$t('pricing.availablePlans.vatLabel', { percentage: '24' })}
+												</p>
+											</div>
+										{:else if pd.pricingSuccess && !isOldStartFee}
+											<!-- For new success fee plans, show base fee from startFee -->
+											<div class="rounded-lg border border-border/50 bg-muted/30 p-4">
+												<p class="text-xs font-medium text-muted-foreground">
+													{$t('pricing.activePlans.baseFee')}
+												</p>
+												<p class="mt-1 text-lg font-bold text-foreground">
+													{pd.pricingSuccess.doctor.startFee.amount}
+													{getCurrencySymbol(pd.pricingSuccess.doctor.startFee.currency)}
+												</p>
+												<p class="text-xs text-muted-foreground">
+													{$t('pricing.availablePlans.vatLabel', { percentage: '24' })}
+												</p>
+											</div>
+										{/if}
+									</div>
+
+									<!-- Success Fees -->
+									{#if pd.pricingSuccess}
+										<div class="mt-4 space-y-4">
+											<h4 class="text-sm font-semibold text-foreground">
+												{$t('pricing.activePlans.viewSuccessFees')}
+											</h4>
+
+											<div class="grid gap-3 sm:grid-cols-2">
+												<!-- Doctors Section -->
+												<div class="rounded-lg border border-border/50 bg-muted/30 p-4">
+													<div class="mb-2 flex items-center gap-2">
+														<Stethoscope class="h-4 w-4 text-primary" />
+														<p class="text-xs font-medium text-muted-foreground">
+															{$t('pricing.activePlans.doctorsTitle')}
+														</p>
+													</div>
+													{#if isOldStartFee}
+														<div class="mb-2">
+															<p class="text-xs text-muted-foreground">
+																{$t('pricing.activePlans.startFee')}
+															</p>
+															<p class="text-base font-semibold text-foreground">
+																{pd.pricingSuccess.doctor.startFee.amount}
+																{getCurrencySymbol(pd.pricingSuccess.doctor.startFee.currency)}
+															</p>
+														</div>
+													{/if}
+													<p class="text-lg font-bold text-foreground">
+														{pd.pricingSuccess.doctor.successFee.amount}
+														{getCurrencySymbol(pd.pricingSuccess.doctor.successFee.currency)}
+													</p>
+												</div>
+
+												<!-- Other Professionals Section -->
+												<div class="rounded-lg border border-border/50 bg-muted/30 p-4">
+													<div class="mb-2 flex items-center gap-2">
+														<Users class="h-4 w-4 text-primary" />
+														<p class="text-xs font-medium text-muted-foreground">
+															{$t('pricing.activePlans.otherProfessionalsTitle')}
+														</p>
+													</div>
+													{#if isOldStartFee}
+														<div class="mb-2">
+															<p class="text-xs text-muted-foreground">
+																{$t('pricing.activePlans.startFee')}
+															</p>
+															<p class="text-base font-semibold text-foreground">
+																{pd.pricingSuccess.other.startFee.amount}
+																{getCurrencySymbol(pd.pricingSuccess.other.startFee.currency)}
+															</p>
+														</div>
+													{/if}
+													<p class="text-lg font-bold text-foreground">
+														{pd.pricingSuccess.other.successFee.amount}
+														{getCurrencySymbol(pd.pricingSuccess.other.successFee.currency)}
+													</p>
+												</div>
+											</div>
+
+											<p class="text-xs text-muted-foreground">
+												{$t('pricing.activePlans.perHiredCandidate')}
+											</p>
+
+											<!-- Success Fee Notice -->
+											<div
+												class="flex items-start gap-3 rounded-lg border border-blue-200 bg-blue-50 p-4"
+											>
+												<InfoIcon class="h-5 w-5 flex-shrink-0 text-blue-600" />
+												<p class="text-sm leading-relaxed text-blue-900">
+													{isOldSuccessFee
+														? $t('pricing.availablePlans.successFeeNotice')
+														: $t('pricing.planSelection.paymentInfo')}
+												</p>
+											</div>
+										</div>
+									{/if}
+								{/if}
+
+								<!-- Accepted Terms -->
+								{#if plan.acceptanceDate}
+									<div class="mt-4 rounded-lg border border-border/50 bg-muted/30 p-4">
+										<div class="flex items-center gap-2">
+											<InfoIcon class="h-4 w-4 text-muted-foreground" />
+											<p class="text-xs font-medium text-muted-foreground">
+												{$t('pricing.activePlans.acceptedTerms') || 'Terms Accepted'}
+											</p>
+										</div>
+										<div class="mt-2 space-y-2">
+											<div class="flex flex-wrap gap-x-2 gap-y-1 text-sm">
+												{#if plan.termsUrl}
+													<a
+														href={plan.termsUrl}
+														target="_blank"
+														rel="noopener noreferrer"
+														class="font-medium text-primary underline hover:text-primary/80"
+													>
+														{$t('pricing.activePlans.viewTerms') || 'View Hiring Terms & Conditions'}
+													</a>
+												{/if}
+												{#if plan.privacyPolicyUrl}
+												{#if plan.termsUrl}<span class="text-muted-foreground">•</span>{/if}
+													<a
+														href={plan.privacyPolicyUrl}
+														target="_blank"
+														rel="noopener noreferrer"
+														class="font-medium text-primary underline hover:text-primary/80"
+													>
+														{$t('pricing.planSelection.privacyPolicy') || 'Privacy Policy'}
+													</a>
+												{/if}
+												{#if plan.termsOfServiceUrl}
+													<span class="text-muted-foreground">•</span>
+													<a
+														href={plan.termsOfServiceUrl}
+														target="_blank"
+														rel="noopener noreferrer"
+														class="font-medium text-primary underline hover:text-primary/80"
+													>
+														{$t('pricing.planSelection.termsOfService') || 'Terms of Service'}
+													</a>
+												{/if}
+											</div>
+											<p class="text-xs text-muted-foreground">
+												{$t('pricing.activePlans.acceptedOn') || 'Accepted on'}: {new Date(plan.acceptanceDate).toLocaleString()}
+											</p>
+										</div>
+									</div>
+								{/if}
+							</div>
+
+							<!-- Action Buttons -->
+							<div class="mt-6 flex flex-col gap-2 border-t border-border pt-6 sm:flex-row">
+								{#if hasMatchingSubscription}
+									<Button
+										variant="outline"
+										size="sm"
+										onclick={() => (paymentMethodsDialogOpen = true)}
+										class="w-full flex-shrink-0 sm:w-auto"
+									>
+										<CreditCard class="mr-2 h-4 w-4" />
+										{$t('pricing.activePlans.managePaymentMethods') || 'Manage Payment Methods'}
+									</Button>
+								{/if}
+								<Button
+									variant="outline"
+									size="sm"
+									onclick={() => handleEndPlan()}
+									class="w-full flex-shrink-0 hover:bg-destructive/10 hover:text-destructive sm:w-auto"
+								>
+									{$t('pricing.activePlans.endPlan')}
+								</Button>
 							</div>
 						</div>
+					</div>
 					{/each}
 				</div>
 			</div>
