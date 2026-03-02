@@ -95,11 +95,11 @@
 		let countryKey = 'OTHER';
 
 		// Map country to specific key
-		if (country === 'Estonia') {
+		if (country === 'Estonia' || country === 'EST') {
 			countryKey = 'EE';
-		} else if (country === 'United Kingdom') {
+		} else if (country === 'United Kingdom' || country === 'GBR') {
 			countryKey = 'UK';
-		} else if (country === 'Australia') {
+		} else if (country === 'Australia' || country === 'AUS') {
 			countryKey = 'AU';
 		}
 
@@ -243,8 +243,8 @@
 			? 'card'
 			: (paymentMethods[0] as 'card' | 'invoice');
 
-		// If card payment but no saved cards, redirect to Stripe Checkout immediately
-		if (selectedPaymentMethod === 'card' && !hasSavedCards) {
+		// If card is the only payment method and no saved cards, redirect to Stripe Checkout immediately
+		if (selectedPaymentMethod === 'card' && !hasSavedCards && paymentMethods.length === 1) {
 			await createSubscriptionWithCheckout(plan);
 			return;
 		}
@@ -261,9 +261,10 @@
 			return;
 		}
 
-		// Validate card selection for card payments
+		// If card selected but no saved cards, redirect to Stripe Checkout
 		if (selectedPaymentMethod === 'card' && !selectedCardId) {
-			toast.error($t('pricing.planSelection.toast.selectCard') || 'Please select a payment card');
+			confirmationDialogOpen = false;
+			await createSubscriptionWithCheckout(planToSubscribe);
 			return;
 		}
 
