@@ -1,12 +1,15 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import SEO from '$lib/components/SEO.svelte';
+	import CompanyStats from '@/components/dashboard/companyStats.svelte';
 	import HuntsList from '@/components/dashboard/huntsList.svelte';
 	import SimpleSearchView from '@/components/dashboard/simpleSearchView.svelte';
 	import type { WorkerLookup } from '@/scrubinClient';
 	import { scrubinClient } from '@/scrubinClient/client';
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
+
+	let { data } = $props();
 
 	let searchViewComponent: SimpleSearchView;
 	let isLoading = $state(false);
@@ -50,19 +53,14 @@
 
 <SEO title="Employer | Scrubin" description="" type="website" />
 
-<div class="mx-auto w-full max-w-screen-xl space-y-2">
+<div class="mx-auto w-full max-w-screen-xl space-y-6">
 	<!-- Search View -->
 	<SimpleSearchView bind:this={searchViewComponent} />
 
 	{#if !isSearchActive}
-		<div class="grid gap-4">
-			<div class="col-span-4">
-				<HuntsList />
-			</div>
-
-			<!-- <div class="col-span-2 border-l border-opacity-50 pl-4">
-				<SearchHistory />
-			</div> -->
-		</div>
+		{#if data.showCompanyStats}
+			<CompanyStats />
+		{/if}
+		<HuntsList />
 	{/if}
 </div>

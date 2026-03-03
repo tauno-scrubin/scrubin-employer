@@ -390,6 +390,50 @@ export interface HuntStats {
 	totalHired: number;
 }
 
+export interface PipelineMetrics {
+	offersSent: number;
+	emailsDelivered: number;
+	emailsOpened: number;
+	offerPageOpened: number;
+	interested: number;
+	underReview: number;
+	meetingScheduled: number;
+	screeningCompleted: number;
+	offerMade: number;
+	accepted: number;
+	rejected: number;
+	expired: number;
+	declined: number;
+}
+
+export interface EngagementMetrics {
+	offerRemindersSent: number;
+	chatRemindersSent: number;
+	totalRemindersSent: number;
+	activeConversations: number;
+	totalMessages: number;
+	totalChatMessagesSent: number;
+	totalChatMessagesReceived: number;
+}
+
+export interface HuntPipelineStats {
+	huntId: number;
+	jobTitle: string;
+	status: string;
+	dateActivated: string;
+	totalCandidatesInPool: number;
+	pipeline: PipelineMetrics;
+	engagement: EngagementMetrics;
+}
+
+export interface CompanyStats {
+	totalHunts: number;
+	activeHunts: number;
+	pipeline: PipelineMetrics;
+	engagement: EngagementMetrics;
+	generatedAt: string;
+}
+
 export interface HuntCandidate {
 	status: string;
 	huntable: Candidate;
@@ -1305,6 +1349,18 @@ class HuntResource extends BaseResource {
 	async getHuntStats(id: number): Promise<HuntStats> {
 		const url = new URL(`/api/v1/hunts/${id}/stats`, this.client.baseUrl);
 		return this.request<HuntStats>('GET', url.toString()) as Promise<HuntStats>;
+	}
+
+	// GET /api/v1/hunts/company-stats
+	async getCompanyStats(): Promise<CompanyStats> {
+		const url = new URL('/api/v1/hunts/company-stats', this.client.baseUrl);
+		return this.request<CompanyStats>('GET', url.toString()) as Promise<CompanyStats>;
+	}
+
+	// GET /api/v1/hunts/{id}/pipeline-stats
+	async getHuntPipelineStats(id: number): Promise<HuntPipelineStats> {
+		const url = new URL(`/api/v1/hunts/${id}/pipeline-stats`, this.client.baseUrl);
+		return this.request<HuntPipelineStats>('GET', url.toString()) as Promise<HuntPipelineStats>;
 	}
 
 	// GET /api/v1/hunts/{id}/candidates
