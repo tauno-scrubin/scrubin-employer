@@ -392,10 +392,10 @@ export interface HuntStats {
 
 export interface PipelineMetrics {
 	offersSent: number;
-	emailsDelivered: number;
 	emailsOpened: number;
-	offerPageOpened: number;
+	expressedInterest: number;
 	interested: number;
+	answeredInitialChats: number;
 	underReview: number;
 	meetingScheduled: number;
 	screeningCompleted: number;
@@ -416,6 +416,15 @@ export interface EngagementMetrics {
 	totalChatMessagesReceived: number;
 }
 
+export interface HuntCostMetricsDto {
+	costSoFar: number;
+	monthlyRunningFee: number;
+	pendingSuccessFees: number;
+	successFeePerHire: number;
+	pendingSuccessFeeCount: number;
+	currency: string;
+}
+
 export interface HuntPipelineStats {
 	huntId: number;
 	jobTitle: string;
@@ -431,7 +440,9 @@ export interface CompanyStats {
 	activeHunts: number;
 	pipeline: PipelineMetrics;
 	engagement: EngagementMetrics;
+	costs: HuntCostMetricsDto;
 	generatedAt: string;
+	planActiveSince: string;
 }
 
 export interface HuntCandidate {

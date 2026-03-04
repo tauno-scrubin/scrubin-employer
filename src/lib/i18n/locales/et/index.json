@@ -160,7 +160,15 @@
 			"received": "saadud",
 			"offerRemindersShort": "pakkumine",
 			"chatRemindersShort": "vestlus",
-			"conversionRate": "pakkumislehe vaatajatest said huvitatud"
+			"conversionRate": "huvi avaldanutest said huvitatud",
+			"pendingInPipeline": "protsessis",
+			"costSoFar": "Kulud seni",
+			"pendingSuccessFees": "Ootel tulemustasud",
+			"pendingFeeCount": "{{count}} ootel värbamist",
+			"answeredInitialChats": "Vastatud esmavestlused",
+			"planActive": "Plaan aktiivne alates",
+			"expressedInterest": "Avaldas huvi",
+			"monthlyRunningFee": "/ kuu"
 		},
 		"searchView": {
 			"welcomeBack": "Tere tulemast tagasi, {{name}}!",

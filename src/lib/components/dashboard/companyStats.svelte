@@ -7,9 +7,9 @@
 	import { scrubinClient } from '$lib/scrubinClient/client';
 	import {
 		ArrowDown,
-		Bell,
-		Mail,
-		MessageSquare,
+		CalendarCheck,
+		Clock,
+		DollarSign,
 		Search,
 		Send,
 		Target,
@@ -22,77 +22,101 @@
 	let stats = $state<CompanyStats | null>(null);
 	let showAllPipeline = $state(false);
 
-	function pct(value: number): number {
-		if (!stats || stats.pipeline.offersSent === 0) return 0;
-		return Math.round((value / stats.pipeline.offersSent) * 100);
+	function formatCurrency(amount: number): string {
+		if (!stats) return '0';
+		return new Intl.NumberFormat('en-US', {
+			style: 'currency',
+			currency: stats.costs.currency,
+			minimumFractionDigits: 0,
+			maximumFractionDigits: 0
+		}).format(amount);
+	}
+
+	function formatDate(dateStr: string): string {
+		return new Date(dateStr).toLocaleDateString('en-US', {
+			month: 'short',
+			day: 'numeric',
+			year: 'numeric'
+		});
 	}
 
 	let pipelineSteps = $derived(
 		stats
-			? [
-					{
-						label: $t('dashboard.companyStats.offersSent'),
-						value: stats.pipeline.offersSent,
-						color: 'bg-blue-500',
-						barBg: 'bg-blue-50'
-					},
-					{
-						label: $t('dashboard.companyStats.emailsDelivered'),
-						value: stats.pipeline.emailsDelivered,
-						color: 'bg-blue-400',
-						barBg: 'bg-blue-50'
-					},
-					{
-						label: $t('dashboard.companyStats.emailsOpened'),
-						value: stats.pipeline.emailsOpened,
-						color: 'bg-indigo-500',
-						barBg: 'bg-indigo-50'
-					},
-					{
-						label: $t('dashboard.companyStats.offerPageOpened'),
-						value: stats.pipeline.offerPageOpened,
-						color: 'bg-violet-500',
-						barBg: 'bg-violet-50'
-					},
-					{
-						label: $t('dashboard.companyStats.interested'),
-						value: stats.pipeline.interested,
-						color: 'bg-purple-500',
-						barBg: 'bg-purple-50',
-						highlight: true
-					},
-					{
-						label: $t('dashboard.companyStats.underReview'),
-						value: stats.pipeline.underReview,
-						color: 'bg-purple-400',
-						barBg: 'bg-purple-50'
-					},
-					{
-						label: $t('dashboard.companyStats.meetingScheduled'),
-						value: stats.pipeline.meetingScheduled,
-						color: 'bg-teal-500',
-						barBg: 'bg-teal-50'
-					},
-					{
-						label: $t('dashboard.companyStats.screeningCompleted'),
-						value: stats.pipeline.screeningCompleted,
-						color: 'bg-teal-400',
-						barBg: 'bg-teal-50'
-					},
-					{
-						label: $t('dashboard.companyStats.offerMade'),
-						value: stats.pipeline.offerMade,
-						color: 'bg-green-500',
-						barBg: 'bg-green-50'
-					},
-					{
-						label: $t('dashboard.companyStats.accepted'),
-						value: stats.pipeline.accepted,
-						color: 'bg-green-600',
-						barBg: 'bg-green-50',
-						highlight: true
-					}
-				]
+			? (() => {
+					const raw = [
+						{
+							label: $t('dashboard.companyStats.offersSent'),
+							value: stats.pipeline.offersSent,
+							color: 'bg-blue-500',
+							barBg: 'bg-blue-50'
+						},
+						{
+							label: $t('dashboard.companyStats.emailsOpened'),
+							value: stats.pipeline.emailsOpened,
+							color: 'bg-indigo-500',
+							barBg: 'bg-indigo-50'
+						},
+						{
+							label: $t('dashboard.companyStats.expressedInterest'),
+							value: stats.pipeline.expressedInterest,
+							color: 'bg-violet-500',
+							barBg: 'bg-violet-50'
+						},
+						{
+							label: $t('dashboard.companyStats.interested'),
+							value: stats.pipeline.interested,
+							color: 'bg-purple-500',
+							barBg: 'bg-purple-50',
+							highlight: true
+						},
+						{
+							label: $t('dashboard.companyStats.answeredInitialChats'),
+							value: stats.pipeline.answeredInitialChats,
+							color: 'bg-purple-400',
+							barBg: 'bg-purple-50'
+						},
+						{
+							label: $t('dashboard.companyStats.underReview'),
+							value: stats.pipeline.underReview,
+							color: 'bg-cyan-500',
+							barBg: 'bg-cyan-50'
+						},
+						{
+							label: $t('dashboard.companyStats.meetingScheduled'),
+							value: stats.pipeline.meetingScheduled,
+							color: 'bg-teal-500',
+							barBg: 'bg-teal-50'
+						},
+						{
+							label: $t('dashboard.companyStats.screeningCompleted'),
+							value: stats.pipeline.screeningCompleted,
+							color: 'bg-teal-400',
+							barBg: 'bg-teal-50'
+						},
+						{
+							label: $t('dashboard.companyStats.offerMade'),
+							value: stats.pipeline.offerMade,
+							color: 'bg-green-500',
+							barBg: 'bg-green-50'
+						},
+						{
+							label: $t('dashboard.companyStats.accepted'),
+							value: stats.pipeline.accepted,
+							color: 'bg-green-600',
+							barBg: 'bg-green-50',
+							highlight: true
+						}
+					];
+					return raw.map((step, i) => ({
+						...step,
+						pctFromPrev:
+							i === 0
+								? null
+								: raw[i - 1].value > 0
+									? Math.round((step.value / raw[i - 1].value) * 100)
+									: 0
+					}));
+				})()
 			: []
 	);
 
@@ -103,9 +127,18 @@
 	);
 
 	let conversionRate = $derived(
-		stats && stats.pipeline.offerPageOpened > 0
-			? ((stats.pipeline.interested / stats.pipeline.offerPageOpened) * 100).toFixed(1)
+		stats && stats.pipeline.expressedInterest > 0
+			? ((stats.pipeline.interested / stats.pipeline.expressedInterest) * 100).toFixed(1)
 			: '0'
+	);
+
+	let pendingHires = $derived(
+		stats
+			? stats.pipeline.underReview +
+				stats.pipeline.meetingScheduled +
+				stats.pipeline.screeningCompleted +
+				stats.pipeline.offerMade
+			: 0
 	);
 
 	async function loadStats() {
@@ -191,26 +224,28 @@
 						<Send class="h-5 w-5 text-gray-400" />
 					</div>
 					<p class="mt-2 text-3xl font-bold text-gray-900">{stats.pipeline.offersSent}</p>
-					<p class="mt-1 text-xs text-gray-400">
-						{$t('dashboard.companyStats.offersDelivered', { count: stats.pipeline.emailsDelivered })}
-					</p>
 				</Card.Content>
 			</Card.Root>
 
 			<!-- Interested & Hired -->
-			<Card.Root class="border-l-4 border-l-purple-500 border bg-white shadow-sm">
+			<Card.Root class="border-l-4 border-l-green-500 border bg-white shadow-sm">
 				<Card.Content class="p-5">
 					<div class="flex items-center justify-between">
 						<p class="text-sm font-medium text-gray-500">
 							{$t('dashboard.companyStats.interested')}
 						</p>
-						<UserCheck class="h-5 w-5 text-purple-500" />
+						<UserCheck class="h-5 w-5 text-green-500" />
 					</div>
 					<p class="mt-2 text-3xl font-bold text-gray-900">{stats.pipeline.interested}</p>
-					<div class="mt-2 flex items-center gap-1.5">
+					<div class="mt-2 flex flex-wrap items-center gap-1.5">
 						<span class="inline-flex items-center rounded-md bg-green-50 px-2 py-0.5 text-xs font-semibold text-green-700">
 							{stats.pipeline.accepted} {$t('dashboard.companyStats.accepted').toLowerCase()}
 						</span>
+						{#if pendingHires > 0}
+							<span class="inline-flex items-center rounded-md bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-800">
+								{pendingHires} {$t('dashboard.companyStats.pendingInPipeline')}
+							</span>
+						{/if}
 					</div>
 				</Card.Content>
 			</Card.Root>
@@ -245,9 +280,13 @@
 							>
 								{step.value.toLocaleString()}
 							</span>
-							<span class="ml-1 w-12 text-right text-xs tabular-nums text-gray-400">
-								{pct(step.value)}%
-							</span>
+							{#if step.pctFromPrev !== null}
+								<span class="ml-1 w-12 text-right text-xs tabular-nums text-gray-400">
+									{step.pctFromPrev}%
+								</span>
+							{:else}
+								<span class="ml-1 w-12"></span>
+							{/if}
 						</div>
 					{/each}
 				</div>
@@ -288,60 +327,56 @@
 			</Card.Content>
 		</Card.Root>
 
-		<!-- Section C: Engagement -->
+		<!-- Section C: Costs & Plan -->
 		<div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
-			<!-- Active Conversations -->
+			<!-- Cost So Far -->
 			<Card.Root class="border bg-white shadow-sm">
 				<Card.Content class="flex items-center gap-3 px-4 py-3">
 					<div class="rounded-lg bg-blue-50 p-2">
-						<MessageSquare class="h-4 w-4 text-blue-600" />
+						<DollarSign class="h-4 w-4 text-blue-600" />
 					</div>
 					<div>
 						<p class="text-xs text-gray-400">
-							{$t('dashboard.companyStats.activeConversations')}
+							{$t('dashboard.companyStats.costSoFar')}
 						</p>
 						<p class="text-lg font-semibold text-gray-900">
-							{stats.engagement.activeConversations}
+							{formatCurrency(stats.costs.costSoFar)}
 						</p>
-					</div>
-				</Card.Content>
-			</Card.Root>
-
-			<!-- Messages -->
-			<Card.Root class="border bg-white shadow-sm">
-				<Card.Content class="flex items-center gap-3 px-4 py-3">
-					<div class="rounded-lg bg-purple-50 p-2">
-						<Mail class="h-4 w-4 text-purple-600" />
-					</div>
-					<div>
-						<p class="text-xs text-gray-400">{$t('dashboard.companyStats.totalMessages')}</p>
-						<p class="text-lg font-semibold text-gray-900">{stats.engagement.totalMessages}</p>
 						<p class="text-[11px] text-gray-400">
-							{stats.engagement.totalChatMessagesSent}
-							{$t('dashboard.companyStats.sent')} / {stats.engagement.totalChatMessagesReceived}
-							{$t('dashboard.companyStats.received')}
+							{formatCurrency(stats.costs.monthlyRunningFee)} {$t('dashboard.companyStats.monthlyRunningFee')}
 						</p>
 					</div>
 				</Card.Content>
 			</Card.Root>
 
-			<!-- Reminders -->
+			<!-- Pending Success Fees -->
 			<Card.Root class="border bg-white shadow-sm">
 				<Card.Content class="flex items-center gap-3 px-4 py-3">
 					<div class="rounded-lg bg-amber-50 p-2">
-						<Bell class="h-4 w-4 text-amber-600" />
+						<Clock class="h-4 w-4 text-amber-600" />
+					</div>
+					<div>
+						<p class="text-xs text-gray-400">{$t('dashboard.companyStats.pendingSuccessFees')}</p>
+						<p class="text-lg font-semibold text-gray-900">{formatCurrency(stats.costs.pendingSuccessFees)}</p>
+						<span class="mt-1 inline-flex items-center rounded-md bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-800">
+							{$t('dashboard.companyStats.pendingFeeCount', { count: stats.costs.pendingSuccessFeeCount })}
+						</span>
+					</div>
+				</Card.Content>
+			</Card.Root>
+
+			<!-- Plan Active Since -->
+			<Card.Root class="border bg-white shadow-sm">
+				<Card.Content class="flex items-center gap-3 px-4 py-3">
+					<div class="rounded-lg bg-green-50 p-2">
+						<CalendarCheck class="h-4 w-4 text-green-600" />
 					</div>
 					<div>
 						<p class="text-xs text-gray-400">
-							{$t('dashboard.companyStats.totalRemindersSent')}
+							{$t('dashboard.companyStats.planActive')}
 						</p>
 						<p class="text-lg font-semibold text-gray-900">
-							{stats.engagement.totalRemindersSent}
-						</p>
-						<p class="text-[11px] text-gray-400">
-							{stats.engagement.offerRemindersSent}
-							{$t('dashboard.companyStats.offerRemindersShort')} / {stats.engagement.chatRemindersSent}
-							{$t('dashboard.companyStats.chatRemindersShort')}
+							{formatDate(stats.planActiveSince)}
 						</p>
 					</div>
 				</Card.Content>

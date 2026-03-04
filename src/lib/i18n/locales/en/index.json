@@ -160,7 +160,15 @@
 			"received": "received",
 			"offerRemindersShort": "offer",
 			"chatRemindersShort": "chat",
-			"conversionRate": "of offer page viewers became interested"
+			"conversionRate": "of expressed interest became interested",
+			"pendingInPipeline": "in pipeline",
+			"costSoFar": "Cost So Far",
+			"pendingSuccessFees": "Pending Success Fees",
+			"pendingFeeCount": "{{count}} pending hires",
+			"answeredInitialChats": "Answered Initial Chats",
+			"planActive": "Plan Active Since",
+			"expressedInterest": "Expressed Interest",
+			"monthlyRunningFee": "/ month"
 		},
 		"searchView": {
 			"welcomeBack": "Welcome back, {{name}}!",
