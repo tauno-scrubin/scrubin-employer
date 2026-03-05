@@ -9,8 +9,6 @@
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
 
-	let { data } = $props();
-
 	let searchViewComponent: SimpleSearchView;
 	let isLoading = $state(false);
 	let searchHistory: WorkerLookup[] = $state([]);
@@ -58,9 +56,7 @@
 	<SimpleSearchView bind:this={searchViewComponent} />
 
 	{#if !isSearchActive}
-		{#if data.showCompanyStats}
-			<CompanyStats />
-		{/if}
+		<CompanyStats />
 		<HuntsList />
 	{/if}
 </div>
