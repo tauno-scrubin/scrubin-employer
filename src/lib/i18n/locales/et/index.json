@@ -526,10 +526,25 @@
 			"passwordsDoNotMatch": "Paroolid ei kattu"
 		}
 	},
+	"portal": {
+		"terms": {
+			"title": "Scrubini kasutamiseks nõustu teenuse tingimuste ja privaatsuspoliitikaga",
+			"description": "Scrubini kasutamise jätkamiseks palun vaata üle ja nõustu meie kasutustingimuste ja privaatsuspoliitikaga.",
+			"agree_prefix": "Nõustun",
+			"privacy_prefix": "Olen tutvunud ja nõustun",
+			"terms_label": "kasutustingimustega",
+			"privacy_label": "privaatsuspoliitikaga",
+			"accept_and_continue": "Nõustu ja jätka",
+			"saving": "Salvestan..."
+		}
+	},
 	"pricing": {
 		"title": "Vali oma värbamisplaan",
 		"subtitle": "Paindlik hinnastamine tervishoiuorganisatsioonidele kõikidest suurustest — väikestest perearsti kabinettidest kuni suurte gruppide või haiglateni. Iga plaan sisaldab kontrollitud kandidaate, AI-abilist otsingul ja nutikat sobivust mõlema poole soovide, vajaduste, eelistuste, oskuste ja rollinõuete põhjal.",
 		"termsAndPolicies": "Tingimused ja poliitikad",
+		"hiringTerms": "Värbamise tingimused",
+		"privacyPolicy": "Privaatsuspoliitika",
+		"termsOfService": "Teenuse tingimused",
 		"activePlans": {
 			"title": "Sinu aktiivsed paketid",
 			"activeSince": "Aktiivne alates",

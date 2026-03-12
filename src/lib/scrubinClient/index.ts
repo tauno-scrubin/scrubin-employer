@@ -34,6 +34,9 @@ export interface PortalUser {
 	passwordSet: boolean;
 	status?: 'pending' | 'active';
 	userLanguage: string;
+	acceptedTermsDate: Date;
+	mustAcceptTerms: string | null;
+	mustAcceptPrivacy: string | null;
 }
 
 export interface UpdatePortalUser {
@@ -1019,9 +1022,13 @@ class BaseResource {
 
 		const isFormData = typeof FormData !== 'undefined' && data instanceof FormData;
 
+		const language =
+			(typeof localStorage !== 'undefined' && localStorage.getItem('preferredLanguage')) || 'en';
+
 		const headers: Record<string, string> = {
 			Authorization: `Bearer ${this.client.authStore.token}`,
-			Origin: PUBLIC_ORIGIN
+			Origin: PUBLIC_ORIGIN,
+			'Accept-Language': language
 		};
 		// Only set JSON content type when not sending FormData
 		if (!isFormData) {
@@ -1121,6 +1128,11 @@ class PortalResource extends BaseResource {
 	async submitFeedback(data: Feedback): Promise<Feedback> {
 		const url = new URL('/api/v1/feedback', this.client.baseUrl);
 		return this.request<Feedback>('POST', url.toString(), data) as Promise<Feedback>;
+	}
+
+	async acceptTermsAndPolicy(): Promise<void> {
+		const url = new URL(`${this.path}/accept-terms-and-privacy`, this.client.baseUrl);
+		await this.request<void>('POST', url.toString(), null, true);
 	}
 }
 

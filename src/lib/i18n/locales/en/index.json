@@ -531,10 +531,25 @@
 			"passwordsDoNotMatch": "Passwords do not match"
 		}
 	},
+	"portal": {
+		"terms": {
+			"title": "Accept Terms and Privacy Policy",
+			"description": "To continue using Scrubin, please review and accept our Terms of Service and Privacy Policy.",
+			"agree_prefix": "I agree to the",
+			"privacy_prefix": "I have read and accept the",
+			"terms_label": "Terms and Conditions",
+			"privacy_label": "Privacy Policy",
+			"accept_and_continue": "Accept and Continue",
+			"saving": "Saving..."
+		}
+	},
 	"pricing": {
 		"title": "Choose Your Recruitment Plan",
 		"subtitle": "Flexible pricing designed for healthcare organisations of all sizes — from small GP clinics to large groups or hospitals. Every plan includes verified candidates, AI-assisted sourcing, and smart matching based on both sides' wants, needs, preferences, skills, and role requirements.",
 		"termsAndPolicies": "Terms and Policies",
+		"hiringTerms": "Hiring Terms and Conditions",
+		"privacyPolicy": "Privacy Policy",
+		"termsOfService": "Terms of Service",
 		"activePlans": {
 			"title": "Your Active Plans",
 			"activeSince": "Active since",

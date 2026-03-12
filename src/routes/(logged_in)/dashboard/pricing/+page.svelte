@@ -390,7 +390,7 @@
 														rel="noopener noreferrer"
 														class="font-medium text-primary underline hover:text-primary/80"
 													>
-														{$t('pricing.activePlans.viewTerms') || 'View Hiring Terms & Conditions'}
+														{$t('pricing.hiringTerms') || 'View Hiring Terms & Conditions'}
 													</a>
 												{/if}
 												{#if plan.privacyPolicyUrl}
@@ -401,7 +401,7 @@
 														rel="noopener noreferrer"
 														class="font-medium text-primary underline hover:text-primary/80"
 													>
-														{$t('pricing.planSelection.privacyPolicy') || 'Privacy Policy'}
+														{$t('pricing.privacyPolicy') || 'Privacy Policy'}
 													</a>
 												{/if}
 												{#if plan.termsOfServiceUrl}
@@ -412,7 +412,7 @@
 														rel="noopener noreferrer"
 														class="font-medium text-primary underline hover:text-primary/80"
 													>
-														{$t('pricing.planSelection.termsOfService') || 'Terms of Service'}
+														{$t('pricing.termsOfService') || 'Terms of Service'}
 													</a>
 												{/if}
 											</div>
