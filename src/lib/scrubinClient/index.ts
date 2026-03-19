@@ -443,7 +443,9 @@ export interface CompanyStats {
 	activeHunts: number;
 	pipeline: PipelineMetrics;
 	engagement: EngagementMetrics;
-	costs: HuntCostMetricsDto;
+	costs: {
+		currencies: HuntCostMetricsDto[];
+	};
 	generatedAt: string;
 	planActiveSince: string;
 }

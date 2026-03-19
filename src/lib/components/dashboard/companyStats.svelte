@@ -22,11 +22,13 @@
 	let stats = $state<CompanyStats | null>(null);
 	let showAllPipeline = $state(false);
 
-	function formatCurrency(amount: number): string {
-		if (!stats) return '0';
+	let costs = $derived(stats?.costs.currencies[0] ?? null);
+
+	function formatCurrency(amount: number, currency?: string): string {
+		const code = currency || costs?.currency || 'EUR';
 		return new Intl.NumberFormat('en-US', {
 			style: 'currency',
-			currency: stats.costs.currency,
+			currency: code,
 			minimumFractionDigits: 0,
 			maximumFractionDigits: 0
 		}).format(amount);
@@ -340,10 +342,10 @@
 							{$t('dashboard.companyStats.costSoFar')}
 						</p>
 						<p class="text-lg font-semibold text-gray-900">
-							{formatCurrency(stats.costs.costSoFar)}
+							{formatCurrency(costs?.costSoFar ?? 0)}
 						</p>
 						<p class="text-[11px] text-gray-400">
-							{formatCurrency(stats.costs.monthlyRunningFee)} {$t('dashboard.companyStats.monthlyRunningFee')}
+							{formatCurrency(costs?.monthlyRunningFee ?? 0)} {$t('dashboard.companyStats.monthlyRunningFee')}
 						</p>
 					</div>
 				</Card.Content>
@@ -357,9 +359,9 @@
 					</div>
 					<div>
 						<p class="text-xs text-gray-400">{$t('dashboard.companyStats.pendingSuccessFees')}</p>
-						<p class="text-lg font-semibold text-gray-900">{formatCurrency(stats.costs.pendingSuccessFees)}</p>
+						<p class="text-lg font-semibold text-gray-900">{formatCurrency(costs?.pendingSuccessFees ?? 0)}</p>
 						<span class="mt-1 inline-flex items-center rounded-md bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-800">
-							{$t('dashboard.companyStats.pendingFeeCount', { count: stats.costs.pendingSuccessFeeCount })}
+							{$t('dashboard.companyStats.pendingFeeCount', { count: costs?.pendingSuccessFeeCount ?? 0 })}
 						</span>
 					</div>
 				</Card.Content>
