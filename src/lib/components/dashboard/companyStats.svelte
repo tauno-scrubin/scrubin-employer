@@ -22,7 +22,7 @@
 	let stats = $state<CompanyStats | null>(null);
 	let showAllPipeline = $state(false);
 
-	let costs = $derived(stats?.costs.currencies[0] ?? null);
+	let costs = $derived(stats?.costs?.currencies?.[0] ?? null);
 
 	function formatCurrency(amount: number, currency?: string): string {
 		const code = currency || costs?.currency || 'EUR';
@@ -368,6 +368,7 @@
 			</Card.Root>
 
 			<!-- Plan Active Since -->
+			{#if stats.planActiveSince}
 			<Card.Root class="border bg-white shadow-sm">
 				<Card.Content class="flex items-center gap-3 px-4 py-3">
 					<div class="rounded-lg bg-green-50 p-2">
@@ -383,6 +384,7 @@
 					</div>
 				</Card.Content>
 			</Card.Root>
+			{/if}
 		</div>
 	{/if}
 </div>
