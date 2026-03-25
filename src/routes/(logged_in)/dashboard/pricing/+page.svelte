@@ -377,7 +377,7 @@
 								{/if}
 
 								<!-- Accepted Terms -->
-								{#if plan.acceptanceDate}
+								{#if plan.acceptanceDate || plan.hiringTermsAcceptedAt}
 									<div class="mt-4 rounded-lg border border-border/50 bg-muted/30 p-4">
 										<div class="flex items-center gap-2">
 											<InfoIcon class="h-4 w-4 text-muted-foreground" />
@@ -387,7 +387,16 @@
 										</div>
 										<div class="mt-2 space-y-2">
 											<div class="flex flex-wrap gap-x-2 gap-y-1 text-sm">
-												{#if plan.termsUrl}
+												{#if plan.hiringTermsUrl}
+													<a
+														href={plan.hiringTermsUrl}
+														target="_blank"
+														rel="noopener noreferrer"
+														class="font-medium text-primary underline hover:text-primary/80"
+													>
+														{$t('pricing.hiringTerms') || 'Hiring Terms & Conditions'}
+													</a>
+												{:else if plan.termsUrl}
 													<a
 														href={plan.termsUrl}
 														target="_blank"
@@ -398,7 +407,7 @@
 													</a>
 												{/if}
 												{#if plan.privacyPolicyUrl}
-												{#if plan.termsUrl}<span class="text-muted-foreground">•</span>{/if}
+												{#if plan.hiringTermsUrl || plan.termsUrl}<span class="text-muted-foreground">•</span>{/if}
 													<a
 														href={plan.privacyPolicyUrl}
 														target="_blank"
@@ -420,9 +429,15 @@
 													</a>
 												{/if}
 											</div>
-											<p class="text-xs text-muted-foreground">
-												{$t('pricing.activePlans.acceptedOn') || 'Accepted on'}: {$formatDateTime(plan.acceptanceDate)}
-											</p>
+											{#if plan.hiringTermsAcceptedAt}
+												<p class="text-xs text-muted-foreground">
+													{$t('pricing.activePlans.acceptedOn') || 'Accepted on'}: {$formatDateTime(plan.hiringTermsAcceptedAt)}
+												</p>
+											{:else if plan.acceptanceDate}
+												<p class="text-xs text-muted-foreground">
+													{$t('pricing.activePlans.acceptedOn') || 'Accepted on'}: {$formatDateTime(plan.acceptanceDate)}
+												</p>
+											{/if}
 										</div>
 									</div>
 								{/if}
