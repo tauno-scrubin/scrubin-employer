@@ -167,6 +167,12 @@
 			"pendingFeeCount": "{{count}} ootel värbamist",
 			"answeredInitialChats": "Vastatud esmavestlused",
 			"planActive": "Plaan aktiivne alates",
+			"planEnded": "Plaan lõppenud",
+			"planPeriod": "Aktiivne: {{start}} — {{end}}",
+			"noPlan": "Plaan puudub",
+			"basedOnPreviousPlan": "Eelmise plaani alusel",
+			"planEndedNotice": "Teie plaan on lõppenud. Näidatud statistika pärineb eelmisest plaaniperioodist.",
+			"viewPlans": "Vaata plaane",
 			"expressedInterest": "Avaldas huvi",
 			"monthlyRunningFee": "/ kuu"
 		},
@@ -562,6 +568,11 @@
 			"acceptedTerms": "Tingimustega nõustutud",
 			"viewTerms": "Vaata värbamise tingimusi",
 			"acceptedOn": "Nõustutud"
+		},
+		"endedPlans": {
+			"title": "Varasemad paketid",
+			"planPeriod": "Paketi periood",
+			"noTermsAvailable": "Pole saadaval"
 		},
 		"startingFee": {
 			"title": "Alusta {{amount}} {{currency}}",

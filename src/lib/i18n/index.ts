@@ -104,6 +104,18 @@ export const t = derived(locale, ($locale) => {
 	};
 });
 
+// Locale-aware date formatting
+const dateFormatOptions: Intl.DateTimeFormatOptions = { day: '2-digit', month: '2-digit', year: 'numeric' };
+const dateTimeFormatOptions: Intl.DateTimeFormatOptions = { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' };
+
+export const formatDate = derived(locale, ($locale) => {
+	return (date: string | number | Date) => new Date(date).toLocaleDateString($locale, dateFormatOptions);
+});
+
+export const formatDateTime = derived(locale, ($locale) => {
+	return (date: string | number | Date) => new Date(date).toLocaleString($locale, dateTimeFormatOptions);
+});
+
 // List of available locales
 export const locales = availableLanguages;
 

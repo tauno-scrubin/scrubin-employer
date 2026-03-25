@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
 	import { BadgeCheck, Calendar, CreditCard, Info, InfoIcon, Loader2, Send, Sparkles, Stethoscope, Users } from 'lucide-svelte';
-	import { t } from '$lib/i18n';
+	import { t, formatDate, formatDateTime } from '$lib/i18n';
 	import { scrubinClient } from '@/scrubinClient/client.js';
 	import { getCurrencySymbol } from '$lib/components/payment/payments';
 	import { Button } from '$lib/components/ui/button';
@@ -17,6 +17,7 @@
 		CompanyBilling,
 		CompanyPlanDetails,
 		CompanyPlanSummary,
+		EndedPlanSummary,
 		InvoiceDto
 	} from '@/scrubinClient/index.js';
 
@@ -29,6 +30,7 @@
 	let subscriptions: Array<{ id: string; status: string }> = $state([]);
 	let invoices = $state<InvoiceDto[]>([]);
 	let companyInfo: Company | null = $state(null);
+	let endedPlans = $state<EndedPlanSummary[]>([]);
 
 	// Contact dialog state
 	let contactDialogOpen = $state(false);
@@ -91,15 +93,17 @@
 
 	onMount(async () => {
 		try {
-			const [active, bill, company] = await Promise.all([
+			const [active, bill, company, ended] = await Promise.all([
 				scrubinClient.company.getActivePlans(),
 				scrubinClient.company.getBilling(),
-				scrubinClient.company.getCompany()
+				scrubinClient.company.getCompany(),
+				scrubinClient.company.getEndedPlans()
 			]);
 
 			activePlans = active;
 			billing = bill;
 			companyInfo = company;
+			endedPlans = ended;
 
 			if (bill?.stripeCustomerId) {
 				scrubinClient.company
@@ -234,7 +238,7 @@
 										</h3>
 										<p class="text-sm text-muted-foreground">
 											{$t('pricing.activePlans.activeSince')}
-											{new Date(plan.dateStarted).toLocaleDateString()}
+											{$formatDate(plan.dateStarted)}
 										</p>
 									</div>
 								</div>
@@ -417,7 +421,7 @@
 												{/if}
 											</div>
 											<p class="text-xs text-muted-foreground">
-												{$t('pricing.activePlans.acceptedOn') || 'Accepted on'}: {new Date(plan.acceptanceDate).toLocaleString()}
+												{$t('pricing.activePlans.acceptedOn') || 'Accepted on'}: {$formatDateTime(plan.acceptanceDate)}
 											</p>
 										</div>
 									</div>
@@ -507,7 +511,7 @@
 								rel="noopener noreferrer"
 								class="font-medium text-primary underline hover:text-primary/80"
 							>
-								{$t('pricing.planSelection.hiringTerms') || 'Hiring Terms and Conditions'}
+								{$t('pricing.hiringTerms') || 'Hiring Terms and Conditions'}
 							</a>
 							<span class="text-muted-foreground">•</span>
 							<a
@@ -516,7 +520,7 @@
 								rel="noopener noreferrer"
 								class="font-medium text-primary underline hover:text-primary/80"
 							>
-								{$t('pricing.planSelection.privacyPolicy') || 'Privacy Policy'}
+								{$t('pricing.privacyPolicy') || 'Privacy Policy'}
 							</a>
 							<span class="text-muted-foreground">•</span>
 							<a
@@ -525,10 +529,195 @@
 								rel="noopener noreferrer"
 								class="font-medium text-primary underline hover:text-primary/80"
 							>
-								{$t('pricing.planSelection.termsOfService') || 'Terms of Service'}
+								{$t('pricing.termsOfService') || 'Terms of Service'}
 							</a>
 						</div>
 					</div>
+				</div>
+			</div>
+		{/if}
+
+		<!-- Past Plans Section -->
+		{#if endedPlans.length > 0}
+			<div class="mb-8 sm:mb-12">
+				<h2 class="mb-6 text-2xl font-semibold text-foreground sm:text-3xl">
+					{$t('pricing.endedPlans.title')}
+				</h2>
+				<div class="space-y-6">
+					{#each endedPlans as plan}
+						<div class="rounded-xl border border-border/50 bg-muted/10">
+							<div class="p-6 sm:p-8">
+								<!-- Plan Header -->
+								<div class="mb-4">
+									<div class="mb-3 flex items-center gap-3">
+										<div class="rounded-full bg-muted p-2">
+											<Calendar class="h-5 w-5 text-muted-foreground sm:h-6 sm:w-6" />
+										</div>
+										<div>
+											<h3 class="text-lg font-bold text-foreground sm:text-xl">
+												{plan.planType === 'success_fee'
+													? $t('pricing.planSelection.successFee')
+													: plan.planType === 'SUCCESS_FEE'
+														? $t('pricing.planSelection.successFee')
+														: plan.planType.replace('_', ' ').toUpperCase()}
+											</h3>
+											<p class="text-sm text-muted-foreground">
+												{$t('pricing.endedPlans.planPeriod')}:
+												{$formatDate(plan.dateStarted)} — {$formatDate(plan.dateEnded)}
+											</p>
+										</div>
+									</div>
+								</div>
+
+								<!-- Custom Plan Description -->
+								{#if plan.customPlanDescription}
+									<div class="mb-4 rounded-xl border border-primary/10 bg-primary/5 p-4">
+										<div class="mb-2 flex items-center gap-2">
+											<Sparkles class="h-4 w-4 text-primary" />
+											<h4 class="text-sm font-semibold text-primary">
+												{$t('pricing.activePlans.customPlanDetails')}
+											</h4>
+										</div>
+										<p class="text-sm leading-relaxed text-foreground/80">
+											{plan.customPlanDescription}
+										</p>
+									</div>
+								{/if}
+
+								<!-- Pricing -->
+								<div class="grid gap-3 sm:grid-cols-2">
+									{#if plan.pricingGeneral}
+										<div class="rounded-lg border border-border/50 bg-muted/30 p-4">
+											<p class="text-xs font-medium text-muted-foreground">
+												{$t('pricing.activePlans.baseFee')}
+											</p>
+											<p class="mt-1 text-lg font-bold text-foreground">
+												{plan.pricingGeneral.amount}
+												{getCurrencySymbol(plan.pricingGeneral.currency)}
+											</p>
+											{#if plan.pricingGeneral.vatPercentage}
+												<p class="text-xs text-muted-foreground">
+													{$t('pricing.availablePlans.vatLabel', { percentage: String(plan.pricingGeneral.vatPercentage) })}
+												</p>
+											{/if}
+										</div>
+									{/if}
+								</div>
+
+								{#if plan.pricingSuccess}
+									<div class="mt-4 space-y-4">
+										<h4 class="text-sm font-semibold text-foreground">
+											{$t('pricing.activePlans.viewSuccessFees')}
+										</h4>
+										<div class="grid gap-3 sm:grid-cols-2">
+											<!-- Doctors -->
+											<div class="rounded-lg border border-border/50 bg-muted/30 p-4">
+												<div class="mb-2 flex items-center gap-2">
+													<Stethoscope class="h-4 w-4 text-primary" />
+													<p class="text-xs font-medium text-muted-foreground">
+														{$t('pricing.activePlans.doctorsTitle')}
+													</p>
+												</div>
+												<div class="mb-2">
+													<p class="text-xs text-muted-foreground">
+														{$t('pricing.activePlans.startFee')}
+													</p>
+													<p class="text-base font-semibold text-foreground">
+														{plan.pricingSuccess.doctor.startFee.amount}
+														{getCurrencySymbol(plan.pricingSuccess.doctor.startFee.currency)}
+													</p>
+												</div>
+												<p class="text-xs text-muted-foreground">{$t('pricing.activePlans.successFee')}</p>
+												<p class="text-lg font-bold text-foreground">
+													{plan.pricingSuccess.doctor.successFee.amount}
+													{getCurrencySymbol(plan.pricingSuccess.doctor.successFee.currency)}
+												</p>
+											</div>
+											<!-- Other Professionals -->
+											<div class="rounded-lg border border-border/50 bg-muted/30 p-4">
+												<div class="mb-2 flex items-center gap-2">
+													<Users class="h-4 w-4 text-primary" />
+													<p class="text-xs font-medium text-muted-foreground">
+														{$t('pricing.activePlans.otherProfessionalsTitle')}
+													</p>
+												</div>
+												<div class="mb-2">
+													<p class="text-xs text-muted-foreground">
+														{$t('pricing.activePlans.startFee')}
+													</p>
+													<p class="text-base font-semibold text-foreground">
+														{plan.pricingSuccess.other.startFee.amount}
+														{getCurrencySymbol(plan.pricingSuccess.other.startFee.currency)}
+													</p>
+												</div>
+												<p class="text-xs text-muted-foreground">{$t('pricing.activePlans.successFee')}</p>
+												<p class="text-lg font-bold text-foreground">
+													{plan.pricingSuccess.other.successFee.amount}
+													{getCurrencySymbol(plan.pricingSuccess.other.successFee.currency)}
+												</p>
+											</div>
+										</div>
+										<p class="text-xs text-muted-foreground">
+											{$t('pricing.activePlans.perHiredCandidate')}
+										</p>
+									</div>
+								{/if}
+
+								<!-- Accepted Terms -->
+								{#if plan.acceptanceDate || plan.hiringTermsAcceptedAt}
+									<div class="mt-4 rounded-lg border border-border/50 bg-muted/30 p-4">
+										<div class="flex items-center gap-2">
+											<InfoIcon class="h-4 w-4 text-muted-foreground" />
+											<p class="text-xs font-medium text-muted-foreground">
+												{$t('pricing.activePlans.acceptedTerms')}
+											</p>
+										</div>
+										<div class="mt-2 space-y-2">
+											<div class="flex flex-wrap gap-x-2 gap-y-1 text-sm">
+												{#if plan.hiringTermsUrl}
+													<a
+														href={plan.hiringTermsUrl}
+														target="_blank"
+														rel="noopener noreferrer"
+														class="font-medium text-primary underline hover:text-primary/80"
+													>
+														{$t('pricing.hiringTerms') || 'Hiring Terms & Conditions'}
+													</a>
+												{/if}
+												{#if plan.privacyPolicyUrl}
+													{#if plan.hiringTermsUrl}<span class="text-muted-foreground">•</span>{/if}
+													<a
+														href={plan.privacyPolicyUrl}
+														target="_blank"
+														rel="noopener noreferrer"
+														class="font-medium text-primary underline hover:text-primary/80"
+													>
+														{$t('pricing.privacyPolicy') || 'Privacy Policy'}
+													</a>
+												{/if}
+												{#if plan.termsOfServiceUrl}
+													<span class="text-muted-foreground">•</span>
+													<a
+														href={plan.termsOfServiceUrl}
+														target="_blank"
+														rel="noopener noreferrer"
+														class="font-medium text-primary underline hover:text-primary/80"
+													>
+														{$t('pricing.termsOfService') || 'Terms of Service'}
+													</a>
+												{/if}
+											</div>
+											{#if plan.acceptanceDate}
+												<p class="text-xs text-muted-foreground">
+													{$t('pricing.activePlans.acceptedOn')}: {$formatDateTime(plan.acceptanceDate)}
+												</p>
+											{/if}
+										</div>
+									</div>
+								{/if}
+							</div>
+						</div>
+					{/each}
 				</div>
 			</div>
 		{/if}
@@ -555,7 +744,7 @@
 								<div class="sm:col-span-4">
 									<div class="text-sm font-medium">{inv.number || inv.id}</div>
 									<div class="text-xs text-muted-foreground">
-										{new Date(inv.created * 1000).toLocaleDateString()}
+										{$formatDate(inv.created * 1000)}
 									</div>
 								</div>
 								<div class="sm:col-span-3">

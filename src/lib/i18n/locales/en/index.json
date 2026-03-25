@@ -167,6 +167,12 @@
 			"pendingFeeCount": "{{count}} pending hires",
 			"answeredInitialChats": "Answered Initial Chats",
 			"planActive": "Plan Active Since",
+			"planEnded": "Plan Ended",
+			"planPeriod": "Active: {{start}} — {{end}}",
+			"noPlan": "No Plan",
+			"basedOnPreviousPlan": "Based on previous plan",
+			"planEndedNotice": "Your plan has ended. The stats shown are from your previous plan period.",
+			"viewPlans": "View Plans",
 			"expressedInterest": "Expressed Interest",
 			"monthlyRunningFee": "/ month"
 		},
@@ -567,6 +573,11 @@
 			"acceptedTerms": "Terms Accepted",
 			"viewTerms": "View Hiring Terms & Conditions",
 			"acceptedOn": "Accepted on"
+		},
+		"endedPlans": {
+			"title": "Past Plans",
+			"planPeriod": "Plan period",
+			"noTermsAvailable": "Not available"
 		},
 		"startingFee": {
 			"title": "Start with {{amount}} {{currency}}",

@@ -448,6 +448,8 @@ export interface CompanyStats {
 	};
 	generatedAt: string;
 	planActiveSince: string;
+	planActive: boolean;
+	planEndedDate: string | null;
 }
 
 export interface HuntCandidate {
@@ -750,6 +752,25 @@ export interface CompanyPlanSummary {
 	privacyPolicyUrl?: string;
 	termsOfServiceUrl?: string;
 	acceptanceDate?: string;
+	hiringTermsUrl?: string | null;
+	hiringTermsAcceptedAt?: string | null;
+}
+
+export interface EndedPlanSummary {
+	id: number;
+	planType: string;
+	planActive: false;
+	stripeSubscription: string | null;
+	dateStarted: string;
+	dateEnded: string;
+	privacyPolicyUrl: string | null;
+	termsOfServiceUrl: string | null;
+	acceptanceDate: string | null;
+	hiringTermsUrl: string | null;
+	hiringTermsAcceptedAt: string | null;
+	pricingGeneral: CompanyPlanPrice | null;
+	pricingSuccess: CompanyPlanPricingSuccess | null;
+	customPlanDescription: string | null;
 }
 
 export interface CompanyPlanDetails extends CompanyPlanSummary {
@@ -1233,6 +1254,11 @@ class CompanyResource extends BaseResource {
 		return this.request<CompanyPlanSummary[]>('GET', url.toString()) as Promise<
 			CompanyPlanSummary[]
 		>;
+	}
+
+	async getEndedPlans(): Promise<EndedPlanSummary[]> {
+		const url = new URL(`${this.path}/ended-plans`, this.client.baseUrl);
+		return this.request<EndedPlanSummary[]>('GET', url.toString()) as Promise<EndedPlanSummary[]>;
 	}
 
 	async getPlanDetails(id: number): Promise<CompanyPlanDetails> {

@@ -355,14 +355,14 @@
 		</div>
 	{:else}
 		<!-- Plans Grid -->
-		<div class="grid grid-cols-1 items-start gap-6 md:grid-cols-3">
+		<div class="grid grid-cols-1 items-start gap-6 sm:grid-cols-2 lg:grid-cols-3">
 			{#each availablePlans as plan}
 				{@const planName = getPlanName(plan)}
 				{@const planDescription = getPlanDescription(plan)}
 				{@const isRecommended = isRecommendedPlan(plan)}
 				{@const paymentTerms = getPaymentTerms()}
 
-				<div class="relative flex h-full flex-col">
+				<div class="relative flex h-full flex-col sm:last:col-span-2 sm:last:mx-auto sm:last:max-w-md lg:last:col-span-1 lg:last:max-w-none">
 					{#if isRecommended}
 						<!-- Most Popular badge positioned outside and above the card -->
 						<div class="mb-4 flex justify-center">
@@ -380,7 +380,7 @@
 						class="relative flex h-full flex-col overflow-hidden transition-all hover:shadow-lg"
 					>
 						<CardHeader class="pb-4">
-							<div class="flex items-center justify-between">
+							<div class="flex flex-col items-start gap-1 sm:flex-row sm:items-center sm:justify-between">
 								<CardTitle class="text-xl">{planName}</CardTitle>
 								{#if plan.planId === -1}
 									<div class="text-right">

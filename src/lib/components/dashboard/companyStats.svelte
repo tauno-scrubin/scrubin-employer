@@ -8,8 +8,10 @@
 	import {
 		ArrowDown,
 		CalendarCheck,
+		CalendarX2,
 		Clock,
 		DollarSign,
+		Info,
 		Search,
 		Send,
 		Target,
@@ -330,6 +332,21 @@
 		</Card.Root>
 
 		<!-- Section C: Costs & Plan -->
+		{#if !stats.planActive}
+			<div class="flex items-center gap-3 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3">
+				<Info class="h-4 w-4 shrink-0 text-amber-600" />
+				<p class="text-sm text-amber-800">
+					{$t('dashboard.companyStats.planEndedNotice')}
+				</p>
+				<a
+					href="/dashboard/pricing"
+					class="ml-auto shrink-0 rounded-md bg-amber-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-amber-700 transition-colors"
+				>
+					{$t('dashboard.companyStats.viewPlans')}
+				</a>
+			</div>
+		{/if}
+
 		<div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
 			<!-- Cost So Far -->
 			<Card.Root class="border bg-white shadow-sm">
@@ -344,9 +361,16 @@
 						<p class="text-lg font-semibold text-gray-900">
 							{formatCurrency(costs?.costSoFar ?? 0)}
 						</p>
-						<p class="text-[11px] text-gray-400">
-							{formatCurrency(costs?.monthlyRunningFee ?? 0)} {$t('dashboard.companyStats.monthlyRunningFee')}
-						</p>
+						{#if stats.planActive}
+							<p class="text-[11px] text-gray-400">
+								{formatCurrency(costs?.monthlyRunningFee ?? 0)} {$t('dashboard.companyStats.monthlyRunningFee')}
+							</p>
+						{:else}
+							<span class="mt-0.5 inline-flex items-center gap-1 text-[11px] text-amber-600">
+								<Info class="h-3 w-3" />
+								{$t('dashboard.companyStats.basedOnPreviousPlan')}
+							</span>
+						{/if}
 					</div>
 				</Card.Content>
 			</Card.Root>
@@ -367,23 +391,61 @@
 				</Card.Content>
 			</Card.Root>
 
-			<!-- Plan Active Since -->
-			{#if stats.planActiveSince}
-			<Card.Root class="border bg-white shadow-sm">
-				<Card.Content class="flex items-center gap-3 px-4 py-3">
-					<div class="rounded-lg bg-green-50 p-2">
-						<CalendarCheck class="h-4 w-4 text-green-600" />
-					</div>
-					<div>
-						<p class="text-xs text-gray-400">
-							{$t('dashboard.companyStats.planActive')}
-						</p>
-						<p class="text-lg font-semibold text-gray-900">
-							{formatDate(stats.planActiveSince)}
-						</p>
-					</div>
-				</Card.Content>
-			</Card.Root>
+			<!-- Plan Status -->
+			{#if stats.planActive && stats.planActiveSince}
+				<Card.Root class="border bg-white shadow-sm">
+					<Card.Content class="flex items-center gap-3 px-4 py-3">
+						<div class="rounded-lg bg-green-50 p-2">
+							<CalendarCheck class="h-4 w-4 text-green-600" />
+						</div>
+						<div>
+							<p class="text-xs text-gray-400">
+								{$t('dashboard.companyStats.planActive')}
+							</p>
+							<p class="text-lg font-semibold text-gray-900">
+								{formatDate(stats.planActiveSince)}
+							</p>
+						</div>
+					</Card.Content>
+				</Card.Root>
+			{:else if !stats.planActive && stats.planActiveSince}
+				<Card.Root class="border border-gray-200 bg-gray-50 shadow-sm">
+					<Card.Content class="flex items-center gap-3 px-4 py-3">
+						<div class="rounded-lg bg-gray-200 p-2">
+							<CalendarX2 class="h-4 w-4 text-gray-500" />
+						</div>
+						<div>
+							<p class="text-xs text-gray-400">
+								{$t('dashboard.companyStats.planEnded')}
+							</p>
+							<p class="text-lg font-semibold text-gray-600">
+								{formatDate(stats.planEndedDate ?? '')}
+							</p>
+							<p class="text-[11px] text-gray-400">
+								{$t('dashboard.companyStats.planPeriod', { start: formatDate(stats.planActiveSince), end: formatDate(stats.planEndedDate ?? '') })}
+							</p>
+						</div>
+					</Card.Content>
+				</Card.Root>
+			{:else}
+				<Card.Root class="border border-dashed border-gray-200 bg-gray-50/50 shadow-sm">
+					<Card.Content class="flex items-center gap-3 px-4 py-3">
+						<div class="rounded-lg bg-gray-100 p-2">
+							<CalendarX2 class="h-4 w-4 text-gray-400" />
+						</div>
+						<div>
+							<p class="text-xs text-gray-400">
+								{$t('dashboard.companyStats.noPlan')}
+							</p>
+							<a
+								href="/dashboard/pricing"
+								class="text-sm font-medium text-primary hover:underline"
+							>
+								{$t('dashboard.companyStats.viewPlans')}
+							</a>
+						</div>
+					</Card.Content>
+				</Card.Root>
 			{/if}
 		</div>
 	{/if}
