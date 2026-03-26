@@ -161,7 +161,8 @@
 					totalHuntablesInterested: stats.totalHuntablesInterested || 0,
 					totalInterestedReadyForCompany: stats.totalInterestedReadyForCompany || 0,
 					totalOffersMade: stats.totalOffersMade || 0,
-					totalHired: stats.totalHired || 0
+					totalHired: stats.totalHired || 0,
+					totalDeclined: stats.totalDeclined || 0
 				};
 			});
 
@@ -341,7 +342,8 @@
 		totalHuntablesInterested: 0,
 		totalInterestedReadyForCompany: 0,
 		totalOffersMade: 0,
-		totalHired: 0
+		totalHired: 0,
+		totalDeclined: 0
 	});
 
 	let funnelData = $state<{ name: string; value: number }[]>([]);
@@ -353,7 +355,8 @@
 			{ name: 'statistics.initialInterest', value: funnelStats.totalHuntablesInterested },
 			{ name: 'statistics.readyForCompany', value: funnelStats.totalInterestedReadyForCompany },
 			{ name: 'statistics.offersMade', value: funnelStats.totalOffersMade },
-			{ name: 'statistics.hired', value: funnelStats.totalHired }
+			{ name: 'statistics.hired', value: funnelStats.totalHired },
+			{ name: 'statistics.declined', value: funnelStats.totalDeclined }
 		];
 	});
 
@@ -513,7 +516,8 @@
 			'meeting_scheduled',
 			'screening_completed',
 			'offer_made',
-			'accepted'
+			'accepted',
+			'declined'
 		];
 
 		return pipelineStatuses.reduce(
@@ -793,7 +797,7 @@
 							<Loader2 class="h-10 w-10 animate-spin text-primary/70" />
 						</div>
 					{:else}
-						<div class="grid grid-cols-6 gap-2">
+						<div class="grid grid-cols-7 gap-2">
 							{#each funnelData as item}
 								<div class="flex flex-col gap-1.5 rounded-md border p-2.5">
 									<div class="flex items-center gap-1.5">
@@ -870,7 +874,7 @@
 									</span>
 								</button>
 
-								{#each pipelineData.filter((s) => s.count > 0 || ['interested', 'under_review', 'meeting_scheduled', 'offer_made', 'accepted'].includes(s.key)) as status}
+								{#each pipelineData.filter((s) => s.count > 0 || ['interested', 'under_review', 'meeting_scheduled', 'offer_made', 'accepted', 'declined'].includes(s.key)) as status}
 									{@const Icon = status.icon}
 									<Tooltip.Root>
 										<Tooltip.Trigger>

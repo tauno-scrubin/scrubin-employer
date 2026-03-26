@@ -391,6 +391,7 @@ export interface HuntStats {
 	totalInterestedReadyForCompany: number;
 	totalOffersMade: number;
 	totalHired: number;
+	totalDeclined: number;
 }
 
 export interface PipelineMetrics {

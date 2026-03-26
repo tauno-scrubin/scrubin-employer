@@ -145,6 +145,8 @@
 		"offersMadeDesc": "Kokku tööpakkumisi, mis on tehtud kandidaatidele pärast edukaid vestlusi.",
 		"hired": "Tööle võetud",
 		"hiredDesc": "Kandidaadid, kes on pakkumised vastu võtnud ja on edukalt tööle võetud.",
+		"declined": "Keeldutud",
+		"declinedDesc": "Kandidaadid, kellest ettevõte on palkamisprotsessis loobunud.",
 		"candidates": "Kandidaadid",
 		"candidatesDesc": "Siin on kandidaadid, kes on kinnitanud oma huvi ja on valmis jätkama ettevõtte vestlustega.",
 		"autoOffersNoticeTitle": "Automaatne sihtotsing",
