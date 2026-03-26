@@ -1,5 +1,7 @@
 <script lang="ts">
 	import * as Card from '$lib/components/ui/card/index.js';
+	import * as Select from '$lib/components/ui/select/index.js';
+	import { Badge } from '$lib/components/ui/badge/index.js';
 	import { Separator } from '$lib/components/ui/separator/index.js';
 	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
 	import { t } from '$lib/i18n';
@@ -20,9 +22,18 @@
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
 
+	type PlanOption = {
+		id: number;
+		label: string;
+		dateRange: string;
+		isActive: boolean;
+	};
+
 	let isLoading = $state(true);
 	let stats = $state<CompanyStats | null>(null);
 	let showAllPipeline = $state(false);
+	let plans = $state<PlanOption[]>([]);
+	let selectedPlanId = $state<string>('');
 
 	let costs = $derived(stats?.costs?.currencies?.[0] ?? null);
 
@@ -42,6 +53,10 @@
 			day: 'numeric',
 			year: 'numeric'
 		});
+	}
+
+	function formatPlanType(type: string): string {
+		return type.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
 	}
 
 	let pipelineSteps = $derived(
@@ -145,10 +160,36 @@
 			: 0
 	);
 
-	async function loadStats() {
+	async function loadPlans() {
+		try {
+			const [activePlans, endedPlans] = await Promise.all([
+				scrubinClient.company.getActivePlans(),
+				scrubinClient.company.getEndedPlans()
+			]);
+
+			plans = [
+				...activePlans.map((p) => ({
+					id: p.id,
+					label: formatPlanType(p.planType),
+					dateRange: `${formatDate(p.dateStarted)} — ${$t('dashboard.companyStats.present')}`,
+					isActive: true
+				})),
+				...endedPlans.map((p) => ({
+					id: p.id,
+					label: formatPlanType(p.planType),
+					dateRange: `${formatDate(p.dateStarted)} — ${formatDate(p.dateEnded)}`,
+					isActive: false
+				}))
+			];
+		} catch (error) {
+			console.error('Error loading plans:', error);
+		}
+	}
+
+	async function loadStats(planId?: number) {
 		isLoading = true;
 		try {
-			stats = await scrubinClient.hunt.getCompanyStats();
+			stats = await scrubinClient.hunt.getPlanStats(planId);
 		} catch (error) {
 			console.error('Error loading company stats:', error);
 			toast.error($t('dashboard.companyStats.loadError'));
@@ -157,13 +198,64 @@
 		}
 	}
 
+	function onPlanChange(newValue: string) {
+		selectedPlanId = newValue;
+		loadStats(parseInt(newValue, 10));
+	}
+
 	onMount(() => {
+		loadPlans();
 		loadStats();
 	});
 </script>
 
 <div class="space-y-5">
-	<h2 class="text-2xl font-medium text-gray-800">{$t('dashboard.companyStats.title')}</h2>
+	<div class="flex items-center justify-between gap-4">
+		<h2 class="text-2xl font-medium text-gray-800">{$t('dashboard.companyStats.title')}</h2>
+
+		{#if plans.length > 1}
+			<Select.Root type="single" value={selectedPlanId} onValueChange={onPlanChange}>
+				<Select.Trigger class="w-[280px]">
+					{#if selectedPlanId}
+						{@const selected = plans.find((p) => p.id.toString() === selectedPlanId)}
+						<span class="flex items-center gap-2 truncate">
+							<span class="truncate">{selected?.label}</span>
+							{#if selected?.isActive}
+								<Badge variant="default" class="shrink-0 px-1.5 py-0 text-[10px]">
+									{$t('dashboard.companyStats.active')}
+								</Badge>
+							{/if}
+						</span>
+					{:else}
+						<span class="text-muted-foreground">
+							{$t('dashboard.companyStats.currentPlan')}
+						</span>
+					{/if}
+				</Select.Trigger>
+				<Select.Content>
+					<Select.Group>
+						{#each plans as plan}
+							<Select.Item value={plan.id.toString()}>
+								<div class="flex flex-col gap-0.5">
+									<span class="flex items-center gap-2">
+										{plan.label}
+										{#if plan.isActive}
+											<Badge variant="default" class="px-1.5 py-0 text-[10px]">
+												{$t('dashboard.companyStats.active')}
+											</Badge>
+										{/if}
+									</span>
+									<span class="text-xs text-muted-foreground">
+										{plan.dateRange}
+									</span>
+								</div>
+							</Select.Item>
+						{/each}
+					</Select.Group>
+				</Select.Content>
+			</Select.Root>
+		{/if}
+	</div>
 
 	{#if isLoading}
 		<!-- Skeleton Loading State -->
@@ -385,7 +477,7 @@
 						<p class="text-xs text-gray-400">{$t('dashboard.companyStats.pendingSuccessFees')}</p>
 						<p class="text-lg font-semibold text-gray-900">{formatCurrency(costs?.pendingSuccessFees ?? 0)}</p>
 						<span class="mt-1 inline-flex items-center rounded-md bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-800">
-							{$t('dashboard.companyStats.pendingFeeCount', { count: costs?.pendingSuccessFeeCount ?? 0 })}
+							{$t('dashboard.companyStats.pendingFeeCount', { count: String(costs?.pendingSuccessFeeCount ?? 0) })}
 						</span>
 					</div>
 				</Card.Content>

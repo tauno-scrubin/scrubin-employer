@@ -1403,8 +1403,17 @@ class HuntResource extends BaseResource {
 	}
 
 	// GET /api/v1/hunts/company-stats
-	async getCompanyStats(): Promise<CompanyStats> {
-		const url = new URL('/api/v1/hunts/company-stats', this.client.baseUrl);
+	// async getCompanyStats(): Promise<CompanyStats> {
+	// 	const url = new URL('/api/v1/hunts/company-stats', this.client.baseUrl);
+	// 	return this.request<CompanyStats>('GET', url.toString()) as Promise<CompanyStats>;
+	// }
+
+	// GET /api/v1/hunts/plan-stats?planId={planId}
+	async getPlanStats(planId?: number): Promise<CompanyStats> {
+		const url = new URL('/api/v1/hunts/plan-stats', this.client.baseUrl);
+		if (planId !== undefined) {
+			url.searchParams.set('planId', planId.toString());
+		}
 		return this.request<CompanyStats>('GET', url.toString()) as Promise<CompanyStats>;
 	}
 

@@ -174,7 +174,10 @@
 			"planEndedNotice": "Your plan has ended. The stats shown are from your previous plan period.",
 			"viewPlans": "View Plans",
 			"expressedInterest": "Expressed Interest",
-			"monthlyRunningFee": "/ month"
+			"monthlyRunningFee": "/ month",
+			"currentPlan": "Current plan",
+			"active": "Active",
+			"present": "Present"
 		},
 		"searchView": {
 			"welcomeBack": "Welcome back, {{name}}!",

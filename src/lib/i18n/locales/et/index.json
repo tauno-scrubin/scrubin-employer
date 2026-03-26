@@ -174,7 +174,10 @@
 			"planEndedNotice": "Teie plaan on lõppenud. Näidatud statistika pärineb eelmisest plaaniperioodist.",
 			"viewPlans": "Vaata plaane",
 			"expressedInterest": "Avaldas huvi",
-			"monthlyRunningFee": "/ kuu"
+			"monthlyRunningFee": "/ kuu",
+			"currentPlan": "Praegune plaan",
+			"active": "Aktiivne",
+			"present": "Praegu"
 		},
 		"searchView": {
 			"welcomeBack": "Tere tulemast tagasi, {{name}}!",
