@@ -11,6 +11,7 @@
 		ArrowDown,
 		CalendarCheck,
 		CalendarX2,
+		CircleCheck,
 		Clock,
 		DollarSign,
 		Info,
@@ -439,7 +440,7 @@
 			</div>
 		{/if}
 
-		<div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
+		<div class="grid grid-cols-1 gap-3 sm:grid-cols-4">
 			<!-- Cost So Far -->
 			<Card.Root class="border bg-white shadow-sm">
 				<Card.Content class="flex items-center gap-3 px-4 py-3">
@@ -478,6 +479,22 @@
 						<p class="text-lg font-semibold text-gray-900">{formatCurrency(costs?.pendingSuccessFees ?? 0)}</p>
 						<span class="mt-1 inline-flex items-center rounded-md bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-800">
 							{$t('dashboard.companyStats.pendingFeeCount', { count: String(costs?.pendingSuccessFeeCount ?? 0) })}
+						</span>
+					</div>
+				</Card.Content>
+			</Card.Root>
+
+			<!-- Paid Success Fees -->
+			<Card.Root class="border bg-white shadow-sm">
+				<Card.Content class="flex items-center gap-3 px-4 py-3">
+					<div class="rounded-lg bg-green-50 p-2">
+						<CircleCheck class="h-4 w-4 text-green-600" />
+					</div>
+					<div>
+						<p class="text-xs text-gray-400">{$t('dashboard.companyStats.paidSuccessFees')}</p>
+						<p class="text-lg font-semibold text-gray-900">{formatCurrency(costs?.paidSuccessFees ?? 0)}</p>
+						<span class="mt-1 inline-flex items-center rounded-md bg-green-100 px-2 py-0.5 text-xs font-semibold text-green-800">
+							{$t('dashboard.companyStats.paidFeeCount', { count: String(costs?.paidSuccessFeeCount ?? 0) })}
 						</span>
 					</div>
 				</Card.Content>

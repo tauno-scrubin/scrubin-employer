@@ -174,6 +174,8 @@
 			"planEndedNotice": "Teie plaan on lõppenud. Näidatud statistika pärineb eelmisest plaaniperioodist.",
 			"viewPlans": "Vaata plaane",
 			"expressedInterest": "Avaldas huvi",
+			"paidSuccessFees": "Makstud tulemustasud",
+			"paidFeeCount": "{{count}} makstud värbamist",
 			"monthlyRunningFee": "/ kuu",
 			"currentPlan": "Praegune plaan",
 			"active": "Aktiivne",
@@ -373,7 +375,10 @@
 				"accepted": "Kinnitatud",
 				"rejected": "Tagasi lükatud",
 				"applied": "Kandideeritud"
-			}
+			},
+			"successFeePaid": "Makstud",
+			"paymentAmount": "Makstud summa",
+			"paymentDate": "Makse kuupäev"
 		},
 		"questionsInHunt": {
 			"noQuestions": "Küsimusi pole veel",

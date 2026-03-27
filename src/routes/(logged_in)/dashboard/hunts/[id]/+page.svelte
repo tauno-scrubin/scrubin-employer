@@ -1046,9 +1046,14 @@
 															{/if}
 
 															<!-- Name -->
-															<div class="text-sm font-medium">
-																{candidate.firstName}
-																{candidate.lastName.charAt(0)}.
+															<div class="flex items-center gap-1.5 text-sm font-medium">
+																<span>{candidate.firstName}
+																{candidate.lastName.charAt(0)}.</span>
+																{#if candidate.successFeePaid}
+																	<span class="rounded-full bg-green-100 px-1.5 py-0.5 text-[10px] font-medium text-green-800">
+																		{$t('dashboard.interestedWorkerDialog.successFeePaid')}
+																	</span>
+																{/if}
 															</div>
 
 															<!-- Email -->
@@ -1191,6 +1196,11 @@
 																			<StatusIcon class="h-3.5 w-3.5" />
 																		{/if}
 																		{$t(`statistics.pipelineStatuses.${statusLower}.label`)}
+																	</span>
+																{/if}
+																{#if candidate.successFeePaid}
+																	<span class="w-fit rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-800">
+																		{$t('dashboard.interestedWorkerDialog.successFeePaid')}
 																	</span>
 																{/if}
 																<Badge variant="outline" class="text-xs">

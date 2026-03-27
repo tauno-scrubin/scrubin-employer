@@ -136,6 +136,15 @@
 		}
 	}
 
+	function formatCurrency(amount: number, currency?: string): string {
+		return new Intl.NumberFormat('en-US', {
+			style: 'currency',
+			currency: currency || 'EUR',
+			minimumFractionDigits: 0,
+			maximumFractionDigits: 0
+		}).format(amount);
+	}
+
 	function formatDateTime(dateString: string): string {
 		try {
 			const date = new Date(dateString);
@@ -286,6 +295,11 @@
 															`statistics.pipelineStatuses.${statusLower}.label`
 														)}
 													</span>
+													{#if worker.successFeePaid}
+														<span class="rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-800">
+															{$t('dashboard.interestedWorkerDialog.successFeePaid')}
+														</span>
+													{/if}
 												</div>
 											{/if}
 										</div>
@@ -344,6 +358,16 @@
 											</div>
 										</div>
 									</div>
+
+									{#if worker.successFeePayment}
+										<div class="mt-3 rounded-lg border border-green-200 bg-green-50 p-3">
+											<p class="text-xs font-medium text-green-800">{$t('dashboard.interestedWorkerDialog.successFeePaid')}</p>
+											<div class="mt-1 flex gap-4 text-sm text-green-700">
+												<span>{$t('dashboard.interestedWorkerDialog.paymentAmount')}: {formatCurrency(worker.successFeePayment.amount / 100, worker.successFeePayment.currency)}</span>
+												<span>{$t('dashboard.interestedWorkerDialog.paymentDate')}: {formatDate(worker.successFeePayment.datePaid)}</span>
+											</div>
+										</div>
+									{/if}
 
 									{#if worker.professionNumbers && worker.professionNumbers.length > 0}
 										<div class="mt-3 border-t pt-3">

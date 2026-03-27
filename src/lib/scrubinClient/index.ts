@@ -426,6 +426,8 @@ export interface HuntCostMetricsDto {
 	pendingSuccessFees: number;
 	successFeePerHire: number;
 	pendingSuccessFeeCount: number;
+	paidSuccessFees: number;
+	paidSuccessFeeCount: number;
 	currency: string;
 }
 
@@ -437,6 +439,10 @@ export interface HuntPipelineStats {
 	totalCandidatesInPool: number;
 	pipeline: PipelineMetrics;
 	engagement: EngagementMetrics;
+	costs?: {
+		paidSuccessFees?: number;
+		paidSuccessFeeCount?: number;
+	};
 }
 
 export interface CompanyStats {
@@ -606,6 +612,7 @@ export interface InterestedCandidate {
 	dateLastUserAction: Date;
 	totalMessages: number;
 	stats: InterestedCandidateStats;
+	successFeePaid?: boolean;
 }
 
 export interface InterestedCandidateStatusResponse {
@@ -642,6 +649,12 @@ export interface InterestedCandidateDetails extends HuntableDetails {
 	dateInterested: string;
 	dateInterview?: string;
 	notes?: string;
+	successFeePaid?: boolean;
+	successFeePayment?: {
+		amount: number;
+		currency: string;
+		datePaid: string;
+	};
 }
 
 export interface InterestedCandidateStats {
