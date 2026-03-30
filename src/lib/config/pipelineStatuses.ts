@@ -67,7 +67,8 @@ export const PIPELINE_STATUS_CONFIGS: PipelineStatusConfig[] = [
  * Maps 'hired' to 'accepted' for backwards compatibility
  */
 export function getStatusConfig(status: string): PipelineStatusConfig | undefined {
-	const normalizedStatus = status.toLowerCase() === 'hired' ? 'accepted' : status.toLowerCase();
+	const lower = status.toLowerCase();
+	const normalizedStatus = lower === 'hired' ? 'accepted' : lower === 'applied' ? 'interested' : lower;
 	return PIPELINE_STATUS_CONFIGS.find((s) => s.value === normalizedStatus);
 }
 

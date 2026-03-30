@@ -382,6 +382,11 @@
 		});
 	}
 
+	function normalizeCandidateStatus(status: string | null | undefined): string {
+		const lower = status?.toLowerCase() || 'interested';
+		return lower === 'applied' ? 'interested' : lower === 'hired' ? 'accepted' : lower;
+	}
+
 	// Pipeline status configuration - reactive with i18n
 	let pipelineStatuses = $derived.by(() => {
 		// Reference locale to make this reactive to language changes
@@ -486,7 +491,7 @@
 		pipelineStatuses.map((status) => ({
 			...status,
 			count: interestedCandidates.filter(
-				(c) => c.status?.toLowerCase() === status.key || (!c.status && status.key === 'interested')
+				(c) => normalizeCandidateStatus(c.status) === status.key
 			).length
 		}))
 	);
@@ -495,8 +500,7 @@
 	let filteredCandidates = $derived(
 		selectedPipelineStatus
 			? interestedCandidates.filter((c) => {
-					const candidateStatus = c.status?.toLowerCase() || 'interested';
-					return candidateStatus === selectedPipelineStatus;
+					return normalizeCandidateStatus(c.status) === selectedPipelineStatus;
 				})
 			: interestedCandidates.filter(
 					(c) => showAllInterestedCandidates || c.dateReadyForRecruiter !== null
@@ -523,7 +527,7 @@
 		return pipelineStatuses.reduce(
 			(acc, status) => {
 				const candidates = filtered.filter(
-					(c) => (c.status?.toLowerCase() || 'interested') === status.key
+					(c) => normalizeCandidateStatus(c.status) === status.key
 				);
 				// Show if has candidates OR is a key stage
 				if (candidates.length > 0 || keyStages.includes(status.key)) {

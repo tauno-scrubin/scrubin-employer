@@ -21,10 +21,12 @@
 
 	let {
 		huntId = $bindable(0),
-		candidateId = $bindable(0)
+		candidateId = $bindable(0),
+		type = $bindable('offer')
 	}: {
 		huntId: number;
 		candidateId: number;
+		type: 'offer' | 'apply';
 	} = $props();
 
 	let messages: ChatMessage[] = $state([]);
@@ -41,7 +43,10 @@
 	async function fetchMessages() {
 		isLoading = true;
 		try {
-			const allMessages = await scrubinClient.hunt.getInterestedCandidateChat(huntId, candidateId);
+			const allMessages =
+				type === 'apply'
+					? await scrubinClient.hunt.getInterestedApplicantChat(huntId, candidateId)
+					: await scrubinClient.hunt.getInterestedCandidateChat(huntId, candidateId);
 			messages = allMessages;
 		} catch (error) {
 			console.error('Failed to fetch messages:', error);
@@ -56,11 +61,19 @@
 
 		isSending = true;
 		try {
-			await scrubinClient.hunt.createInterestedCandidateMessage(
-				huntId,
-				candidateId,
-				newMessage.trim()
-			);
+			if (type === 'apply') {
+				await scrubinClient.hunt.createInterestedApplicantMessage(
+					huntId,
+					candidateId,
+					newMessage.trim()
+				);
+			} else {
+				await scrubinClient.hunt.createInterestedCandidateMessage(
+					huntId,
+					candidateId,
+					newMessage.trim()
+				);
+			}
 
 			messages = [
 				...messages,

@@ -805,5 +805,34 @@
 				"selectCard": "Palun vali maksekaart"
 			}
 		}
+	},
+	"enums": {
+		"importantTerms": {
+			"LOWER_WORK_INTENSITY": "Väiksem töö intensiivsus",
+			"GAINING_EXPERIENCE": "Kogemuse saamine",
+			"BETTER_SALARY": "Parem palk",
+			"FLEXIBLE_SCHEDULE": "Paindlik töögraafik",
+			"WORK_LIFE_BALANCE": "Töö- ja eraelu tasakaal",
+			"CAREER_GROWTH": "Karjäärikasv",
+			"SUPPORTIVE_TEAM": "Toetav meeskond",
+			"WORK_LOCATION": "Töökoha asukoht"
+		},
+		"facilityTypes": {
+			"PHARMACY": "Apteek",
+			"PRIVATE_CLINIC": "Erakliinik",
+			"HOSPITAL": "Haigla",
+			"CARE_HOME": "Hooldekodu",
+			"DENTAL": "Hambakliinik",
+			"AMBULANCE": "Kiirabi",
+			"MEDICAL_LABORATORY": "Meditsiinilabor",
+			"DEFENCE_FORCES": "Kaitsevägi",
+			"FAMILY_MEDICINE": "Perearstikeskus",
+			"NHS_TRUST": "NHS Trust",
+			"CARE_SERVICES": "Hooldusteenused",
+			"PCN": "Esmatasandi tervishoiuvõrgustik",
+			"DRUG_COMPANY": "Ravimifirma",
+			"GOVERNMENT_COMPANY": "Riigiasutus",
+			"OTHER": "Muu"
+		}
 	}
 }

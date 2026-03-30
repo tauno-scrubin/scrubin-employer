@@ -1,11 +1,10 @@
 <script lang="ts">
 	import * as Card from '$lib/components/ui/card/index.js';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
-	import * as Tabs from '$lib/components/ui/tabs/index.js';
-	import * as Button from '$lib/components/ui/button/index.js';
-	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
 	import * as Select from '$lib/components/ui/select/index.js';
-	import { get } from 'svelte/store';
+	import * as Tabs from '$lib/components/ui/tabs/index.js';
+	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
+	import { PIPELINE_STATUS_CONFIGS } from '$lib/config/pipelineStatuses';
 	import { t } from '$lib/i18n';
 	import type { InterestedCandidateDetails, InterestedCandidateStats } from '@/scrubinClient';
 	import { scrubinClient } from '@/scrubinClient/client';
@@ -13,15 +12,15 @@
 		Award,
 		Briefcase,
 		Calendar,
+		Eye,
 		GraduationCap,
 		Mail,
-		Phone,
-		Sparkle,
-		Eye,
 		MailOpen,
-		MessageSquare
+		MessageSquare,
+		Phone,
+		Sparkle
 	} from 'lucide-svelte';
-	import { PIPELINE_STATUS_CONFIGS } from '$lib/config/pipelineStatuses';
+	import { get } from 'svelte/store';
 	import CandidateChat from './candidateChat.svelte';
 	import CandidateNotes from './candidateNotes.svelte';
 
@@ -57,9 +56,9 @@
 	// Current status value for the select dropdown
 	let currentStatus = $derived.by(() => {
 		if (!worker?.status) return 'interested';
-		// Map old status values to new ones
 		const statusLower = worker.status.toLowerCase();
 		if (statusLower === 'hired') return 'accepted';
+		if (statusLower === 'applied') return 'interested';
 		return statusLower;
 	});
 
@@ -89,8 +88,10 @@
 
 	async function getWorkerStats() {
 		try {
-			// Use correct API endpoint based on candidate type
-			const response = await scrubinClient.hunt.getInterestedCandidateStats(huntId, candidateId);
+			const response =
+				type === 'apply'
+					? await scrubinClient.hunt.getInterestedApplicantStats(huntId, candidateId)
+					: await scrubinClient.hunt.getInterestedCandidateStats(huntId, candidateId);
 			workerStats = response;
 		} catch (error) {
 			console.error('Error fetching interested worker stats:', error);
@@ -108,8 +109,11 @@
 		actionError = '';
 
 		try {
-			// Use the new unified endpoint
-			await scrubinClient.hunt.updateInterestedCandidateStatus(huntId, candidateId, newStatus);
+			if (type === 'apply') {
+				await scrubinClient.hunt.updateInterestedApplicantStatus(huntId, candidateId, newStatus.toUpperCase());
+			} else {
+				await scrubinClient.hunt.updateInterestedCandidateStatus(huntId, candidateId, newStatus);
+			}
 
 			// Reload hunt stats
 			await scrubinClient.hunt.getHuntStats(huntId);
@@ -124,7 +128,8 @@
 		}
 	}
 
-	function formatDate(dateString: string): string {
+	function formatDate(dateString: string | null | undefined): string {
+		if (!dateString) return '';
 		try {
 			return new Date(dateString).toLocaleDateString('en-US', {
 				year: 'numeric',
@@ -132,7 +137,7 @@
 				day: 'numeric'
 			});
 		} catch (e) {
-			return dateString || 'Not available';
+			return dateString || '';
 		}
 	}
 
@@ -279,7 +284,7 @@
 												>{worker.firstName} {worker.lastName}</span
 											>
 											{#if worker.status}
-												{@const statusLower = worker.status.toLowerCase() === 'hired' ? 'accepted' : worker.status.toLowerCase()}
+												{@const statusLower = (() => { const s = worker.status.toLowerCase(); return s === 'hired' ? 'accepted' : s === 'applied' ? 'interested' : s; })()}
 												{@const statusConfig = availableStatuses.find((s) => s.value === statusLower)}
 												{@const statusColor = statusConfig?.color || 'bg-gray-100 text-gray-800'}
 												{@const StatusIcon = statusConfig?.icon}
@@ -589,11 +594,13 @@
 												{#each worker.workExperiences as experience}
 													<div class="border-l-2 border-blue-200 py-1 pl-3">
 														<div class="font-medium">{experience.company}</div>
-														<div class="text-sm text-gray-600">
-															{formatDate(experience.start)} - {experience.end
-																? formatDate(experience.end)
-																: $t('dashboard.interestedWorkerDialog.present')}
-														</div>
+														{#if experience.start}
+															<div class="text-sm text-gray-600">
+																{formatDate(experience.start)} - {experience.end
+																	? formatDate(experience.end)
+																	: $t('dashboard.interestedWorkerDialog.present')}
+															</div>
+														{/if}
 														<div class="mt-1 text-sm">{experience.desc}</div>
 													</div>
 												{/each}
@@ -634,9 +641,11 @@
 												{#each worker.trainings as training}
 													<div class="border-l-2 border-blue-200 py-1 pl-3">
 														<div class="font-medium">{training.name}</div>
-														<div class="text-sm text-gray-600">
-															{formatDate(training.date)}
-														</div>
+														{#if training.date}
+															<div class="text-sm text-gray-600">
+																{formatDate(training.date)}
+															</div>
+														{/if}
 														<div class="mt-1 text-sm">{training.description}</div>
 													</div>
 												{/each}
@@ -710,7 +719,7 @@
 												{#if worker.preferredFacilityTypes && worker.preferredFacilityTypes.length > 0}
 													{#each worker.preferredFacilityTypes as facilityType}
 														<span class="rounded bg-gray-100 px-2 py-0.5 text-xs text-gray-700"
-															>{facilityType}</span
+															>{$t(`enums.facilityTypes.${facilityType}`)}</span
 														>
 													{/each}
 												{:else}
@@ -744,7 +753,7 @@
 												{#if worker.top3Terms && worker.top3Terms.length > 0}
 													{#each worker.top3Terms as term}
 														<span class="rounded bg-gray-100 px-2 py-0.5 text-xs text-gray-700"
-															>{term}</span
+															>{$t(`enums.importantTerms.${term}`)}</span
 														>
 													{/each}
 												{:else}
@@ -817,7 +826,7 @@
 							<span>{$t('dashboard.interestedWorkerDialog.unreadMessages')}</span>
 						</div>
 					{/if}
-					<CandidateChat bind:huntId bind:candidateId />
+					<CandidateChat bind:huntId bind:candidateId bind:type />
 				</Tabs.Content>
 
 				<Tabs.Content value="notes">

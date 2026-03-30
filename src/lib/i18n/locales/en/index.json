@@ -810,5 +810,34 @@
 				"selectCard": "Please select a payment card"
 			}
 		}
+	},
+	"enums": {
+		"importantTerms": {
+			"LOWER_WORK_INTENSITY": "Lower Work Intensity",
+			"GAINING_EXPERIENCE": "Gaining Experience",
+			"BETTER_SALARY": "Better Salary",
+			"FLEXIBLE_SCHEDULE": "Flexible Schedule",
+			"WORK_LIFE_BALANCE": "Work-Life Balance",
+			"CAREER_GROWTH": "Career Growth",
+			"SUPPORTIVE_TEAM": "Supportive Team",
+			"WORK_LOCATION": "Work Location"
+		},
+		"facilityTypes": {
+			"PHARMACY": "Pharmacy",
+			"PRIVATE_CLINIC": "Private Clinic",
+			"HOSPITAL": "Hospital",
+			"CARE_HOME": "Care Home",
+			"DENTAL": "Dental Center",
+			"AMBULANCE": "Ambulance Service",
+			"MEDICAL_LABORATORY": "Medical Laboratory",
+			"DEFENCE_FORCES": "Defence Forces",
+			"FAMILY_MEDICINE": "Family Medicine Center",
+			"NHS_TRUST": "NHS Trust",
+			"CARE_SERVICES": "Care Services",
+			"PCN": "Primary Care Network",
+			"DRUG_COMPANY": "Pharmaceutical Company",
+			"GOVERNMENT_COMPANY": "Government Institution",
+			"OTHER": "Other"
+		}
 	}
 }

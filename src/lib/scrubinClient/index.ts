@@ -1533,6 +1533,20 @@ class HuntResource extends BaseResource {
 		) as Promise<InterestedCandidateStats>;
 	}
 
+	async getInterestedApplicantStats(
+		id: number,
+		candidateId: number
+	): Promise<InterestedCandidateStats> {
+		const url = new URL(
+			`/api/v1/hunts/${id}/interested-applications/${candidateId}/stats`,
+			this.client.baseUrl
+		);
+		return this.request<InterestedCandidateStats>(
+			'GET',
+			url.toString()
+		) as Promise<InterestedCandidateStats>;
+	}
+
 	async getInterestedApplicantDetails(
 		id: number,
 		candidateId: number
@@ -1632,6 +1646,21 @@ class HuntResource extends BaseResource {
 		}) as Promise<InterestedCandidateStatusResponse>;
 	}
 
+	// PATCH /api/v1/hunts/{id}/interested-applications/{candidateId}/update-status
+	async updateInterestedApplicantStatus(
+		id: number,
+		candidateId: number,
+		status: string
+	): Promise<InterestedCandidateStatusResponse> {
+		const url = new URL(
+			`/api/v1/hunts/${id}/interested-applications/${candidateId}/update-status`,
+			this.client.baseUrl
+		);
+		return this.request<InterestedCandidateStatusResponse>('PATCH', url.toString(), {
+			status
+		}) as Promise<InterestedCandidateStatusResponse>;
+	}
+
 	// PUT /api/v1/hunts/{id}/interested-candidates/{candidateId}/notes
 	async updateInterestedCandidateNotes(
 		id: number,
@@ -1662,6 +1691,30 @@ class HuntResource extends BaseResource {
 	): Promise<ChatMessageMin[]> {
 		const url = new URL(
 			`/api/v1/hunts/${id}/interested-candidates/${candidateId}/chat`,
+			this.client.baseUrl
+		);
+		return this.request<ChatMessageMin[]>('POST', url.toString(), { message }) as Promise<
+			ChatMessageMin[]
+		>;
+	}
+
+	// GET /api/v1/hunts/{id}/interested-applications/{candidateId}/chat
+	async getInterestedApplicantChat(id: number, candidateId: number): Promise<ChatMessage[]> {
+		const url = new URL(
+			`/api/v1/hunts/${id}/interested-applications/${candidateId}/chat`,
+			this.client.baseUrl
+		);
+		return this.request<ChatMessage[]>('GET', url.toString()) as Promise<ChatMessage[]>;
+	}
+
+	// POST /api/v1/hunts/{id}/interested-applications/{candidateId}/chat
+	async createInterestedApplicantMessage(
+		id: number,
+		candidateId: number,
+		message: string
+	): Promise<ChatMessageMin[]> {
+		const url = new URL(
+			`/api/v1/hunts/${id}/interested-applications/${candidateId}/chat`,
 			this.client.baseUrl
 		);
 		return this.request<ChatMessageMin[]>('POST', url.toString(), { message }) as Promise<
