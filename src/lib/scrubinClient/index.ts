@@ -1106,7 +1106,9 @@ class BaseResource {
 				return;
 			}
 
-			return response.json();
+			const text = await response.text();
+			if (!text) return null as T;
+			return JSON.parse(text) as T;
 		} catch (error) {
 			if (error instanceof Error) {
 				throw new Error(`${error.message}`);
