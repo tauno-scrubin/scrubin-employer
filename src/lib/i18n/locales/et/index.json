@@ -787,6 +787,7 @@
 			"installments": "Osamaksed",
 			"taxInfo": "Maksuinfo",
 			"monthlyAccountFee": "Kuu kontotasu",
+			"noMonthlyAccountFee": "Puudub kuine kontotasu",
 			"monthlyAccountFeeDescription": "Kuu tellimustasu platvormi juurdepääsu ja teenuste eest",
 			"successFeeDescription": "Ühekordne tasu, mida makstakse ainult kandidaadi edukal palkamisel",
 			"includedFeatures": "Paketis sisaldub",

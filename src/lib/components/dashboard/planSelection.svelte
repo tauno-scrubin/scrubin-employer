@@ -404,9 +404,13 @@
 										</div>
 									</div>
 								{:else}
-									<div class="text-right">
-										<div class="text-2xl font-bold text-green-600">
-											{$t('pricing.planSelection.free')}
+									<div class="flex items-center gap-2">
+										<p class="text-xs text-muted-foreground">
+											{$t('pricing.planSelection.noMonthlyAccountFee')}
+										</p>
+										<div class="text-2xl font-bold">
+											{plan.baseFee.amount}
+											{getCurrencySymbol(plan.baseFee.currency)}
 										</div>
 									</div>
 								{/if}

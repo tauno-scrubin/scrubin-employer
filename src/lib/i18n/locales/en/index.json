@@ -792,6 +792,7 @@
 			"installments": "Installments",
 			"taxInfo": "Tax Information",
 			"monthlyAccountFee": "Monthly Account Fee",
+			"noMonthlyAccountFee": "No Monthly Account Fee",
 			"monthlyAccountFeeDescription": "Monthly subscription fee for platform access and features",
 			"successFeeDescription": "One-time fee paid only when you successfully hire a candidate",
 			"includedFeatures": "Included Features",
