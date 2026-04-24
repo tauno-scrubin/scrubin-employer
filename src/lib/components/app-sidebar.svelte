@@ -105,7 +105,7 @@
 	</Sidebar.Header>
 	<Sidebar.Content>
 		<NavMain items={data.navMain} />
-		{#if $currentUser?.status == 'pending'}
+		<!-- {#if $currentUser?.status == 'pending'}
 			<div
 				class="mx-2 mb-4 rounded-lg border border-yellow-200 bg-gradient-to-b from-yellow-100 via-yellow-100 to-yellow-50 px-4 py-3 shadow-inner shadow-yellow-50"
 			>
@@ -123,7 +123,7 @@
 					{$t('account.scheduleCallBtn')}
 				</a>
 			</div>
-		{/if}
+		{/if} -->
 	</Sidebar.Content>
 	<Sidebar.Footer>
 		<DropdownMenu.Root bind:open={languageDropdownOpen}>
