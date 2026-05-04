@@ -24,8 +24,12 @@
 
 	onMount(async () => {
 		await scrubinClient.ensureAuth();
-		isAuthenticatedState = true;
+		// Resolve T&C state BEFORE flipping isAuthenticatedState — otherwise
+		// children render in the gap and fire API calls that 403 because the
+		// company is still pending. The {#if showTermsModal} branch below
+		// keeps children unmounted while terms are unaccepted.
 		await ensureTermsAccepted();
+		isAuthenticatedState = true;
 	});
 
 	$effect(() => {
