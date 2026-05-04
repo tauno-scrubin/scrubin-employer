@@ -41,6 +41,13 @@
 	}
 
 	async function checkAuth() {
+		// Public outreach landing route has its own JS-gated redeem flow
+		// and must not be auth-walled — the recipient arrives unauthenticated.
+		if (page.url.pathname.startsWith('/o/')) {
+			loading = false;
+			return;
+		}
+
 		try {
 			// First, handle token authentication if present
 			const tokenAuthSuccess = await handleTokenAuthentication();
