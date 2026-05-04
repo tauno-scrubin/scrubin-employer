@@ -7,6 +7,7 @@ User-agent: *
 Allow: /
 Disallow: /admin/
 Disallow: /api/
+Disallow: /o/
 
 Sitemap: ${PUBLIC_ORIGIN}/sitemap.xml
 `.trim();

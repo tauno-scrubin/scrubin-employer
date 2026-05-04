@@ -41,10 +41,14 @@ const handleAPI: Handle = async ({ event, resolve }) => {
 		event.locals.scrubinClient.setClientIP(clientIP);
 	}
 
-	// Check if URL contains token parameter
+	// Check if URL contains token parameter.
+	// Skip auto-redeem for /o/* — those routes serve a JS-gated splash that redeems via
+	// /api/outreach/redeem only when a real browser runs the page script, preventing
+	// email-security bot prefetch from burning the magic link.
 	const url = event.url;
 	const urlToken = url.searchParams.get('token');
-	if (urlToken) {
+	const isOutreachLanding = url.pathname.startsWith('/o/');
+	if (urlToken && !isOutreachLanding) {
 		// Clear authStore and let frontend handle token validation
 		event.locals.scrubinClient.authStore.clear();
 		event.locals.user = undefined;

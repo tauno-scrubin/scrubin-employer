@@ -1,4 +1,4 @@
-import type { CallbackDataParams } from 'echarts/types/dist/shared.js'
+import type { CallbackDataParams } from 'echarts/types/dist/shared'
 
 // ref: https://echarts.apache.org/en/api.html#events
 export const MOUSE_EVENT_NAMES = [
