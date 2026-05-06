@@ -50,12 +50,27 @@ export function getStatusColor(status: string) {
 }
 
 export async function payWithStripe(huntId: number, paymentMethodId: string) {
-	// Create PaymentIntent
 	await scrubinClient.company.updateBillingStripe({
 		stripePaymentMethodId: paymentMethodId
 	});
 
-	const createPaymentIntent = await scrubinClient.hunt.createPaymentIntent(huntId);
+	const intent = await scrubinClient.hunt.createPaymentIntent(huntId);
+
+	// Off-session charge already cleared (verified card, no 3DS).
+	if (intent.status === 'succeeded') {
+		await scrubinClient.hunt.activateHunt(huntId, intent.paymentIntentId, paymentMethodId);
+		return { success: true, hunt: huntId };
+	}
+
+	// Off-session 3DS challenge — backend has emailed a confirmation link to the user.
+	if (intent.status === 'requires_action') {
+		return { success: false, hunt: huntId, requiresAction: true };
+	}
+
+	// requires_confirmation (legacy on-session path) or undefined status (older backend).
+	if (!intent.clientSecret) {
+		throw new Error('Payment confirmation required but no client secret returned');
+	}
 
 	const isDemoUser = get(currentUser)?.isDemoUser || false;
 	const stripePublicKey = isDemoUser ? PUBLIC_STRIPE_PUBLIC_KEY_DEV : PUBLIC_STRIPE_PUBLIC_KEY;
@@ -63,32 +78,21 @@ export async function payWithStripe(huntId: number, paymentMethodId: string) {
 	if (!stripe) {
 		throw new Error('Payment system failed to initialize');
 	}
-	// Confirm the payment
 
-	const result = await stripe.confirmCardPayment(createPaymentIntent.clientSecret);
+	const result = await stripe.confirmCardPayment(intent.clientSecret);
 
-	console.log('Stripe response:', result); // For debugging
-
-	// Check if payment is already succeeded
 	if (result.paymentIntent?.status === 'succeeded') {
-		await scrubinClient.hunt.activateHunt(
-			huntId,
-			createPaymentIntent.paymentIntentId,
-			paymentMethodId
-		);
+		await scrubinClient.hunt.activateHunt(huntId, intent.paymentIntentId, paymentMethodId);
 		return { success: true, hunt: huntId };
 	}
 
-	// If we have an error, throw it
 	if (result.error) {
-		// Check if it's the "already succeeded" error
 		if (result.error.payment_intent?.status === 'succeeded') {
 			return { success: true, hunt: huntId };
 		}
 		throw new Error(result.error.message || 'Payment failed');
 	}
 
-	// If we get here without a PaymentIntent, something went wrong
 	if (!result.paymentIntent) {
 		throw new Error('Payment failed - no payment intent returned');
 	}

@@ -59,7 +59,11 @@
 				paymentMethodId = paymentMethod.id;
 			}
 			const result = await payWithStripe(huntId, paymentMethodId);
-			onSuccess(huntId);
+			if (result.requiresAction) {
+				toast.info($t('payment.requiresAction'));
+			} else {
+				onSuccess(huntId);
+			}
 		} catch (error) {
 			errorMessage = error instanceof Error ? error.message : $t('payment.stripeError');
 			toast.error(errorMessage);

@@ -123,20 +123,26 @@
 		try {
 			isAddingCard = true;
 
-			// Create payment method using Stripe.js
-			const { error, paymentMethod } = await stripe.createPaymentMethod({
-				type: 'card',
-				card: cardNumberElement
+			const { clientSecret } = await scrubinClient.company.createSetupIntent();
+
+			const { error, setupIntent } = await stripe.confirmCardSetup(clientSecret, {
+				payment_method: {
+					card: cardNumberElement
+				}
 			});
 
 			if (error) {
-				toast.error(error.message || 'Failed to process card');
+				toast.error(error.message || 'Failed to verify card');
 				return;
 			}
 
-			// Send payment method ID to backend
+			if (!setupIntent || setupIntent.status !== 'succeeded') {
+				toast.error($t('pricing.cardManagement.verifyFailed') || 'Card verification failed');
+				return;
+			}
+
 			await scrubinClient.company.addPaymentMethod({
-				paymentMethodId: paymentMethod.id,
+				setupIntentId: setupIntent.id,
 				setAsDefault: cards.length === 0 // First card becomes default
 			});
 

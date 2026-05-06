@@ -1,4 +1,8 @@
 <script lang="ts">
+	import { PUBLIC_STRIPE_PUBLIC_KEY, PUBLIC_STRIPE_PUBLIC_KEY_DEV } from '$env/static/public';
+	import { loadStripe } from '@stripe/stripe-js';
+	import { currentUser } from '@/scrubinClient/client';
+	import { get } from 'svelte/store';
 	import { getCurrencySymbol } from '$lib/components/payment/payments';
 	import { Button } from '$lib/components/ui/button';
 	import {
@@ -56,7 +60,6 @@
 	let selectedCardId = $state<string>('');
 	let companyInfo: Company | null = $state(null);
 	let termsAccepted = $state(false);
-	let hasSavedCards = $state(false);
 
 	// Enterprise contact dialog state
 	let contactDialogOpen = $state(false);
@@ -168,15 +171,6 @@
 
 			availablePlans = plans;
 			paymentMethods = response.paymentMethods;
-
-			// Check if user has saved cards
-			try {
-				const cards = await scrubinClient.company.getPaymentMethods();
-				hasSavedCards = cards.length > 0;
-			} catch (err) {
-				console.warn('Could not fetch payment methods:', err);
-				hasSavedCards = false;
-			}
 		} catch (err) {
 			error = (err as Error).message;
 			console.error('Failed to fetch available plans:', err);
@@ -190,66 +184,11 @@
 		onPlanSelected?.(plan);
 	};
 
-	const createSubscriptionWithCheckout = async (plan: AvailablePlan) => {
-		if (!plan.planId) {
-			toast.error($t('pricing.planSelection.toast.planNotAvailable'));
-			return;
-		}
-
-		try {
-			isCreatingSubscription = true;
-
-			const subscriptionData: CreateSubscriptionRequest = {
-				planId: plan.planId,
-				paymentMethod: 'card',
-				// No stripePaymentMethodId - backend will return checkoutUrl
-				couponCode: couponCode.trim() || undefined,
-				termsUrl: $t('pricing.planSelection.hiringTermsUrl'),
-				privacyPolicyUrl: $t('pricing.planSelection.privacyPolicyUrl'),
-				termsOfServiceUrl: $t('pricing.planSelection.termsOfServiceUrl'),
-				acceptanceDate: new Date().toISOString()
-			};
-
-			const response = await scrubinClient.company.createSubscription(subscriptionData);
-
-			if (response.checkoutUrl) {
-				// Redirect to Stripe checkout
-				const currentUrl = new URL(window.location.href);
-				const successUrl = `${currentUrl.origin}/dashboard/pricing?subscription=success`;
-				const cancelUrl = `${currentUrl.origin}/dashboard/pricing?subscription=cancelled`;
-
-				const checkoutUrl = new URL(response.checkoutUrl);
-				checkoutUrl.searchParams.set('success_url', successUrl);
-				checkoutUrl.searchParams.set('cancel_url', cancelUrl);
-
-				window.location.href = checkoutUrl.toString();
-			} else {
-				// Unexpected: backend should always return checkoutUrl when no payment method provided
-				toast.error('Unable to process payment. Please try again.');
-			}
-		} catch (err) {
-			const errorMessage = err instanceof Error ? err.message : 'Failed to create subscription';
-			toast.error(errorMessage);
-			console.error('Subscription creation failed:', err);
-		} finally {
-			isCreatingSubscription = false;
-		}
-	};
-
 	const handleSubscribe = async (plan: AvailablePlan) => {
 		planToSubscribe = plan;
-		// Set default payment method based on available methods
 		selectedPaymentMethod = paymentMethods.includes('card')
 			? 'card'
 			: (paymentMethods[0] as 'card' | 'invoice');
-
-		// If card is the only payment method and no saved cards, redirect to Stripe Checkout immediately
-		if (selectedPaymentMethod === 'card' && !hasSavedCards && paymentMethods.length === 1) {
-			await createSubscriptionWithCheckout(plan);
-			return;
-		}
-
-		// Otherwise show confirmation dialog for card selection or invoice
 		selectedCardId = '';
 		termsAccepted = false;
 		confirmationDialogOpen = true;
@@ -261,10 +200,8 @@
 			return;
 		}
 
-		// If card selected but no saved cards, redirect to Stripe Checkout
 		if (selectedPaymentMethod === 'card' && !selectedCardId) {
-			confirmationDialogOpen = false;
-			await createSubscriptionWithCheckout(planToSubscribe);
+			toast.error($t('pricing.planSelection.toast.selectCard'));
 			return;
 		}
 
@@ -283,9 +220,56 @@
 				acceptanceDate: new Date().toISOString()
 			};
 
-			await scrubinClient.company.createSubscription(subscriptionData);
+			const response = await scrubinClient.company.createSubscription(subscriptionData);
 
-			// With saved card or invoice, subscription completes in-app
+			if (response.status === 'requires_payment' && response.checkoutUrl) {
+				// Backend wants the user to capture/verify a card via Stripe Checkout (setup mode)
+				const currentUrl = new URL(window.location.href);
+				const successUrl = `${currentUrl.origin}/dashboard/pricing?subscription=success`;
+				const cancelUrl = `${currentUrl.origin}/dashboard/pricing?subscription=cancelled`;
+				const checkoutUrl = new URL(response.checkoutUrl);
+				checkoutUrl.searchParams.set('success_url', successUrl);
+				checkoutUrl.searchParams.set('cancel_url', cancelUrl);
+				window.location.href = checkoutUrl.toString();
+				return;
+			}
+
+			if (response.status === 'invoice_pending') {
+				onSubscriptionCreated?.();
+				toast.success($t('pricing.planSelection.toast.invoicePending'));
+				return;
+			}
+
+			// First-invoice SCA — paid plan whose initial payment requires 3DS confirmation.
+			if (response.clientSecret) {
+				const isDemoUser = get(currentUser)?.isDemoUser || false;
+				const stripePublicKey = isDemoUser ? PUBLIC_STRIPE_PUBLIC_KEY_DEV : PUBLIC_STRIPE_PUBLIC_KEY;
+				const stripe = await loadStripe(stripePublicKey);
+				if (!stripe) {
+					throw new Error('Payment system failed to initialize');
+				}
+
+				const result = await stripe.confirmCardPayment(response.clientSecret);
+
+				if (result.error) {
+					if (result.error.payment_intent?.status === 'succeeded') {
+						onSubscriptionCreated?.();
+						toast.success($t('pricing.planSelection.toast.subscriptionCreated'));
+						return;
+					}
+					throw new Error(result.error.message || 'Payment confirmation failed');
+				}
+
+				if (result.paymentIntent?.status !== 'succeeded') {
+					throw new Error('Payment was not completed');
+				}
+
+				onSubscriptionCreated?.();
+				toast.success($t('pricing.planSelection.toast.subscriptionCreated'));
+				return;
+			}
+
+			// 'active' | 'trialing' | other in-app completion paths
 			onSubscriptionCreated?.();
 			toast.success($t('pricing.planSelection.toast.subscriptionCreated'));
 		} catch (err) {
@@ -762,7 +746,7 @@
 			</Button>
 			<Button
 				onclick={confirmSubscription}
-				disabled={isCreatingSubscription || !termsAccepted}
+				disabled={isCreatingSubscription || !termsAccepted || (selectedPaymentMethod === 'card' && !selectedCardId)}
 				class="w-full text-sm sm:w-auto"
 			>
 				{#if isCreatingSubscription}

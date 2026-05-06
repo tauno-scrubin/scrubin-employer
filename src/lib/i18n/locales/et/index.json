@@ -82,6 +82,7 @@
 		"total": "Kokku",
 		"pay": "Maksa",
 		"stripeError": "Makse töötlemine ebaõnnestus",
+		"requiresAction": "Vajame kaardi täiendavat kinnitust. Kontrolli oma e-posti ja avab saadetud kinnituslingi.",
 		"expires": "Aegub",
 		"activateHunt": "Aktiveeri otsing",
 		"completePayment": "Lõpeta makse",
@@ -669,7 +670,7 @@
 			"cancel": "Tühista",
 			"adding": "Lisan...",
 			"addCardTitle": "Lisa maksekaart",
-			"addCardDescription": "Sisesta oma kaardi andmed. Sinu teave töödeldakse turvaliselt Stripe'i kaudu.",
+			"addCardDescription": "Sisesta oma kaardi andmed. Kontrollime kaarti sinu pangaga — võid näha 3D Secure kinnitust. Tasu ei võeta.",
 			"cardNumber": "Kaardi number",
 			"expiryDate": "Kehtivusaeg",
 			"cvc": "CVC",
@@ -680,7 +681,8 @@
 			"cardRemoved": "Kaart edukalt eemaldatud",
 			"defaultSet": "Vaikimisi kaart uuendatud",
 			"cannotRemoveDefault": "Vaikimisi makseviisi ei saa eemaldada",
-			"cannotRemoveLast": "Ainsat makseviisi ei saa eemaldada"
+			"cannotRemoveLast": "Ainsat makseviisi ei saa eemaldada",
+			"verifyFailed": "Kaardi kinnitamine ebaõnnestus. Proovi uuesti või kasuta teist kaarti."
 		},
 		"planSelection": {
 			"selectCard": "Vali maksekaart",
@@ -713,7 +715,7 @@
 			"couponPlaceholder": "Sisesta kupongi kood",
 			"confirmTitle": "Kinnita tellimus",
 			"confirmDescription": "Me arvestame selle plaani eest {{amount}} {{currency}} iga kuu.",
-			"confirmDescriptionFree": "Kogume sinu andmeid tellimuse kinnitamiseks. Ette maksu pole vaja.",
+			"confirmDescriptionFree": "Kaart on vajalik üksnes kinnitamiseks. Täna sind ei debiteerita — võtame edutasu ainult eduka palkamise korral.",
 			"planDetails": "Plaani üksikasjad",
 			"planName": "Plaan",
 			"monthlyFee": "Kuutasu",
@@ -800,6 +802,9 @@
 			"toast": {
 				"planNotAvailable": "Plaan pole tellimiseks saadaval",
 				"subscriptionCreated": "Tellimus loodud edukalt!",
+				"subscriptionPending": "Tellimust vormistatakse. See võib võtta hetke.",
+				"subscriptionCancelled": "Tellimus tühistatud. Saad alati uuesti proovida.",
+				"invoicePending": "Tellimus loodud. Saadame esimese arve peagi.",
 				"messageSent": "Sõnum saadetud! Võtame peagi ühendust.",
 				"enterMessage": "Palun sisesta sõnum",
 				"failedToSend": "Sõnumi saatmine ebaõnnestus",

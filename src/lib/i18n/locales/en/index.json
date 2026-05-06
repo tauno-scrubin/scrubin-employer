@@ -82,6 +82,7 @@
 		"total": "Total",
 		"pay": "Pay",
 		"stripeError": "Payment processing failed",
+		"requiresAction": "We need extra verification on your card. Check your email for a confirmation link.",
 		"expires": "Expires",
 		"activateHunt": "Activate Hunt",
 		"completePayment": "Complete Payment",
@@ -674,7 +675,7 @@
 			"cancel": "Cancel",
 			"adding": "Adding...",
 			"addCardTitle": "Add Payment Card",
-			"addCardDescription": "Enter your card details. Your information is securely processed by Stripe.",
+			"addCardDescription": "Enter your card details. We'll verify your card with your bank — you may see a 3D Secure prompt. No charge will be made.",
 			"cardNumber": "Card Number",
 			"expiryDate": "Expiry Date",
 			"cvc": "CVC",
@@ -685,7 +686,8 @@
 			"cardRemoved": "Card removed successfully",
 			"defaultSet": "Default card updated",
 			"cannotRemoveDefault": "Cannot remove default payment method",
-			"cannotRemoveLast": "Cannot remove the only payment method"
+			"cannotRemoveLast": "Cannot remove the only payment method",
+			"verifyFailed": "Card verification failed. Please try again or use a different card."
 		},
 		"planSelection": {
 			"selectCard": "Select Payment Card",
@@ -718,7 +720,7 @@
 			"couponPlaceholder": "Enter coupon code",
 			"confirmTitle": "Confirm Subscription",
 			"confirmDescription": "We will charge you {{amount}} {{currency}} each month for this plan.",
-			"confirmDescriptionFree": "We will collect your details to confirm your subscription. No upfront payment required.",
+			"confirmDescriptionFree": "Your card is required for verification only. You will not be charged today — we charge a success fee only when you make a successful hire.",
 			"planDetails": "Plan Details",
 			"planName": "Plan",
 			"monthlyFee": "Monthly Fee",
@@ -805,6 +807,9 @@
 			"toast": {
 				"planNotAvailable": "Plan not available for subscription",
 				"subscriptionCreated": "Subscription created successfully!",
+				"subscriptionPending": "Subscription is being finalized. This may take a moment.",
+				"subscriptionCancelled": "Subscription cancelled. You can try again anytime.",
+				"invoicePending": "Subscription created. We'll send your first invoice shortly.",
 				"messageSent": "Message sent! We will get back to you shortly.",
 				"enterMessage": "Please enter a message",
 				"failedToSend": "Failed to send message",

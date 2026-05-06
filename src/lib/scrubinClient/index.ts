@@ -536,9 +536,12 @@ export interface CompanyBillingRequest {
 	stripePaymentMethodId?: string;
 }
 
+export type PaymentIntentStatus = 'succeeded' | 'requires_confirmation' | 'requires_action';
+
 export interface PaymentIntent {
-	clientSecret: string;
+	clientSecret: string | null;
 	paymentIntentId: string;
+	status?: PaymentIntentStatus;
 }
 
 export interface HuntPaymentResponse extends PaymentIntent {
@@ -560,8 +563,13 @@ export interface PaymentMethodDto {
 }
 
 export interface CreatePaymentMethodRequest {
-	paymentMethodId: string;
+	setupIntentId?: string;
+	paymentMethodId?: string;
 	setAsDefault?: boolean;
+}
+
+export interface SetupIntentResponse {
+	clientSecret: string;
 }
 
 export interface UpdateSubscriptionPaymentMethodRequest {
@@ -745,14 +753,32 @@ export interface CreateSubscriptionRequest {
 	acceptanceDate?: string;
 }
 
+export type CreateSubscriptionStatus =
+	| 'active'
+	| 'trialing'
+	| 'invoice_pending'
+	| 'requires_payment'
+	| 'incomplete'
+	| string;
+
 export interface CreateSubscriptionResponse {
-	subscriptionId: string;
-	status: string;
-	currentPeriodStart: number;
-	currentPeriodEnd: number;
-	cancelAtPeriodEnd: boolean;
+	subscriptionId?: string;
+	status: CreateSubscriptionStatus;
+	currentPeriodStart?: number;
+	currentPeriodEnd?: number;
+	cancelAtPeriodEnd?: boolean;
 	clientSecret?: string;
 	checkoutUrl?: string;
+	planId?: number;
+}
+
+export interface FinalizeCheckoutRequest {
+	sessionId: string;
+}
+
+export interface FinalizeCheckoutResponse {
+	activated: boolean;
+	planId?: number;
 }
 
 export interface CompanyPlanSummary {
@@ -1250,6 +1276,11 @@ class CompanyResource extends BaseResource {
 		return this.request<PaymentMethodDto>('POST', url.toString(), data) as Promise<PaymentMethodDto>;
 	}
 
+	async createSetupIntent(): Promise<SetupIntentResponse> {
+		const url = new URL(`${this.path}/billing/payment-methods/setup-intent`, this.client.baseUrl);
+		return this.request<SetupIntentResponse>('POST', url.toString(), {}) as Promise<SetupIntentResponse>;
+	}
+
 	async removePaymentMethod(paymentMethodId: string): Promise<void> {
 		const url = new URL(`${this.path}/billing/payment-methods/${paymentMethodId}`, this.client.baseUrl);
 		return this.request<void>('DELETE', url.toString(), undefined, true) as Promise<void>;
@@ -1294,6 +1325,15 @@ class CompanyResource extends BaseResource {
 			url.toString(),
 			data
 		) as Promise<CreateSubscriptionResponse>;
+	}
+
+	async finalizeCheckout(data: FinalizeCheckoutRequest): Promise<FinalizeCheckoutResponse> {
+		const url = new URL(`${this.path}/plans/finalize-checkout`, this.client.baseUrl);
+		return this.request<FinalizeCheckoutResponse>(
+			'POST',
+			url.toString(),
+			data
+		) as Promise<FinalizeCheckoutResponse>;
 	}
 
 	async startPlan(planType: string): Promise<CompanyPlanSummary> {
@@ -1480,13 +1520,12 @@ class HuntResource extends BaseResource {
 	async activateHunt(
 		id: number,
 		paymentIntentId: string,
-		paymentMethodId: string
+		paymentMethodId?: string
 	): Promise<HuntPaymentResponse> {
 		const url = new URL(`/api/v1/hunts/${id}/activate`, this.client.baseUrl);
-		return this.request<HuntPaymentResponse>('POST', url.toString(), {
-			paymentIntentId,
-			paymentMethodId
-		}) as Promise<HuntPaymentResponse>;
+		const body: { paymentIntentId: string; paymentMethodId?: string } = { paymentIntentId };
+		if (paymentMethodId) body.paymentMethodId = paymentMethodId;
+		return this.request<HuntPaymentResponse>('POST', url.toString(), body) as Promise<HuntPaymentResponse>;
 	}
 
 	// GET /api/v1/landing/worker-lookups/{lookupId}/huntable/{id}

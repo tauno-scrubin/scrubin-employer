@@ -91,8 +91,39 @@
 		return null;
 	};
 
+	const handleCheckoutReturn = async () => {
+		if (typeof window === 'undefined') return;
+		const params = new URLSearchParams(window.location.search);
+		const subscriptionParam = params.get('subscription');
+		if (!subscriptionParam) return;
+
+		const sessionId = params.get('session_id');
+		const cleanUrl = window.location.pathname;
+
+		try {
+			if (subscriptionParam === 'success' && sessionId) {
+				const result = await scrubinClient.company.finalizeCheckout({ sessionId });
+				if (result.activated) {
+					toast.success($t('pricing.planSelection.toast.subscriptionCreated'));
+				} else {
+					toast.info($t('pricing.planSelection.toast.subscriptionPending'));
+				}
+			} else if (subscriptionParam === 'cancelled') {
+				toast.info($t('pricing.planSelection.toast.subscriptionCancelled'));
+			}
+		} catch (err) {
+			const errorMessage = err instanceof Error ? err.message : 'Failed to finalize subscription';
+			toast.error(errorMessage);
+			console.error('Finalize checkout failed:', err);
+		} finally {
+			window.history.replaceState({}, '', cleanUrl);
+		}
+	};
+
 	onMount(async () => {
 		try {
+			await handleCheckoutReturn();
+
 			const [active, bill, company, ended] = await Promise.all([
 				scrubinClient.company.getActivePlans(),
 				scrubinClient.company.getBilling(),
