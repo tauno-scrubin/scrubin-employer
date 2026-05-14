@@ -15,6 +15,7 @@
 	import BasicInfoStep from '$lib/components/requirements/v2/BasicInfoStep.svelte';
 	import LocationSalaryStep from '$lib/components/requirements/v2/LocationSalaryStep.svelte';
 	import JobDetailsStep from '$lib/components/requirements/v2/JobDetailsStep.svelte';
+	import QualificationsStep from '$lib/components/requirements/v2/QualificationsStep.svelte';
 	import TargetingStep from '$lib/components/requirements/v2/TargetingStep.svelte';
 	import PreviewStep from '$lib/components/requirements/v2/PreviewStep.svelte';
 
@@ -34,6 +35,11 @@
 			id: 'details',
 			title: $t('requirementsV2.steps.details.title'),
 			description: $t('requirementsV2.steps.details.description')
+		},
+		{
+			id: 'qualifications',
+			title: $t('requirementsV2.steps.qualifications.title'),
+			description: $t('requirementsV2.steps.qualifications.description')
 		},
 		{
 			id: 'targeting',
@@ -175,9 +181,11 @@
 				return !!(requirement.countryIso && requirement.salary?.amountStart);
 			case 2: // Job Details
 				return !!requirement.jobDescription;
-			case 3: // Targeting
+			case 3: // Qualifications
 				return true; // Optional step
-			case 4: // Preview
+			case 4: // Targeting
+				return true; // Optional step
+			case 5: // Preview
 				return true; // Always accessible if other steps are done
 			default:
 				return false;
@@ -397,8 +405,10 @@
 			{:else if currentStep === 2}
 				<JobDetailsStep bind:requirement {requirementId} />
 			{:else if currentStep === 3}
-				<TargetingStep bind:requirement {requirementId} />
+				<QualificationsStep bind:requirement {requirementId} />
 			{:else if currentStep === 4}
+				<TargetingStep bind:requirement {requirementId} />
+			{:else if currentStep === 5}
 				<PreviewStep {requirement} {requirementId} />
 			{/if}
 		{/if}

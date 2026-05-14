@@ -17,6 +17,7 @@
 	import { scrubinClient } from '$lib/scrubinClient/client';
 	import InterestedWorkerDialog from '@/components/dashboard/interestedWorkerDialog.svelte';
 	import QuestionsInHunt from '@/components/dashboard/questionsInHunt.svelte';
+	import ScreeningQuestionsInHunt from '@/components/dashboard/screeningQuestionsInHunt.svelte';
 	import { getStatusColor } from '@/components/payment/payments.js';
 	import { getStatusConfig } from '$lib/config/pipelineStatuses';
 	import * as Dialog from '@/components/ui/dialog/index.js';
@@ -625,7 +626,7 @@
 	</div>
 	<!-- Status badge at the top -->
 	<Tabs.Root bind:value={activeTab} class="w-full">
-		<Tabs.List class="grid w-fit grid-cols-3">
+		<Tabs.List class="grid w-fit grid-cols-4">
 			<Tabs.Trigger value="details">{$t('hunt.details')}</Tabs.Trigger>
 			<Tabs.Trigger value="statistics">
 				<span>{$t('hunt.statistics')}</span>
@@ -637,6 +638,7 @@
 					</span>
 				{/if}
 			</Tabs.Trigger>
+			<Tabs.Trigger value="screening">{$t('hunt.screening')}</Tabs.Trigger>
 			<Tabs.Trigger value="questions">
 				<span>{$t('hunt.questions')}</span>
 				{#if unansweredQuestionsCount > 0}
@@ -1239,6 +1241,19 @@
 							</div>
 						{/if}
 					</div>
+				</div>
+			</div>
+		</Tabs.Content>
+		<Tabs.Content value="screening">
+			<div class="rounded-md bg-blue-50/80 p-4">
+				<div class="rounded-md bg-white p-4 shadow-sm">
+					<h4 class="text-xl font-semibold text-gray-900">
+						{$t('dashboard.screeningQuestions.title')}
+					</h4>
+					<p class="mb-6 text-sm text-muted-foreground">
+						{$t('dashboard.screeningQuestions.subtitle')}
+					</p>
+					<ScreeningQuestionsInHunt huntId={hunt.huntId} />
 				</div>
 			</div>
 		</Tabs.Content>

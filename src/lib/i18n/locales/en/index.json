@@ -392,6 +392,45 @@
 			"submit": "Submit",
 			"cancel": "Cancel"
 		},
+		"screeningQuestions": {
+			"title": "Screening questions",
+			"subtitle": "Questions our AI agent will weave into every candidate conversation. Required ones gate the recruiter handoff.",
+			"intro": {
+				"title": "What this is",
+				"body": "These questions help our AI agent filter for fit before passing candidates to the agency. Required questions must be answered before the handoff is allowed; non-required questions are still asked but don't block."
+			},
+			"empty": {
+				"title": "No screening questions yet",
+				"body": "Add a question below and our AI agent will start asking it in every candidate conversation for this hunt."
+			},
+			"fields": {
+				"question": "Question",
+				"questionPlaceholder": "e.g. Why do you want to move?",
+				"rationale": "Why we ask (private — shown only to our AI agent)",
+				"rationalePlaceholder": "Optional — gives our AI agent context",
+				"topic": "Topic",
+				"required": "Required for handoff"
+			},
+			"topic": {
+				"documents": "Documents readiness",
+				"motivation": "Motivation",
+				"destination": "Destination",
+				"on_trip_meeting": "On-trip meeting",
+				"custom": "Custom"
+			},
+			"template": {
+				"documents": "Have you looked into the documents you'll need?",
+				"motivation": "Why do you want to move?",
+				"destination": "Where in Australia do you want to move?",
+				"on_trip_meeting": "Would you like to meet us during the trip?"
+			},
+			"addBlank": "Add question",
+			"delete": "Delete",
+			"save": "Save changes",
+			"saved": "Screening questions saved",
+			"loadFailed": "Couldn't load screening questions",
+			"saveFailed": "Couldn't save screening questions"
+		},
 		"searchHistory": {
 			"title": "Recent Searches",
 			"loading": "Loading...",

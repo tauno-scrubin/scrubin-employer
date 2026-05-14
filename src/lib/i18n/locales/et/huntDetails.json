@@ -2,6 +2,7 @@
 	"hunt": {
 		"details": "Detailid",
 		"statistics": "Kandidaadid",
+		"screening": "Eelsõelumine",
 		"questions": "Küsimused",
 		"jobDetails": "Töö detailid",
 		"qualifications": "Kvalifikatsioonid",
@@ -26,10 +27,10 @@
 		"languages": "Keeled",
 		"salary": "Palk",
 		"notSpecified": "Määramata",
-		"requiredQualifications": "Nõutavad Kvalifikatsioonid",
-		"additionalRequirements": "Täiendavad Nõuded",
+		"requiredQualifications": "Nõutavad kvalifikatsioonid",
+		"additionalRequirements": "Täiendavad nõuded",
 		"drivingLicense": "Juhiluba",
-		"personalCar": "Isiklik Auto",
+		"personalCar": "Isiklik auto",
 		"accommodation": "Majutus",
 		"transport": "Transport",
 		"required": "Nõutav",
@@ -37,6 +38,7 @@
 		"title": "Sihtotsing",
 		"completed": "Otsing märgiti lõpetatuks",
 		"cancelled": "Otsing tühistati",
+		"paused": "Otsing pandi pausile",
 		"completeDialog": {
 			"title": "Lõpeta otsing",
 			"description": "See märgib otsingu lõpetatuks. Saad statistikat endiselt vaadata."
@@ -47,7 +49,7 @@
 		},
 		"pauseDialog": {
 			"title": "Pane otsing pausile",
-			"description": "Pausil olev otsing lõpetab automaatsed väljasaatmised. Hiljem saad jätakata."
+			"description": "Pausile panemine peatab väljasaatmised ja automaatika. Hiljem saad jätkata."
 		},
 		"actions": {
 			"complete": "Lõpeta otsing",
@@ -65,11 +67,11 @@
 			"makePublic": "Muuda avalikuks",
 			"publishSuccess": "Sinu otsing on nüüd avalik.",
 			"publishError": "Ei õnnestunud kuulutust avalikustada. Palun proovi uuesti."
-		},
-		"readyForCompany": "Valmis intervjuuks",
-		"offersMade": "Tehtud pakkumised",
-		"hired": "Tööle võetud",
-		"candidates": "Kandidaadid"
+		}
+	},
+	"pauseDialog": {
+		"title": "Pane otsing pausile",
+		"description": "Pausile panemine peatab väljasaatmised ja automaatika. Hiljem saad jätkata."
 	},
 	"requirementsDetails": {
 		"potentialReach": "Potentsiaalne kandidaatide ulatus",

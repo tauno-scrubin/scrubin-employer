@@ -21,6 +21,12 @@
 				"heading": "Töö detailid",
 				"subheading": "Anna üksikasjalik informatsioon rolli kohta, et meelitada õigeid kandidaate."
 			},
+			"qualifications": {
+				"title": "Kvalifikatsioonide kontroll",
+				"description": "Kohustuslikud kvalifikatsioonid",
+				"heading": "Kohustuslikud kvalifikatsioonid",
+				"subheading": "Kvalifikatsioonid, mille kohta meie AI-agent küsib igalt kandidaadilt enne värbajale üleandmist. Kasuta seda nimekirja vältimatute nõuete jaoks, ilma milleta sihtriik või agentuur kandidaati ei aktsepteeri — näiteks MRCGP Ühendkuningriigi perearsti rollide puhul või AHPRA registreering Austraalias. Kui „Blokeeri üleandmine“ on sisse lülitatud, märgitakse kandidaat, kes kinnitab, et tal see kvalifikatsioon puudub, automaatselt mittehuvitatuks ja ta ei jõua sinuni. Jäta „Blokeeri üleandmine“ välja eelistuste puhul, mida soovid talletada, kuid mis ei pea vestlust peatama. See nimekiri on eraldi eelmise sammu kvalifikatsioonide kirjeldusest, mida kuvatakse kandidaatidele tööpakkumises."
+			},
 			"targeting": {
 				"title": "Sihtmääramine",
 				"description": "Otsingu eelistused",
@@ -121,9 +127,31 @@
 				"description": "Kirjelda rolli, vastutusi ja seda, mis teeb selle võimaluse põnevaks."
 			},
 			"jobRequiredQualifications": {
-				"label": "Nõutavad kvalifikatsioonid",
+				"label": "Kvalifikatsioonide kirjeldus (tööpakkumine)",
 				"placeholder": "Loetle nõutavad kvalifikatsioonid, kutse-/registratsiooniõigus, sertifikaadid, oskused ja kogemus. Ole täpne, kuid realistlik.\n\nNäide:\n• Kehtiv kutse-/registratsiooniõigus [riigis] (vastavalt rollile)\n• 2+ aastat asjakohast kliinilist töökogemust (statsionaar/erakorraline/ICU vastavalt rollile)\n• BLS kohustuslik; ACLS/ALS eelis (rollist sõltuv)\n• Kogemus digilooga / EHR süsteemidega ja korrektse dokumenteerimisega\n• Väga hea suhtlemis- ja meeskonnatööoskus\n• Patsiendiohutuse, konfidentsiaalsuse ja kvaliteedi väärtustamine\n...",
-				"description": "Loetleta hädavajalikud oskused, kogemus ja kvalifikatsioonid selle rolli jaoks."
+				"description": "Vabas vormis kvalifikatsioonid, mida kuvatakse kandidaatidele tööpakkumises. Kohustuslike kvalifikatsioonide nimekiri — nõuded, mida meie AI-agent enne värbajale üleandmist kinnitab — seadistatakse järgmisel sammul."
+			},
+			"requiredQualifications": {
+				"empty": "Kohustuslikke kvalifikatsioone pole veel. Kasuta allpool automaatset tuvastamist või lisa nõue käsitsi, et meie AI-agent kinnitaks seda iga kandidaadiga.",
+				"addBlank": "Lisa kvalifikatsioon",
+				"autoDetect": "Tuvasta AI abil",
+				"autoDetecting": "AI analüüsib töö detaile ja pakub kvalifikatsioone...",
+				"autoDetectNoneFound": "AI ei pakkunud sellele rollile kohustuslikke kvalifikatsioone. Lisa need vajadusel käsitsi.",
+				"autoDetectAllAlreadyAdded": "Kõik AI pakutud kvalifikatsioonid on juba nimekirjas.",
+				"autoDetectAdded": "Lisatud {{count}} uut soovitatud kvalifikatsiooni — vaata üle ja salvesta.",
+				"autoDetectFailed": "AI-soovituste teenusega ei õnnestunud ühendust saada. Proovi uuesti või lisa kvalifikatsioon käsitsi.",
+				"save": "Salvesta kvalifikatsioonid",
+				"fields": {
+					"label": "Nõue",
+					"labelPlaceholder": "MRCGP (Royal College of GP)",
+					"rationale": "Miks see on oluline (privaatne — nähtav ainult AI-agendile)",
+					"rationalePlaceholder": "nt Austraalia agentuur nõuab seda perearsti rollide puhul; ilma selleta kandidaati ei aktsepteerita",
+					"blockOffer": "Blokeeri üleandmine, kui puudub",
+					"delete": "Kustuta"
+				},
+				"errors": {
+					"duplicateCode": "Kaks rida näivad identsed — palun erista nende nimetusi."
+				}
 			},
 			"preferredCountries": {
 				"label": "Eelistatud riigid",

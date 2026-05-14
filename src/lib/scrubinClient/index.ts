@@ -140,6 +140,7 @@ export interface Requirements {
 		modifiedDateTime: string;
 		dateCreated: string;
 		jobRequiredQualifications: string;
+		requiredQualifications?: HuntRequiredQualification[];
 		jobRequiredWorkExperience: number;
 		jobRequiredLanguages: string[];
 		numberOfCandidates: number;
@@ -698,6 +699,39 @@ export interface ContextQuestion {
 	id: number;
 	question: string;
 	date: string;
+}
+
+export interface HuntRequiredQualification {
+	code: string;
+	label: string;
+	rationale: string;
+	blockOffer: boolean;
+}
+
+export type HuntScreeningQuestionTopic =
+	| 'documents'
+	| 'motivation'
+	| 'destination'
+	| 'on_trip_meeting'
+	| 'custom';
+
+export interface HuntScreeningQuestion {
+	id: number;
+	question: string;
+	rationale: string | null;
+	expectedTopic: HuntScreeningQuestionTopic | null;
+	required: boolean;
+	displayOrder: number;
+	createdAt: string;
+}
+
+export interface HuntScreeningQuestionInput {
+	id?: number;
+	question: string;
+	rationale?: string | null;
+	expectedTopic?: HuntScreeningQuestionTopic | null;
+	required: boolean;
+	displayOrder?: number;
 }
 
 export interface Feedback {
@@ -1781,6 +1815,36 @@ class HuntResource extends BaseResource {
 		}) as Promise<ContextQuestion>;
 	}
 
+	// GET /api/v1/hunts/{id}/screening-questions
+	async getScreeningQuestions(id: number): Promise<HuntScreeningQuestion[]> {
+		const url = new URL(`/api/v1/hunts/${id}/screening-questions`, this.client.baseUrl);
+		return this.request<HuntScreeningQuestion[]>('GET', url.toString()) as Promise<
+			HuntScreeningQuestion[]
+		>;
+	}
+
+	// PUT /api/v1/hunts/{id}/screening-questions — bulk replace
+	async replaceScreeningQuestions(
+		id: number,
+		questions: HuntScreeningQuestionInput[]
+	): Promise<HuntScreeningQuestion[]> {
+		const url = new URL(`/api/v1/hunts/${id}/screening-questions`, this.client.baseUrl);
+		return this.request<HuntScreeningQuestion[]>('PUT', url.toString(), { questions }) as Promise<
+			HuntScreeningQuestion[]
+		>;
+	}
+
+	// DELETE /api/v1/hunts/{id}/screening-questions/{questionId}
+	async deleteScreeningQuestion(id: number, questionId: number): Promise<{ deleted: boolean }> {
+		const url = new URL(
+			`/api/v1/hunts/${id}/screening-questions/${questionId}`,
+			this.client.baseUrl
+		);
+		return this.request<{ deleted: boolean }>('DELETE', url.toString()) as Promise<{
+			deleted: boolean;
+		}>;
+	}
+
 	// POST /api/v2/hunts/{id}/activate
 	async activateHuntV2(id: number): Promise<Hunt> {
 		const url = new URL(`/api/v2/hunts/${id}/activate`, this.client.baseUrl);
@@ -1816,6 +1880,7 @@ class HuntResource extends BaseResource {
 		data: {
 			jobTitle?: string;
 			jobRequiredQualifications?: string;
+			requiredQualifications?: HuntRequiredQualification[];
 			jobRequiredWorkExperience?: number;
 			jobDescription?: string;
 			country?: string;
@@ -1869,6 +1934,19 @@ class HuntResource extends BaseResource {
 			'POST',
 			url.toString()
 		) as Promise<{ jobRequiredQualifications: string }>;
+	}
+
+	async suggestRequiredQualifications(
+		id: number
+	): Promise<{ qualifications: HuntRequiredQualification[] }> {
+		const url = new URL(
+			`${this.path}/requirements/${id}/ai/required-qualifications`,
+			this.client.baseUrl
+		);
+		return this.request<{ qualifications: HuntRequiredQualification[] }>(
+			'POST',
+			url.toString()
+		) as Promise<{ qualifications: HuntRequiredQualification[] }>;
 	}
 
 	async getChatSession(

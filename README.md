@@ -25,8 +25,8 @@ src/
 │       ├── +page.svelte              # Main dashboard (search + stats + hunts)
 │       ├── +layout.svelte            # Auth guard, sidebar, header
 │       ├── hunts/                    # Hunt management
-│       │   ├── [id]/+page.svelte     # Hunt detail (details/statistics/questions tabs)
-│       │   └── requirements/[id]/    # Requirements detail + creation
+│       │   ├── [id]/+page.svelte     # Hunt detail (details / statistics / screening / questions tabs)
+│       │   └── requirements/[id]/    # Requirements detail + creation (6-step wizard incl. Qualifications gate)
 │       ├── pricing/                  # Subscription plans
 │       ├── settings/                 # User/company settings
 │       ├── search/                   # Candidate search
@@ -86,7 +86,10 @@ All API calls go through `ScrubinClient` (`src/lib/scrubinClient/index.ts`), whi
 - **`AuthStore`** — JWT token management, cookie storage, auto-refresh
 - **`PortalResource`** — User profile (getUser, updateUser, updatePassword)
 - **`CompanyResource`** — Company profile, billing, subscriptions, payment methods
-- **`HuntResource`** — Hunts, requirements, candidates, stats, pipeline
+- **`HuntResource`** — Hunts, requirements, candidates, stats, pipeline. Includes:
+  - `updateRequirementFields(id, data)` — PATCH job requirement (now accepts `requiredQualifications: HuntRequiredQualification[]`)
+  - `suggestRequiredQualifications(id)` — AI-suggested hard-required qualifications (auto-fired on first open of the Qualifications step)
+  - `getScreeningQuestions(id)` / `replaceScreeningQuestions(id, qs)` / `deleteScreeningQuestion(id, qId)` — hunt-level screening questions surfaced on the hunt-detail "Screening" tab
 - **`DataResource`** — Reference data (countries, professions, specialties, languages) with localStorage caching
 
 Pattern for API calls:

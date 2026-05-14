@@ -392,6 +392,45 @@
 			"submit": "Esita",
 			"cancel": "Tühista"
 		},
+		"screeningQuestions": {
+			"title": "Eelsõelumise küsimused",
+			"subtitle": "Küsimused, mida meie AI-agent küsib igas kandidaadivestluses. Kohustuslikud küsimused takistavad üleandmist värbajale, kuni neile on vastatud.",
+			"intro": {
+				"title": "Milleks see on",
+				"body": "Need küsimused aitavad meie AI-agendil hinnata kandidaadi sobivust enne agentuurile üleandmist. Kohustuslikele küsimustele peab olema vastatud, enne kui üleandmine on lubatud; mittekohustuslikke küsimusi küsitakse samuti, kuid need ei takista üleandmist."
+			},
+			"empty": {
+				"title": "Eelsõelumise küsimusi pole veel",
+				"body": "Lisa allpool küsimus ja meie AI-agent hakkab seda selles sihtotsingus igalt kandidaadilt küsima."
+			},
+			"fields": {
+				"question": "Küsimus",
+				"questionPlaceholder": "nt Miks soovid kolida?",
+				"rationale": "Miks me seda küsime (privaatne — nähtav ainult AI-agendile)",
+				"rationalePlaceholder": "Valikuline — annab AI-agendile konteksti",
+				"topic": "Teema",
+				"required": "Nõutav üleandmiseks"
+			},
+			"topic": {
+				"documents": "Dokumentide valmisolek",
+				"motivation": "Motivatsioon",
+				"destination": "Sihtkoht",
+				"on_trip_meeting": "Kohtumine reisi ajal",
+				"custom": "Muu"
+			},
+			"template": {
+				"documents": "Kas oled kolimiseks vajalikud dokumendid läbi vaadanud?",
+				"motivation": "Miks soovid kolida?",
+				"destination": "Kuhu Austraalias soovid kolida?",
+				"on_trip_meeting": "Kas soovid reisi ajal meiega kohtuda?"
+			},
+			"addBlank": "Lisa küsimus",
+			"delete": "Kustuta",
+			"save": "Salvesta muudatused",
+			"saved": "Eelsõelumise küsimused salvestatud",
+			"loadFailed": "Eelsõelumise küsimuste laadimine ebaõnnestus",
+			"saveFailed": "Eelsõelumise küsimuste salvestamine ebaõnnestus"
+		},
 		"searchHistory": {
 			"title": "Hiljutised otsingud",
 			"loading": "Laadimine...",
@@ -405,6 +444,8 @@
 			"startDate": "Alguskuupäev",
 			"endDate": "Lõppkuupäev",
 			"statistics": {
+				"totalHuntables": "Potentsiaalseid kandidaate kokku",
+				"readyForCompany": "Valmis intervjuuks",
 				"totalViews": "Vaatamisi kokku",
 				"totalClicks": "Klikke kokku",
 				"totalCustomActions": "Kohandatud tegevusi kokku"
@@ -532,6 +573,9 @@
 		"payment": {
 			"title": "Makseviis",
 			"expires": "Aegub"
+		},
+		"errors": {
+			"loadFailed": "Andmete laadimine ebaõnnestus"
 		},
 		"notifications": {
 			"settingsUpdated": "Seaded edukalt uuendatud",
