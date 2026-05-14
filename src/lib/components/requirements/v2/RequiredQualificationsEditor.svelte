@@ -9,7 +9,7 @@
 	import { scrubinClient } from '$lib/scrubinClient/client';
 	import { toast } from 'svelte-sonner';
 	import { t } from '$lib/i18n';
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 
 	type Row = HuntRequiredQualification & { _key: string };
 
@@ -32,9 +32,26 @@
 	let isSuggesting = $state(false);
 	let didInitialSuggest = $state(false);
 
+	// Debounced auto-save plumbing — matches the onblur auto-save model used by
+	// every other step in the wizard.
+	let saveTimer: ReturnType<typeof setTimeout> | null = null;
+	let isInitialEffect = true;
+	// Set when we mutate rows ourselves after a successful save, so the
+	// resulting $effect re-run doesn't trigger another save (would loop).
+	let suppressNextEffect = false;
+
 	function syncFromRequirement() {
 		const incoming = requirement.requiredQualifications ?? [];
+		suppressNextEffect = true;
 		rows = incoming.map((q, i) => ({ _key: `existing-${i}-${q.code}`, ...q }));
+	}
+
+	function scheduleSave() {
+		if (saveTimer) clearTimeout(saveTimer);
+		saveTimer = setTimeout(() => {
+			saveTimer = null;
+			void save({ silent: true });
+		}, 700);
 	}
 	/**
 	 * Ask the backend's AI service for suggested hard-required qualifications.
@@ -124,7 +141,7 @@
 			.slice(0, 64);
 	}
 
-	async function save() {
+	async function save(opts: { silent?: boolean } = {}) {
 		const cleaned: HuntRequiredQualification[] = rows
 			.map((r) => {
 				const label = r.label.trim();
@@ -160,7 +177,9 @@
 			});
 			requirement = { ...requirement, ...updated } as unknown as JobRequirementDto;
 			syncFromRequirement();
-			toast.success($t('requirementsV2.success.saved'));
+			if (!opts.silent) {
+				toast.success($t('requirementsV2.success.saved'));
+			}
 		} catch (error) {
 			console.error('Failed to save required qualifications', error);
 			toast.error($t('requirementsV2.errors.failedToSave'));
@@ -168,6 +187,23 @@
 			isSaving = false;
 		}
 	}
+
+	$effect(() => {
+		// Touch every reactive field on every row so this re-runs on any edit
+		// (add/remove/label/rationale/blockOffer). Svelte 5 $state proxies make
+		// the deep read enough to register the dependency.
+		rows.map((r) => `${r.label}|${r.code}|${r.rationale ?? ''}|${r.blockOffer}`);
+
+		if (isInitialEffect) {
+			isInitialEffect = false;
+			return;
+		}
+		if (suppressNextEffect) {
+			suppressNextEffect = false;
+			return;
+		}
+		scheduleSave();
+	});
 
 	onMount(() => {
 		// First-open auto-suggest: when the qualifications step is opened for the
@@ -178,11 +214,17 @@
 			void suggestFromAI({ silent: true });
 		}
 	});
+
+	onDestroy(() => {
+		if (saveTimer) clearTimeout(saveTimer);
+	});
 </script>
 
 <div class="w-full space-y-3">
 	{#if rows.length === 0}
-		<div class="rounded-md border border-dashed bg-muted/30 p-6 text-center text-sm text-muted-foreground">
+		<div
+			class="rounded-md border border-dashed bg-muted/30 p-6 text-center text-sm text-muted-foreground"
+		>
 			{#if isSuggesting}
 				<div class="flex items-center justify-center gap-2">
 					<Loader2 class="h-4 w-4 animate-spin" />
@@ -195,7 +237,7 @@
 	{:else}
 		<div class="space-y-3">
 			{#each rows as row (row._key)}
-				<div class="space-y-2 rounded-md border bg-white p-3">
+				<div class="space-y-2 rounded-md border bg-white p-4">
 					<div class="flex flex-wrap items-end gap-3">
 						<div class="flex flex-1 flex-col">
 							<Label class="text-xs">
@@ -203,7 +245,9 @@
 							</Label>
 							<Input
 								bind:value={row.label}
-								placeholder={$t('requirementsV2.fields.requiredQualifications.fields.labelPlaceholder')}
+								placeholder={$t(
+									'requirementsV2.fields.requiredQualifications.fields.labelPlaceholder'
+								)}
 								class="mt-1"
 							/>
 						</div>
@@ -239,26 +283,24 @@
 		</div>
 	{/if}
 
-	<div class="flex flex-wrap items-center justify-between gap-2">
-		<div class="flex flex-wrap items-center gap-2">
-			<Button variant="secondary" size="sm" onclick={() => suggestFromAI()} disabled={isSuggesting}>
-				{#if isSuggesting}
-					<Loader2 class="mr-1 h-4 w-4 animate-spin" />
-				{:else}
-					<Sparkles class="mr-1 h-4 w-4" />
-				{/if}
-				{$t('requirementsV2.fields.requiredQualifications.autoDetect')}
-			</Button>
-			<Button variant="outline" size="sm" onclick={() => addRow()}>
-				<Plus class="mr-1 h-4 w-4" />
-				{$t('requirementsV2.fields.requiredQualifications.addBlank')}
-			</Button>
-		</div>
-		<Button onclick={save} disabled={isSaving}>
-			{#if isSaving}
-				<div class="mr-2 h-4 w-4 animate-spin rounded-full border-b-2 border-white"></div>
+	<div class="flex flex-wrap items-center gap-2">
+		<Button variant="secondary" size="sm" onclick={() => suggestFromAI()} disabled={isSuggesting}>
+			{#if isSuggesting}
+				<Loader2 class="mr-1 h-4 w-4 animate-spin" />
+			{:else}
+				<Sparkles class="mr-1 h-4 w-4" />
 			{/if}
-			{$t('requirementsV2.fields.requiredQualifications.save')}
+			{$t('requirementsV2.fields.requiredQualifications.autoDetect')}
 		</Button>
+		<Button variant="outline" size="sm" onclick={() => addRow()}>
+			<Plus class="mr-1 h-4 w-4" />
+			{$t('requirementsV2.fields.requiredQualifications.addBlank')}
+		</Button>
+		{#if isSaving}
+			<span class="ml-1 inline-flex items-center gap-1 text-xs text-muted-foreground">
+				<Loader2 class="h-3 w-3 animate-spin" />
+				{$t('requirementsV2.fields.requiredQualifications.saving')}
+			</span>
+		{/if}
 	</div>
 </div>

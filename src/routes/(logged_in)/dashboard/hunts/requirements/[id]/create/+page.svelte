@@ -166,9 +166,15 @@
 		};
 	});
 
-	// Step validation logic
+	// Whether the user has provided real content for this step. Drives the
+	// green check-mark in the stepper, so optional steps must NOT report
+	// themselves as completed by default — navigation still allows skipping.
 	function isStepCompleted(stepIndex: number): boolean {
 		if (!requirement) return false;
+
+		const r = requirement as typeof requirement & {
+			requiredQualifications?: unknown[];
+		};
 
 		switch (stepIndex) {
 			case 0: // Basic Info
@@ -181,15 +187,25 @@
 				return !!(requirement.countryIso && requirement.salary?.amountStart);
 			case 2: // Job Details
 				return !!requirement.jobDescription;
-			case 3: // Qualifications
-				return true; // Optional step
-			case 4: // Targeting
-				return true; // Optional step
-			case 5: // Preview
-				return true; // Always accessible if other steps are done
+			case 3: // Qualifications (optional) — done only if at least one is added
+				return !!r.requiredQualifications?.length;
+			case 4: // Targeting (optional) — done if any targeting field is set
+				return !!(
+					requirement.countriesPreferredToSearch?.length ||
+					requirement.countriesOnlyToSearch?.length ||
+					requirement.companyContext ||
+					requirement.hiringContext
+				);
+			case 5: // Review — never auto-marked done; activation closes the flow
+				return false;
 			default:
 				return false;
 		}
+	}
+
+	// Optional steps the user is allowed to move past without filling.
+	function isStepOptional(stepIndex: number): boolean {
+		return stepIndex === 3 || stepIndex === 4 || stepIndex === 5;
 	}
 
 	// Check if step can be accessed (non-linear navigation)
@@ -197,8 +213,8 @@
 		if (stepIndex === 0) return true; // First step always accessible
 		if (stepIndex <= currentStep) return true; // Already visited steps
 
-		// Can access if current step is completed
-		return isStepCompleted(currentStep);
+		// Can leave current step if it's completed OR optional
+		return isStepCompleted(currentStep) || isStepOptional(currentStep);
 	}
 
 	async function saveAndNext() {
@@ -257,8 +273,8 @@
 
 <div class="mx-auto min-h-screen max-w-4xl p-6">
 	<!-- Header with Integrated Stepper -->
-	<div class="mb-4 rounded-lg bg-white p-4 shadow-sm ring-1 ring-gray-100">
-		<div class="mb-4 flex items-center gap-3">
+	<div class="mb-4 rounded-xl border border-gray-200/70 bg-white p-5">
+		<div class="mb-5 flex items-center gap-3">
 			<Button
 				onclick={() => goto('/dashboard/hunts')}
 				variant="outline"
@@ -268,7 +284,7 @@
 				<ArrowLeft class="h-4 w-4" />
 			</Button>
 			<div>
-				<h1 class="text-2xl font-bold tracking-tight">{$t('requirementsV2.title')}</h1>
+				<h1 class="text-2xl font-semibold tracking-tight">{$t('requirementsV2.title')}</h1>
 				<p class="text-xs text-muted-foreground">
 					{$t('requirementsV2.subtitle')}
 				</p>
@@ -281,57 +297,61 @@
 				{@const stepAccessible = canAccessStep(index)}
 				{@const stepCompleted = isStepCompleted(index)}
 
-				<!-- Step circle and label -->
+				<!-- Step circle and label.
+				     - Completed: solid green with check (✓ "done")
+				     - Current: white with blue ring glow (active focus)
+				     - Future accessible: black outline, empty inside (todo)
+				     - Disabled: muted gray outline -->
 				<div class="flex flex-1 flex-col items-center gap-2">
 					<div class="flex w-full items-center">
 						<!-- Left half line -->
 						{#if index > 0}
 							<div
-								class="h-[2px] flex-1 transition-all duration-300 {isStepCompleted(index - 1)
-									? 'bg-primary'
+								class="h-px flex-1 transition-colors duration-300 {isStepCompleted(index - 1)
+									? 'bg-emerald-500'
 									: 'bg-gray-200'}"
 							></div>
 						{:else}
 							<!-- Invisible spacer for first step to center the circle -->
-							<div class="h-[2px] flex-1 opacity-0"></div>
+							<div class="h-px flex-1 opacity-0"></div>
 						{/if}
 
 						<!-- Step circle -->
 						<button
 							onclick={() => goToStep(index)}
-							class="relative flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border-2 transition-all {stepCompleted
-								? 'border-primary bg-primary text-primary-foreground shadow-sm'
+							class="relative flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-xs font-semibold transition-all {stepCompleted
+								? 'bg-emerald-500 text-white hover:bg-emerald-600'
 								: index === currentStep
-									? 'border-primary bg-primary text-primary-foreground shadow-md ring-4 ring-primary/30'
+									? 'border-2 border-gray-900 bg-white text-gray-900 ring-2 ring-blue-500 ring-offset-2 ring-offset-white'
 									: stepAccessible
-										? 'border-gray-300 bg-white text-gray-600 hover:border-primary/50'
-										: 'cursor-not-allowed border-gray-200 bg-gray-50 text-gray-400'}"
+										? 'border-2 border-gray-900 bg-white text-gray-900 hover:border-blue-500 hover:text-blue-600'
+										: 'cursor-not-allowed border-2 border-gray-200 bg-gray-50 text-gray-400'}"
 							disabled={!stepAccessible}
 						>
 							{#if stepCompleted}
 								<Check class="h-4 w-4" />
 							{:else}
-								<span class="text-xs font-bold">{index + 1}</span>
+								<span>{index + 1}</span>
 							{/if}
 						</button>
 
 						<!-- Right half line -->
 						{#if index < steps.length - 1}
 							<div
-								class="h-[2px] flex-1 transition-all duration-300 {stepCompleted
-									? 'bg-primary'
+								class="h-px flex-1 transition-colors duration-300 {stepCompleted
+									? 'bg-emerald-500'
 									: 'bg-gray-200'}"
 							></div>
 						{:else}
 							<!-- Invisible spacer for last step to center the circle -->
-							<div class="h-[2px] flex-1 opacity-0"></div>
+							<div class="h-px flex-1 opacity-0"></div>
 						{/if}
 					</div>
 
 					<span
-						class="max-w-[80px] text-center text-[10px] leading-tight transition-all {stepAccessible
+						class="max-w-[80px] text-center text-[11px] leading-tight transition-colors {stepAccessible
 							? index === currentStep
-								? 'font-bold text-primary'
+								? 'font-semibold text-gray-900'
 								: 'font-medium text-gray-600'
 							: 'font-medium text-gray-400'}"
 					>
@@ -344,7 +364,7 @@
 
 	<!-- Sticky Navigation Bar -->
 	<div
-		class="sticky top-0 z-10 mb-4 flex items-center justify-between rounded-lg bg-gradient-to-r from-gray-50 to-gray-100/50 p-3 shadow-sm ring-1 ring-gray-200/50 backdrop-blur-sm"
+		class="sticky top-2 z-10 mb-4 flex items-center justify-between rounded-xl border border-gray-200/70 bg-white/80 p-2.5 backdrop-blur-md"
 	>
 		<Button onclick={goBack} variant="outline" size="sm" disabled={currentStep === 0}>
 			<ArrowLeft class="mr-1.5 h-3.5 w-3.5" />
@@ -356,10 +376,10 @@
 			<Tooltip.Root>
 				<Tooltip.Trigger>
 					<div
-						class="flex items-center gap-1.5 rounded-md bg-white px-2.5 py-1 text-xs shadow-sm ring-1 ring-gray-200/50 transition-all hover:shadow-md"
+						class="flex items-center gap-1.5 rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-xs transition-colors hover:bg-blue-100"
 					>
 						<Users class="h-3.5 w-3.5 text-blue-600" />
-						<span class="font-semibold text-gray-800">
+						<span class="font-semibold text-blue-900">
 							{potentialReach !== null ? formatNumber(potentialReach) : '—'}
 						</span>
 						{#if isLoadingReach}
@@ -396,7 +416,7 @@
 	</div>
 
 	<!-- Step Content -->
-	<div class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm ring-1 ring-gray-100/50">
+	<div class="rounded-xl border border-gray-200/70 bg-white p-6">
 		{#if requirement && requirementId}
 			{#if currentStep === 0}
 				<BasicInfoStep bind:requirement {requirementId} />

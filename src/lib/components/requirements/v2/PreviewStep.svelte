@@ -7,15 +7,7 @@
 	import type { CompanyPlanSummary, JobRequirementDto } from '@/scrubinClient';
 	import { scrubinClient } from '@/scrubinClient/client';
 	import type { CodeNamePair } from '@/scrubinClient/models';
-	import {
-		AlertCircle,
-		CheckCircle,
-		GraduationCap,
-		Target,
-
-		TriangleAlert
-
-	} from 'lucide-svelte';
+	import { AlertCircle, CheckCircle, GraduationCap, Target, TriangleAlert } from 'lucide-svelte';
 	import { onMount } from 'svelte';
 	import { get } from 'svelte/store';
 
@@ -36,14 +28,15 @@
 
 	onMount(async () => {
 		const lang = get(locale);
-		const [countries, professions, specialties, languages, salaryPeriods, plans] = await Promise.all([
-			scrubinClient.data.getCountries(lang),
-			scrubinClient.data.getProfessions(lang),
-			scrubinClient.data.getSpecialties(lang),
-			scrubinClient.data.getLanguages(lang),
-			scrubinClient.data.getSalaryPeriods(lang),
-			scrubinClient.company.getActivePlans()
-		]);
+		const [countries, professions, specialties, languages, salaryPeriods, plans] =
+			await Promise.all([
+				scrubinClient.data.getCountries(lang),
+				scrubinClient.data.getProfessions(lang),
+				scrubinClient.data.getSpecialties(lang),
+				scrubinClient.data.getLanguages(lang),
+				scrubinClient.data.getSalaryPeriods(lang),
+				scrubinClient.company.getActivePlans()
+			]);
 		availableCountries = countries;
 		availableProfessions = professions;
 		availableSpecialties = specialties;
@@ -152,11 +145,11 @@
 				</p>
 			</div>
 		</div>
-		{/if}
+	{/if}
 
 	<!-- Plan Required Notification -->
 	{#if isComplete && companyActivePlans.length === 0}
-		<div class="flex items-center gap-3 rounded-lg border yellow-red-200 bg-yellow-50 p-4">
+		<div class="flex items-center gap-3 rounded-lg border border-yellow-200 bg-yellow-50 p-4">
 			<TriangleAlert class="h-6 w-6 text-yellow-600" />
 			<div class="flex-1">
 				<p class="font-semibold text-yellow-900">
@@ -310,33 +303,36 @@
 			</div>
 			<Separator />
 
-		
 			{#if requirement.jobDescription}
-				<div>
+				<div class="min-w-0">
 					<p class="mb-4 text-sm font-medium">
 						{$t('requirementsV2.preview.fields.description')}
 					</p>
 					{#if hasMarkdownSyntax(requirement.jobDescription)}
-						<div class="prose max-w-none text-sm">
+						<div class="prose max-w-none break-words text-sm">
 							{@html markdownToHtml(requirement.jobDescription)}
 						</div>
 					{:else}
-						<div class="whitespace-pre-line text-sm">{requirement.jobDescription}</div>
+						<div class="whitespace-pre-line break-words text-sm">
+							{requirement.jobDescription}
+						</div>
 					{/if}
 				</div>
 			{/if}
 
 			{#if requirement.jobRequiredQualifications}
-				<div>
-					<p class="pt-8 mb-4 text-sm font-medium">
+				<div class="min-w-0">
+					<p class="mb-2 text-sm font-medium">
 						{$t('requirementsV2.preview.fields.requiredQualifications')}
 					</p>
 					{#if hasMarkdownSyntax(requirement.jobRequiredQualifications)}
-						<div class="prose max-w-none text-sm">
+						<div class="prose max-w-none break-words text-sm">
 							{@html markdownToHtml(requirement.jobRequiredQualifications)}
 						</div>
 					{:else}
-						<div class="whitespace-pre-line text-sm">{requirement.jobRequiredQualifications}</div>
+						<div class="whitespace-pre-line break-words text-sm">
+							{requirement.jobRequiredQualifications}
+						</div>
 					{/if}
 				</div>
 			{/if}
@@ -345,7 +341,7 @@
 
 	<!-- Targeting -->
 	{#if requirement.countriesPreferredToSearch?.length || requirement.countriesOnlyToSearch?.length || requirement.companyContext || requirement.hiringContext}
-		<div class="w-full space-y-3 rounded-lg border bg-white p-4 shadow-sm">
+		<div class="w-full space-y-3">
 			<div class="flex items-center gap-2">
 				<Target class="h-4 w-4 text-primary" />
 				<h3 class="text-base font-semibold">{$t('requirementsV2.preview.targetingSection')}</h3>

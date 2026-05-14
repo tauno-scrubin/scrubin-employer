@@ -25,7 +25,8 @@
 				"title": "Kvalifikatsioonide kontroll",
 				"description": "Kohustuslikud kvalifikatsioonid",
 				"heading": "Kohustuslikud kvalifikatsioonid",
-				"subheading": "Kvalifikatsioonid, mille kohta meie AI-agent küsib igalt kandidaadilt enne värbajale üleandmist. Kasuta seda nimekirja vältimatute nõuete jaoks, ilma milleta sihtriik või agentuur kandidaati ei aktsepteeri — näiteks MRCGP Ühendkuningriigi perearsti rollide puhul või AHPRA registreering Austraalias. Kui „Blokeeri üleandmine“ on sisse lülitatud, märgitakse kandidaat, kes kinnitab, et tal see kvalifikatsioon puudub, automaatselt mittehuvitatuks ja ta ei jõua sinuni. Jäta „Blokeeri üleandmine“ välja eelistuste puhul, mida soovid talletada, kuid mis ei pea vestlust peatama. See nimekiri on eraldi eelmise sammu kvalifikatsioonide kirjeldusest, mida kuvatakse kandidaatidele tööpakkumises."
+				"subheading": "Kvalifikatsioonid, mille kohta meie AI-agent küsib igalt kandidaadilt enne värbajale üleandmist. Kasuta seda nimekirja vältimatute nõuete jaoks, ilma milleta sihtriik või agentuur kandidaati ei aktsepteeri — näiteks MRCGP Ühendkuningriigi perearsti rollide puhul või AHPRA registreering Austraalias. Kui „Blokeeri üleandmine“ on sisse lülitatud, märgitakse kandidaat, kes kinnitab, et tal see kvalifikatsioon puudub, automaatselt mittehuvitatuks ja ta ei jõua sinuni. Jäta „Blokeeri üleandmine“ välja eelistuste puhul, mida soovid talletada, kuid mis ei pea vestlust peatama. See nimekiri on eraldi eelmise sammu kvalifikatsioonide kirjeldusest, mida kuvatakse kandidaatidele tööpakkumises.",
+				"tip": "Loetle ainult kvalifikatsioonid, mis kandidaadil peavad olema. Lülita sisse „Blokeeri üleandmine“ nende jaoks, mille puudumisel kandidaat tuleb automaatselt diskvalifitseerida."
 			},
 			"targeting": {
 				"title": "Sihtmääramine",
@@ -34,10 +35,10 @@
 				"subheading": "Konfigureeri otsingu eelistused, et leida kõige asjakohasemad kandidaadid."
 			},
 			"preview": {
-				"title": "Eelvaade",
-				"description": "Vaata üle ja aktiveeri",
-				"heading": "Vaata oma tööpakkumine üle",
-				"subheading": "Vaata kõik detailid üle enne oma pakkumise aktiveerimist. Saad minna tagasi mistahes sammu juurde, et teha muudatusi."
+				"title": "Ülevaade",
+				"description": "Lõplik kontroll enne aktiveerimist",
+				"heading": "Vaata üle ja aktiveeri",
+				"subheading": "Kinnita andmed all ja aktiveeri pakkumine. Parempoolne otse-eelvaade on seda vaadet kuvanud kogu protsessi vältel — see on sinu lõplik kontroll."
 			}
 		},
 		"navigation": {
@@ -138,9 +139,10 @@
 				"autoDetecting": "AI analüüsib töö detaile ja pakub kvalifikatsioone...",
 				"autoDetectNoneFound": "AI ei pakkunud sellele rollile kohustuslikke kvalifikatsioone. Lisa need vajadusel käsitsi.",
 				"autoDetectAllAlreadyAdded": "Kõik AI pakutud kvalifikatsioonid on juba nimekirjas.",
-				"autoDetectAdded": "Lisatud {{count}} uut soovitatud kvalifikatsiooni — vaata üle ja salvesta.",
+				"autoDetectAdded": "Lisatud {{count}} uut soovitatud kvalifikatsiooni — vaata üle ja kohenda vajadusel.",
 				"autoDetectFailed": "AI-soovituste teenusega ei õnnestunud ühendust saada. Proovi uuesti või lisa kvalifikatsioon käsitsi.",
 				"save": "Salvesta kvalifikatsioonid",
+				"saving": "Salvestan…",
 				"fields": {
 					"label": "Nõue",
 					"labelPlaceholder": "MRCGP (Royal College of GP)",

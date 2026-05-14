@@ -118,7 +118,7 @@
 		</div>
 
 		<!-- Country and City -->
-		<div class="grid grid-cols-2 gap-4">
+		<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
 			<div class="space-y-2">
 				<Label class="text-base font-medium">
 					{$t('requirementsV2.fields.country.label')} <span class="text-destructive">*</span>
@@ -153,7 +153,7 @@
 		</div>
 
 		<!-- State/Province/Region and Address -->
-		<div class="grid grid-cols-2 gap-4">
+		<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
 			<div class="space-y-2">
 				<Label for="region" class="text-base font-medium"
 					>{$t('requirementsV2.fields.region.label')}</Label

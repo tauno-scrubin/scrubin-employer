@@ -3,263 +3,265 @@
 		"title": "Create New Job Hunt",
 		"subtitle": "Fill out the information step by step to create your job hunt",
 		"steps": {
-		"basic": {
-			"title": "Basic Info",
-			"description": "Job title and profession",
-			"heading": "Basic Information",
-			"subheading": "Start by providing the essential details about the position you're hiring for."
-		},
-		"location": {
-			"title": "Location & Salary",
-			"description": "Where and compensation",
-			"heading": "Location & Compensation",
-			"subheading": "Specify where the job is located and the compensation details."
-		},
-		"details": {
-			"title": "Job Details",
-			"description": "Description and requirements",
-			"heading": "Job Details",
-			"subheading": "Provide detailed information about the role to attract the right candidates."
-		},
-		"qualifications": {
-			"title": "Qualifications gate",
-			"description": "Hard-required credentials",
-			"heading": "Hard-required qualifications",
-			"subheading": "Credentials our AI agent will explicitly ask each candidate about, by code, before recruiter handoff. Use this list for must-haves your destination country or agency rejects without — like MRCGP for UK GP roles or AHPRA registration for Australia. When \"Block handoff\" is on, a candidate who confirms they don't hold the credential is automatically marked not-interested and never reaches you. Leave \"Block handoff\" off for nice-to-have credentials that should be recorded but not block the conversation. This list is separate from the qualifications narrative on the previous step, which is shown to candidates in the job advert."
-		},
-		"targeting": {
-			"title": "Targeting",
-			"description": "Search preferences",
-			"heading": "Candidate Targeting",
-			"subheading": "Configure search preferences to find the most relevant candidates."
-		},
-		"preview": {
-			"title": "Preview",
-			"description": "Review and activate",
-			"heading": "Review Your Job Hunt",
-			"subheading": "Review all the details before activating your hunt. You can go back to any step to make changes."
-		}
-	},
-	"navigation": {
-		"previous": "Previous",
-		"next": "Next",
-		"activateHunt": "Activate Hunt",
-		"activating": "Activating...",
-		"step": "Step",
-		"of": "of"
-	},
-	"fields": {
-		"jobTitle": {
-			"label": "Job Title",
-			"placeholder": "e.g., Registered Nurse (ICU), Physiotherapist, Radiographer, Care Assistant",
-			"description": "What is the official title for this position? Be specific and clear."
-		},
-		"professions": {
-			"label": "Professions",
-			"placeholder": "Select professions...",
-			"searchPlaceholder": "Search professions...",
-			"description": "Select one or more professions that best match this role. This helps us find relevant candidates."
-		},
-		"specialization": {
-			"label": "Specialization",
-			"placeholder": "Select specialization (optional)...",
-			"searchPlaceholder": "Search specializations...",
-			"emptyText": "No specializations found",
-			"description": "Optionally specify a specialization within the profession to narrow down the search."
-		},
-		"workExperience": {
-			"label": "Required Work Experience (years)",
-			"placeholder": "0",
-			"description": "Minimum years of relevant work experience required for this position."
-		},
-		"languages": {
-			"label": "Required Languages",
-			"placeholder": "Select languages...",
-			"searchPlaceholder": "Search languages...",
-			"emptyText": "No languages found",
-			"description": "Select the languages candidates must be proficient in for this role."
-		},
-		"country": {
-			"label": "Country",
-			"placeholder": "Select country...",
-			"searchPlaceholder": "Search countries...",
-			"emptyText": "No countries found",
-			"description": "Where is this position based?"
-		},
-		"city": {
-			"label": "City",
-			"placeholder": "e.g., London, New York, Berlin",
-			"description": "Which city is the job located in?"
-		},
-		"region": {
-			"label": "State / Province / Region",
-			"placeholder": "e.g., California, Greater London",
-			"description": "Specify the state, province, or region (optional). Separate multiple with commas."
-		},
-		"address": {
-			"label": "Street Address",
-			"placeholder": "e.g., 123 Main Street",
-			"description": "Full street address (optional but helpful)"
-		},
-		"salaryRange": {
-			"label": "Salary Range",
-			"from": "From",
-			"to": "To",
-			"description": "Provide a salary range to attract suitable candidates. Transparency helps!"
-		},
-		"currency": {
-			"label": "Currency",
-			"placeholder": "Select currency..."
-		},
-		"salaryPeriod": {
-			"label": "Salary Period",
-			"placeholder": "Select period...",
-			"description": "How often is the salary paid?"
-		},
-		"salaryExtra": {
-			"label": "Additional Compensation Details",
-			"placeholder": "e.g., shift differentials, on-call allowance, overtime rates, relocation support, continuing education budget...",
-			"description": "Any extra information about compensation (shift allowances, overtime, benefits, relocation, CPD/CME, etc.)"
-		},
-		"jobDescription": {
-			"label": "Job Description",
-			"placeholder": "Describe the clinical role, main responsibilities, shift pattern, patient population, team structure, growth opportunities, and what makes this workplace unique. Be detailed and engaging to attract great healthcare professionals.\n\nExample:\nWe're looking for a Registered Nurse to join our medical-surgical ward. You'll deliver safe, compassionate patient care as part of a multidisciplinary team.\n\nKey Responsibilities:\n• Assess patients, monitor vital signs, and document care\n• Administer medications and treatments according to protocols\n• Coordinate care with physicians and allied health\n• Educate patients and families on care plans and discharge instructions\n• Follow infection prevention, safeguarding, and patient safety procedures\n...",
-			"description": "Describe the role, responsibilities, and what makes this opportunity exciting."
-		},
-		"jobRequiredQualifications": {
-			"label": "Qualifications narrative (job advert)",
-			"placeholder": "List the essential qualifications, registrations, certifications, skills, and experience candidates must have. Be specific but realistic.\n\nExample:\n• Active professional license/registration (as applicable in your country)\n• 2+ years of relevant clinical experience (acute care/ICU preferred where relevant)\n• BLS required; ACLS/ALS preferred (role dependent)\n• Experience with electronic health records (EHR) and clinical documentation\n• Strong communication, teamwork, and patient-centered mindset\n• Commitment to patient safety, confidentiality, and quality of care\n...",
-			"description": "Free-text qualifications shown to candidates in the job advert. The hard-gate list — codes our AI agent will explicitly confirm before recruiter handoff — is configured on the next step."
-		},
-		"requiredQualifications": {
-			"empty": "No hard-required qualifications yet. Use the auto-detect button below, or add one manually to make our AI agent confirm it on every candidate.",
-			"addBlank": "Add qualification",
-			"autoDetect": "Auto-detect with AI",
-			"autoDetecting": "Asking our AI to suggest qualifications from the job details…",
-			"autoDetectNoneFound": "Our AI didn't suggest any hard-required qualifications for this role. Add manually if needed.",
-			"autoDetectAllAlreadyAdded": "All AI-suggested qualifications are already in your list.",
-			"autoDetectAdded": "Suggested {{count}} new qualification(s) — review and save.",
-			"autoDetectFailed": "Couldn't reach the AI suggestion service. Try again or add manually.",
-			"save": "Save qualifications",
-			"fields": {
-				"label": "Requirement",
-				"labelPlaceholder": "MRCGP (Royal College of GP)",
-				"rationale": "Why it matters (private — shown only to our AI agent)",
-				"rationalePlaceholder": "e.g. Required by Australia agency for GP roles; rejected without it",
-				"blockOffer": "Block handoff if missing",
-				"delete": "Delete"
+			"basic": {
+				"title": "Basic Info",
+				"description": "Job title and profession",
+				"heading": "Basic Information",
+				"subheading": "Start by providing the essential details about the position you're hiring for."
 			},
-			"errors": {
-				"duplicateCode": "Two rows look identical — please differentiate the labels."
+			"location": {
+				"title": "Location & Salary",
+				"description": "Where and compensation",
+				"heading": "Location & Compensation",
+				"subheading": "Specify where the job is located and the compensation details."
+			},
+			"details": {
+				"title": "Job Details",
+				"description": "Description and requirements",
+				"heading": "Job Details",
+				"subheading": "Provide detailed information about the role to attract the right candidates."
+			},
+			"qualifications": {
+				"title": "Qualifications gate",
+				"description": "Hard-required credentials",
+				"heading": "Hard-required qualifications",
+				"subheading": "Credentials our AI agent will explicitly ask each candidate about, by code, before recruiter handoff. Use this list for must-haves your destination country or agency rejects without — like MRCGP for UK GP roles or AHPRA registration for Australia. When \"Block handoff\" is on, a candidate who confirms they don't hold the credential is automatically marked not-interested and never reaches you. Leave \"Block handoff\" off for nice-to-have credentials that should be recorded but not block the conversation. This list is separate from the qualifications narrative on the previous step, which is shown to candidates in the job advert.",
+				"tip": "List only credentials a candidate must hold to be eligible. Turn on \"Block handoff\" for must-haves that should auto-disqualify a candidate when missing."
+			},
+			"targeting": {
+				"title": "Targeting",
+				"description": "Search preferences",
+				"heading": "Candidate Targeting",
+				"subheading": "Configure search preferences to find the most relevant candidates."
+			},
+			"preview": {
+				"title": "Review",
+				"description": "Final check before activating",
+				"heading": "Review & activate",
+				"subheading": "Confirm the details below and activate the hunt. The live preview on the right has been showing you this view as you went — this is your final check."
 			}
 		},
-		"preferredCountries": {
-			"label": "Preferred Countries",
-			"placeholder": "Select preferred countries...",
-			"searchPlaceholder": "Search countries...",
-			"description": "Countries where you'd prefer to search for candidates. Candidates from these countries will be prioritized in search results.",
-			"info": "Selecting preferred countries helps us prioritize candidates from these locations, but we'll still search globally."
+		"navigation": {
+			"previous": "Previous",
+			"next": "Next",
+			"activateHunt": "Activate Hunt",
+			"activating": "Activating...",
+			"step": "Step",
+			"of": "of"
 		},
-		"onlyCountries": {
-			"label": "Filter by Country",
-			"placeholder": "Select countries (optional)...",
-			"searchPlaceholder": "Search countries...",
-			"emptyText": "No countries found",
-			"description": "Select specific countries to restrict your search. Leave empty to search globally.",
-			"info": "When no countries are selected, we search globally. Selecting specific countries will limit the search to only those locations.",
-			"warning": "Warning: Restricting to specific countries may significantly limit your candidate pool. Leave empty to search globally."
-		},
-		"companyContext": {
-			"label": "Company Context",
-			"placeholder": "Describe your organization, services, patient population, size, culture, values, mission, and what makes it a great place to deliver care.\n\nExample:\nWe're a regional hospital serving our local community with inpatient and outpatient services. We focus on patient-centered care, multidisciplinary teamwork, and continuous quality improvement. We support professional development through paid training, clinical supervision, and clear career pathways...",
-			"description": "Provide context about your company that helps candidates understand your organization. This information helps our AI match you with candidates who align with your company culture."
-		},
-		"hiringContext": {
-			"label": "Hiring Context",
-			"placeholder": "Explain why this position exists, team structure, shift arrangements, growth opportunities, and what success looks like in this role.\n\nExample:\nWe're expanding our ward team to support increased patient volume and improve continuity of care. The ideal candidate will work closely with nurses, physicians, and allied health professionals to deliver high-quality, safe patient care. Success looks like excellent clinical judgement, clear documentation, and strong collaboration across the multidisciplinary team...",
-			"description": "Explain why you're hiring and what the role means for your team. This helps us find candidates who are the right fit for this specific opportunity."
-		}
-	},
-	"sections": {
-		"location": "Job Location",
-		"compensation": "Compensation",
-		"geographicTargeting": "Geographic Targeting",
-		"additionalContext": "Additional Context"
-	},
-	"aiGenerate": {
-		"button": "AI Generate",
-		"generating": "Generating...",
-		"title": "AI assistance available!",
-		"description": "Click the \"AI Generate\" buttons to automatically create professional descriptions and qualifications based on the information you've provided. You can always edit the generated content to fit your needs.",
-		"enableTip": "Add a job title in the first step to enable AI generation"
-	},
-	"tips": {
-		"beSpecific": {
-			"title": "Tip: Be specific but not too restrictive",
-			"description": "Providing clear details helps us match you with the right candidates, but being too restrictive might limit your candidate pool."
-		},
-		"salaryTransparency": {
-			"title": "Salary transparency increases applications",
-			"description": "Being upfront about compensation attracts more qualified candidates and saves time in the hiring process."
-		},
-		"targeting": {
-			"title": "How targeting works",
-			"description": "Our AI uses all the information you provide to find and rank candidates. Better targeting and context leads to better matches. Don't worry about being too specific - you can always adjust these settings later."
-		}
-	},
-	"preview": {
-		"readyToActivate": {
-			"title": "Ready to activate!",
-			"description": "All required information has been provided. Click \"Activate Hunt\" to start finding candidates."
-		},
-		"missingInfo": {
-			"title": "Missing required information",
-			"description": "Please complete the following:"
-		},
-		"missingFields": {
-			"jobTitle": "Job Title",
-			"professions": "Professions",
-			"country": "Country",
-			"jobDescription": "Job Description"
-		},
-		"potentialReach": "Potential Candidate Reach",
-		"potentialReachTooltipTitle": "Potential Candidate Reach",
-		"potentialReachTooltipDescription": "Number of candidates who match your job requirements",
-		"reachDescription": "candidates match your requirements and will be notified about this opportunity",
-		"jobOverview": "Job Overview",
 		"fields": {
-			"jobTitle": "Job Title",
-			"professions": "Professions",
-			"specialization": "Specialization",
-			"requiredExperience": "Required Experience",
-			"requiredLanguages": "Required Languages",
-			"description": "Description",
-			"requiredQualifications": "Required Qualifications",
-			"preferredCountries": "Preferred Countries",
-			"onlySearchIn": "Only Search In",
-			"companyContext": "Company Context",
-			"hiringContext": "Hiring Context"
+			"jobTitle": {
+				"label": "Job Title",
+				"placeholder": "e.g., Registered Nurse (ICU), Physiotherapist, Radiographer, Care Assistant",
+				"description": "What is the official title for this position? Be specific and clear."
+			},
+			"professions": {
+				"label": "Professions",
+				"placeholder": "Select professions...",
+				"searchPlaceholder": "Search professions...",
+				"description": "Select one or more professions that best match this role. This helps us find relevant candidates."
+			},
+			"specialization": {
+				"label": "Specialization",
+				"placeholder": "Select specialization (optional)...",
+				"searchPlaceholder": "Search specializations...",
+				"emptyText": "No specializations found",
+				"description": "Optionally specify a specialization within the profession to narrow down the search."
+			},
+			"workExperience": {
+				"label": "Required Work Experience (years)",
+				"placeholder": "0",
+				"description": "Minimum years of relevant work experience required for this position."
+			},
+			"languages": {
+				"label": "Required Languages",
+				"placeholder": "Select languages...",
+				"searchPlaceholder": "Search languages...",
+				"emptyText": "No languages found",
+				"description": "Select the languages candidates must be proficient in for this role."
+			},
+			"country": {
+				"label": "Country",
+				"placeholder": "Select country...",
+				"searchPlaceholder": "Search countries...",
+				"emptyText": "No countries found",
+				"description": "Where is this position based?"
+			},
+			"city": {
+				"label": "City",
+				"placeholder": "e.g., London, New York, Berlin",
+				"description": "Which city is the job located in?"
+			},
+			"region": {
+				"label": "State / Province / Region",
+				"placeholder": "e.g., California, Greater London",
+				"description": "Specify the state, province, or region (optional). Separate multiple with commas."
+			},
+			"address": {
+				"label": "Street Address",
+				"placeholder": "e.g., 123 Main Street",
+				"description": "Full street address (optional but helpful)"
+			},
+			"salaryRange": {
+				"label": "Salary Range",
+				"from": "From",
+				"to": "To",
+				"description": "Provide a salary range to attract suitable candidates. Transparency helps!"
+			},
+			"currency": {
+				"label": "Currency",
+				"placeholder": "Select currency..."
+			},
+			"salaryPeriod": {
+				"label": "Salary Period",
+				"placeholder": "Select period...",
+				"description": "How often is the salary paid?"
+			},
+			"salaryExtra": {
+				"label": "Additional Compensation Details",
+				"placeholder": "e.g., shift differentials, on-call allowance, overtime rates, relocation support, continuing education budget...",
+				"description": "Any extra information about compensation (shift allowances, overtime, benefits, relocation, CPD/CME, etc.)"
+			},
+			"jobDescription": {
+				"label": "Job Description",
+				"placeholder": "Describe the clinical role, main responsibilities, shift pattern, patient population, team structure, growth opportunities, and what makes this workplace unique. Be detailed and engaging to attract great healthcare professionals.\n\nExample:\nWe're looking for a Registered Nurse to join our medical-surgical ward. You'll deliver safe, compassionate patient care as part of a multidisciplinary team.\n\nKey Responsibilities:\n• Assess patients, monitor vital signs, and document care\n• Administer medications and treatments according to protocols\n• Coordinate care with physicians and allied health\n• Educate patients and families on care plans and discharge instructions\n• Follow infection prevention, safeguarding, and patient safety procedures\n...",
+				"description": "Describe the role, responsibilities, and what makes this opportunity exciting."
+			},
+			"jobRequiredQualifications": {
+				"label": "Qualifications narrative (job advert)",
+				"placeholder": "List the essential qualifications, registrations, certifications, skills, and experience candidates must have. Be specific but realistic.\n\nExample:\n• Active professional license/registration (as applicable in your country)\n• 2+ years of relevant clinical experience (acute care/ICU preferred where relevant)\n• BLS required; ACLS/ALS preferred (role dependent)\n• Experience with electronic health records (EHR) and clinical documentation\n• Strong communication, teamwork, and patient-centered mindset\n• Commitment to patient safety, confidentiality, and quality of care\n...",
+				"description": "Free-text qualifications shown to candidates in the job advert. The hard-gate list — codes our AI agent will explicitly confirm before recruiter handoff — is configured on the next step."
+			},
+			"requiredQualifications": {
+				"empty": "No hard-required qualifications yet. Use the auto-detect button below, or add one manually to make our AI agent confirm it on every candidate.",
+				"addBlank": "Add qualification",
+				"autoDetect": "Auto-detect with AI",
+				"autoDetecting": "Asking our AI to suggest qualifications from the job details…",
+				"autoDetectNoneFound": "Our AI didn't suggest any hard-required qualifications for this role. Add manually if needed.",
+				"autoDetectAllAlreadyAdded": "All AI-suggested qualifications are already in your list.",
+				"autoDetectAdded": "Suggested {{count}} new qualification(s) — review and adjust as needed.",
+				"autoDetectFailed": "Couldn't reach the AI suggestion service. Try again or add manually.",
+				"save": "Save qualifications",
+				"saving": "Saving…",
+				"fields": {
+					"label": "Requirement",
+					"labelPlaceholder": "MRCGP (Royal College of GP)",
+					"rationale": "Why it matters (private — shown only to our AI agent)",
+					"rationalePlaceholder": "e.g. Required by Australia agency for GP roles; rejected without it",
+					"blockOffer": "Block handoff if missing",
+					"delete": "Delete"
+				},
+				"errors": {
+					"duplicateCode": "Two rows look identical — please differentiate the labels."
+				}
+			},
+			"preferredCountries": {
+				"label": "Preferred Countries",
+				"placeholder": "Select preferred countries...",
+				"searchPlaceholder": "Search countries...",
+				"description": "Countries where you'd prefer to search for candidates. Candidates from these countries will be prioritized in search results.",
+				"info": "Selecting preferred countries helps us prioritize candidates from these locations, but we'll still search globally."
+			},
+			"onlyCountries": {
+				"label": "Filter by Country",
+				"placeholder": "Select countries (optional)...",
+				"searchPlaceholder": "Search countries...",
+				"emptyText": "No countries found",
+				"description": "Select specific countries to restrict your search. Leave empty to search globally.",
+				"info": "When no countries are selected, we search globally. Selecting specific countries will limit the search to only those locations.",
+				"warning": "Warning: Restricting to specific countries may significantly limit your candidate pool. Leave empty to search globally."
+			},
+			"companyContext": {
+				"label": "Company Context",
+				"placeholder": "Describe your organization, services, patient population, size, culture, values, mission, and what makes it a great place to deliver care.\n\nExample:\nWe're a regional hospital serving our local community with inpatient and outpatient services. We focus on patient-centered care, multidisciplinary teamwork, and continuous quality improvement. We support professional development through paid training, clinical supervision, and clear career pathways...",
+				"description": "Provide context about your company that helps candidates understand your organization. This information helps our AI match you with candidates who align with your company culture."
+			},
+			"hiringContext": {
+				"label": "Hiring Context",
+				"placeholder": "Explain why this position exists, team structure, shift arrangements, growth opportunities, and what success looks like in this role.\n\nExample:\nWe're expanding our ward team to support increased patient volume and improve continuity of care. The ideal candidate will work closely with nurses, physicians, and allied health professionals to deliver high-quality, safe patient care. Success looks like excellent clinical judgement, clear documentation, and strong collaboration across the multidisciplinary team...",
+				"description": "Explain why you're hiring and what the role means for your team. This helps us find candidates who are the right fit for this specific opportunity."
+			}
 		},
-		"locationSection": "Location",
-		"compensationSection": "Compensation",
-		"jobDetailsSection": "Job Details",
-		"targetingSection": "Targeting & Context",
-		"notSpecified": "Not specified",
-		"notProvided": "Not provided",
-		"years": "years"
-	},
-	"errors": {
-		"failedToInitialize": "Failed to initialize. Please try again.",
-		"failedToSave": "Failed to save. Please try again.",
-		"failedToActivate": "Failed to activate hunt. Please try again.",
-		"needActivePlan": "You need an active plan to activate this hunt",
-		"failedToGenerateDescription": "Failed to generate description. Please try again or write manually.",
-		"failedToGenerateQualifications": "Failed to generate qualifications. Please try again or write manually.",
-		"completeCurrentStep": "Please complete the current step before proceeding"
-	},
-	"success": {
-		"saved": "Saved successfully",
-		"activated": "Hunt activated successfully!"
-	}
+		"sections": {
+			"location": "Job Location",
+			"compensation": "Compensation",
+			"geographicTargeting": "Geographic Targeting",
+			"additionalContext": "Additional Context"
+		},
+		"aiGenerate": {
+			"button": "AI Generate",
+			"generating": "Generating...",
+			"title": "AI assistance available!",
+			"description": "Click the \"AI Generate\" buttons to automatically create professional descriptions and qualifications based on the information you've provided. You can always edit the generated content to fit your needs.",
+			"enableTip": "Add a job title in the first step to enable AI generation"
+		},
+		"tips": {
+			"beSpecific": {
+				"title": "Tip: Be specific but not too restrictive",
+				"description": "Providing clear details helps us match you with the right candidates, but being too restrictive might limit your candidate pool."
+			},
+			"salaryTransparency": {
+				"title": "Salary transparency increases applications",
+				"description": "Being upfront about compensation attracts more qualified candidates and saves time in the hiring process."
+			},
+			"targeting": {
+				"title": "How targeting works",
+				"description": "Our AI uses all the information you provide to find and rank candidates. Better targeting and context leads to better matches. Don't worry about being too specific - you can always adjust these settings later."
+			}
+		},
+		"preview": {
+			"readyToActivate": {
+				"title": "Ready to activate!",
+				"description": "All required information has been provided. Click \"Activate Hunt\" to start finding candidates."
+			},
+			"missingInfo": {
+				"title": "Missing required information",
+				"description": "Please complete the following:"
+			},
+			"missingFields": {
+				"jobTitle": "Job Title",
+				"professions": "Professions",
+				"country": "Country",
+				"jobDescription": "Job Description"
+			},
+			"potentialReach": "Potential Candidate Reach",
+			"potentialReachTooltipTitle": "Potential Candidate Reach",
+			"potentialReachTooltipDescription": "Number of candidates who match your job requirements",
+			"reachDescription": "candidates match your requirements and will be notified about this opportunity",
+			"jobOverview": "Job Overview",
+			"fields": {
+				"jobTitle": "Job Title",
+				"professions": "Professions",
+				"specialization": "Specialization",
+				"requiredExperience": "Required Experience",
+				"requiredLanguages": "Required Languages",
+				"description": "Description",
+				"requiredQualifications": "Required Qualifications",
+				"preferredCountries": "Preferred Countries",
+				"onlySearchIn": "Only Search In",
+				"companyContext": "Company Context",
+				"hiringContext": "Hiring Context"
+			},
+			"locationSection": "Location",
+			"compensationSection": "Compensation",
+			"jobDetailsSection": "Job Details",
+			"targetingSection": "Targeting & Context",
+			"notSpecified": "Not specified",
+			"notProvided": "Not provided",
+			"years": "years"
+		},
+		"errors": {
+			"failedToInitialize": "Failed to initialize. Please try again.",
+			"failedToSave": "Failed to save. Please try again.",
+			"failedToActivate": "Failed to activate hunt. Please try again.",
+			"needActivePlan": "You need an active plan to activate this hunt",
+			"failedToGenerateDescription": "Failed to generate description. Please try again or write manually.",
+			"failedToGenerateQualifications": "Failed to generate qualifications. Please try again or write manually.",
+			"completeCurrentStep": "Please complete the current step before proceeding"
+		},
+		"success": {
+			"saved": "Saved successfully",
+			"activated": "Hunt activated successfully!"
+		}
 	}
 }
