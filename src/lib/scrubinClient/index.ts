@@ -685,6 +685,17 @@ export interface ChatMessage {
 	createdByAssistant: boolean;
 }
 
+export interface HandoffSummary {
+	id: number;
+	content: string;
+	createdAt: string;
+}
+
+export interface CandidateChatResponse {
+	messages: ChatMessage[];
+	handoffSummary: HandoffSummary | null;
+}
+
 export interface UpdateCandidateNotesRequest {
 	notes: string;
 }
@@ -1750,12 +1761,12 @@ class HuntResource extends BaseResource {
 	}
 
 	// GET /api/v1/hunts/{id}/interested-candidates/{candidateId}/chat
-	async getInterestedCandidateChat(id: number, candidateId: number): Promise<ChatMessage[]> {
+	async getInterestedCandidateChat(id: number, candidateId: number): Promise<CandidateChatResponse> {
 		const url = new URL(
 			`/api/v1/hunts/${id}/interested-candidates/${candidateId}/chat`,
 			this.client.baseUrl
 		);
-		return this.request<ChatMessage[]>('GET', url.toString()) as Promise<ChatMessage[]>;
+		return this.request<CandidateChatResponse>('GET', url.toString()) as Promise<CandidateChatResponse>;
 	}
 
 	// POST /api/v1/hunts/{id}/interested-candidates/{candidateId}/chat
@@ -1763,23 +1774,21 @@ class HuntResource extends BaseResource {
 		id: number,
 		candidateId: number,
 		message: string
-	): Promise<ChatMessageMin[]> {
+	): Promise<CandidateChatResponse> {
 		const url = new URL(
 			`/api/v1/hunts/${id}/interested-candidates/${candidateId}/chat`,
 			this.client.baseUrl
 		);
-		return this.request<ChatMessageMin[]>('POST', url.toString(), { message }) as Promise<
-			ChatMessageMin[]
-		>;
+		return this.request<CandidateChatResponse>('POST', url.toString(), { message }) as Promise<CandidateChatResponse>;
 	}
 
 	// GET /api/v1/hunts/{id}/interested-applications/{candidateId}/chat
-	async getInterestedApplicantChat(id: number, candidateId: number): Promise<ChatMessage[]> {
+	async getInterestedApplicantChat(id: number, candidateId: number): Promise<CandidateChatResponse> {
 		const url = new URL(
 			`/api/v1/hunts/${id}/interested-applications/${candidateId}/chat`,
 			this.client.baseUrl
 		);
-		return this.request<ChatMessage[]>('GET', url.toString()) as Promise<ChatMessage[]>;
+		return this.request<CandidateChatResponse>('GET', url.toString()) as Promise<CandidateChatResponse>;
 	}
 
 	// POST /api/v1/hunts/{id}/interested-applications/{candidateId}/chat
@@ -1787,14 +1796,12 @@ class HuntResource extends BaseResource {
 		id: number,
 		candidateId: number,
 		message: string
-	): Promise<ChatMessageMin[]> {
+	): Promise<CandidateChatResponse> {
 		const url = new URL(
 			`/api/v1/hunts/${id}/interested-applications/${candidateId}/chat`,
 			this.client.baseUrl
 		);
-		return this.request<ChatMessageMin[]>('POST', url.toString(), { message }) as Promise<
-			ChatMessageMin[]
-		>;
+		return this.request<CandidateChatResponse>('POST', url.toString(), { message }) as Promise<CandidateChatResponse>;
 	}
 
 	// GET /api/v1/hunts/{id}/context-questions

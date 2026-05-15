@@ -282,7 +282,9 @@
 			"yearsAgo": "aastat tagasi",
 			"read": "Loetud",
 			"remindersSent": "meeldetuletust saadetud",
-			"privateSummaryNote": "Privaatne kokkuvõte — kandidaat seda ei näe"
+			"privateSummaryNote": "Privaatne kokkuvõte — kandidaat seda ei näe",
+			"handoffSummaryTitle": "Kandidaadi valmiduse kokkuvõte",
+			"showMore": "Näita rohkem"
 		},
 		"candidateNotes": {
 			"title": "Kandidaadi märkmed",

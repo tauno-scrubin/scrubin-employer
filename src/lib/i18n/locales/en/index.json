@@ -282,7 +282,9 @@
 			"yearsAgo": "years ago",
 			"read": "Read",
 			"remindersSent": "reminders sent",
-			"privateSummaryNote": "Private summary — candidate can't see this"
+			"privateSummaryNote": "Private summary — candidate can't see this",
+			"handoffSummaryTitle": "Candidate readiness summary",
+			"showMore": "Show more"
 		},
 		"candidateNotes": {
 			"title": "Candidate Notes",
