@@ -102,6 +102,10 @@
 				"placeholder": "e.g., 123 Main Street",
 				"description": "Full street address (optional but helpful)"
 			},
+			"relocationNotRequired": {
+				"label": "This role does not require relocation",
+				"description": "Tick for telehealth, fully-remote, or work-from-home roles. Maria will skip the relocation question and the recruiter handoff will not wait for it."
+			},
 			"salaryRange": {
 				"label": "Salary Range",
 				"from": "From",

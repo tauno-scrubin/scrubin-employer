@@ -255,6 +255,13 @@ export interface JobRequirementDto {
 	specialization?: string;
 	specializationV2: number;
 	jobRequiredQualifications?: string;
+	/**
+	 * Per-hunt opt-out for offer-chat readiness fields. Listed names are skipped by
+	 * the chat agent and the recruiter handoff gate. Currently only "willingToRelocate"
+	 * is wired through the UI — flipped on for telehealth / remote roles so Maria
+	 * doesn't push the candidate about moving.
+	 */
+	disabledReadinessFields?: string[];
 	jobRequiredWorkExperience: number;
 	jobRequiredLanguages?: string[];
 	jobDescription?: string;
@@ -1888,6 +1895,7 @@ class HuntResource extends BaseResource {
 			jobTitle?: string;
 			jobRequiredQualifications?: string;
 			requiredQualifications?: HuntRequiredQualification[];
+			disabledReadinessFields?: string[];
 			jobRequiredWorkExperience?: number;
 			jobDescription?: string;
 			country?: string;
