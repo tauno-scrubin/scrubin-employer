@@ -102,10 +102,6 @@
 				"placeholder": "nt Vabaduse väljak 7",
 				"description": "Täielik tänavaadress (valikuline, kuid kasulik)"
 			},
-			"relocationNotRequired": {
-				"label": "See töö ei nõua kolimist",
-				"description": "Märgi linnuke kaugtöö, telehealth'i või kodust tehtava töö korral. Maria ei küsi enam kolimisvalmiduse kohta ja värbaja üleandmine ei oota seda vastust."
-			},
 			"salaryRange": {
 				"label": "Palgavahemik",
 				"from": "Alates",

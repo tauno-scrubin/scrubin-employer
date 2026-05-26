@@ -8,7 +8,6 @@
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
 	import { MapPin, DollarSign, Info } from 'lucide-svelte';
-	import { Checkbox } from '$lib/components/ui/checkbox';
 	import { locale, t } from '$lib/i18n';
 	import { get } from 'svelte/store';
 
@@ -34,11 +33,6 @@
 			: requirement.address?.stateProvinceRegion || ''
 	);
 	let address = $state(requirement.address?.address || '');
-
-	const RELOCATION_FIELD = 'willingToRelocate';
-	let relocationNotRequired = $state(
-		Array.isArray(requirement.disabledReadinessFields) && requirement.disabledReadinessFields.includes(RELOCATION_FIELD)
-	);
 
 	let salaryStart = $state(requirement.salary?.amountStart || 0);
 	let salaryEnd = $state(requirement.salary?.amountEnd || 0);
@@ -73,11 +67,6 @@
 					.map((s) => s.trim())
 					.filter(Boolean);
 				updateData.address = address;
-			} else if (field === 'workArrangement') {
-				const existing = Array.isArray(requirement.disabledReadinessFields)
-					? requirement.disabledReadinessFields.filter((f) => f !== RELOCATION_FIELD)
-					: [];
-				updateData.disabledReadinessFields = relocationNotRequired ? [...existing, RELOCATION_FIELD] : existing;
 			} else if (field === 'salary') {
 				updateData.salaryAmountStart = salaryStart;
 				updateData.salaryAmountEnd = salaryEnd;
@@ -194,25 +183,6 @@
 			</div>
 		</div>
 
-		<!-- Relocation opt-out (telehealth / remote roles) -->
-		<div class="flex items-start gap-2 rounded-md border border-input bg-white p-3">
-			<Checkbox
-				id="relocationNotRequired"
-				checked={relocationNotRequired}
-				onCheckedChange={(value) => {
-					relocationNotRequired = value === true;
-					saveField('workArrangement');
-				}}
-			/>
-			<div class="space-y-0.5">
-				<Label for="relocationNotRequired" class="text-sm font-medium cursor-pointer"
-					>{$t('requirementsV2.fields.relocationNotRequired.label')}</Label
-				>
-				<p class="text-xs text-muted-foreground">
-					{$t('requirementsV2.fields.relocationNotRequired.description')}
-				</p>
-			</div>
-		</div>
 	</div>
 
 	<!-- Salary Section -->
