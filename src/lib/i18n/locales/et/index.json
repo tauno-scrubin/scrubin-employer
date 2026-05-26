@@ -335,6 +335,15 @@
 			"currentStatus": "Praegune staatus",
 			"email": "E-post",
 			"phone": "Telefon",
+			"newnessGate": {
+				"title": "Kas see kandidaat on teie värbamisprotsessis uus?",
+				"description": "Enne kandidaadi kontaktandmete jagamist kinnitage palun, et ta ei ole juba teie värbamisprotsessis mõne teise agentuuri või kanali kaudu. Iga kinnitus logitakse.",
+				"confirmButton": "Jah, see kandidaat on meie jaoks uus",
+				"confirming": "Kinnitamine…",
+				"confirmedToast": "Kinnitatud. Kontaktandmed on nüüd nähtavad.",
+				"errorToast": "Kinnitamine ebaõnnestus. Palun proovige uuesti.",
+				"contactHidden": "Avage kandidaat, et kinnitus anda ja kontaktandmeid näha"
+			},
 			"interestedSince": "Huvitatud alates",
 			"professionalRegistration": "Kutseregistratsioon",
 			"professions": "Kutsealad",

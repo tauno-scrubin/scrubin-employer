@@ -335,6 +335,15 @@
 			"currentStatus": "Current Status",
 			"email": "Email",
 			"phone": "Phone",
+			"newnessGate": {
+				"title": "Is this candidate new to your pipeline?",
+				"description": "Before we share {{firstName}}'s contact details, please confirm you do not already have them in your pipeline through another agency or channel. Every confirmation is logged.",
+				"confirmButton": "Yes, this candidate is new to us",
+				"confirming": "Confirming…",
+				"confirmedToast": "Confirmed. Contact details are now visible.",
+				"errorToast": "Could not confirm. Please try again.",
+				"contactHidden": "Open candidate to confirm and reveal contact"
+			},
 			"interestedSince": "Interested since",
 			"professionalRegistration": "Professional Registration",
 			"professions": "Professions",

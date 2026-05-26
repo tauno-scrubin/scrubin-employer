@@ -612,8 +612,8 @@ export interface InterestedCandidate {
 	type: 'offer' | 'apply';
 	firstName: string;
 	lastName: string;
-	email: string;
-	phone: string;
+	email: string | null;
+	phone: string | null;
 	status: string;
 	dateInterested: string;
 	dateInterview?: string;
@@ -622,6 +622,8 @@ export interface InterestedCandidate {
 	totalMessages: number;
 	stats: InterestedCandidateStats;
 	successFeePaid?: boolean;
+	companyConfirmedNewCandidate: boolean;
+	dateCompanyConfirmedNewCandidate?: string | null;
 }
 
 export interface InterestedCandidateStatusResponse {
@@ -648,8 +650,8 @@ export interface InternalNote {
 export interface InterestedCandidateDetails extends HuntableDetails {
 	firstName: string;
 	lastName: string;
-	email: string;
-	phone: string;
+	email: string | null;
+	phone: string | null;
 	status: string;
 	professionNumbers?: Array<{
 		countryRegistered: string;
@@ -664,6 +666,8 @@ export interface InterestedCandidateDetails extends HuntableDetails {
 		currency: string;
 		datePaid: string;
 	};
+	companyConfirmedNewCandidate: boolean;
+	dateCompanyConfirmedNewCandidate?: string | null;
 }
 
 export interface InterestedCandidateStats {
@@ -1617,6 +1621,23 @@ class HuntResource extends BaseResource {
 			'GET',
 			url.toString()
 		) as Promise<InterestedCandidateStats>;
+	}
+
+	// POST /api/v1/hunts/{id}/interested-candidates/{candidateId}/confirm-newness
+	// Idempotent. The employer confirms this candidate is not already in their
+	// pipeline; backend reveals email + phone in the returned details.
+	async confirmCandidateIsNew(
+		id: number,
+		candidateId: number
+	): Promise<InterestedCandidateDetails> {
+		const url = new URL(
+			`/api/v1/hunts/${id}/interested-candidates/${candidateId}/confirm-newness`,
+			this.client.baseUrl
+		);
+		return this.request<InterestedCandidateDetails>(
+			'POST',
+			url.toString()
+		) as Promise<InterestedCandidateDetails>;
 	}
 
 	async getInterestedApplicantStats(

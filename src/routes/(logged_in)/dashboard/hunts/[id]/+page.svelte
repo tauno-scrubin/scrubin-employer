@@ -1062,12 +1062,18 @@
 																{/if}
 															</div>
 
-															<!-- Email -->
+															<!-- Email (hidden until employer confirms candidate is new) -->
 															<div
 																class="flex items-center gap-1 truncate text-xs text-muted-foreground"
 															>
 																<Mail class="h-3 w-3 flex-shrink-0" />
-																<span class="truncate">{candidate.email}</span>
+																{#if candidate.companyConfirmedNewCandidate}
+																	<span class="truncate">{candidate.email}</span>
+																{:else}
+																	<span class="truncate italic"
+																		>{$t('dashboard.interestedWorkerDialog.newnessGate.contactHidden')}</span
+																	>
+																{/if}
 															</div>
 
 															<!-- Stats row -->
@@ -1222,14 +1228,25 @@
 													</div>
 
 													<div class="flex gap-4 text-sm text-muted-foreground">
-														<div class="flex items-center gap-1">
-															<Mail class="h-3.5 w-3.5" />
-															<span>{candidate.email}</span>
-														</div>
-														{#if candidate.phone}
+														{#if candidate.companyConfirmedNewCandidate}
 															<div class="flex items-center gap-1">
-																<Phone class="h-3.5 w-3.5" />
-																<span>{candidate.phone}</span>
+																<Mail class="h-3.5 w-3.5" />
+																<span>{candidate.email}</span>
+															</div>
+															{#if candidate.phone}
+																<div class="flex items-center gap-1">
+																	<Phone class="h-3.5 w-3.5" />
+																	<span>{candidate.phone}</span>
+																</div>
+															{/if}
+														{:else}
+															<div class="flex items-center gap-1 italic">
+																<Mail class="h-3.5 w-3.5" />
+																<span
+																	>{$t(
+																		'dashboard.interestedWorkerDialog.newnessGate.contactHidden'
+																	)}</span
+																>
 															</div>
 														{/if}
 													</div>

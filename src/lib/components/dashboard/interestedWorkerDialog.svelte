@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { Button } from '$lib/components/ui/button';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import * as Select from '$lib/components/ui/select/index.js';
@@ -18,9 +19,11 @@
 		MailOpen,
 		MessageSquare,
 		Phone,
+		ShieldCheck,
 		Sparkle
 	} from 'lucide-svelte';
 	import { get } from 'svelte/store';
+	import { toast } from 'svelte-sonner';
 	import CandidateChat from './candidateChat.svelte';
 	import CandidateNotes from './candidateNotes.svelte';
 
@@ -43,6 +46,7 @@
 	let activeTab = $state('profile'); // profile, messages, notes
 	let isProcessing = $state(false);
 	let actionError = $state('');
+	let isConfirmingNewness = $state(false);
 
 	// Available pipeline statuses
 	let availableStatuses = $derived.by(() => {
@@ -98,6 +102,20 @@
 			hasError = true;
 		} finally {
 			isLoading = false;
+		}
+	}
+
+	async function confirmCandidateIsNew() {
+		if (!worker || !huntId || !candidateId || isConfirmingNewness) return;
+		isConfirmingNewness = true;
+		try {
+			worker = await scrubinClient.hunt.confirmCandidateIsNew(huntId, candidateId);
+			toast.success($t('dashboard.interestedWorkerDialog.newnessGate.confirmedToast'));
+		} catch (error) {
+			console.error('Error confirming candidate newness:', error);
+			toast.error($t('dashboard.interestedWorkerDialog.newnessGate.errorToast'));
+		} finally {
+			isConfirmingNewness = false;
 		}
 	}
 
@@ -311,43 +329,74 @@
 									</div>
 
 									<div class="grid grid-cols-1 gap-2 pl-1 md:grid-cols-2">
-										<div
-											class="group flex items-center gap-3 rounded-md transition-colors hover:bg-blue-50"
-										>
-											<div class="rounded-full bg-blue-50 p-2">
-												<Mail class="h-4 w-4 text-blue-600" />
+										{#if worker.companyConfirmedNewCandidate}
+											<div
+												class="group flex items-center gap-3 rounded-md transition-colors hover:bg-blue-50"
+											>
+												<div class="rounded-full bg-blue-50 p-2">
+													<Mail class="h-4 w-4 text-blue-600" />
+												</div>
+												<div class="flex flex-col">
+													<span class="text-xs text-gray-500"
+														>{$t('dashboard.interestedWorkerDialog.email')}</span
+													>
+													<a
+														href={`mailto:${worker.email}`}
+														class="text-sm text-gray-700 transition-colors group-hover:text-blue-700"
+													>
+														{worker.email}
+													</a>
+												</div>
 											</div>
-											<div class="flex flex-col">
-												<span class="text-xs text-gray-500"
-													>{$t('dashboard.interestedWorkerDialog.email')}</span
-												>
-												<a
-													href={`mailto:${worker.email}`}
-													class="text-sm text-gray-700 transition-colors group-hover:text-blue-700"
-												>
-													{worker.email}
-												</a>
-											</div>
-										</div>
 
-										<div
-											class="group flex items-center gap-3 rounded-md transition-colors hover:bg-blue-50"
-										>
-											<div class="rounded-full bg-blue-50 p-2">
-												<Phone class="h-4 w-4 text-blue-600" />
+											<div
+												class="group flex items-center gap-3 rounded-md transition-colors hover:bg-blue-50"
+											>
+												<div class="rounded-full bg-blue-50 p-2">
+													<Phone class="h-4 w-4 text-blue-600" />
+												</div>
+												<div class="flex flex-col">
+													<span class="text-xs text-gray-500"
+														>{$t('dashboard.interestedWorkerDialog.phone')}</span
+													>
+													<a
+														href={`tel:${worker.phone}`}
+														class="text-sm text-gray-700 transition-colors group-hover:text-blue-700"
+													>
+														{worker.phone}
+													</a>
+												</div>
 											</div>
-											<div class="flex flex-col">
-												<span class="text-xs text-gray-500"
-													>{$t('dashboard.interestedWorkerDialog.phone')}</span
-												>
-												<a
-													href={`tel:${worker.phone}`}
-													class="text-sm text-gray-700 transition-colors group-hover:text-blue-700"
-												>
-													{worker.phone}
-												</a>
+										{:else}
+											<div
+												class="md:col-span-2 rounded-lg border border-amber-200 bg-amber-50 p-4"
+											>
+												<div class="flex items-start gap-3">
+													<div class="rounded-full bg-amber-100 p-2">
+														<ShieldCheck class="h-5 w-5 text-amber-700" />
+													</div>
+													<div class="flex-1">
+														<h4 class="text-sm font-semibold text-amber-900">
+															{$t('dashboard.interestedWorkerDialog.newnessGate.title')}
+														</h4>
+														<p class="mt-1 text-sm text-amber-800">
+															{$t('dashboard.interestedWorkerDialog.newnessGate.description', {
+																firstName: worker.firstName ?? ''
+															})}
+														</p>
+														<Button
+															class="mt-3"
+															disabled={isConfirmingNewness}
+															onclick={confirmCandidateIsNew}
+														>
+															{isConfirmingNewness
+																? $t('dashboard.interestedWorkerDialog.newnessGate.confirming')
+																: $t('dashboard.interestedWorkerDialog.newnessGate.confirmButton')}
+														</Button>
+													</div>
+												</div>
 											</div>
-										</div>
+										{/if}
 
 										<div class="group flex items-center gap-3 rounded-md md:col-span-2">
 											<div class="rounded-full bg-blue-50 p-2">
