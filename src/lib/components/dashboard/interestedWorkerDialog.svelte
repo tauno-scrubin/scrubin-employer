@@ -20,6 +20,7 @@
 		MessageSquare,
 		Phone,
 		ShieldCheck,
+		ShieldOff,
 		Sparkle
 	} from 'lucide-svelte';
 	import { get } from 'svelte/store';
@@ -131,7 +132,11 @@
 
 		try {
 			if (type === 'apply') {
-				await scrubinClient.hunt.updateInterestedApplicantStatus(huntId, candidateId, newStatus.toUpperCase());
+				await scrubinClient.hunt.updateInterestedApplicantStatus(
+					huntId,
+					candidateId,
+					newStatus.toUpperCase()
+				);
 			} else {
 				await scrubinClient.hunt.updateInterestedCandidateStatus(huntId, candidateId, newStatus);
 			}
@@ -305,24 +310,31 @@
 												>{worker.firstName} {worker.lastName}</span
 											>
 											{#if worker.status}
-												{@const statusLower = (() => { const s = worker.status.toLowerCase(); return s === 'hired' ? 'accepted' : s === 'applied' ? 'interested' : s; })()}
-												{@const statusConfig = availableStatuses.find((s) => s.value === statusLower)}
+												{@const statusLower = (() => {
+													const s = worker.status.toLowerCase();
+													return s === 'hired' ? 'accepted' : s === 'applied' ? 'interested' : s;
+												})()}
+												{@const statusConfig = availableStatuses.find(
+													(s) => s.value === statusLower
+												)}
 												{@const statusColor = statusConfig?.color || 'bg-gray-100 text-gray-800'}
 												{@const StatusIcon = statusConfig?.icon}
 												<div class="flex items-center gap-2">
 													<span class="text-xs font-medium text-gray-500">
 														{$t('dashboard.interestedWorkerDialog.currentStatus')}:
 													</span>
-													<span class="rounded-full px-3 py-1 text-xs font-medium {statusColor} flex items-center gap-1.5">
+													<span
+														class="rounded-full px-3 py-1 text-xs font-medium {statusColor} flex items-center gap-1.5"
+													>
 														{#if StatusIcon}
 															<StatusIcon class="h-3.5 w-3.5" />
 														{/if}
-														{$t(
-															`statistics.pipelineStatuses.${statusLower}.label`
-														)}
+														{$t(`statistics.pipelineStatuses.${statusLower}.label`)}
 													</span>
 													{#if worker.successFeePaid}
-														<span class="rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-800">
+														<span
+															class="rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-800"
+														>
 															{$t('dashboard.interestedWorkerDialog.successFeePaid')}
 														</span>
 													{/if}
@@ -332,7 +344,23 @@
 									</div>
 
 									<div class="grid grid-cols-1 gap-2 pl-1 md:grid-cols-2">
-										{#if worker.companyConfirmedNewCandidate}
+										{#if worker.contactBlocked}
+											<div class="rounded-lg border border-gray-200 bg-gray-50 p-4 md:col-span-2">
+												<div class="flex items-start gap-3">
+													<div class="rounded-full bg-gray-200 p-2">
+														<ShieldOff class="h-5 w-5 text-gray-600" />
+													</div>
+													<div class="flex-1">
+														<h4 class="text-sm font-semibold text-gray-900">
+															{$t('dashboard.interestedWorkerDialog.contactWithheld.title')}
+														</h4>
+														<p class="mt-1 text-sm text-gray-700">
+															{$t('dashboard.interestedWorkerDialog.contactWithheld.description')}
+														</p>
+													</div>
+												</div>
+											</div>
+										{:else if worker.companyConfirmedNewCandidate}
 											<div
 												class="group flex items-center gap-3 rounded-md transition-colors hover:bg-blue-50"
 											>
@@ -371,9 +399,7 @@
 												</div>
 											</div>
 										{:else}
-											<div
-												class="md:col-span-2 rounded-lg border border-amber-200 bg-amber-50 p-4"
-											>
+											<div class="rounded-lg border border-amber-200 bg-amber-50 p-4 md:col-span-2">
 												<div class="flex items-start gap-3">
 													<div class="rounded-full bg-amber-100 p-2">
 														<ShieldCheck class="h-5 w-5 text-amber-700" />
@@ -418,10 +444,21 @@
 
 									{#if worker.successFeePayment}
 										<div class="mt-3 rounded-lg border border-green-200 bg-green-50 p-3">
-											<p class="text-xs font-medium text-green-800">{$t('dashboard.interestedWorkerDialog.successFeePaid')}</p>
+											<p class="text-xs font-medium text-green-800">
+												{$t('dashboard.interestedWorkerDialog.successFeePaid')}
+											</p>
 											<div class="mt-1 flex gap-4 text-sm text-green-700">
-												<span>{$t('dashboard.interestedWorkerDialog.paymentAmount')}: {formatCurrency(worker.successFeePayment.amount / 100, worker.successFeePayment.currency)}</span>
-												<span>{$t('dashboard.interestedWorkerDialog.paymentDate')}: {formatDate(worker.successFeePayment.datePaid)}</span>
+												<span
+													>{$t('dashboard.interestedWorkerDialog.paymentAmount')}: {formatCurrency(
+														worker.successFeePayment.amount / 100,
+														worker.successFeePayment.currency
+													)}</span
+												>
+												<span
+													>{$t('dashboard.interestedWorkerDialog.paymentDate')}: {formatDate(
+														worker.successFeePayment.datePaid
+													)}</span
+												>
 											</div>
 										</div>
 									{/if}
@@ -453,8 +490,11 @@
 								</h4>
 
 								{#if !canWrite}
-									<div class="mb-4 rounded-md border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800">
-										You have read-only access to this hunt. Ask the main account to upgrade you to collaborator if you need to act on candidates.
+									<div
+										class="mb-4 rounded-md border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800"
+									>
+										You have read-only access to this hunt. Ask the main account to upgrade you to
+										collaborator if you need to act on candidates.
 									</div>
 								{/if}
 
@@ -484,7 +524,9 @@
 												{#if selectedStatus}
 													{@const Icon = selectedStatus.icon}
 													<div class="flex items-center gap-2">
-														<span class="rounded-full px-3 py-1 text-xs font-medium {selectedStatus.color} flex items-center gap-1.5">
+														<span
+															class="rounded-full px-3 py-1 text-xs font-medium {selectedStatus.color} flex items-center gap-1.5"
+														>
 															<Icon class="h-3.5 w-3.5" />
 															{selectedStatus.label}
 														</span>
@@ -498,7 +540,9 @@
 													{#each availableStatuses as status}
 														{@const Icon = status.icon}
 														<Select.Item value={status.value}>
-															<span class="rounded-full px-3 py-1 text-xs font-medium {status.color} flex items-center gap-1.5">
+															<span
+																class="rounded-full px-3 py-1 text-xs font-medium {status.color} flex items-center gap-1.5"
+															>
 																<Icon class="h-3.5 w-3.5" />
 																{status.label}
 															</span>
@@ -884,7 +928,13 @@
 							<span>{$t('dashboard.interestedWorkerDialog.unreadMessages')}</span>
 						</div>
 					{/if}
-					<CandidateChat bind:huntId bind:candidateId bind:type {canWrite} />
+					<CandidateChat
+						bind:huntId
+						bind:candidateId
+						bind:type
+						{canWrite}
+						closed={worker.contactBlocked}
+					/>
 				</Tabs.Content>
 
 				<Tabs.Content value="notes">

@@ -390,7 +390,8 @@
 			"remindersSent": "reminders sent",
 			"privateSummaryNote": "Private summary — candidate can't see this",
 			"handoffSummaryTitle": "Candidate readiness summary",
-			"showMore": "Show more"
+			"showMore": "Show more",
+			"closed": "Messaging is closed — this candidate has been declined or rejected."
 		},
 		"candidateNotes": {
 			"title": "Candidate Notes",
@@ -449,6 +450,11 @@
 				"confirmedToast": "Confirmed. Contact details are now visible.",
 				"errorToast": "Could not confirm. Please try again.",
 				"contactHidden": "Open candidate to confirm and reveal contact"
+			},
+			"contactWithheld": {
+				"title": "Contact details withheld",
+				"description": "This candidate has been declined or rejected, so their contact details are no longer available and messaging is closed.",
+				"short": "Contact withheld"
 			},
 			"interestedSince": "Interested since",
 			"professionalRegistration": "Professional Registration",

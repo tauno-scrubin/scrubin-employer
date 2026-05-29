@@ -23,13 +23,16 @@
 		huntId = $bindable(0),
 		candidateId = $bindable(0),
 		type = $bindable('offer'),
-		canWrite = true
+		canWrite = true,
+		closed = false
 	}: {
 		huntId: number;
 		candidateId: number;
 		type: 'offer' | 'apply';
 		/** false when caller is a viewer — disables the send-message form. */
 		canWrite?: boolean;
+		/** true when the candidate is declined/rejected — messaging is closed for everyone. */
+		closed?: boolean;
 	} = $props();
 
 	let messages: ChatMessage[] = $state([]);
@@ -187,7 +190,9 @@
 				</span>
 			</div>
 			<Collapsible class="group w-full">
-				<p class="whitespace-pre-wrap break-words text-sm text-gray-800 group-data-[state=open]:hidden">
+				<p
+					class="whitespace-pre-wrap break-words text-sm text-gray-800 group-data-[state=open]:hidden"
+				>
 					{getSummaryPreview(handoffSummary.content)}
 					{#if handoffSummary.content.length > 220}
 						<CollapsibleTrigger class="ml-1 text-xs text-amber-700 underline underline-offset-2">
@@ -265,7 +270,11 @@
 	</TooltipProvider>
 
 	<div class="border-t p-4">
-		{#if canWrite}
+		{#if closed}
+			<p class="text-center text-xs text-muted-foreground">
+				{$t('dashboard.candidateChat.closed')}
+			</p>
+		{:else if canWrite}
 			<form onsubmit={sendMessage} class="flex gap-2">
 				<Input
 					type="text"

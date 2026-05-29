@@ -713,6 +713,8 @@ export interface InterestedCandidate {
 	successFeePaid?: boolean;
 	companyConfirmedNewCandidate: boolean;
 	dateCompanyConfirmedNewCandidate?: string | null;
+	/** True when declined by the company or rejected by the candidate — contact is withheld and chat is closed. */
+	contactBlocked: boolean;
 }
 
 export interface InterestedCandidateStatusResponse {
@@ -757,6 +759,8 @@ export interface InterestedCandidateDetails extends HuntableDetails {
 	};
 	companyConfirmedNewCandidate: boolean;
 	dateCompanyConfirmedNewCandidate?: string | null;
+	/** True when declined by the company or rejected by the candidate — contact is withheld and chat is closed. */
+	contactBlocked: boolean;
 }
 
 export interface InterestedCandidateStats {
@@ -1062,7 +1066,9 @@ class AuthStore {
 
 	async refresh(
 		baseUrl: string,
-		serverCookies?: { set: (name: string, value: string, opts: (CookieSerializeOptions & { path: string })) => void }
+		serverCookies?: {
+			set: (name: string, value: string, opts: CookieSerializeOptions & { path: string }) => void;
+		}
 	): Promise<boolean> {
 		if (!this.rToken) {
 			throw new Error('No refresh token available');
@@ -1416,26 +1422,46 @@ class CompanyResource extends BaseResource {
 
 	async addPaymentMethod(data: CreatePaymentMethodRequest): Promise<PaymentMethodDto> {
 		const url = new URL(`${this.path}/billing/payment-methods`, this.client.baseUrl);
-		return this.request<PaymentMethodDto>('POST', url.toString(), data) as Promise<PaymentMethodDto>;
+		return this.request<PaymentMethodDto>(
+			'POST',
+			url.toString(),
+			data
+		) as Promise<PaymentMethodDto>;
 	}
 
 	async createSetupIntent(): Promise<SetupIntentResponse> {
 		const url = new URL(`${this.path}/billing/payment-methods/setup-intent`, this.client.baseUrl);
-		return this.request<SetupIntentResponse>('POST', url.toString(), {}) as Promise<SetupIntentResponse>;
+		return this.request<SetupIntentResponse>(
+			'POST',
+			url.toString(),
+			{}
+		) as Promise<SetupIntentResponse>;
 	}
 
 	async removePaymentMethod(paymentMethodId: string): Promise<void> {
-		const url = new URL(`${this.path}/billing/payment-methods/${paymentMethodId}`, this.client.baseUrl);
+		const url = new URL(
+			`${this.path}/billing/payment-methods/${paymentMethodId}`,
+			this.client.baseUrl
+		);
 		return this.request<void>('DELETE', url.toString(), undefined, true) as Promise<void>;
 	}
 
 	async setDefaultPaymentMethod(paymentMethodId: string): Promise<void> {
-		const url = new URL(`${this.path}/billing/payment-methods/${paymentMethodId}/default`, this.client.baseUrl);
+		const url = new URL(
+			`${this.path}/billing/payment-methods/${paymentMethodId}/default`,
+			this.client.baseUrl
+		);
 		return this.request<void>('PATCH', url.toString(), undefined, true) as Promise<void>;
 	}
 
-	async updateSubscriptionPaymentMethod(subscriptionId: string, data: UpdateSubscriptionPaymentMethodRequest): Promise<void> {
-		const url = new URL(`${this.path}/billing/subscriptions/${subscriptionId}/payment-method`, this.client.baseUrl);
+	async updateSubscriptionPaymentMethod(
+		subscriptionId: string,
+		data: UpdateSubscriptionPaymentMethodRequest
+	): Promise<void> {
+		const url = new URL(
+			`${this.path}/billing/subscriptions/${subscriptionId}/payment-method`,
+			this.client.baseUrl
+		);
 		return this.request<void>('PATCH', url.toString(), data, true) as Promise<void>;
 	}
 
@@ -1668,7 +1694,11 @@ class HuntResource extends BaseResource {
 		const url = new URL(`/api/v1/hunts/${id}/activate`, this.client.baseUrl);
 		const body: { paymentIntentId: string; paymentMethodId?: string } = { paymentIntentId };
 		if (paymentMethodId) body.paymentMethodId = paymentMethodId;
-		return this.request<HuntPaymentResponse>('POST', url.toString(), body) as Promise<HuntPaymentResponse>;
+		return this.request<HuntPaymentResponse>(
+			'POST',
+			url.toString(),
+			body
+		) as Promise<HuntPaymentResponse>;
 	}
 
 	// GET /api/v1/landing/worker-lookups/{lookupId}/huntable/{id}
@@ -1876,12 +1906,18 @@ class HuntResource extends BaseResource {
 	}
 
 	// GET /api/v1/hunts/{id}/interested-candidates/{candidateId}/chat
-	async getInterestedCandidateChat(id: number, candidateId: number): Promise<CandidateChatResponse> {
+	async getInterestedCandidateChat(
+		id: number,
+		candidateId: number
+	): Promise<CandidateChatResponse> {
 		const url = new URL(
 			`/api/v1/hunts/${id}/interested-candidates/${candidateId}/chat`,
 			this.client.baseUrl
 		);
-		return this.request<CandidateChatResponse>('GET', url.toString()) as Promise<CandidateChatResponse>;
+		return this.request<CandidateChatResponse>(
+			'GET',
+			url.toString()
+		) as Promise<CandidateChatResponse>;
 	}
 
 	// POST /api/v1/hunts/{id}/interested-candidates/{candidateId}/chat
@@ -1894,16 +1930,24 @@ class HuntResource extends BaseResource {
 			`/api/v1/hunts/${id}/interested-candidates/${candidateId}/chat`,
 			this.client.baseUrl
 		);
-		return this.request<CandidateChatResponse>('POST', url.toString(), { message }) as Promise<CandidateChatResponse>;
+		return this.request<CandidateChatResponse>('POST', url.toString(), {
+			message
+		}) as Promise<CandidateChatResponse>;
 	}
 
 	// GET /api/v1/hunts/{id}/interested-applications/{candidateId}/chat
-	async getInterestedApplicantChat(id: number, candidateId: number): Promise<CandidateChatResponse> {
+	async getInterestedApplicantChat(
+		id: number,
+		candidateId: number
+	): Promise<CandidateChatResponse> {
 		const url = new URL(
 			`/api/v1/hunts/${id}/interested-applications/${candidateId}/chat`,
 			this.client.baseUrl
 		);
-		return this.request<CandidateChatResponse>('GET', url.toString()) as Promise<CandidateChatResponse>;
+		return this.request<CandidateChatResponse>(
+			'GET',
+			url.toString()
+		) as Promise<CandidateChatResponse>;
 	}
 
 	// POST /api/v1/hunts/{id}/interested-applications/{candidateId}/chat
@@ -1916,7 +1960,9 @@ class HuntResource extends BaseResource {
 			`/api/v1/hunts/${id}/interested-applications/${candidateId}/chat`,
 			this.client.baseUrl
 		);
-		return this.request<CandidateChatResponse>('POST', url.toString(), { message }) as Promise<CandidateChatResponse>;
+		return this.request<CandidateChatResponse>('POST', url.toString(), {
+			message
+		}) as Promise<CandidateChatResponse>;
 	}
 
 	// GET /api/v1/hunts/{id}/context-questions
@@ -2044,18 +2090,16 @@ class HuntResource extends BaseResource {
 
 	async generateJobDescription(id: number): Promise<{ jobDescription: string }> {
 		const url = new URL(`${this.path}/requirements/${id}/ai/job-description`, this.client.baseUrl);
-		return this.request<{ jobDescription: string }>(
-			'POST',
-			url.toString()
-		) as Promise<{ jobDescription: string }>;
+		return this.request<{ jobDescription: string }>('POST', url.toString()) as Promise<{
+			jobDescription: string;
+		}>;
 	}
 
 	async generateJobQualifications(id: number): Promise<{ jobRequiredQualifications: string }> {
 		const url = new URL(`${this.path}/requirements/${id}/ai/qualifications`, this.client.baseUrl);
-		return this.request<{ jobRequiredQualifications: string }>(
-			'POST',
-			url.toString()
-		) as Promise<{ jobRequiredQualifications: string }>;
+		return this.request<{ jobRequiredQualifications: string }>('POST', url.toString()) as Promise<{
+			jobRequiredQualifications: string;
+		}>;
 	}
 
 	async suggestRequiredQualifications(
@@ -2241,7 +2285,9 @@ class TeamResource extends BaseResource {
 
 	async listMemberHuntAccess(memberId: number): Promise<MemberHuntAccessRow[]> {
 		const url = new URL(`${this.path}/members/${memberId}/hunt-access`, this.client.baseUrl);
-		return this.request<MemberHuntAccessRow[]>('GET', url.toString()) as Promise<MemberHuntAccessRow[]>;
+		return this.request<MemberHuntAccessRow[]>('GET', url.toString()) as Promise<
+			MemberHuntAccessRow[]
+		>;
 	}
 
 	async changeMemberRole(id: number, role: CompanyUserRole): Promise<TeamMember> {
@@ -2287,12 +2333,17 @@ class HuntAccessResource extends BaseResource {
 
 	async grant(huntId: number, userId: number, huntRole: HuntRole): Promise<HuntAccessRow> {
 		const url = new URL(`${this.path}/${huntId}/access`, this.client.baseUrl);
-		return this.request<HuntAccessRow>('POST', url.toString(), { userId, huntRole }) as Promise<HuntAccessRow>;
+		return this.request<HuntAccessRow>('POST', url.toString(), {
+			userId,
+			huntRole
+		}) as Promise<HuntAccessRow>;
 	}
 
 	async changeRole(huntId: number, accessId: number, huntRole: HuntRole): Promise<HuntAccessRow> {
 		const url = new URL(`${this.path}/${huntId}/access/${accessId}`, this.client.baseUrl);
-		return this.request<HuntAccessRow>('PUT', url.toString(), { huntRole }) as Promise<HuntAccessRow>;
+		return this.request<HuntAccessRow>('PUT', url.toString(), {
+			huntRole
+		}) as Promise<HuntAccessRow>;
 	}
 
 	async revoke(huntId: number, accessId: number): Promise<void> {
@@ -2302,10 +2353,19 @@ class HuntAccessResource extends BaseResource {
 
 	async createShareLink(
 		huntId: number,
-		input: { scope: ShareLinkScope; candidateId?: number; expiresInDays: number; recipientEmail?: string }
+		input: {
+			scope: ShareLinkScope;
+			candidateId?: number;
+			expiresInDays: number;
+			recipientEmail?: string;
+		}
 	): Promise<ShareLinkCreated> {
 		const url = new URL(`${this.path}/${huntId}/access/share-link`, this.client.baseUrl);
-		return this.request<ShareLinkCreated>('POST', url.toString(), input) as Promise<ShareLinkCreated>;
+		return this.request<ShareLinkCreated>(
+			'POST',
+			url.toString(),
+			input
+		) as Promise<ShareLinkCreated>;
 	}
 
 	async listShareLinks(huntId: number): Promise<ShareLink[]> {
@@ -2326,7 +2386,9 @@ class PublicShareResource extends BaseResource {
 
 	async open(token: string): Promise<PublicShareView> {
 		const url = new URL(`${this.path}/${encodeURIComponent(token)}`, this.client.baseUrl);
-		return this.request<PublicShareView>('GET', url.toString(), undefined, false, { skipAuth: true }) as Promise<PublicShareView>;
+		return this.request<PublicShareView>('GET', url.toString(), undefined, false, {
+			skipAuth: true
+		}) as Promise<PublicShareView>;
 	}
 }
 
@@ -2382,7 +2444,7 @@ export class ScrubinClient {
 	}
 
 	public async ensureAuth(serverCookies?: {
-		set: (name: string, value: string, opts: (CookieSerializeOptions & { path: string })) => void;
+		set: (name: string, value: string, opts: CookieSerializeOptions & { path: string }) => void;
 	}): Promise<boolean> {
 		// Add a buffer time (e.g., 60 seconds) to refresh before actual expiration
 		const shouldRefresh = () => {
@@ -2430,7 +2492,7 @@ export class ScrubinClient {
 	async authWithToken(
 		token: string,
 		serverCookies?: {
-			set: (name: string, value: string, opts: (CookieSerializeOptions & { path: string })) => void;
+			set: (name: string, value: string, opts: CookieSerializeOptions & { path: string }) => void;
 		}
 	): Promise<AuthResponse> {
 		const headers: Record<string, string> = {

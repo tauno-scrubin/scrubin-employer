@@ -390,7 +390,8 @@
 			"remindersSent": "meeldetuletust saadetud",
 			"privateSummaryNote": "Privaatne kokkuvõte — kandidaat seda ei näe",
 			"handoffSummaryTitle": "Kandidaadi valmiduse kokkuvõte",
-			"showMore": "Näita rohkem"
+			"showMore": "Näita rohkem",
+			"closed": "Sõnumivahetus on suletud — see kandidaat on tagasi lükatud või keeldus."
 		},
 		"candidateNotes": {
 			"title": "Kandidaadi märkmed",
@@ -449,6 +450,11 @@
 				"confirmedToast": "Kinnitatud. Kontaktandmed on nüüd nähtavad.",
 				"errorToast": "Kinnitamine ebaõnnestus. Palun proovige uuesti.",
 				"contactHidden": "Avage kandidaat, et kinnitus anda ja kontaktandmeid näha"
+			},
+			"contactWithheld": {
+				"title": "Kontaktandmed on varjatud",
+				"description": "See kandidaat on tagasi lükatud või keeldus, mistõttu tema kontaktandmed ei ole enam saadaval ja sõnumivahetus on suletud.",
+				"short": "Kontakt varjatud"
 			},
 			"interestedSince": "Huvitatud alates",
 			"professionalRegistration": "Kutseregistratsioon",

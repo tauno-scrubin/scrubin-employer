@@ -517,9 +517,8 @@
 	let pipelineData = $derived(
 		pipelineStatuses.map((status) => ({
 			...status,
-			count: interestedCandidates.filter(
-				(c) => normalizeCandidateStatus(c.status) === status.key
-			).length
+			count: interestedCandidates.filter((c) => normalizeCandidateStatus(c.status) === status.key)
+				.length
 		}))
 	);
 
@@ -653,7 +652,7 @@
 	</div>
 	<!-- Status badge at the top -->
 	<Tabs.Root bind:value={activeTab} class="w-full">
-		<Tabs.List class="grid w-fit grid-flow-col auto-cols-max">
+		<Tabs.List class="grid w-fit auto-cols-max grid-flow-col">
 			<Tabs.Trigger value="details">{$t('hunt.details')}</Tabs.Trigger>
 			<Tabs.Trigger value="statistics">
 				<span>{$t('hunt.statistics')}</span>
@@ -1092,10 +1091,14 @@
 
 															<!-- Name -->
 															<div class="flex items-center gap-1.5 text-sm font-medium">
-																<span>{candidate.firstName}
-																{candidate.lastName.charAt(0)}.</span>
+																<span
+																	>{candidate.firstName}
+																	{candidate.lastName.charAt(0)}.</span
+																>
 																{#if candidate.successFeePaid}
-																	<span class="rounded-full bg-green-100 px-1.5 py-0.5 text-[10px] font-medium text-green-800">
+																	<span
+																		class="rounded-full bg-green-100 px-1.5 py-0.5 text-[10px] font-medium text-green-800"
+																	>
 																		{$t('dashboard.interestedWorkerDialog.successFeePaid')}
 																	</span>
 																{/if}
@@ -1106,11 +1109,19 @@
 																class="flex items-center gap-1 truncate text-xs text-muted-foreground"
 															>
 																<Mail class="h-3 w-3 flex-shrink-0" />
-																{#if candidate.companyConfirmedNewCandidate}
+																{#if candidate.contactBlocked}
+																	<span class="truncate italic"
+																		>{$t(
+																			'dashboard.interestedWorkerDialog.contactWithheld.short'
+																		)}</span
+																	>
+																{:else if candidate.companyConfirmedNewCandidate}
 																	<span class="truncate">{candidate.email}</span>
 																{:else}
 																	<span class="truncate italic"
-																		>{$t('dashboard.interestedWorkerDialog.newnessGate.contactHidden')}</span
+																		>{$t(
+																			'dashboard.interestedWorkerDialog.newnessGate.contactHidden'
+																		)}</span
 																	>
 																{/if}
 															</div>
@@ -1239,10 +1250,16 @@
 																		{$t('dashboard.interestedWorkerDialog.pendingConfirmation')}
 																	</span>
 																{:else if candidate.status}
-																	{@const statusLower = candidate.status.toLowerCase() === 'hired' ? 'accepted' : candidate.status.toLowerCase()}
+																	{@const statusLower =
+																		candidate.status.toLowerCase() === 'hired'
+																			? 'accepted'
+																			: candidate.status.toLowerCase()}
 																	{@const statusConfig = getStatusConfig(statusLower)}
 																	{@const StatusIcon = statusConfig?.icon}
-																	<span class="w-fit rounded-full px-3 py-1 text-xs font-medium {statusConfig?.color || 'bg-gray-100 text-gray-800'} flex items-center gap-1.5">
+																	<span
+																		class="w-fit rounded-full px-3 py-1 text-xs font-medium {statusConfig?.color ||
+																			'bg-gray-100 text-gray-800'} flex items-center gap-1.5"
+																	>
 																		{#if StatusIcon}
 																			<StatusIcon class="h-3.5 w-3.5" />
 																		{/if}
@@ -1250,7 +1267,9 @@
 																	</span>
 																{/if}
 																{#if candidate.successFeePaid}
-																	<span class="w-fit rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-800">
+																	<span
+																		class="w-fit rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-800"
+																	>
 																		{$t('dashboard.interestedWorkerDialog.successFeePaid')}
 																	</span>
 																{/if}
@@ -1267,7 +1286,16 @@
 													</div>
 
 													<div class="flex gap-4 text-sm text-muted-foreground">
-														{#if candidate.companyConfirmedNewCandidate}
+														{#if candidate.contactBlocked}
+															<div class="flex items-center gap-1 italic">
+																<Mail class="h-3.5 w-3.5" />
+																<span
+																	>{$t(
+																		'dashboard.interestedWorkerDialog.contactWithheld.short'
+																	)}</span
+																>
+															</div>
+														{:else if candidate.companyConfirmedNewCandidate}
 															<div class="flex items-center gap-1">
 																<Mail class="h-3.5 w-3.5" />
 																<span>{candidate.email}</span>
