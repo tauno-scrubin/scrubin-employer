@@ -158,5 +158,5 @@ The app runs on `http://localhost:5174` by default. Requires the backend API run
 - JWT tokens stored in `scrubin_auth` cookie
 - Auto-refresh before expiration (60s buffer)
 - Server hooks (`hooks.server.ts`) validate auth on each request
-- Only `company` user sub-type is allowed; others redirect to `auth.scrubin.io`
+- Only `company` user sub-type is allowed; others redirect to `auth.scrubin.io` (sibling repo: [../scrubin-auth/](../scrubin-auth/))
 - Auth domains: `scrubin.io`, `scrubin.uk`, `scrubin.ch`, `scrubin.au` (plus localhost)

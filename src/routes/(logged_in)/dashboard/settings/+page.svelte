@@ -13,6 +13,11 @@
 	import { PUBLIC_ORIGIN } from '$env/static/public';
 	import * as Select from '$lib/components/ui/select/index.js';
 	import { t } from '$lib/i18n';
+	import { isMainAccount } from '$lib/permissions';
+
+	// Multi-user companies: sub-users (manager role) can SEE the company
+	// profile but can't edit it — only OWNER/ADMIN have manage_company_profile.
+	const canEditCompanyProfile = $derived(isMainAccount($currentUser));
 
 	interface Address {
 		city: string;
@@ -52,11 +57,17 @@
 
 	onMount(async () => {
 		try {
+			// Billing is main-account-only on the backend (@MainAccountOnly).
+			// Sub-users skip the call entirely — otherwise the 403 poisons
+			// Promise.all and the rest of the page fails to render.
+			const billingPromise = isMainAccount($currentUser)
+				? scrubinClient.company.getBilling()
+				: Promise.resolve(null);
 			const [userResult, advertiserResult, countriesResult, billingResult] = await Promise.all([
 				Promise.resolve($currentUser),
 				scrubinClient.company.getCompany(),
 				scrubinClient.company.getCountries(),
-				scrubinClient.company.getBilling()
+				billingPromise
 			]);
 			user = userResult;
 			companyProfile = {
@@ -401,7 +412,13 @@
 					<span class="loading loading-spinner loading-lg"></span>
 				</div>
 			{:else if companyProfile}
+				{#if !canEditCompanyProfile}
+					<div class="mb-4 rounded-md border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
+						You have read-only access to the company profile. Ask an admin to make changes.
+					</div>
+				{/if}
 				<form onsubmit={handleSubmitCompany} class="space-y-6">
+					<fieldset disabled={!canEditCompanyProfile} class="space-y-6 disabled:opacity-90">
 					<div class="grid gap-6 md:grid-cols-2">
 						<div class="space-y-2 md:col-span-2">
 							<Label for="company-logo">{$t('settings.company.logo')}</Label>
@@ -613,14 +630,17 @@
 						</div>
 					{/if}
 
-					<div class="flex justify-end">
-						<Button type="submit" disabled={isSavingCompany}>
-							{#if isSavingCompany}
-								<span class="loading loading-spinner loading-sm mr-2"></span>
-							{/if}
-							{$t('settings.company.save')}
-						</Button>
-					</div>
+					{#if canEditCompanyProfile}
+						<div class="flex justify-end">
+							<Button type="submit" disabled={isSavingCompany}>
+								{#if isSavingCompany}
+									<span class="loading loading-spinner loading-sm mr-2"></span>
+								{/if}
+								{$t('settings.company.save')}
+							</Button>
+						</div>
+					{/if}
+					</fieldset>
 				</form>
 			{/if}
 		</Card.Content>

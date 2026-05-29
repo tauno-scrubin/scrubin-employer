@@ -4,6 +4,108 @@
 		"language": "Keel",
 		"selectLanguage": "Vali keel"
 	},
+	"team": {
+		"pageTitle": "Meeskond",
+		"pageDescription": "Kutsu kolleege ja määra, kes näeb iga otsingut.",
+		"sidebarLink": "Meeskond",
+		"membersHeading": "Liikmed",
+		"invitesHeading": "Saadetud kutsed",
+		"inviteButton": "Kutsu kolleeg",
+		"emptyInvites": "Kutseid ootel ei ole.",
+		"emptyMembers": "Hetkel oled meeskonnas ainus.",
+		"columns": {
+			"name": "Nimi",
+			"email": "E-post",
+			"role": "Roll",
+			"lastLogin": "Viimati sisse logitud",
+			"actions": "Tegevused",
+			"expires": "Aegub"
+		},
+		"roles": {
+			"owner": "Omanik",
+			"admin": "Admin",
+			"manager": "Liige"
+		},
+		"actions": {
+			"changeRole": "Muuda rolli",
+			"manageHunts": "Halda ligipääse",
+			"remove": "Eemalda",
+			"resend": "Saada uuesti",
+			"revoke": "Tühista"
+		},
+		"changeRoleDialog": {
+			"title": "Muuda rolli kasutajale {{name}}",
+			"description": "See juhib ettevõtteüleseid õigusi. Üksikute otsingute juurdepääsu hallatakse eraldi.",
+			"adminLabel": "Admin",
+			"adminHint": "Saab hallata tiimi, arveldust ja kõiki ettevõtte otsinguid.",
+			"managerLabel": "Liige",
+			"managerHint": "Vaikimisi puudub juurdepääs. Sina otsustad, milliseid otsinguid ta näeb.",
+			"save": "Salvesta"
+		},
+		"manageHuntsDialog": {
+			"title": "Otsingute juurdepääs kasutajale {{name}}",
+			"description": "Vali iga otsingu jaoks juurdepääsutase. Muudatused salvestuvad automaatselt.",
+			"noHunts": "Sinu ettevõttel pole veel ühtegi otsingut.",
+			"access": {
+				"none": "Juurdepääs puudub",
+				"viewer": "Vaataja",
+				"collaborator": "Kaastöötaja"
+			},
+			"close": "Sulge"
+		},
+		"invite": {
+			"title": "Kutsu kolleeg",
+			"emailLabel": "E-post",
+			"roleLabel": "Roll",
+			"submit": "Saada kutse",
+			"adminHint": "Adminid saavad tiimi juhtida ja näevad kõiki otsinguid.",
+			"managerHint": "Liikmed näevad ainult otsinguid, mille sa nendega jagad."
+		},
+		"confirmRemove": "Eemalda see liige tiimist?",
+		"confirmRevoke": "Tühista see kutse?",
+		"hunts": {
+			"subUserEmptyState": "Sinuga ei ole veel otsinguid jagatud. {{brand}} peakonto saab otsingu sinuga jagada otsingu lehelt."
+		}
+	},
+	"huntAccess": {
+		"sharedWithHeading": "Jagatud",
+		"emptyState": "Pole veel kellegagi jagatud.",
+		"addTeammate": "Lisa kolleeg",
+		"chooseUser": "Vali kolleeg",
+		"chooseRole": "Juurdepääsutase",
+		"roleCollaborator": "Kaastöötaja",
+		"roleViewer": "Vaataja (ainult lugemine)",
+		"roleCollaboratorHint": "Saab lugeda ja kandidaatidele vastata",
+		"roleViewerHint": "Saab lugeda, kuid mitte vastata",
+		"changeRoleAria": "Muuda juurdepääsutaset",
+		"grantButton": "Jaga",
+		"revoke": "Tühista",
+		"yourRole": "Sinu juurdepääs: {{role}}",
+		"readonlyTooltip": "Sul on sellele otsingule ainult lugemisõigus.",
+		"viewerNoUsers": "Kõigil tiimi liikmetel on juba juurdepääs — kutsu uusi liikmeid Seaded → Tiim.",
+		"shareLink": {
+			"title": "Loo jagamislink",
+			"button": "Jaga lingina",
+			"scope": "Mida jagada",
+			"scopeHunt": "Terve otsing",
+			"scopeCandidate": "See kandidaat",
+			"expiresInDays": "Link aegub (päevades)",
+			"recipientEmail": "Saada aadressile (valikuline)",
+			"recipientPlaceholder": "email@nait.ee",
+			"create": "Loo link",
+			"copyHint": "Kopeeri link allpool — seda näidatakse vaid korra.",
+			"copyButton": "Kopeeri link",
+			"copied": "Kopeeritud",
+			"activeLinks": "Aktiivsed lingid",
+			"emptyLinks": "Aktiivseid jagamislinke ei ole."
+		}
+	},
+	"publicShare": {
+		"viewOnlyBanner": "Ainult vaatamiseks — jagas {{brand}}",
+		"expiredTitle": "Link enam ei kehti",
+		"expiredBody": "Palu, et jagaja saadaks uue lingi.",
+		"loadingTitle": "Laen…"
+	},
 	"nav": {
 		"dashboard": "Töölaud",
 		"hunts": "Otsingud",
@@ -181,6 +283,10 @@
 			"currentPlan": "Praegune plaan",
 			"active": "Aktiivne",
 			"present": "Praegu"
+		},
+		"subUser": {
+			"welcomeTitle": "Tere tulemast, {{name}}",
+			"welcomeSubtitle": "Oled {{brand}} meeskonna liige. Allpool näed sinuga jagatud otsinguid."
 		},
 		"searchView": {
 			"welcomeBack": "Tere tulemast tagasi, {{name}}!",

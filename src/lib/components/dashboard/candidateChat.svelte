@@ -22,11 +22,14 @@
 	let {
 		huntId = $bindable(0),
 		candidateId = $bindable(0),
-		type = $bindable('offer')
+		type = $bindable('offer'),
+		canWrite = true
 	}: {
 		huntId: number;
 		candidateId: number;
 		type: 'offer' | 'apply';
+		/** false when caller is a viewer — disables the send-message form. */
+		canWrite?: boolean;
 	} = $props();
 
 	let messages: ChatMessage[] = $state([]);
@@ -262,17 +265,23 @@
 	</TooltipProvider>
 
 	<div class="border-t p-4">
-		<form onsubmit={sendMessage} class="flex gap-2">
-			<Input
-				type="text"
-				placeholder={$t('dashboard.candidateChat.messagePlaceholder')}
-				bind:value={newMessage}
-				onkeydown={handleKeyDown}
-				class="flex-1"
-			/>
-			<Button type="submit" disabled={!newMessage.trim() || isSending}>
-				{$t('dashboard.candidateChat.send')}
-			</Button>
-		</form>
+		{#if canWrite}
+			<form onsubmit={sendMessage} class="flex gap-2">
+				<Input
+					type="text"
+					placeholder={$t('dashboard.candidateChat.messagePlaceholder')}
+					bind:value={newMessage}
+					onkeydown={handleKeyDown}
+					class="flex-1"
+				/>
+				<Button type="submit" disabled={!newMessage.trim() || isSending}>
+					{$t('dashboard.candidateChat.send')}
+				</Button>
+			</form>
+		{:else}
+			<p class="text-center text-xs text-muted-foreground">
+				You have read-only access to this hunt — sending messages is disabled.
+			</p>
+		{/if}
 	</div>
 </div>

@@ -4,7 +4,8 @@
 	import { t } from '$lib/i18n';
 	import { visible } from '@/components/dashboard/overlay';
 	import type { Hunt, Requirements } from '@/scrubinClient';
-	import { scrubinClient } from '@/scrubinClient/client';
+	import { currentUser, scrubinClient } from '@/scrubinClient/client';
+	import { isMainAccount } from '$lib/permissions';
 	import {
 		ArrowDown,
 		Bell,
@@ -25,6 +26,10 @@
 	let showAllHunts = $state(false);
 	let showAllDrafts = $state(false);
 	let drafts: Requirements['requirements'][] = $state([]);
+
+	// Drafts are a main-account workflow (creating new hunts). Sub-users don't
+	// see them and getAllRequirements would 403 on the backend anyway.
+	const showDrafts = $derived(isMainAccount($currentUser));
 
 	async function loadHunts() {
 		isLoading = true;
@@ -136,7 +141,9 @@
 
 	onMount(() => {
 		loadHunts();
-		loadDrafts();
+		if (showDrafts) {
+			loadDrafts();
+		}
 	});
 </script>
 
@@ -152,9 +159,15 @@
 				<Search class="h-5 w-5 text-primary/60" />
 			</div>
 			<p class="text-sm font-medium text-gray-600">{$t('dashboard.huntsList.noActiveHunts')}</p>
-			<p class="mt-1 max-w-[200px] text-xs text-gray-400">
-				{$t('dashboard.huntsList.huntsWillAppearHere')}
-			</p>
+			{#if $currentUser?.team && !$currentUser.team.isMainAccount}
+				<p class="mt-1 max-w-[320px] text-xs text-gray-400">
+					{$t('team.hunts.subUserEmptyState', { brand: $currentUser.team.companyBrandName })}
+				</p>
+			{:else}
+				<p class="mt-1 max-w-[200px] text-xs text-gray-400">
+					{$t('dashboard.huntsList.huntsWillAppearHere')}
+				</p>
+			{/if}
 		</div>
 	{:else}
 		{#each getDisplayedHunts() as hunt}
@@ -237,6 +250,7 @@
 	{/if}
 </div>
 
+{#if showDrafts}
 <!-- Drafts Section -->
 <h2 class="mb-4 mt-8 text-2xl font-medium text-gray-800">{$t('dashboard.huntsList.drafts')}</h2>
 <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
@@ -294,3 +308,4 @@
 		{/if}
 	{/if}
 </div>
+{/if}

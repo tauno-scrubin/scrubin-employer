@@ -8,10 +8,11 @@
 	import type { PortalUser } from '@/scrubinClient';
 	import { currentUser } from '@/scrubinClient/client';
 	import Scrubinsvg from '@/scrubinsvg.svelte';
-	import { Book, Calendar, DollarSign, HelpCircle } from 'lucide-svelte';
+	import { Book, Calendar, DollarSign, HelpCircle, Users } from 'lucide-svelte';
 	import ChartPie from 'lucide-svelte/icons/chart-pie';
 	import Settings2 from 'lucide-svelte/icons/settings-2';
 	import SquareTerminal from 'lucide-svelte/icons/square-terminal';
+	import { canManageBilling, canManageTeam } from '$lib/permissions';
 	import { onMount, type ComponentProps } from 'svelte';
 	import HelpDialog from './dashboard/helpDialog.svelte';
 	import Button from './ui/button/button.svelte';
@@ -46,14 +47,28 @@
 				title: $t('nav.settings'),
 				url: '/dashboard/settings',
 				icon: Settings2,
-				isActive: $page.url.href.includes('/settings')
+				isActive: $page.url.href.includes('/settings') && !$page.url.href.includes('/settings/team')
 			},
-			{
-				title: $t('nav.pricing'),
-				url: '/dashboard/pricing',
-				icon: DollarSign,
-				isActive: $page.url.href.includes('/pricing')
-			}
+			...(canManageTeam($currentUser)
+				? [
+						{
+							title: $t('team.sidebarLink'),
+							url: '/dashboard/settings/team',
+							icon: Users,
+							isActive: $page.url.href.includes('/settings/team')
+						}
+					]
+				: []),
+			...(canManageBilling($currentUser)
+				? [
+						{
+							title: $t('nav.pricing'),
+							url: '/dashboard/pricing',
+							icon: DollarSign,
+							isActive: $page.url.href.includes('/pricing')
+						}
+					]
+				: [])
 		],
 		projects: []
 	});

@@ -4,6 +4,108 @@
 		"language": "Language",
 		"selectLanguage": "Select language"
 	},
+	"team": {
+		"pageTitle": "Team",
+		"pageDescription": "Invite teammates and decide who can see each hunt.",
+		"sidebarLink": "Team",
+		"membersHeading": "Members",
+		"invitesHeading": "Pending invites",
+		"inviteButton": "Invite teammate",
+		"emptyInvites": "No pending invites.",
+		"emptyMembers": "You're the only person on this team right now.",
+		"columns": {
+			"name": "Name",
+			"email": "Email",
+			"role": "Role",
+			"lastLogin": "Last login",
+			"actions": "Actions",
+			"expires": "Expires"
+		},
+		"roles": {
+			"owner": "Owner",
+			"admin": "Admin",
+			"manager": "Member"
+		},
+		"actions": {
+			"changeRole": "Change role",
+			"manageHunts": "Manage access",
+			"remove": "Remove",
+			"resend": "Resend",
+			"revoke": "Revoke"
+		},
+		"changeRoleDialog": {
+			"title": "Change role for {{name}}",
+			"description": "This controls company-wide permissions. Per-hunt access is managed separately.",
+			"adminLabel": "Admin",
+			"adminHint": "Can manage team, billing, and every hunt in the company.",
+			"managerLabel": "Member",
+			"managerHint": "Default-zero access. You decide which hunts they can see.",
+			"save": "Save"
+		},
+		"manageHuntsDialog": {
+			"title": "Hunt access for {{name}}",
+			"description": "Pick the access level for each hunt. Changes save automatically.",
+			"noHunts": "Your company has no hunts yet.",
+			"access": {
+				"none": "No access",
+				"viewer": "Viewer",
+				"collaborator": "Collaborator"
+			},
+			"close": "Close"
+		},
+		"invite": {
+			"title": "Invite teammate",
+			"emailLabel": "Email",
+			"roleLabel": "Role",
+			"submit": "Send invite",
+			"adminHint": "Admins can manage the team and see every hunt.",
+			"managerHint": "Members see only the hunts you share with them."
+		},
+		"confirmRemove": "Remove this member from the team?",
+		"confirmRevoke": "Revoke this invite?",
+		"hunts": {
+			"subUserEmptyState": "No hunts shared with you yet. The main account at {{brand}} can share a hunt with you from the hunt page."
+		}
+	},
+	"huntAccess": {
+		"sharedWithHeading": "Shared with",
+		"emptyState": "Not shared with anyone yet.",
+		"addTeammate": "Add teammate",
+		"chooseUser": "Choose teammate",
+		"chooseRole": "Access level",
+		"roleCollaborator": "Collaborator",
+		"roleViewer": "Viewer (read-only)",
+		"roleCollaboratorHint": "Can read and reply to candidates",
+		"roleViewerHint": "Can read everything but not reply",
+		"changeRoleAria": "Change access level",
+		"grantButton": "Share",
+		"revoke": "Revoke",
+		"yourRole": "Your access: {{role}}",
+		"readonlyTooltip": "You have read-only access to this hunt.",
+		"viewerNoUsers": "Everyone on the team already has access — invite more teammates from Settings → Team.",
+		"shareLink": {
+			"title": "Generate share link",
+			"button": "Share link",
+			"scope": "What to share",
+			"scopeHunt": "Whole hunt",
+			"scopeCandidate": "This candidate",
+			"expiresInDays": "Link expires in (days)",
+			"recipientEmail": "Send to (optional)",
+			"recipientPlaceholder": "email@example.com",
+			"create": "Create link",
+			"copyHint": "Copy the link below — it's only shown once.",
+			"copyButton": "Copy link",
+			"copied": "Copied",
+			"activeLinks": "Active links",
+			"emptyLinks": "No active share links."
+		}
+	},
+	"publicShare": {
+		"viewOnlyBanner": "View only — shared by {{brand}}",
+		"expiredTitle": "This link is no longer active",
+		"expiredBody": "Ask the person who shared it with you to resend.",
+		"loadingTitle": "Loading…"
+	},
 	"nav": {
 		"dashboard": "Dashboard",
 		"hunts": "Hunts",
@@ -181,6 +283,10 @@
 			"currentPlan": "Current plan",
 			"active": "Active",
 			"present": "Present"
+		},
+		"subUser": {
+			"welcomeTitle": "Welcome, {{name}}",
+			"welcomeSubtitle": "You're part of the {{brand}} team. Below you'll find the hunts shared with you."
 		},
 		"searchView": {
 			"welcomeBack": "Welcome back, {{name}}!",

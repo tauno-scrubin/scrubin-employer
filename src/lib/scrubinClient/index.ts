@@ -24,6 +24,18 @@ export interface JwtPayload {
 
 // Removed Advertiser, Campaign, CampaignDetails, and AdvertiserProfile
 
+export type CompanyUserRole = 'owner' | 'admin' | 'manager';
+export type HuntRole = 'collaborator' | 'viewer';
+export type ShareLinkScope = 'hunt' | 'candidate';
+
+export interface PortalUserTeam {
+	companyId: number;
+	companyBrandName: string;
+	role: CompanyUserRole;
+	isMainAccount: boolean;
+	assignmentId: number | null;
+}
+
 export interface PortalUser {
 	email: string;
 	firstName: string;
@@ -37,6 +49,81 @@ export interface PortalUser {
 	acceptedTermsDate: Date;
 	mustAcceptTerms: string | null;
 	mustAcceptPrivacy: string | null;
+	team?: PortalUserTeam | null;
+}
+
+// ─── TEAM / HUNT-ACCESS DTOs (multi-user companies) ─────────────────────
+
+export interface TeamMember {
+	id: number;
+	userId: number;
+	email: string;
+	firstName?: string;
+	lastName?: string;
+	role: CompanyUserRole;
+	isPrimary: boolean;
+	lastLogin?: string | null;
+}
+
+export interface TeamInvite {
+	id: number;
+	email: string;
+	role: CompanyUserRole;
+	expiresAt: string;
+	createdAt: string;
+}
+
+export interface HuntAccessRow {
+	id: number;
+	userId: number;
+	email: string;
+	firstName?: string;
+	lastName?: string;
+	huntRole: HuntRole;
+	grantedAt: string;
+	grantedByUserId: number;
+}
+
+export interface MemberHuntAccessRow {
+	huntId: number;
+	jobTitle: string;
+	huntRole: HuntRole | null;
+	accessId?: number;
+}
+
+export interface ShareLink {
+	id: number;
+	scope: ShareLinkScope;
+	candidateId: number | null;
+	expiresAt: string;
+	recipientEmail: string | null;
+	openedCount: number;
+	createdAt: string;
+}
+
+export interface ShareLinkCreated extends ShareLink {
+	url: string;
+}
+
+export interface PublicShareCandidate {
+	candidateId: number;
+	firstName?: string;
+	lastName?: string;
+	countryIso?: string;
+	profession?: string;
+	status?: string;
+}
+
+export interface PublicShareView {
+	scope: ShareLinkScope;
+	hunt: {
+		huntId: number;
+		jobTitle?: string;
+		country?: string;
+		companyBrandName?: string;
+	};
+	candidates?: PublicShareCandidate[];
+	expiresAt: string;
 }
 
 export interface UpdatePortalUser {
@@ -382,6 +469,8 @@ export interface HuntDetail {
 		vatPercentage: number;
 		vatAmount: number;
 	}; // teistel puhkudel on juba plan aktiveeritid ja midagi rohkem maksma ei pea
+	/** The caller's effective role on this hunt. Main accounts get 'collaborator'. Sub-users get their per-hunt grant. */
+	huntRole?: HuntRole;
 }
 
 export interface HuntStats {
@@ -1128,9 +1217,12 @@ class BaseResource {
 		method: string,
 		url: string,
 		data?: unknown,
-		expectNoContent?: boolean
+		expectNoContent?: boolean,
+		options?: { skipAuth?: boolean }
 	): Promise<T | void> {
-		await this.client.ensureAuth();
+		if (!options?.skipAuth) {
+			await this.client.ensureAuth();
+		}
 
 		const isFormData = typeof FormData !== 'undefined' && data instanceof FormData;
 
@@ -1138,16 +1230,18 @@ class BaseResource {
 			(typeof localStorage !== 'undefined' && localStorage.getItem('preferredLanguage')) || 'en';
 
 		const headers: Record<string, string> = {
-			Authorization: `Bearer ${this.client.authStore.token}`,
 			Origin: PUBLIC_ORIGIN,
 			'Accept-Language': language
 		};
+		if (!options?.skipAuth) {
+			headers['Authorization'] = `Bearer ${this.client.authStore.token}`;
+		}
 		// Only set JSON content type when not sending FormData
 		if (!isFormData) {
 			headers['Content-Type'] = 'application/json';
 		}
 
-		if (this.client.authStore.token) {
+		if (!options?.skipAuth && this.client.authStore.token) {
 			headers['Cookie'] = this.client.authStore.exportToCookie();
 		}
 
@@ -2133,6 +2227,109 @@ class DataResource extends BaseResource {
 	}
 }
 
+// ─── TEAM / HUNT-ACCESS / PUBLIC-SHARE RESOURCES (multi-user companies) ──
+
+class TeamResource extends BaseResource {
+	constructor(client: ScrubinClient) {
+		super(client, '/api/v1/portal/team');
+	}
+
+	async listMembers(): Promise<TeamMember[]> {
+		const url = new URL(`${this.path}/members`, this.client.baseUrl);
+		return this.request<TeamMember[]>('GET', url.toString()) as Promise<TeamMember[]>;
+	}
+
+	async listMemberHuntAccess(memberId: number): Promise<MemberHuntAccessRow[]> {
+		const url = new URL(`${this.path}/members/${memberId}/hunt-access`, this.client.baseUrl);
+		return this.request<MemberHuntAccessRow[]>('GET', url.toString()) as Promise<MemberHuntAccessRow[]>;
+	}
+
+	async changeMemberRole(id: number, role: CompanyUserRole): Promise<TeamMember> {
+		const url = new URL(`${this.path}/members/${id}/role`, this.client.baseUrl);
+		return this.request<TeamMember>('PUT', url.toString(), { role }) as Promise<TeamMember>;
+	}
+
+	async removeMember(id: number): Promise<void> {
+		const url = new URL(`${this.path}/members/${id}`, this.client.baseUrl);
+		await this.request<void>('DELETE', url.toString(), undefined, true);
+	}
+
+	async listInvites(): Promise<TeamInvite[]> {
+		const url = new URL(`${this.path}/invites`, this.client.baseUrl);
+		return this.request<TeamInvite[]>('GET', url.toString()) as Promise<TeamInvite[]>;
+	}
+
+	async createInvite(email: string, role: CompanyUserRole): Promise<TeamInvite> {
+		const url = new URL(`${this.path}/invites`, this.client.baseUrl);
+		return this.request<TeamInvite>('POST', url.toString(), { email, role }) as Promise<TeamInvite>;
+	}
+
+	async resendInvite(id: number): Promise<TeamInvite> {
+		const url = new URL(`${this.path}/invites/${id}/resend`, this.client.baseUrl);
+		return this.request<TeamInvite>('POST', url.toString(), {}) as Promise<TeamInvite>;
+	}
+
+	async revokeInvite(id: number): Promise<void> {
+		const url = new URL(`${this.path}/invites/${id}`, this.client.baseUrl);
+		await this.request<void>('DELETE', url.toString(), undefined, true);
+	}
+}
+
+class HuntAccessResource extends BaseResource {
+	constructor(client: ScrubinClient) {
+		super(client, '/api/v1/hunts');
+	}
+
+	async list(huntId: number): Promise<HuntAccessRow[]> {
+		const url = new URL(`${this.path}/${huntId}/access`, this.client.baseUrl);
+		return this.request<HuntAccessRow[]>('GET', url.toString()) as Promise<HuntAccessRow[]>;
+	}
+
+	async grant(huntId: number, userId: number, huntRole: HuntRole): Promise<HuntAccessRow> {
+		const url = new URL(`${this.path}/${huntId}/access`, this.client.baseUrl);
+		return this.request<HuntAccessRow>('POST', url.toString(), { userId, huntRole }) as Promise<HuntAccessRow>;
+	}
+
+	async changeRole(huntId: number, accessId: number, huntRole: HuntRole): Promise<HuntAccessRow> {
+		const url = new URL(`${this.path}/${huntId}/access/${accessId}`, this.client.baseUrl);
+		return this.request<HuntAccessRow>('PUT', url.toString(), { huntRole }) as Promise<HuntAccessRow>;
+	}
+
+	async revoke(huntId: number, accessId: number): Promise<void> {
+		const url = new URL(`${this.path}/${huntId}/access/${accessId}`, this.client.baseUrl);
+		await this.request<void>('DELETE', url.toString(), undefined, true);
+	}
+
+	async createShareLink(
+		huntId: number,
+		input: { scope: ShareLinkScope; candidateId?: number; expiresInDays: number; recipientEmail?: string }
+	): Promise<ShareLinkCreated> {
+		const url = new URL(`${this.path}/${huntId}/access/share-link`, this.client.baseUrl);
+		return this.request<ShareLinkCreated>('POST', url.toString(), input) as Promise<ShareLinkCreated>;
+	}
+
+	async listShareLinks(huntId: number): Promise<ShareLink[]> {
+		const url = new URL(`${this.path}/${huntId}/access/share-links`, this.client.baseUrl);
+		return this.request<ShareLink[]>('GET', url.toString()) as Promise<ShareLink[]>;
+	}
+
+	async revokeShareLink(huntId: number, linkId: number): Promise<void> {
+		const url = new URL(`${this.path}/${huntId}/access/share-links/${linkId}`, this.client.baseUrl);
+		await this.request<void>('DELETE', url.toString(), undefined, true);
+	}
+}
+
+class PublicShareResource extends BaseResource {
+	constructor(client: ScrubinClient) {
+		super(client, '/api/v1/public/share');
+	}
+
+	async open(token: string): Promise<PublicShareView> {
+		const url = new URL(`${this.path}/${encodeURIComponent(token)}`, this.client.baseUrl);
+		return this.request<PublicShareView>('GET', url.toString(), undefined, false, { skipAuth: true }) as Promise<PublicShareView>;
+	}
+}
+
 // ─── CLIENT CLASS ─────────────────────────────────────────────────────────────
 
 export class ScrubinClient {
@@ -2141,6 +2338,9 @@ export class ScrubinClient {
 	public company: CompanyResource;
 	public hunt: HuntResource;
 	public data: DataResource;
+	public team: TeamResource;
+	public huntAccess: HuntAccessResource;
+	public publicShare: PublicShareResource;
 	public clientIP?: string; // Store client IP for server-side requests
 
 	constructor(public baseUrl: string) {
@@ -2149,6 +2349,9 @@ export class ScrubinClient {
 		this.company = new CompanyResource(this);
 		this.hunt = new HuntResource(this);
 		this.data = new DataResource(this);
+		this.team = new TeamResource(this);
+		this.huntAccess = new HuntAccessResource(this);
+		this.publicShare = new PublicShareResource(this);
 
 		this.cleanupDuplicateCookies();
 	}

@@ -14,10 +14,12 @@
 	import { t, locale } from '$lib/i18n';
 	import { get } from 'svelte/store';
 	import type { Currency as Cur, HuntStats, InterestedCandidate } from '$lib/scrubinClient';
-	import { scrubinClient } from '$lib/scrubinClient/client';
+	import { currentUser, scrubinClient } from '$lib/scrubinClient/client';
+	import { canWriteOnHunt, isMainAccount } from '$lib/permissions';
 	import InterestedWorkerDialog from '@/components/dashboard/interestedWorkerDialog.svelte';
 	import QuestionsInHunt from '@/components/dashboard/questionsInHunt.svelte';
 	import ScreeningQuestionsInHunt from '@/components/dashboard/screeningQuestionsInHunt.svelte';
+	import SharedWithPanel from '$lib/employer/hunt-access/SharedWithPanel.svelte';
 	import { getStatusColor } from '@/components/payment/payments.js';
 	import { getStatusConfig } from '$lib/config/pipelineStatuses';
 	import * as Dialog from '@/components/ui/dialog/index.js';
@@ -63,6 +65,7 @@
 	let isLoading = $state(true);
 	let isLoadingCandidates = $state(false);
 	let unansweredQuestionsCount = $state(0);
+	let teamShareCount = $state(0);
 	let showInterestedWorkerDialog = $state(false);
 	let selectedCandidateId = $state(0);
 	let selectedCandidateType = $state<'offer' | 'apply'>('offer');
@@ -84,6 +87,14 @@
 	let isPausing = $state(false);
 	let isPauseDialogOpen = $state(false);
 	let isPublishing = $state(false);
+
+	// Multi-user companies: gate hunt-state + candidate write controls when
+	// the caller is a sub-user (manager). `huntRole` lands on the hunt
+	// detail response — null/undefined for legacy / main-account users
+	// implies full access via the `canWriteOnHunt` helper.
+	const isMainAccountUser = $derived(isMainAccount($currentUser));
+	const huntCallerRole = $derived(hunt?.huntRole ?? null);
+	const canWriteHunt = $derived(canWriteOnHunt($currentUser, huntCallerRole));
 	let editableRequirements = $state<{
 		jobTitle: string;
 		jobDescription: string;
@@ -148,6 +159,21 @@
 					showInterestedWorkerDialog = true;
 					activeTab = 'statistics';
 				}
+			}
+
+			// Fetch hunt-access count for the Team tab badge. Tabs.Content
+			// only mounts the active tab, so we need this here to keep the
+			// badge correct before the user opens the tab. SharedWithPanel
+			// keeps it in sync after grant/revoke via onCountChange.
+			if (isMainAccountUser) {
+				scrubinClient.huntAccess
+					.list(hunt.huntId)
+					.then((grants) => {
+						teamShareCount = grants.length;
+					})
+					.catch(() => {
+						// Non-fatal; the tab still works once opened.
+					});
 			}
 
 			// Fetch latest stats
@@ -593,6 +619,7 @@
 	bind:huntId={hunt.huntId}
 	bind:candidateId={selectedCandidateId}
 	bind:type={selectedCandidateType}
+	canWrite={canWriteHunt}
 />
 
 <PaymentDialog
@@ -626,7 +653,7 @@
 	</div>
 	<!-- Status badge at the top -->
 	<Tabs.Root bind:value={activeTab} class="w-full">
-		<Tabs.List class="grid w-fit grid-cols-4">
+		<Tabs.List class="grid w-fit grid-flow-col auto-cols-max">
 			<Tabs.Trigger value="details">{$t('hunt.details')}</Tabs.Trigger>
 			<Tabs.Trigger value="statistics">
 				<span>{$t('hunt.statistics')}</span>
@@ -649,6 +676,18 @@
 					</span>
 				{/if}
 			</Tabs.Trigger>
+			{#if isMainAccountUser}
+				<Tabs.Trigger value="team">
+					<span>{$t('hunt.team')}</span>
+					{#if teamShareCount > 0}
+						<span
+							class="ml-2 inline-flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-gray-700 px-1.5 text-xs font-semibold text-white"
+						>
+							{teamShareCount}
+						</span>
+					{/if}
+				</Tabs.Trigger>
+			{/if}
 			<!-- <Tabs.Trigger value="agent_chat">Agent chat</Tabs.Trigger> -->
 		</Tabs.List>
 		<Tabs.Content value="details">
@@ -694,7 +733,7 @@
 						>
 							{$t(`hunt.huntStatus.${hunt.status.toLowerCase()}`)}
 						</Badge>
-						{#if hunt.status === 'ACTIVE'}
+						{#if hunt.status === 'ACTIVE' && isMainAccountUser}
 							<DropdownMenu.Root>
 								<DropdownMenu.Trigger>
 									<Button variant="outline" size="sm" class="ml-2 inline-flex items-center gap-1">
@@ -723,7 +762,7 @@
 					<!-- {/if} -->
 				</div>
 
-				{#if hunt.status === 'ACTIVE' && !hunt.hasPublicAd}
+				{#if hunt.status === 'ACTIVE' && !hunt.hasPublicAd && isMainAccountUser}
 					<Alert.Root class="border-border bg-background text-foreground">
 						<div class="flex items-start justify-between gap-3">
 							<div>
@@ -1286,6 +1325,11 @@
 						onUnansweredChange={(count) => (unansweredQuestionsCount = count)}
 					/>
 				</div>
+			</div>
+		</Tabs.Content>
+		<Tabs.Content value="team">
+			<div class="rounded-md bg-blue-50/80 p-4">
+				<SharedWithPanel huntId={hunt.huntId} onCountChange={(c) => (teamShareCount = c)} />
 			</div>
 		</Tabs.Content>
 		<Tabs.Content value="agent_chat">

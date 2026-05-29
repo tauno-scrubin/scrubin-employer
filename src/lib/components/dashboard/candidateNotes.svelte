@@ -7,11 +7,14 @@
 	let {
 		huntId = $bindable(0),
 		candidateId = $bindable(0),
-		notes = $bindable('')
+		notes = $bindable(''),
+		canWrite = true
 	}: {
 		huntId: number;
 		candidateId: number;
 		notes: string;
+		/** false when caller is a viewer — textarea + save button become read-only. */
+		canWrite?: boolean;
 	} = $props();
 
 	let originalNotes = $state('');
@@ -54,7 +57,7 @@
 				>{$t('dashboard.candidateNotes.lastSaved')}: {lastSaved.toLocaleString()}</span
 			>
 		</div>
-		{#if hasChanges}
+		{#if hasChanges && canWrite}
 			<div class="flex items-center gap-2">
 				<span class="text-sm text-primary/20">{$t('dashboard.candidateNotes.unsavedChanges')}</span>
 				<Button
@@ -78,6 +81,7 @@
 			oninput={handleInput}
 			placeholder={$t('dashboard.candidateNotes.placeholder')}
 			class="h-full min-h-[200px] w-full resize-none border-none bg-transparent leading-6 text-gray-800 outline-none placeholder:text-gray-400 focus-visible:ring-0"
+			readonly={!canWrite}
 		/>
 	</div>
 

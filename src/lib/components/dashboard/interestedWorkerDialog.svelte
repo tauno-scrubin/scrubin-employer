@@ -31,12 +31,15 @@
 		open = $bindable(false),
 		huntId = $bindable(0),
 		candidateId = $bindable(0),
-		type = $bindable('offer')
+		type = $bindable('offer'),
+		canWrite = true
 	}: {
 		open: boolean;
 		huntId: number;
 		candidateId: number;
 		type: 'offer' | 'apply';
+		/** false when the caller is a viewer on this hunt — disables status changes, notes, chat send. */
+		canWrite?: boolean;
 	} = $props();
 
 	let worker: InterestedCandidateDetails | null = $state(null);
@@ -449,6 +452,12 @@
 									{$t('dashboard.interestedWorkerDialog.actions')}
 								</h4>
 
+								{#if !canWrite}
+									<div class="mb-4 rounded-md border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800">
+										You have read-only access to this hunt. Ask the main account to upgrade you to collaborator if you need to act on candidates.
+									</div>
+								{/if}
+
 								{#if actionError}
 									<div class="mb-4 rounded-md bg-red-50 p-3 text-sm text-red-800">
 										{actionError}
@@ -466,7 +475,7 @@
 											onValueChange={(value: string | undefined) => {
 												if (value) handleStatusChange(value);
 											}}
-											disabled={isProcessing}
+											disabled={isProcessing || !canWrite}
 										>
 											<Select.Trigger id="status-select" class="w-[280px]">
 												{@const selectedStatus = availableStatuses.find(
@@ -875,11 +884,11 @@
 							<span>{$t('dashboard.interestedWorkerDialog.unreadMessages')}</span>
 						</div>
 					{/if}
-					<CandidateChat bind:huntId bind:candidateId bind:type />
+					<CandidateChat bind:huntId bind:candidateId bind:type {canWrite} />
 				</Tabs.Content>
 
 				<Tabs.Content value="notes">
-					<CandidateNotes bind:huntId bind:candidateId notes={worker?.notes || ''} />
+					<CandidateNotes bind:huntId bind:candidateId notes={worker?.notes || ''} {canWrite} />
 				</Tabs.Content>
 			</Tabs.Root>
 		{:else}
