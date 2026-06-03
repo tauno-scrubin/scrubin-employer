@@ -86,6 +86,8 @@
 				<Dialog.Description>{$t('team.manageHuntsDialog.description')}</Dialog.Description>
 			</Dialog.Header>
 
+			<p class="text-xs text-muted-foreground">{$t('team.manageHuntsDialog.legend')}</p>
+
 			<div class="max-h-[60vh] space-y-2 overflow-y-auto">
 				{#if loading}
 					<p class="text-sm text-muted-foreground">…</p>
@@ -94,16 +96,19 @@
 				{:else}
 					{#each rows as row (row.huntId)}
 						<div class="flex items-center justify-between gap-3 rounded-md border p-3">
-							<div class="min-w-0 flex-1 text-sm font-medium truncate">{row.jobTitle}</div>
+							<div class="min-w-0 flex-1 truncate text-sm font-medium">{row.jobTitle}</div>
 							<select
 								class="rounded-md border bg-background px-2 py-1 text-sm"
 								disabled={savingHuntId === row.huntId}
 								value={currentSelection(row)}
-								onchange={(e) => onChange(row, (e.currentTarget as HTMLSelectElement).value as Selection)}
+								onchange={(e) =>
+									onChange(row, (e.currentTarget as HTMLSelectElement).value as Selection)}
 							>
 								<option value="none">{$t('team.manageHuntsDialog.access.none')}</option>
 								<option value="viewer">{$t('team.manageHuntsDialog.access.viewer')}</option>
-								<option value="collaborator">{$t('team.manageHuntsDialog.access.collaborator')}</option>
+								<option value="collaborator"
+									>{$t('team.manageHuntsDialog.access.collaborator')}</option
+								>
 							</select>
 						</div>
 					{/each}
@@ -111,7 +116,9 @@
 			</div>
 
 			<Dialog.Footer>
-				<Button variant="ghost" onclick={() => (open = false)}>{$t('team.manageHuntsDialog.close')}</Button>
+				<Button variant="ghost" onclick={() => (open = false)}
+					>{$t('team.manageHuntsDialog.close')}</Button
+				>
 			</Dialog.Footer>
 		{/if}
 	</Dialog.Content>

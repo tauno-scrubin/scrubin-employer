@@ -37,14 +37,15 @@
 			"title": "Change role for {{name}}",
 			"description": "This controls company-wide permissions. Per-hunt access is managed separately.",
 			"adminLabel": "Admin",
-			"adminHint": "Can manage team, billing, and every hunt in the company.",
+			"adminHint": "Sees and acts on every hunt in the company and can manage the team. (Billing stays with the owner.)",
 			"managerLabel": "Member",
-			"managerHint": "Default-zero access. You decide which hunts they can see.",
+			"managerHint": "Starts with no access — you share specific hunts and pick collaborator (can act) or viewer (read-only) for each.",
 			"save": "Save"
 		},
 		"manageHuntsDialog": {
 			"title": "Hunt access for {{name}}",
 			"description": "Pick the access level for each hunt. Changes save automatically.",
+			"legend": "Collaborator can act on the hunt (message candidates, change their status, run the hunt); Viewer is read-only.",
 			"noHunts": "Your company has no hunts yet.",
 			"access": {
 				"none": "No access",
@@ -58,8 +59,8 @@
 			"emailLabel": "Email",
 			"roleLabel": "Role",
 			"submit": "Send invite",
-			"adminHint": "Admins can manage the team and see every hunt.",
-			"managerHint": "Members see only the hunts you share with them."
+			"adminHint": "Can manage the team and see and act on every hunt in the company. (Only the owner handles billing.)",
+			"managerHint": "See only the hunts you share with them — for each hunt you pick collaborator (can act) or viewer (read-only)."
 		},
 		"confirmRemove": "Remove this member from the team?",
 		"confirmRevoke": "Revoke this invite?",
@@ -75,8 +76,8 @@
 		"chooseRole": "Access level",
 		"roleCollaborator": "Collaborator",
 		"roleViewer": "Viewer (read-only)",
-		"roleCollaboratorHint": "Can read and reply to candidates",
-		"roleViewerHint": "Can read everything but not reply",
+		"roleCollaboratorHint": "Can act on this hunt — message candidates, change their status, and manage the hunt (activate, pause, complete).",
+		"roleViewerHint": "Read-only — can see the hunt and candidates but can't message or change anything.",
 		"changeRoleAria": "Change access level",
 		"grantButton": "Share",
 		"revoke": "Revoke",

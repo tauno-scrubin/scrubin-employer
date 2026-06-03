@@ -7,7 +7,8 @@
 	import type { HuntAccessState } from './hunt-access-state.svelte';
 	import type { HuntRole } from '$lib/scrubinClient';
 
-	let { open = $bindable(false), accessState }: { open?: boolean; accessState: HuntAccessState } = $props();
+	let { open = $bindable(false), accessState }: { open?: boolean; accessState: HuntAccessState } =
+		$props();
 
 	let userId = $state<number | null>(null);
 	let huntRole = $state<HuntRole>('collaborator');
@@ -55,7 +56,9 @@
 					>
 						<option value={null}>—</option>
 						{#each accessState.availableTeammates() as m (m.userId)}
-							<option value={m.userId}>{[m.firstName, m.lastName].filter(Boolean).join(' ') || m.email} · {m.email}</option>
+							<option value={m.userId}
+								>{[m.firstName, m.lastName].filter(Boolean).join(' ') || m.email} · {m.email}</option
+							>
 						{/each}
 					</select>
 				{/if}
@@ -63,19 +66,35 @@
 			<div class="space-y-1">
 				<Label>{$t('huntAccess.chooseRole')}</Label>
 				<div class="space-y-2">
-					<label class="flex items-center gap-2 rounded-md border p-3 cursor-pointer hover:bg-muted/50">
-						<input type="radio" bind:group={huntRole} value="collaborator" />
-						<span class="text-sm">{$t('huntAccess.roleCollaborator')}</span>
+					<label
+						class="flex cursor-pointer items-start gap-2 rounded-md border p-3 hover:bg-muted/50"
+					>
+						<input type="radio" bind:group={huntRole} value="collaborator" class="mt-1" />
+						<div>
+							<div class="text-sm font-medium">{$t('huntAccess.roleCollaborator')}</div>
+							<div class="text-xs text-muted-foreground">
+								{$t('huntAccess.roleCollaboratorHint')}
+							</div>
+						</div>
 					</label>
-					<label class="flex items-center gap-2 rounded-md border p-3 cursor-pointer hover:bg-muted/50">
-						<input type="radio" bind:group={huntRole} value="viewer" />
-						<span class="text-sm">{$t('huntAccess.roleViewer')}</span>
+					<label
+						class="flex cursor-pointer items-start gap-2 rounded-md border p-3 hover:bg-muted/50"
+					>
+						<input type="radio" bind:group={huntRole} value="viewer" class="mt-1" />
+						<div>
+							<div class="text-sm font-medium">{$t('huntAccess.roleViewer')}</div>
+							<div class="text-xs text-muted-foreground">{$t('huntAccess.roleViewerHint')}</div>
+						</div>
 					</label>
 				</div>
 			</div>
 			<Dialog.Footer>
-				<Button type="button" variant="ghost" onclick={() => (open = false)}>{$t('buttons.cancel')}</Button>
-				<Button type="submit" disabled={submitting || !userId}>{submitting ? '…' : $t('huntAccess.grantButton')}</Button>
+				<Button type="button" variant="ghost" onclick={() => (open = false)}
+					>{$t('buttons.cancel')}</Button
+				>
+				<Button type="submit" disabled={submitting || !userId}
+					>{submitting ? '…' : $t('huntAccess.grantButton')}</Button
+				>
 			</Dialog.Footer>
 		</form>
 	</Dialog.Content>

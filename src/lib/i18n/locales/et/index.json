@@ -37,14 +37,15 @@
 			"title": "Muuda rolli kasutajale {{name}}",
 			"description": "See juhib ettevõtteüleseid õigusi. Üksikute otsingute juurdepääsu hallatakse eraldi.",
 			"adminLabel": "Admin",
-			"adminHint": "Saab hallata tiimi, arveldust ja kõiki ettevõtte otsinguid.",
+			"adminHint": "Näeb ja saab tegutseda kõigis ettevõtte otsingutes ning hallata tiimi. (Arveldus jääb omanikule.)",
 			"managerLabel": "Liige",
-			"managerHint": "Vaikimisi puudub juurdepääs. Sina otsustad, milliseid otsinguid ta näeb.",
+			"managerHint": "Alustab ilma juurdepääsuta — sina jagad konkreetseid otsinguid ja valid igaühele kaastöötaja (saab tegutseda) või vaataja (ainult lugemine).",
 			"save": "Salvesta"
 		},
 		"manageHuntsDialog": {
 			"title": "Otsingute juurdepääs kasutajale {{name}}",
 			"description": "Vali iga otsingu jaoks juurdepääsutase. Muudatused salvestuvad automaatselt.",
+			"legend": "Kaastöötaja saab otsinguga tegutseda (kirjutada kandidaatidele, muuta nende staatust, otsingut juhtida); vaataja näeb ainult lugemisõigusega.",
 			"noHunts": "Sinu ettevõttel pole veel ühtegi otsingut.",
 			"access": {
 				"none": "Juurdepääs puudub",
@@ -58,8 +59,8 @@
 			"emailLabel": "E-post",
 			"roleLabel": "Roll",
 			"submit": "Saada kutse",
-			"adminHint": "Adminid saavad tiimi juhtida ja näevad kõiki otsinguid.",
-			"managerHint": "Liikmed näevad ainult otsinguid, mille sa nendega jagad."
+			"adminHint": "Saab hallata tiimi ning näeb ja saab tegutseda kõigis ettevõtte otsingutes. (Arveldusega tegeleb ainult omanik.)",
+			"managerHint": "Näevad ainult otsinguid, mille sa nendega jagad — iga otsingu juures valid kaastöötaja (saab tegutseda) või vaataja (ainult lugemine)."
 		},
 		"confirmRemove": "Eemalda see liige tiimist?",
 		"confirmRevoke": "Tühista see kutse?",
@@ -75,8 +76,8 @@
 		"chooseRole": "Juurdepääsutase",
 		"roleCollaborator": "Kaastöötaja",
 		"roleViewer": "Vaataja (ainult lugemine)",
-		"roleCollaboratorHint": "Saab lugeda ja kandidaatidele vastata",
-		"roleViewerHint": "Saab lugeda, kuid mitte vastata",
+		"roleCollaboratorHint": "Saab selle otsinguga tegutseda — kirjutada kandidaatidele, muuta nende staatust ja otsingut hallata (aktiveerida, peatada, lõpetada).",
+		"roleViewerHint": "Ainult lugemine — näeb otsingut ja kandidaate, kuid ei saa kirjutada ega midagi muuta.",
 		"changeRoleAria": "Muuda juurdepääsutaset",
 		"grantButton": "Jaga",
 		"revoke": "Tühista",
