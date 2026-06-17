@@ -393,7 +393,9 @@
 			"privateSummaryNote": "Privaatne kokkuvõte — kandidaat seda ei näe",
 			"handoffSummaryTitle": "Kandidaadi valmiduse kokkuvõte",
 			"showMore": "Näita rohkem",
-			"closed": "Sõnumivahetus on suletud — see kandidaat on tagasi lükatud või keeldus."
+			"closed": "Sõnumivahetus on suletud — see kandidaat on tagasi lükatud või keeldus.",
+			"openDocument": "Ava dokument",
+			"documentError": "Dokumendi avamine ebaõnnestus. Palun proovi uuesti."
 		},
 		"candidateNotes": {
 			"title": "Kandidaadi märkmed",

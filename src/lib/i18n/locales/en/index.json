@@ -393,7 +393,9 @@
 			"privateSummaryNote": "Private summary — candidate can't see this",
 			"handoffSummaryTitle": "Candidate readiness summary",
 			"showMore": "Show more",
-			"closed": "Messaging is closed — this candidate has been declined or rejected."
+			"closed": "Messaging is closed — this candidate has been declined or rejected.",
+			"openDocument": "Open document",
+			"documentError": "Could not open the document. Please try again."
 		},
 		"candidateNotes": {
 			"title": "Candidate Notes",

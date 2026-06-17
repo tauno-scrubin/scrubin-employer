@@ -778,6 +778,20 @@ export interface InterestedCandidateStats {
 	needAttention: boolean;
 }
 
+export interface ChatAttachment {
+	id: number;
+	kind: string;
+	fileName: string;
+	fileType: string;
+	fileSize: number | null;
+	uploadedAt: string;
+}
+
+export interface ChatAttachmentSignedUrl {
+	signedUrl: string;
+	fileName: string;
+}
+
 export interface ChatMessage {
 	id: number;
 	message: string;
@@ -787,6 +801,7 @@ export interface ChatMessage {
 	remindersCount: number;
 	isSummary: boolean;
 	createdByAssistant: boolean;
+	attachments?: ChatAttachment[];
 }
 
 export interface HandoffSummary {
@@ -1997,6 +2012,22 @@ class HuntResource extends BaseResource {
 		return this.request<CandidateChatResponse>('POST', url.toString(), {
 			message
 		}) as Promise<CandidateChatResponse>;
+	}
+
+	// GET /api/v1/hunts/{id}/interested-candidates/{candidateId}/chat/attachment/{attachmentId}/signed-url
+	async getInterestedCandidateChatAttachmentSignedUrl(
+		id: number,
+		candidateId: number,
+		attachmentId: number
+	): Promise<ChatAttachmentSignedUrl> {
+		const url = new URL(
+			`/api/v1/hunts/${id}/interested-candidates/${candidateId}/chat/attachment/${attachmentId}/signed-url`,
+			this.client.baseUrl
+		);
+		return this.request<ChatAttachmentSignedUrl>(
+			'GET',
+			url.toString()
+		) as Promise<ChatAttachmentSignedUrl>;
 	}
 
 	// GET /api/v1/hunts/{id}/interested-applications/{candidateId}/chat

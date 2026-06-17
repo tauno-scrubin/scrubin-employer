@@ -14,10 +14,11 @@
 		CollapsibleTrigger
 	} from '$lib/components/ui/collapsible';
 	import { t } from '$lib/i18n';
-	import type { ChatMessage, HandoffSummary } from '$lib/scrubinClient';
+	import type { ChatAttachment, ChatMessage, HandoffSummary } from '$lib/scrubinClient';
 	import { scrubinClient } from '@/scrubinClient/client';
-	import { Bell, Bot, Lock, User } from 'lucide-svelte';
+	import { Bell, Bot, FileText, Lock, User } from 'lucide-svelte';
 	import { onMount } from 'svelte';
+	import { toast } from 'svelte-sonner';
 
 	let {
 		huntId = $bindable(0),
@@ -106,6 +107,29 @@
 			console.error('Failed to send message:', error);
 		} finally {
 			isSending = false;
+		}
+	}
+
+	// Candidate-uploaded documents (CV, certificates, …) live behind a short-lived
+	// signed URL — fetch it on click and open in a new tab. The tab is opened
+	// synchronously first so the popup blocker doesn't swallow the post-await open.
+	async function openAttachment(attachment: ChatAttachment) {
+		const win = window.open('', '_blank');
+		try {
+			const { signedUrl } = await scrubinClient.hunt.getInterestedCandidateChatAttachmentSignedUrl(
+				huntId,
+				candidateId,
+				attachment.id
+			);
+			if (win) {
+				win.location.href = signedUrl;
+			} else {
+				window.location.href = signedUrl;
+			}
+		} catch (error) {
+			win?.close();
+			console.error('Failed to open attachment:', error);
+			toast.error($t('dashboard.candidateChat.documentError'));
 		}
 	}
 
@@ -239,6 +263,21 @@
 								<div class="flex items-start gap-2">
 									<p class="flex-1 whitespace-pre-wrap break-words text-sm">{message.message}</p>
 								</div>
+								{#if message.attachments?.length}
+									<div class="mt-2 flex flex-col gap-1">
+										{#each message.attachments as attachment (attachment.id)}
+											<button
+												type="button"
+												onclick={() => openAttachment(attachment)}
+												class="inline-flex max-w-full items-center gap-2 rounded-md border border-gray-200 bg-white px-2 py-1 text-left text-xs text-gray-700 hover:bg-gray-50"
+												title={$t('dashboard.candidateChat.openDocument')}
+											>
+												<FileText class="h-3.5 w-3.5 shrink-0 text-gray-500" />
+												<span class="truncate">{attachment.fileName}</span>
+											</button>
+										{/each}
+									</div>
+								{/if}
 								<p class={`mt-1 flex flex-wrap items-center gap-2 text-xs text-gray-600`}>
 									{formatMessageTime(message.date)}
 									{#if !message.sentByCandidate && message.dateRead}
