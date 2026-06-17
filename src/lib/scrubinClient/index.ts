@@ -213,7 +213,12 @@ export interface AllRequirementsResponse {
 	totalPages: number;
 }
 
-export type PlanType = 'success_fee' | 'enterprise' | 'ad_subscription' | 'general_subscription';
+export type PlanType =
+	| 'success_fee'
+	| 'enterprise'
+	| 'ad_subscription'
+	| 'general_subscription'
+	| 'hunt_subscription';
 
 export interface Requirements {
 	allowedPlanOptions: PlanType[];
@@ -305,6 +310,8 @@ export interface AddressDto {
 	stateProvinceRegion: string[];
 	city: string;
 	cityBorough: string[];
+	/** Remote / "mainly virtual" posting with no physical location. When true, city may be empty. */
+	virtual?: boolean;
 }
 
 export interface HuntInstructionsDto {
@@ -884,6 +891,36 @@ export interface AvailablePlansResponse {
 	plans: AvailablePlan[];
 }
 
+export interface HuntSubscriptionPlanPricing {
+	monthlyFeePerHunt: CompanyPlanPrice;
+	monthlyOfferLimit: number;
+}
+
+export interface EnterprisePlanInfo {
+	description?: string;
+	agreementUrl?: string;
+	successFeeDoctor?: CompanyPlanPrice;
+	successFeeOther?: CompanyPlanPrice;
+}
+
+export interface AvailablePlanV3 {
+	planId: number;
+	planType: PlanType;
+	isCustom: boolean;
+	isPlanActive: boolean;
+	huntSubscription?: HuntSubscriptionPlanPricing;
+	enterprise?: EnterprisePlanInfo;
+}
+
+export interface AvailablePlansV3Response {
+	paymentMethods: string[];
+	plans: AvailablePlanV3[];
+}
+
+export interface HuntSubscriptionPricing extends CompanyPlanPrice {
+	monthlyOfferLimit: number;
+}
+
 export interface CreateSubscriptionRequest {
 	planId: number;
 	paymentMethod: 'card' | 'invoice';
@@ -952,6 +989,8 @@ export interface EndedPlanSummary {
 	hiringTermsAcceptedAt: string | null;
 	pricingGeneral: CompanyPlanPrice | null;
 	pricingSuccess: CompanyPlanPricingSuccess | null;
+	pricingHunt?: HuntSubscriptionPricing | null;
+	enterprise?: EnterprisePlanInfo | null;
 	customPlanDescription: string | null;
 }
 
@@ -959,6 +998,8 @@ export interface CompanyPlanDetails extends CompanyPlanSummary {
 	planPaymentMethod: string;
 	pricingGeneral: CompanyPlanPrice;
 	pricingSuccess: CompanyPlanPricingSuccess;
+	pricingHunt?: HuntSubscriptionPricing | null;
+	enterprise?: EnterprisePlanInfo | null;
 	customPlanDescription?: string;
 }
 
@@ -1213,6 +1254,17 @@ class AuthStore {
 
 // ─── BASE RESOURCE ────────────────────────────────────────────────────────────
 
+/** HTTP error carrying the response status so callers can branch on it (e.g. 409). */
+export class ApiError extends Error {
+	constructor(
+		message: string,
+		public readonly status: number
+	) {
+		super(message);
+		this.name = 'ApiError';
+	}
+}
+
 class BaseResource {
 	constructor(
 		protected client: ScrubinClient,
@@ -1271,9 +1323,10 @@ class BaseResource {
 
 			if (!response.ok) {
 				const errorData = await response.json().catch(() => null);
-				throw new Error(
+				throw new ApiError(
 					errorData?.message ||
-						`Request failed with status ${response.status}: ${response.statusText}`
+						`Request failed with status ${response.status}: ${response.statusText}`,
+					response.status
 				);
 			}
 
@@ -1285,6 +1338,9 @@ class BaseResource {
 			if (!text) return null as T;
 			return JSON.parse(text) as T;
 		} catch (error) {
+			if (error instanceof ApiError) {
+				throw error;
+			}
 			if (error instanceof Error) {
 				throw new Error(`${error.message}`);
 			}
@@ -1397,6 +1453,14 @@ class CompanyResource extends BaseResource {
 			'GET',
 			url.toString()
 		) as Promise<AvailablePlansResponse>;
+	}
+
+	async getAvailablePlansV3(): Promise<AvailablePlansV3Response> {
+		const url = new URL(`/api/v3/company/available-plans`, this.client.baseUrl);
+		return this.request<AvailablePlansV3Response>(
+			'GET',
+			url.toString()
+		) as Promise<AvailablePlansV3Response>;
 	}
 
 	async createStripePortalSession(): Promise<PortalSessionDto> {
@@ -2055,6 +2119,7 @@ class HuntResource extends BaseResource {
 			stateProvinceRegion?: string[];
 			city?: string;
 			address?: string;
+			virtual?: boolean;
 			salaryAmountStart?: number;
 			salaryAmountEnd?: number;
 			salaryCurrency?: string;

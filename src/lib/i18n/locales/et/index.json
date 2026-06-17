@@ -744,12 +744,22 @@
 			"perHiredCandidate": "(värvatud kandidaadi kohta)",
 			"acceptedTerms": "Tingimustega nõustutud",
 			"viewTerms": "Vaata värbamise tingimusi",
-			"acceptedOn": "Nõustutud"
+			"acceptedOn": "Nõustutud",
+			"monthlyFeePerHunt": "Kuutasu aktiivse sihtotsingu kohta",
+			"billedPerActiveHunt": "Arveldatakse iga aktiivse sihtotsingu kohta",
+			"offerLimit": "Pakkumiste kuulimiit",
+			"offersPerHuntPerMonth": "pakkumist sihtotsingu kohta kuus",
+			"manualInvoicing": "Arveldus arve alusel",
+			"viewAgreement": "Vaata lepingut"
 		},
 		"endedPlans": {
 			"title": "Varasemad paketid",
 			"planPeriod": "Paketi periood",
 			"noTermsAvailable": "Pole saadaval"
+		},
+		"planTypes": {
+			"huntSubscription": "Fikseeritud — sihtotsingu kohta",
+			"enterprise": "Kohandatud pakett"
 		},
 		"startingFee": {
 			"title": "Alusta {{amount}} {{currency}}",
@@ -967,6 +977,34 @@
 				"verifiedPool": "Verifitseeritud tervishoiuspetsialistid",
 				"analytics": "Värbamise analüütika ja ülevaated"
 			},
+			"currentPlan": "Praegune pakett",
+			"fixed": {
+				"name": "Fikseeritud",
+				"description": "Prognoositav kuutasu iga aktiivse sihtotsingu eest. Alusta ja peata sihtotsinguid vastavalt vajadusele.",
+				"perMonthPerHunt": "kuus, iga aktiivse sihtotsingu kohta",
+				"bulletOffers": "Kuni {{limit}} pakkumist sihtotsingu kohta kuus",
+				"bulletUnlimitedCandidates": "Piiramatu arv kandidaate",
+				"bulletNoSuccessFees": "Ilma tulemustasudeta",
+				"bulletStopAnytime": "Peata sihtotsing igal ajal — selle arveldus lõpeb kohe",
+				"noChargeToday": "Täna sinult tasu ei võeta — arveldus algab sihtotsingu aktiveerimisel.",
+				"confirmDescription": "Kaart on vajalik üksnes kinnitamiseks — täna sind ei debiteerita. Arveldus {{amount}} {{currency}} kuus iga aktiivse sihtotsingu kohta algab sihtotsingu aktiveerimisel.",
+				"monthlyFeePerHunt": "Kuutasu aktiivse sihtotsingu kohta"
+			},
+			"customPlan": {
+				"title": "Sinu kohandatud pakett",
+				"preparedForYou": "Sulle koostatud",
+				"viewAgreement": "Vaata lepingut",
+				"manualInvoicing": "Arveldus arve alusel — kaarti pole vaja",
+				"activate": "Aktiveeri pakett",
+				"activating": "Aktiveerin...",
+				"confirmTitle": "Aktiveeri oma kohandatud pakett",
+				"confirmDescription": "Paketi aktiveerimiseks nõustu tingimustega. Pakett aktiveerub kohe — kaarti pole vaja, tasud arveldatakse arve alusel."
+			},
+			"enterpriseCard": {
+				"noMonthlyFee": "Ilma kuutasuta",
+				"successFeeOnHire": "Tulemustasu ainult eduka värbamise korral",
+				"customAgreement": "Sinu organisatsioonile kohandatud leping"
+			},
 			"toast": {
 				"planNotAvailable": "Plaan pole tellimiseks saadaval",
 				"subscriptionCreated": "Tellimus loodud edukalt!",
@@ -976,7 +1014,9 @@
 				"messageSent": "Sõnum saadetud! Võtame peagi ühendust.",
 				"enterMessage": "Palun sisesta sõnum",
 				"failedToSend": "Sõnumi saatmine ebaõnnestus",
-				"selectCard": "Palun vali maksekaart"
+				"selectCard": "Palun vali maksekaart",
+				"planAlreadyActive": "Sul on juba aktiivne pakett. Värskenda lehte, et seda näha.",
+				"customPlanActivated": "Sinu kohandatud pakett on nüüd aktiivne!"
 			}
 		}
 	},

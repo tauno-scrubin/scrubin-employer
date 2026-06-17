@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
+	import { Checkbox } from '$lib/components/ui/checkbox';
 	import { Combobox } from '$lib/components/ui/combobox';
 	import DropdownComponent from '$lib/components/dropdownComponent.svelte';
 	import { scrubinClient } from '@/scrubinClient/client';
@@ -33,6 +34,7 @@
 			: requirement.address?.stateProvinceRegion || ''
 	);
 	let address = $state(requirement.address?.address || '');
+	let isVirtual = $state(requirement.address?.virtual || false);
 
 	let salaryStart = $state(requirement.salary?.amountStart || 0);
 	let salaryEnd = $state(requirement.salary?.amountEnd || 0);
@@ -61,12 +63,15 @@
 
 			if (field === 'location') {
 				updateData.country = country;
-				updateData.city = city;
-				updateData.stateProvinceRegion = stateProvinceRegion
-					.split(',')
-					.map((s) => s.trim())
-					.filter(Boolean);
-				updateData.address = address;
+				updateData.virtual = isVirtual;
+				updateData.city = isVirtual ? '' : city;
+				updateData.stateProvinceRegion = isVirtual
+					? []
+					: stateProvinceRegion
+							.split(',')
+							.map((s) => s.trim())
+							.filter(Boolean);
+				updateData.address = isVirtual ? '' : address;
 			} else if (field === 'salary') {
 				updateData.salaryAmountStart = salaryStart;
 				updateData.salaryAmountEnd = salaryEnd;
@@ -87,6 +92,16 @@
 	}
 
 	function handleLocationBlur() {
+		saveField('location');
+	}
+
+	function handleVirtualToggle(checked: boolean) {
+		isVirtual = checked;
+		if (isVirtual) {
+			city = '';
+			stateProvinceRegion = '';
+			address = '';
+		}
 		saveField('location');
 	}
 
@@ -117,6 +132,21 @@
 			<h3 class="text-lg font-semibold">{$t('requirementsV2.sections.location')}</h3>
 		</div>
 
+		<!-- Virtual / no physical location -->
+		<label class="flex items-start gap-2.5 rounded-md border bg-white p-3">
+			<Checkbox
+				checked={isVirtual}
+				onCheckedChange={(checked) => handleVirtualToggle(checked === true)}
+				class="mt-0.5"
+			/>
+			<span class="space-y-0.5">
+				<span class="block text-sm font-medium">{$t('requirementsV2.fields.virtual.label')}</span>
+				<span class="block text-xs text-muted-foreground"
+					>{$t('requirementsV2.fields.virtual.description')}</span
+				>
+			</span>
+		</label>
+
 		<!-- Country and City -->
 		<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
 			<div class="space-y-2">
@@ -146,6 +176,7 @@
 					type="text"
 					bind:value={city}
 					onblur={handleLocationBlur}
+					disabled={isVirtual}
 					placeholder={$t('requirementsV2.fields.city.placeholder')}
 					class="bg-white text-base"
 				/>
@@ -163,6 +194,7 @@
 					type="text"
 					bind:value={stateProvinceRegion}
 					onblur={handleLocationBlur}
+					disabled={isVirtual}
 					placeholder={$t('requirementsV2.fields.region.placeholder')}
 					class="bg-white text-base"
 				/>
@@ -177,6 +209,7 @@
 					type="text"
 					bind:value={address}
 					onblur={handleLocationBlur}
+					disabled={isVirtual}
 					placeholder={$t('requirementsV2.fields.address.placeholder')}
 					class="bg-white text-base"
 				/>

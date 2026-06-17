@@ -87,6 +87,11 @@
 				"emptyText": "Riike ei leitud",
 				"description": "Kus see positsioon asub?"
 			},
+			"virtual": {
+				"label": "Kaugtöö / virtuaalne roll (füüsiline asukoht puudub)",
+				"description": "Märgi, kui sellel positsioonil puudub füüsiline asukoht. Linna, regiooni ja aadressi väljad on siis valikulised ning roll pakutakse \"virtuaalse\" asukohana.",
+				"badge": "Kaugtöö / virtuaalne (füüsiline asukoht puudub)"
+			},
 			"city": {
 				"label": "Linn",
 				"placeholder": "nt London, New York, Berliin",

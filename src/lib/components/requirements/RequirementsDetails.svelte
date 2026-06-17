@@ -4,6 +4,7 @@
 	import { Combobox } from '$lib/components/ui/combobox';
 	import { ComboboxMulti } from '$lib/components/ui/combobox-multi';
 	import { Input } from '$lib/components/ui/input';
+	import { Checkbox } from '$lib/components/ui/checkbox';
 	import { Separator } from '$lib/components/ui/separator';
 	import DropdownComponent from '$lib/components/dropdownComponent.svelte';
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
@@ -89,6 +90,7 @@
 		country: '',
 		city: '',
 		stateProvinceRegion: '' as string | string[],
+		virtual: false,
 		professionsV2: [] as number[],
 		specializationV2: null as unknown as number | null,
 		jobRequiredLanguages: [] as string[],
@@ -151,6 +153,7 @@
 				address: requirements.address?.address || '',
 				city: requirements.address?.city || '',
 				stateProvinceRegion: requirements.address?.stateProvinceRegion || [],
+				virtual: requirements.address?.virtual || false,
 				professionsV2: requirements.professionsV2 || [],
 				specializationV2: requirements.specializationV2 || undefined,
 				jobRequiredLanguages: requirements.jobRequiredLanguages || [],
@@ -193,9 +196,10 @@
 			} else if (field === 'country' || field === 'city' || field === 'stateProvinceRegion') {
 				updateData = {
 					country: editValues.country,
-					address: editValues.address,
-					city: editValues.city,
-					stateProvinceRegion: editValues.stateProvinceRegion
+					virtual: editValues.virtual,
+					address: editValues.virtual ? '' : editValues.address,
+					city: editValues.virtual ? '' : editValues.city,
+					stateProvinceRegion: editValues.virtual ? [] : editValues.stateProvinceRegion
 				};
 			} else if (field === 'professions') {
 				updateData = { professions: editValues.professionsV2 };
@@ -279,7 +283,10 @@
 		if (field === 'salaryType')
 			editValues.salaryType = requirements.salary?.typeV2 || requirements.salary?.type || '';
 		if (field === 'salaryExtra') editValues.salaryExtra = requirements.salary?.salaryExtra || '';
-		if (field === 'country') editValues.country = requirements.country || '';
+		if (field === 'country') {
+			editValues.country = requirements.country || '';
+			editValues.virtual = requirements.address?.virtual || false;
+		}
 		if (field === 'address') editValues.address = requirements.address?.address || '';
 		if (field === 'city') editValues.city = requirements.address?.city || '';
 		if (field === 'stateProvinceRegion')
@@ -742,6 +749,7 @@
 									placeholder={$t('requirementsDetails.placeholders.city')}
 									value={editValues.city}
 									onchange={(e) => (editValues.city = e.currentTarget.value)}
+									disabled={editValues.virtual}
 									class="w-full"
 								/>
 								<Input
@@ -749,8 +757,24 @@
 									placeholder={$t('requirementsDetails.placeholders.regionStateProvince')}
 									value={editValues.stateProvinceRegion}
 									onchange={(e) => (editValues.stateProvinceRegion = e.currentTarget.value)}
+									disabled={editValues.virtual}
 									class="w-full"
 								/>
+								<label class="flex items-start gap-2.5 rounded-md border bg-white p-3">
+									<Checkbox
+										checked={editValues.virtual}
+										onCheckedChange={(checked) => (editValues.virtual = checked === true)}
+										class="mt-0.5"
+									/>
+									<span class="space-y-0.5">
+										<span class="block text-sm font-medium"
+											>{$t('requirementsV2.fields.virtual.label')}</span
+										>
+										<span class="block text-xs text-muted-foreground"
+											>{$t('requirementsV2.fields.virtual.description')}</span
+										>
+									</span>
+								</label>
 								<div class="flex justify-end gap-2">
 									<Button
 										size="icon"
@@ -774,19 +798,26 @@
 							</div>
 						{:else}
 							<div class="mt-1 flex items-center gap-2">
-								<p
-									class={requirements.address?.city || requirements.address?.stateProvinceRegion
-										? 'text-gray-900'
-										: 'text-gray-500'}
-								>
-									{availableCountries.find((c) => c.code === requirements?.countryIso)?.name ||
-										requirements.country}, {requirements.address?.city || ''}
-									{requirements.address?.stateProvinceRegion
-										? Array.isArray(requirements.address.stateProvinceRegion)
-											? requirements.address.stateProvinceRegion.join(', ')
-											: requirements.address.stateProvinceRegion
-										: ''}
-								</p>
+								{#if requirements.address?.virtual}
+									<p class="text-gray-900">
+										{availableCountries.find((c) => c.code === requirements?.countryIso)?.name ||
+											requirements.country} · {$t('requirementsV2.fields.virtual.badge')}
+									</p>
+								{:else}
+									<p
+										class={requirements.address?.city || requirements.address?.stateProvinceRegion
+											? 'text-gray-900'
+											: 'text-gray-500'}
+									>
+										{availableCountries.find((c) => c.code === requirements?.countryIso)?.name ||
+											requirements.country}, {requirements.address?.city || ''}
+										{requirements.address?.stateProvinceRegion
+											? Array.isArray(requirements.address.stateProvinceRegion)
+												? requirements.address.stateProvinceRegion.join(', ')
+												: requirements.address.stateProvinceRegion
+											: ''}
+									</p>
+								{/if}
 							</div>
 						{/if}
 					</div>

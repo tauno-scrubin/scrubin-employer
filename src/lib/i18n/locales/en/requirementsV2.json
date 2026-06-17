@@ -87,6 +87,11 @@
 				"emptyText": "No countries found",
 				"description": "Where is this position based?"
 			},
+			"virtual": {
+				"label": "Remote / virtual role (no physical location)",
+				"description": "Tick if this position has no physical location. The city, region and address fields are then optional, and the role is offered as a \"virtual\" location.",
+				"badge": "Remote / virtual (no physical location)"
+			},
 			"city": {
 				"label": "City",
 				"placeholder": "e.g., London, New York, Berlin",

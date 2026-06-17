@@ -248,15 +248,19 @@
 						<span class="font-medium">{getCountryName(requirement.country)}</span>
 					</p>
 				{/if}
-				{#if requirement.address?.city}
-					<p class="text-sm text-muted-foreground">{requirement.address.city}</p>
-				{/if}
-				{#if requirement.address?.stateProvinceRegion}
-					<p class="text-sm text-muted-foreground">
-						{Array.isArray(requirement.address.stateProvinceRegion)
-							? requirement.address.stateProvinceRegion.join(', ')
-							: requirement.address.stateProvinceRegion}
-					</p>
+				{#if requirement.address?.virtual}
+					<p class="text-sm text-muted-foreground">{$t('requirementsV2.fields.virtual.badge')}</p>
+				{:else}
+					{#if requirement.address?.city}
+						<p class="text-sm text-muted-foreground">{requirement.address.city}</p>
+					{/if}
+					{#if requirement.address?.stateProvinceRegion}
+						<p class="text-sm text-muted-foreground">
+							{Array.isArray(requirement.address.stateProvinceRegion)
+								? requirement.address.stateProvinceRegion.join(', ')
+								: requirement.address.stateProvinceRegion}
+						</p>
+					{/if}
 				{/if}
 			</div>
 		</div>

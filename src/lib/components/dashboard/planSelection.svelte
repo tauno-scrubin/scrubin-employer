@@ -17,160 +17,75 @@
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import { t } from '$lib/i18n';
 	import { scrubinClient } from '@/scrubinClient/client.js';
-	import type { AvailablePlan, Company, CreateSubscriptionRequest } from '@/scrubinClient/index.js';
+	import { ApiError } from '@/scrubinClient/index.js';
+	import type { AvailablePlanV3, CreateSubscriptionRequest } from '@/scrubinClient/index.js';
 	import {
-		AlertCircle,
-		Calendar,
+		BadgeCheck,
 		CheckCircle,
 		CreditCard,
 		FileText,
 		Info,
 		Loader2,
-		Shield,
 		Sparkles,
 		Stethoscope,
-		Target,
-		TrendingUp,
-		Users,
-		Zap
+		Users
 	} from 'lucide-svelte';
 	import { toast } from 'svelte-sonner';
 	import CardManagement from '$lib/components/billing/cardManagement.svelte';
 
-	// Props
 	interface Props {
-		onPlanSelected?: (plan: AvailablePlan) => void;
-		onCustomPlanRequested?: () => void;
 		onSubscriptionCreated?: () => void;
 	}
 
-	let { onPlanSelected, onSubscriptionCreated }: Props = $props();
+	let { onSubscriptionCreated }: Props = $props();
 
-	// State
-	let availablePlans = $state<AvailablePlan[]>([]);
-	let paymentMethods = $state<string[]>([]);
+	type PlanCard =
+		| { kind: 'fixed'; plan: AvailablePlanV3 }
+		| { kind: 'custom'; plan: AvailablePlanV3 }
+		| { kind: 'contact' };
+
+	let planCards = $state<PlanCard[]>([]);
 	let isLoading = $state(true);
 	let error: string | null = $state(null);
-	let selectedPlan: AvailablePlan | null = $state(null);
 	let isCreatingSubscription = $state(false);
-	let couponCode = $state('');
-	let confirmationDialogOpen = $state(false);
-	let planToSubscribe: AvailablePlan | null = $state(null);
-	let selectedPaymentMethod = $state<'card' | 'invoice'>('card');
+
+	// Fixed-plan confirmation dialog state
+	let fixedDialogOpen = $state(false);
+	let fixedPlanToSubscribe: AvailablePlanV3 | null = $state(null);
 	let selectedCardId = $state<string>('');
-	let companyInfo: Company | null = $state(null);
-	let termsAccepted = $state(false);
+	let fixedTermsAccepted = $state(false);
+
+	// Custom-plan activation dialog state
+	let customDialogOpen = $state(false);
+	let customPlanToSubscribe: AvailablePlanV3 | null = $state(null);
+	let customTermsAccepted = $state(false);
 
 	// Enterprise contact dialog state
 	let contactDialogOpen = $state(false);
 	let contactMessage = $state('');
 	let isSendingMessage = $state(false);
 
-	// Plan names mapping based on position in sorted plans (exclude custom enterprise)
-	const getPlanName = (plan: AvailablePlan): string => {
-		if (plan.planId === -1) return $t('pricing.planSelection.enterpriseName');
-		const paidPlansSorted = [...availablePlans]
-			.filter((p) => p.planId !== -1)
-			.sort((a, b) => a.baseFee.amount - b.baseFee.amount);
-		const planIndex = paidPlansSorted.findIndex((p) => p.planId === plan.planId);
-
-		if (planIndex === 0) return $t('pricing.planSelection.starterName');
-		if (planIndex === 1) return $t('pricing.planSelection.smartName');
-		return $t('pricing.planSelection.starterName');
-	};
-
-	const getPlanDescription = (plan: AvailablePlan): string => {
-		if (plan.planId === -1) return $t('pricing.planSelection.planDescriptionsStatic.enterprise');
-		const paidPlansSorted = [...availablePlans]
-			.filter((p) => p.planId !== -1)
-			.sort((a, b) => a.baseFee.amount - b.baseFee.amount);
-		const planIndex = paidPlansSorted.findIndex((p) => p.planId === plan.planId);
-
-		if (planIndex === 0) return $t('pricing.planSelection.planDescriptionsStatic.starter');
-		if (planIndex === 1) return $t('pricing.planSelection.planDescriptionsStatic.smart');
-		return '';
-	};
-
-	const getPaymentTerms = (): { schedule: string; installments: string; tax: string } | null => {
-		if (!companyInfo) return null;
-
-		const country = companyInfo.country;
-		let countryKey = 'OTHER';
-
-		// Map country to specific key
-		if (country === 'Estonia' || country === 'EST') {
-			countryKey = 'EE';
-		} else if (country === 'United Kingdom' || country === 'GBR') {
-			countryKey = 'UK';
-		} else if (country === 'Australia' || country === 'AUS') {
-			countryKey = 'AU';
-		}
-
-		// Access translation keys individually
-		const schedule = $t(`pricing.planSelection.paymentTerms.${countryKey}.paymentSchedule`);
-		const installments = $t(`pricing.planSelection.paymentTerms.${countryKey}.installments`);
-		const tax = $t(`pricing.planSelection.paymentTerms.${countryKey}.taxInfo`);
-
-		// Check if any translation was found (if not, it returns the key itself)
-		if (schedule && !schedule.includes('pricing.planSelection.paymentTerms')) {
-			return {
-				schedule,
-				installments,
-				tax
-			};
-		}
-		return null;
-	};
-
-	// Recommendation logic - Smart plan (second paid plan) is always recommended
-	const isRecommendedPlan = (plan: AvailablePlan): boolean => {
-		if (plan.planId === -1) return false;
-		const paidPlansSorted = [...availablePlans]
-			.filter((p) => p.planId !== -1)
-			.sort((a, b) => a.baseFee.amount - b.baseFee.amount);
-		const planIndex = paidPlansSorted.findIndex((p) => p.planId === plan.planId);
-		return planIndex === 1;
-	};
-
-	// Fetch available plans
 	const fetchPlans = async () => {
 		try {
 			isLoading = true;
 			error = null;
 
-			const [response, company] = await Promise.all([
-				scrubinClient.company.getAvailablePlansV2(),
-				scrubinClient.company.getCompany()
-			]);
-			companyInfo = company;
-			let plans = response.plans.sort((a, b) => a.baseFee.amount - b.baseFee.amount);
+			const response = await scrubinClient.company.getAvailablePlansV3();
 
-			// If we only have 2 plans, add a custom enterprise plan (sorted last visually)
-			if (plans.length === 2) {
-				const enterprisePlan: AvailablePlan = {
-					planId: -1, // Use -1 to identify custom enterprise plan
-					planType: 'enterprise-custom',
-					baseFee: {
-						amount: Number.MAX_SAFE_INTEGER, // force to sort last by price
-						currency: 'EUR',
-						vatAmount: 0
-					},
-					successFeeDoctor: {
-						amount: 0,
-						currency: 'EUR',
-						vatAmount: 0
-					},
-					successFeeOther: {
-						amount: 0,
-						currency: 'EUR',
-						vatAmount: 0
-					}
-				};
-				plans = [...plans, enterprisePlan];
+			const cards: PlanCard[] = [];
+			const fixedPlan = response.plans.find(
+				(plan) => plan.planType === 'hunt_subscription' && plan.huntSubscription && !plan.isCustom
+			);
+			if (fixedPlan) {
+				cards.push({ kind: 'fixed', plan: fixedPlan });
 			}
-
-			availablePlans = plans;
-			paymentMethods = response.paymentMethods;
+			const customPlan = response.plans.find((plan) => plan.isCustom);
+			if (customPlan) {
+				cards.push({ kind: 'custom', plan: customPlan });
+			}
+			// The enterprise "Contact us" card is always available, even with no plans at all.
+			cards.push({ kind: 'contact' });
+			planCards = cards;
 		} catch (err) {
 			error = (err as Error).message;
 			console.error('Failed to fetch available plans:', err);
@@ -179,45 +94,50 @@
 		}
 	};
 
-	const handlePlanSelect = (plan: AvailablePlan) => {
-		selectedPlan = plan;
-		onPlanSelected?.(plan);
-	};
+	const termsFields = (): Pick<
+		CreateSubscriptionRequest,
+		'termsUrl' | 'privacyPolicyUrl' | 'termsOfServiceUrl' | 'acceptanceDate'
+	> => ({
+		termsUrl: $t('pricing.planSelection.hiringTermsUrl'),
+		privacyPolicyUrl: $t('pricing.planSelection.privacyPolicyUrl'),
+		termsOfServiceUrl: $t('pricing.planSelection.termsOfServiceUrl'),
+		acceptanceDate: new Date().toISOString()
+	});
 
-	const handleSubscribe = async (plan: AvailablePlan) => {
-		planToSubscribe = plan;
-		selectedPaymentMethod = paymentMethods.includes('card')
-			? 'card'
-			: (paymentMethods[0] as 'card' | 'invoice');
-		selectedCardId = '';
-		termsAccepted = false;
-		confirmationDialogOpen = true;
-	};
-
-	const confirmSubscription = async () => {
-		if (!planToSubscribe?.planId) {
-			toast.error($t('pricing.planSelection.toast.planNotAvailable'));
+	const handleSubscribeError = (err: unknown) => {
+		if (err instanceof ApiError && err.status === 409) {
+			toast.error($t('pricing.planSelection.toast.planAlreadyActive'));
 			return;
 		}
+		const errorMessage = err instanceof Error ? err.message : 'Failed to create subscription';
+		toast.error(errorMessage);
+		console.error('Subscription creation failed:', err);
+	};
 
-		if (selectedPaymentMethod === 'card' && !selectedCardId) {
+	const openFixedDialog = (plan: AvailablePlanV3) => {
+		fixedPlanToSubscribe = plan;
+		selectedCardId = '';
+		fixedTermsAccepted = false;
+		fixedDialogOpen = true;
+	};
+
+	const confirmFixedSubscription = async () => {
+		if (!fixedPlanToSubscribe) return;
+
+		if (!selectedCardId) {
 			toast.error($t('pricing.planSelection.toast.selectCard'));
 			return;
 		}
 
 		try {
 			isCreatingSubscription = true;
-			confirmationDialogOpen = false;
+			fixedDialogOpen = false;
 
 			const subscriptionData: CreateSubscriptionRequest = {
-				planId: planToSubscribe.planId,
-				paymentMethod: selectedPaymentMethod,
-				stripePaymentMethodId: selectedPaymentMethod === 'card' ? selectedCardId : undefined,
-				couponCode: couponCode.trim() || undefined,
-				termsUrl: $t('pricing.planSelection.hiringTermsUrl'),
-				privacyPolicyUrl: $t('pricing.planSelection.privacyPolicyUrl'),
-				termsOfServiceUrl: $t('pricing.planSelection.termsOfServiceUrl'),
-				acceptanceDate: new Date().toISOString()
+				planId: fixedPlanToSubscribe.planId,
+				paymentMethod: 'card',
+				stripePaymentMethodId: selectedCardId,
+				...termsFields()
 			};
 
 			const response = await scrubinClient.company.createSubscription(subscriptionData);
@@ -234,16 +154,12 @@
 				return;
 			}
 
-			if (response.status === 'invoice_pending') {
-				onSubscriptionCreated?.();
-				toast.success($t('pricing.planSelection.toast.invoicePending'));
-				return;
-			}
-
-			// First-invoice SCA — paid plan whose initial payment requires 3DS confirmation.
+			// First-invoice SCA — payment that requires 3DS confirmation.
 			if (response.clientSecret) {
 				const isDemoUser = get(currentUser)?.isDemoUser || false;
-				const stripePublicKey = isDemoUser ? PUBLIC_STRIPE_PUBLIC_KEY_DEV : PUBLIC_STRIPE_PUBLIC_KEY;
+				const stripePublicKey = isDemoUser
+					? PUBLIC_STRIPE_PUBLIC_KEY_DEV
+					: PUBLIC_STRIPE_PUBLIC_KEY;
 				const stripe = await loadStripe(stripePublicKey);
 				if (!stripe) {
 					throw new Error('Payment system failed to initialize');
@@ -273,25 +189,52 @@
 			onSubscriptionCreated?.();
 			toast.success($t('pricing.planSelection.toast.subscriptionCreated'));
 		} catch (err) {
-			const errorMessage = err instanceof Error ? err.message : 'Failed to create subscription';
-			toast.error(errorMessage);
-			console.error('Subscription creation failed:', err);
+			handleSubscribeError(err);
 		} finally {
 			isCreatingSubscription = false;
-			planToSubscribe = null;
+			fixedPlanToSubscribe = null;
 		}
 	};
 
-	const cancelSubscription = () => {
-		confirmationDialogOpen = false;
-		planToSubscribe = null;
-		termsAccepted = false;
+	const cancelFixedSubscription = () => {
+		fixedDialogOpen = false;
+		fixedPlanToSubscribe = null;
+		fixedTermsAccepted = false;
 	};
 
-	const handleCustomPlan = () => {
-		// Keep callback for parent if needed
-		// onCustomPlanRequested?.();
-		contactDialogOpen = true;
+	const openCustomDialog = (plan: AvailablePlanV3) => {
+		customPlanToSubscribe = plan;
+		customTermsAccepted = false;
+		customDialogOpen = true;
+	};
+
+	const confirmCustomActivation = async () => {
+		if (!customPlanToSubscribe) return;
+
+		try {
+			isCreatingSubscription = true;
+			customDialogOpen = false;
+
+			await scrubinClient.company.createSubscription({
+				planId: customPlanToSubscribe.planId,
+				paymentMethod: 'invoice',
+				...termsFields()
+			});
+
+			onSubscriptionCreated?.();
+			toast.success($t('pricing.planSelection.toast.customPlanActivated'));
+		} catch (err) {
+			handleSubscribeError(err);
+		} finally {
+			isCreatingSubscription = false;
+			customPlanToSubscribe = null;
+		}
+	};
+
+	const cancelCustomActivation = () => {
+		customDialogOpen = false;
+		customPlanToSubscribe = null;
+		customTermsAccepted = false;
 	};
 
 	const sendCustomPlanRequest = async () => {
@@ -320,7 +263,6 @@
 		window.open(url, '_blank', 'noopener');
 	};
 
-	// Initialize
 	$effect(() => {
 		fetchPlans();
 	});
@@ -338,16 +280,13 @@
 			{error}
 		</div>
 	{:else}
-		<!-- Plans Grid -->
 		<div class="grid grid-cols-1 items-start gap-6 sm:grid-cols-2 lg:grid-cols-3">
-			{#each availablePlans as plan}
-				{@const planName = getPlanName(plan)}
-				{@const planDescription = getPlanDescription(plan)}
-				{@const isRecommended = isRecommendedPlan(plan)}
-				{@const paymentTerms = getPaymentTerms()}
-
-				<div class="relative flex h-full flex-col sm:last:col-span-2 sm:last:mx-auto sm:last:max-w-md lg:last:col-span-1 lg:last:max-w-none">
-					{#if isRecommended}
+			{#each planCards as card}
+				<div
+					class="relative flex h-full flex-col sm:last:col-span-2 sm:last:mx-auto sm:last:max-w-md lg:last:col-span-1 lg:last:max-w-none"
+				>
+					{#if card.kind === 'fixed'}
+						{@const pricing = card.plan.huntSubscription!}
 						<!-- Most Popular badge positioned outside and above the card -->
 						<div class="mb-4 flex justify-center">
 							<span
@@ -356,100 +295,127 @@
 								{$t('pricing.planSelection.mostPopular')}
 							</span>
 						</div>
-					{:else}
-						<!-- Empty space to align cards at the same level -->
-						<div class="mb-4 h-8"></div>
-					{/if}
-					<Card
-						class="relative flex h-full flex-col overflow-hidden transition-all hover:shadow-lg"
-					>
-						<CardHeader class="pb-4">
-							<div class="flex flex-col items-start gap-1 sm:flex-row sm:items-center sm:justify-between">
-								<CardTitle class="text-xl">{planName}</CardTitle>
-								{#if plan.planId === -1}
-									<div class="text-right">
-										<div class="text-sm font-semibold text-primary">
-											{$t('pricing.planSelection.contactUs')}
-										</div>
-									</div>
-								{:else if plan.baseFee.amount > 0}
-									<div class="flex items-center gap-2">
-										<p class="text-xs text-muted-foreground">
-											{$t('pricing.planSelection.monthlyAccountFee')}
-										</p>
-										<div class="text-2xl font-bold">
-											{plan.baseFee.amount}
-											{getCurrencySymbol(plan.baseFee.currency)}
-											{#if plan.baseFee.vatAmount && plan.baseFee.vatAmount > 0}
-												<span class="text-xs font-normal text-muted-foreground"
-													>(+{$t('pricing.planSelection.vat')})</span
-												>
-											{/if}
-										</div>
-									</div>
-								{:else}
-									<div class="flex items-center gap-2">
-										<p class="text-xs text-muted-foreground">
-											{$t('pricing.planSelection.noMonthlyAccountFee')}
-										</p>
-										<div class="text-2xl font-bold">
-											{plan.baseFee.amount}
-											{getCurrencySymbol(plan.baseFee.currency)}
-										</div>
-									</div>
-								{/if}
-							</div>
-							<CardDescription class="text-sm">
-								{planDescription}
-							</CardDescription>
-						</CardHeader>
+						<Card
+							class="relative flex h-full flex-col overflow-hidden transition-all hover:shadow-lg"
+						>
+							<CardHeader class="pb-4">
+								<CardTitle class="text-xl">{$t('pricing.planSelection.fixed.name')}</CardTitle>
+								<div class="flex items-baseline gap-2">
+									<span class="text-2xl font-bold">
+										{pricing.monthlyFeePerHunt.amount}
+										{getCurrencySymbol(pricing.monthlyFeePerHunt.currency)}
+										{#if pricing.monthlyFeePerHunt.vatAmount && pricing.monthlyFeePerHunt.vatAmount > 0}
+											<span class="text-xs font-normal text-muted-foreground"
+												>(+{$t('pricing.planSelection.vat')})</span
+											>
+										{/if}
+									</span>
+									<span class="text-xs text-muted-foreground">
+										{$t('pricing.planSelection.fixed.perMonthPerHunt')}
+									</span>
+								</div>
+								<CardDescription class="text-sm">
+									{$t('pricing.planSelection.fixed.description')}
+								</CardDescription>
+							</CardHeader>
 
-						<CardContent class="flex-1 space-y-6">
-							<!-- Success Fees - Clean Design -->
-							<div class="space-y-3">
-								<div class="flex items-center gap-2">
-									<CheckCircle class="h-4 w-4 text-green-500" />
-									<h4 class="text-sm font-semibold text-foreground">
-										{$t('pricing.planSelection.successFee')}
-									</h4>
+							<CardContent class="flex-1 space-y-4">
+								<div class="space-y-2">
+									<div class="flex items-center gap-2">
+										<CheckCircle class="h-4 w-4 flex-shrink-0 text-green-500" />
+										<span class="text-sm text-muted-foreground">
+											{$t('pricing.planSelection.fixed.bulletOffers', {
+												limit: pricing.monthlyOfferLimit.toString()
+											})}
+										</span>
+									</div>
+									<div class="flex items-center gap-2">
+										<CheckCircle class="h-4 w-4 flex-shrink-0 text-green-500" />
+										<span class="text-sm text-muted-foreground">
+											{$t('pricing.planSelection.fixed.bulletUnlimitedCandidates')}
+										</span>
+									</div>
+									<div class="flex items-center gap-2">
+										<CheckCircle class="h-4 w-4 flex-shrink-0 text-green-500" />
+										<span class="text-sm text-muted-foreground">
+											{$t('pricing.planSelection.fixed.bulletNoSuccessFees')}
+										</span>
+									</div>
+									<div class="flex items-center gap-2">
+										<CheckCircle class="h-4 w-4 flex-shrink-0 text-green-500" />
+										<span class="text-sm text-muted-foreground">
+											{$t('pricing.planSelection.fixed.bulletStopAnytime')}
+										</span>
+									</div>
 								</div>
 
-								<div class="space-y-3">
-									<p class="text-xs text-muted-foreground">
-										{$t('pricing.planSelection.successFeeDescription')}
+								<div
+									class="flex items-start gap-2 rounded-lg border border-blue-200 bg-blue-50 p-3"
+								>
+									<Info class="h-4 w-4 flex-shrink-0 text-blue-600" />
+									<p class="text-xs leading-relaxed text-blue-900">
+										{$t('pricing.planSelection.fixed.noChargeToday')}
 									</p>
+								</div>
+							</CardContent>
 
-									<div class="space-y-2">
-										{#if plan.planId === -1}
-											<!-- Enterprise - Custom pricing -->
-											<!-- Doctors Box -->
-											<div class="flex items-center justify-between">
-												<div class="flex items-center gap-2">
-													<Stethoscope class="h-4 w-4 text-muted-foreground" />
-													<span class="text-sm font-medium text-foreground"
-														>{$t('pricing.planSelection.doctors')}</span
-													>
-												</div>
-												<span class="text-sm font-semibold text-muted-foreground">
-													{$t('pricing.planSelection.custom')}
-												</span>
-											</div>
-
-											<!-- Nurses Box -->
-											<div class="flex items-center justify-between">
-												<div class="flex items-center gap-2">
-													<Users class="h-4 w-4 text-muted-foreground" />
-													<span class="text-sm font-medium text-foreground"
-														>{$t('pricing.planSelection.otherProfessionals')}</span
-													>
-												</div>
-												<span class="text-sm font-semibold text-muted-foreground">
-													{$t('pricing.planSelection.custom')}
-												</span>
-											</div>
+							<CardFooter class="mt-auto pt-0">
+								{#if card.plan.isPlanActive}
+									<Button class="w-full" variant="outline" disabled>
+										<BadgeCheck class="mr-2 h-4 w-4" />
+										{$t('pricing.planSelection.currentPlan')}
+									</Button>
+								{:else}
+									<Button
+										class="w-full"
+										variant="default"
+										onclick={() => openFixedDialog(card.plan)}
+										disabled={isCreatingSubscription}
+									>
+										{#if isCreatingSubscription && fixedPlanToSubscribe === card.plan}
+											<div
+												class="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-background border-t-transparent"
+											></div>
+											{$t('pricing.planSelection.creating')}
 										{:else}
-											<!-- Regular plans - Show actual pricing -->
-											<!-- Doctors Box -->
+											<CreditCard class="mr-2 h-4 w-4" />
+											{$t('pricing.planSelection.selectPlan')}
+										{/if}
+									</Button>
+								{/if}
+							</CardFooter>
+						</Card>
+					{:else if card.kind === 'custom'}
+						{@const enterprise = card.plan.enterprise}
+						<!-- "Prepared for you" badge positioned outside and above the card -->
+						<div class="mb-4 flex justify-center">
+							<span
+								class="inline-flex items-center gap-1 rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary"
+							>
+								<Sparkles class="h-3 w-3" />
+								{$t('pricing.planSelection.customPlan.preparedForYou')}
+							</span>
+						</div>
+						<Card
+							class="relative flex h-full flex-col overflow-hidden border-primary/40 transition-all hover:shadow-lg"
+						>
+							<CardHeader class="pb-4">
+								<CardTitle class="text-xl">{$t('pricing.planSelection.customPlan.title')}</CardTitle
+								>
+								{#if enterprise?.description}
+									<CardDescription class="whitespace-pre-line text-sm">
+										{enterprise.description}
+									</CardDescription>
+								{/if}
+							</CardHeader>
+
+							<CardContent class="flex-1 space-y-4">
+								{#if enterprise?.successFeeDoctor || enterprise?.successFeeOther}
+									<div class="space-y-2">
+										<h4 class="text-sm font-semibold text-foreground">
+											{$t('pricing.planSelection.successFee')}
+										</h4>
+										{#if enterprise?.successFeeDoctor}
 											<div class="flex items-center justify-between">
 												<div class="flex items-center gap-2">
 													<Stethoscope class="h-4 w-4 text-muted-foreground" />
@@ -458,12 +424,12 @@
 													>
 												</div>
 												<span class="text-sm font-semibold text-foreground">
-													{plan.successFeeDoctor.amount}
-													{getCurrencySymbol(plan.successFeeDoctor.currency)}
+													{enterprise.successFeeDoctor.amount}
+													{getCurrencySymbol(enterprise.successFeeDoctor.currency)}
 												</span>
 											</div>
-
-											<!-- Nurses Box -->
+										{/if}
+										{#if enterprise?.successFeeOther}
 											<div class="flex items-center justify-between">
 												<div class="flex items-center gap-2">
 													<Users class="h-4 w-4 text-muted-foreground" />
@@ -472,244 +438,213 @@
 													>
 												</div>
 												<span class="text-sm font-semibold text-foreground">
-													{plan.successFeeOther.amount}
-													{getCurrencySymbol(plan.successFeeOther.currency)}
+													{enterprise.successFeeOther.amount}
+													{getCurrencySymbol(enterprise.successFeeOther.currency)}
 												</span>
 											</div>
 										{/if}
 									</div>
-								</div>
-							</div>
+								{/if}
 
-							<!-- Plan Features -->
-							<div class="mt-auto space-y-3 border-t border-border pt-4">
-								<h4 class="text-sm font-semibold text-foreground">
-									{$t('pricing.planSelection.includedFeatures')}
-								</h4>
-								<div class="space-y-2">
-									<div class="flex items-center gap-2">
-										<Zap class="h-4 w-4 text-muted-foreground" />
-										<span class="text-sm text-muted-foreground"
-											>{$t('pricing.planSelection.features.aiOffers')}</span
-										>
-									</div>
-									<div class="flex items-center gap-2">
-										<Target class="h-4 w-4 text-muted-foreground" />
-										<span class="text-sm text-muted-foreground"
-											>{$t('pricing.planSelection.features.candidateMatching')}</span
-										>
-									</div>
-									<div class="flex items-center gap-2">
-										<Shield class="h-4 w-4 text-muted-foreground" />
-										<span class="text-sm text-muted-foreground"
-											>{$t('pricing.planSelection.features.verifiedPool')}</span
-										>
-									</div>
-									<div class="flex items-center gap-2">
-										<TrendingUp class="h-4 w-4 text-muted-foreground" />
-										<span class="text-sm text-muted-foreground"
-											>{$t('pricing.planSelection.features.analytics')}</span
-										>
+								{#if enterprise?.agreementUrl}
+									<a
+										href={enterprise.agreementUrl}
+										target="_blank"
+										rel="noopener noreferrer"
+										class="inline-flex items-center gap-2 text-sm font-medium text-primary underline hover:text-primary/80"
+									>
+										<FileText class="h-4 w-4" />
+										{$t('pricing.planSelection.customPlan.viewAgreement')}
+									</a>
+								{/if}
+
+								<div class="flex items-center gap-2 text-xs text-muted-foreground">
+									<CheckCircle class="h-3 w-3 flex-shrink-0" />
+									<span>{$t('pricing.planSelection.customPlan.manualInvoicing')}</span>
+								</div>
+							</CardContent>
+
+							<CardFooter class="mt-auto pt-0">
+								{#if card.plan.isPlanActive}
+									<Button class="w-full" variant="outline" disabled>
+										<BadgeCheck class="mr-2 h-4 w-4" />
+										{$t('pricing.planSelection.currentPlan')}
+									</Button>
+								{:else}
+									<Button
+										class="w-full"
+										variant="default"
+										onclick={() => openCustomDialog(card.plan)}
+										disabled={isCreatingSubscription}
+									>
+										{#if isCreatingSubscription && customPlanToSubscribe === card.plan}
+											<div
+												class="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-background border-t-transparent"
+											></div>
+											{$t('pricing.planSelection.customPlan.activating')}
+										{:else}
+											<Sparkles class="mr-2 h-4 w-4" />
+											{$t('pricing.planSelection.customPlan.activate')}
+										{/if}
+									</Button>
+								{/if}
+							</CardFooter>
+						</Card>
+					{:else}
+						<!-- Enterprise contact card -->
+						<div class="mb-4 h-8"></div>
+						<Card
+							class="relative flex h-full flex-col overflow-hidden transition-all hover:shadow-lg"
+						>
+							<CardHeader class="pb-4">
+								<div
+									class="flex flex-col items-start gap-1 sm:flex-row sm:items-center sm:justify-between"
+								>
+									<CardTitle class="text-xl">{$t('pricing.planSelection.enterpriseName')}</CardTitle
+									>
+									<div class="text-sm font-semibold text-primary">
+										{$t('pricing.planSelection.contactUs')}
 									</div>
 								</div>
-							</div>
-						</CardContent>
+								<CardDescription class="text-sm">
+									{$t('pricing.planSelection.planDescriptionsStatic.enterprise')}
+								</CardDescription>
+							</CardHeader>
 
-						<CardFooter class="mt-auto pt-0">
-							{#if plan.planId === -1}
-								<Button class="w-full" variant="outline" onclick={handleCustomPlan}>
+							<CardContent class="flex-1 space-y-2">
+								<div class="flex items-center gap-2">
+									<CheckCircle class="h-4 w-4 flex-shrink-0 text-green-500" />
+									<span class="text-sm text-muted-foreground">
+										{$t('pricing.planSelection.enterpriseCard.noMonthlyFee')}
+									</span>
+								</div>
+								<div class="flex items-center gap-2">
+									<CheckCircle class="h-4 w-4 flex-shrink-0 text-green-500" />
+									<span class="text-sm text-muted-foreground">
+										{$t('pricing.planSelection.enterpriseCard.successFeeOnHire')}
+									</span>
+								</div>
+								<div class="flex items-center gap-2">
+									<CheckCircle class="h-4 w-4 flex-shrink-0 text-green-500" />
+									<span class="text-sm text-muted-foreground">
+										{$t('pricing.planSelection.enterpriseCard.customAgreement')}
+									</span>
+								</div>
+							</CardContent>
+
+							<CardFooter class="mt-auto pt-0">
+								<Button class="w-full" variant="outline" onclick={() => (contactDialogOpen = true)}>
 									<Sparkles class="mr-2 h-4 w-4" />
 									{$t('pricing.planSelection.contactUs')}
 								</Button>
-							{:else}
-								<Button
-									class="w-full"
-									variant="default"
-									onclick={() => handleSubscribe(plan)}
-									disabled={isCreatingSubscription}
-								>
-									{#if isCreatingSubscription && selectedPlan === plan}
-										<div
-											class="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-background border-t-transparent"
-										></div>
-										{$t('pricing.planSelection.creating')}
-									{:else}
-										<CreditCard class="mr-2 h-4 w-4" />
-										{$t('pricing.planSelection.selectPlan')}
-									{/if}
-								</Button>
-							{/if}
-						</CardFooter>
-					</Card>
+							</CardFooter>
+						</Card>
+					{/if}
 				</div>
 			{/each}
 		</div>
-
-		<!-- Coupon Code Input -->
-		{#if selectedPlan}
-			<div class="mx-auto max-w-md space-y-2">
-				<label for="coupon" class="text-sm font-medium"
-					>{$t('pricing.planSelection.couponLabel')}</label
-				>
-				<input
-					id="coupon"
-					type="text"
-					bind:value={couponCode}
-					placeholder={$t('pricing.planSelection.couponPlaceholder')}
-					class="w-full rounded-md border border-input px-3 py-2 text-sm"
-				/>
-			</div>
-		{/if}
 	{/if}
 </div>
 
-<!-- Subscription Confirmation Dialog -->
-<Dialog.Root bind:open={confirmationDialogOpen}>
+<!-- Fixed-plan Subscription Confirmation Dialog -->
+<Dialog.Root bind:open={fixedDialogOpen}>
 	<Dialog.Content class="mx-4 sm:mx-auto sm:max-w-lg">
 		<Dialog.Header>
 			<Dialog.Title class="text-base sm:text-lg">
 				{$t('pricing.planSelection.confirmTitle')}
 			</Dialog.Title>
 			<Dialog.Description class="text-sm sm:text-base">
-				{#if planToSubscribe?.baseFee?.amount && planToSubscribe.baseFee.amount > 0}
-					{$t('pricing.planSelection.confirmDescription', {
+				{#if fixedPlanToSubscribe?.huntSubscription}
+					{$t('pricing.planSelection.fixed.confirmDescription', {
 						amount: (
-							planToSubscribe.baseFee.amount + (planToSubscribe.baseFee.vatAmount || 0)
+							fixedPlanToSubscribe.huntSubscription.monthlyFeePerHunt.amount +
+							(fixedPlanToSubscribe.huntSubscription.monthlyFeePerHunt.vatAmount || 0)
 						).toString(),
-						currency: getCurrencySymbol(planToSubscribe.baseFee.currency)
+						currency: getCurrencySymbol(
+							fixedPlanToSubscribe.huntSubscription.monthlyFeePerHunt.currency
+						)
 					})}
-				{:else}
-					{$t('pricing.planSelection.confirmDescriptionFree')}
 				{/if}
 			</Dialog.Description>
-	</Dialog.Header>
+		</Dialog.Header>
 
-	{#if planToSubscribe}
-		<div class="max-h-[60vh] overflow-y-auto py-4">
-			<div class="rounded-md bg-muted/50 p-4">
+		{#if fixedPlanToSubscribe?.huntSubscription}
+			{@const pricing = fixedPlanToSubscribe.huntSubscription}
+			<div class="max-h-[60vh] overflow-y-auto py-4">
+				<div class="rounded-md bg-muted/50 p-4">
 					<div class="mb-2 flex items-center gap-2">
-						<AlertCircle class="h-4 w-4 text-primary" />
+						<Info class="h-4 w-4 text-primary" />
 						<span class="text-sm font-medium">{$t('pricing.planSelection.planDetails')}</span>
 					</div>
 					<div class="space-y-1 text-sm">
 						<div class="flex justify-between">
 							<span class="text-muted-foreground">{$t('pricing.planSelection.planName')}:</span>
-							<span class="font-medium">{getPlanName(planToSubscribe)}</span>
+							<span class="font-medium">{$t('pricing.planSelection.fixed.name')}</span>
 						</div>
-						{#if planToSubscribe.baseFee.amount > 0}
-							<div class="flex justify-between">
-								<span class="text-muted-foreground">{$t('pricing.planSelection.monthlyFee')}:</span>
-								<span class="font-medium">
-									{planToSubscribe.baseFee.amount}
-									{getCurrencySymbol(planToSubscribe.baseFee.currency)}
-									{#if planToSubscribe.baseFee.vatAmount && planToSubscribe.baseFee.vatAmount > 0}
-										<span class="text-xs text-muted-foreground">
-											(+ VAT {planToSubscribe.baseFee.vatAmount}
-											{getCurrencySymbol(planToSubscribe.baseFee.currency)})
-										</span>
-									{/if}
-								</span>
-							</div>
-						{/if}
-
-						<!-- Divider -->
-						<div class="my-3 border-t border-border"></div>
-
-						<!-- Success Fees Section -->
-						<div class="space-y-2">
-							<div class="mb-2 text-sm font-medium text-muted-foreground">
-								{$t('pricing.availablePlans.successFees')}
-							</div>
-							<div class="flex justify-between">
-								<span class="text-muted-foreground">{$t('pricing.planSelection.doctors')}:</span>
-								<span class="font-medium">
-									{planToSubscribe.successFeeDoctor.amount}
-									{getCurrencySymbol(planToSubscribe.successFeeDoctor.currency)}
-									{#if planToSubscribe.successFeeDoctor.vatAmount && planToSubscribe.successFeeDoctor.vatAmount > 0}
-										<span class="text-xs font-normal text-muted-foreground">(+VAT)</span>
-									{/if}
-								</span>
-							</div>
-							<div class="flex justify-between">
-								<span class="text-muted-foreground"
-									>{$t('pricing.planSelection.otherProfessionals')}:</span
-								>
-								<span class="font-medium">
-									{planToSubscribe.successFeeOther.amount}
-									{getCurrencySymbol(planToSubscribe.successFeeOther.currency)}
-									{#if planToSubscribe.successFeeOther.vatAmount && planToSubscribe.successFeeOther.vatAmount > 0}
-										<span class="text-xs font-normal text-muted-foreground">(+VAT)</span>
-									{/if}
-								</span>
-							</div>
+						<div class="flex justify-between">
+							<span class="text-muted-foreground"
+								>{$t('pricing.planSelection.fixed.monthlyFeePerHunt')}:</span
+							>
+							<span class="font-medium">
+								{pricing.monthlyFeePerHunt.amount}
+								{getCurrencySymbol(pricing.monthlyFeePerHunt.currency)}
+								{#if pricing.monthlyFeePerHunt.vatAmount && pricing.monthlyFeePerHunt.vatAmount > 0}
+									<span class="text-xs text-muted-foreground">
+										(+ {$t('pricing.planSelection.vat')}
+										{pricing.monthlyFeePerHunt.vatAmount}
+										{getCurrencySymbol(pricing.monthlyFeePerHunt.currency)})
+									</span>
+								{/if}
+							</span>
 						</div>
-						<!-- Payment Information -->
-						<div class="mt-3 border-t border-border pt-3">
+						<div class="mt-2 space-y-1 border-t border-border pt-2">
 							<div class="flex items-center gap-2 text-xs text-muted-foreground">
-								<CheckCircle class="h-3 w-3" />
-								<span>{$t('pricing.planSelection.paymentInfo')}</span>
+								<CheckCircle class="h-3 w-3 flex-shrink-0" />
+								<span>
+									{$t('pricing.planSelection.fixed.bulletOffers', {
+										limit: pricing.monthlyOfferLimit.toString()
+									})}
+								</span>
 							</div>
-						</div>
-
-						<div class="mt-3 pt-3">
 							<div class="flex items-center gap-2 text-xs text-muted-foreground">
-								<CheckCircle class="h-3 w-3" />
-								<span>{@html $t('pricing.planSelection.terms')}</span>
+								<CheckCircle class="h-3 w-3 flex-shrink-0" />
+								<span>{$t('pricing.planSelection.fixed.bulletNoSuccessFees')}</span>
+							</div>
+							<div class="flex items-center gap-2 text-xs text-muted-foreground">
+								<CheckCircle class="h-3 w-3 flex-shrink-0" />
+								<span>{$t('pricing.planSelection.fixed.noChargeToday')}</span>
 							</div>
 						</div>
 					</div>
 				</div>
 
-				<!-- Payment Method Selection -->
-				{#if paymentMethods.length > 0}
-					<div class="mt-4 space-y-3">
-						<div class="text-sm font-medium">{$t('pricing.planSelection.paymentMethod')}</div>
-						<div class="space-y-2">
-							{#each paymentMethods as method}
-								<label class="flex cursor-pointer items-center space-x-2">
-									<input
-										type="radio"
-										bind:group={selectedPaymentMethod}
-										value={method}
-										class="h-4 w-4 text-primary"
-									/>
-									<span class="text-sm">{$t(`pricing.planSelection.paymentMethods.${method}`)}</span
-									>
-								</label>
-							{/each}
-						</div>
+				<!-- Card Selection (payment method is always card for the fixed tier) -->
+				<div class="mt-4 space-y-3">
+					<div class="text-sm font-medium">
+						{$t('pricing.planSelection.selectCard') || 'Select Payment Card'}
 					</div>
-				{/if}
-
-				<!-- Card Selection (only shown when card payment is selected) -->
-				{#if selectedPaymentMethod === 'card'}
-					<div class="mt-4 space-y-3">
-						<div class="text-sm font-medium">
-							{$t('pricing.planSelection.selectCard') || 'Select Payment Card'}
-						</div>
-						<CardManagement
-							mode="selector"
-							bind:selectedCardId={selectedCardId}
-							onCardSelected={(cardId) => {
-								selectedCardId = cardId;
-							}}
-						/>
-					</div>
-				{/if}
+					<CardManagement
+						mode="selector"
+						bind:selectedCardId
+						onCardSelected={(cardId) => {
+							selectedCardId = cardId;
+						}}
+					/>
+				</div>
 
 				<!-- Hiring Terms Acceptance -->
 				<div class="mt-4 rounded-md border border-border bg-muted/30 p-4">
 					<label class="flex cursor-pointer items-start space-x-3">
-						<Checkbox bind:checked={termsAccepted} />
+						<Checkbox bind:checked={fixedTermsAccepted} />
 						<span class="text-sm leading-relaxed">
-							{$t('pricing.planSelection.acceptTerms') || 'I have read and agree to the'}
+							{$t('pricing.planSelection.acceptTerms')}
 							<a
 								href={$t('pricing.planSelection.hiringTermsUrl')}
 								target="_blank"
 								rel="noopener noreferrer"
 								class="font-medium text-primary underline hover:text-primary/80"
 							>
-								{$t('pricing.planSelection.hiringTerms') || 'Hiring Terms and Conditions'}
+								{$t('pricing.planSelection.hiringTerms')}
 							</a>,
 							<a
 								href={$t('pricing.planSelection.privacyPolicyUrl')}
@@ -717,16 +652,16 @@
 								rel="noopener noreferrer"
 								class="font-medium text-primary underline hover:text-primary/80"
 							>
-								{$t('pricing.planSelection.privacyPolicy') || 'Privacy Policy'}
+								{$t('pricing.planSelection.privacyPolicy')}
 							</a>
-							{$t('pricing.planSelection.and') || 'and'}
+							{$t('pricing.planSelection.and')}
 							<a
 								href={$t('pricing.planSelection.termsOfServiceUrl')}
 								target="_blank"
 								rel="noopener noreferrer"
 								class="font-medium text-primary underline hover:text-primary/80"
 							>
-								{$t('pricing.planSelection.termsOfService') || 'Terms of Service'}
+								{$t('pricing.planSelection.termsOfService')}
 							</a>
 						</span>
 					</label>
@@ -738,15 +673,15 @@
 			<Button
 				type="button"
 				variant="outline"
-				onclick={cancelSubscription}
+				onclick={cancelFixedSubscription}
 				disabled={isCreatingSubscription}
 				class="w-full text-sm sm:w-auto"
 			>
 				{$t('pricing.planSelection.cancel')}
 			</Button>
 			<Button
-				onclick={confirmSubscription}
-				disabled={isCreatingSubscription || !termsAccepted || (selectedPaymentMethod === 'card' && !selectedCardId)}
+				onclick={confirmFixedSubscription}
+				disabled={isCreatingSubscription || !fixedTermsAccepted || !selectedCardId}
 				class="w-full text-sm sm:w-auto"
 			>
 				{#if isCreatingSubscription}
@@ -757,6 +692,138 @@
 				{:else}
 					<CreditCard class="mr-2 h-4 w-4" />
 					{$t('pricing.planSelection.confirm')}
+				{/if}
+			</Button>
+		</Dialog.Footer>
+	</Dialog.Content>
+</Dialog.Root>
+
+<!-- Custom-plan Activation Dialog (terms only, no card) -->
+<Dialog.Root bind:open={customDialogOpen}>
+	<Dialog.Content class="mx-4 sm:mx-auto sm:max-w-lg">
+		<Dialog.Header>
+			<Dialog.Title class="text-base sm:text-lg">
+				{$t('pricing.planSelection.customPlan.confirmTitle')}
+			</Dialog.Title>
+			<Dialog.Description class="text-sm sm:text-base">
+				{$t('pricing.planSelection.customPlan.confirmDescription')}
+			</Dialog.Description>
+		</Dialog.Header>
+
+		{#if customPlanToSubscribe}
+			{@const enterprise = customPlanToSubscribe.enterprise}
+			<div class="max-h-[60vh] overflow-y-auto py-4">
+				<div class="rounded-md bg-muted/50 p-4">
+					<div class="mb-2 flex items-center gap-2">
+						<Sparkles class="h-4 w-4 text-primary" />
+						<span class="text-sm font-medium">{$t('pricing.planSelection.customPlan.title')}</span>
+					</div>
+					<div class="space-y-2 text-sm">
+						{#if enterprise?.description}
+							<p class="whitespace-pre-line text-sm leading-relaxed text-foreground/80">
+								{enterprise.description}
+							</p>
+						{/if}
+						{#if enterprise?.successFeeDoctor}
+							<div class="flex justify-between">
+								<span class="text-muted-foreground">{$t('pricing.planSelection.doctors')}:</span>
+								<span class="font-medium">
+									{enterprise.successFeeDoctor.amount}
+									{getCurrencySymbol(enterprise.successFeeDoctor.currency)}
+								</span>
+							</div>
+						{/if}
+						{#if enterprise?.successFeeOther}
+							<div class="flex justify-between">
+								<span class="text-muted-foreground"
+									>{$t('pricing.planSelection.otherProfessionals')}:</span
+								>
+								<span class="font-medium">
+									{enterprise.successFeeOther.amount}
+									{getCurrencySymbol(enterprise.successFeeOther.currency)}
+								</span>
+							</div>
+						{/if}
+						{#if enterprise?.agreementUrl}
+							<a
+								href={enterprise.agreementUrl}
+								target="_blank"
+								rel="noopener noreferrer"
+								class="inline-flex items-center gap-2 text-sm font-medium text-primary underline hover:text-primary/80"
+							>
+								<FileText class="h-4 w-4" />
+								{$t('pricing.planSelection.customPlan.viewAgreement')}
+							</a>
+						{/if}
+						<div
+							class="flex items-center gap-2 border-t border-border pt-2 text-xs text-muted-foreground"
+						>
+							<CheckCircle class="h-3 w-3 flex-shrink-0" />
+							<span>{$t('pricing.planSelection.customPlan.manualInvoicing')}</span>
+						</div>
+					</div>
+				</div>
+
+				<!-- Hiring Terms Acceptance -->
+				<div class="mt-4 rounded-md border border-border bg-muted/30 p-4">
+					<label class="flex cursor-pointer items-start space-x-3">
+						<Checkbox bind:checked={customTermsAccepted} />
+						<span class="text-sm leading-relaxed">
+							{$t('pricing.planSelection.acceptTerms')}
+							<a
+								href={$t('pricing.planSelection.hiringTermsUrl')}
+								target="_blank"
+								rel="noopener noreferrer"
+								class="font-medium text-primary underline hover:text-primary/80"
+							>
+								{$t('pricing.planSelection.hiringTerms')}
+							</a>,
+							<a
+								href={$t('pricing.planSelection.privacyPolicyUrl')}
+								target="_blank"
+								rel="noopener noreferrer"
+								class="font-medium text-primary underline hover:text-primary/80"
+							>
+								{$t('pricing.planSelection.privacyPolicy')}
+							</a>
+							{$t('pricing.planSelection.and')}
+							<a
+								href={$t('pricing.planSelection.termsOfServiceUrl')}
+								target="_blank"
+								rel="noopener noreferrer"
+								class="font-medium text-primary underline hover:text-primary/80"
+							>
+								{$t('pricing.planSelection.termsOfService')}
+							</a>
+						</span>
+					</label>
+				</div>
+			</div>
+		{/if}
+
+		<Dialog.Footer class="flex-col gap-2 sm:flex-row sm:gap-0">
+			<Button
+				type="button"
+				variant="outline"
+				onclick={cancelCustomActivation}
+				disabled={isCreatingSubscription}
+				class="w-full text-sm sm:w-auto"
+			>
+				{$t('pricing.planSelection.cancel')}
+			</Button>
+			<Button
+				onclick={confirmCustomActivation}
+				disabled={isCreatingSubscription || !customTermsAccepted}
+				class="w-full text-sm sm:w-auto"
+			>
+				{#if isCreatingSubscription}
+					<div
+						class="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-background border-t-transparent"
+					></div>
+					{$t('pricing.planSelection.customPlan.activating')}
+				{:else}
+					<Sparkles class="mr-2 h-4 w-4" />
+					{$t('pricing.planSelection.customPlan.activate')}
 				{/if}
 			</Button>
 		</Dialog.Footer>

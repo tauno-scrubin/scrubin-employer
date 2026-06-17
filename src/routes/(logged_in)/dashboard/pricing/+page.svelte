@@ -12,7 +12,6 @@
 	import PlanSelection from '$lib/components/dashboard/planSelection.svelte';
 	import PaymentMethodsDialog from '$lib/components/billing/paymentMethodsDialog.svelte';
 	import type {
-		AvailablePlan,
 		Company,
 		CompanyBilling,
 		CompanyPlanDetails,
@@ -193,11 +192,12 @@
 		openContactDialog(message);
 	};
 
-	const handlePlanSelected = (plan: AvailablePlan) => {
-	};
-
-	const handleCustomPlanRequested = () => {
-		openContactDialog();
+	const planTypeLabel = (planType: string): string => {
+		const normalized = planType.toLowerCase();
+		if (normalized === 'success_fee') return $t('pricing.planSelection.successFee');
+		if (normalized === 'hunt_subscription') return $t('pricing.planTypes.huntSubscription');
+		if (normalized === 'enterprise') return $t('pricing.planTypes.enterprise');
+		return planType.replace('_', ' ').toUpperCase();
 	};
 </script>
 
@@ -263,9 +263,7 @@
 									</div>
 									<div>
 										<h3 class="text-lg font-bold text-foreground sm:text-xl">
-											{plan.planType === 'success_fee'
-												? $t('pricing.planSelection.successFee')
-												: plan.planType.replace('_', ' ').toUpperCase()}
+											{planTypeLabel(plan.planType)}
 										</h3>
 										<p class="text-sm text-muted-foreground">
 											{$t('pricing.activePlans.activeSince')}
@@ -328,6 +326,121 @@
 											</div>
 										{/if}
 									</div>
+
+									<!-- Hunt subscription pricing (fixed monthly fee per active headhunt) -->
+									{#if pd.pricingHunt}
+										<div class="mt-4 grid gap-3 sm:grid-cols-2">
+											<div class="rounded-lg border border-border/50 bg-muted/30 p-4">
+												<p class="text-xs font-medium text-muted-foreground">
+													{$t('pricing.activePlans.monthlyFeePerHunt')}
+												</p>
+												<p class="mt-1 text-lg font-bold text-foreground">
+													{pd.pricingHunt.amount}
+													{getCurrencySymbol(pd.pricingHunt.currency)}
+												</p>
+												{#if pd.pricingHunt.vatPercentage}
+													<p class="text-xs text-muted-foreground">
+														{$t('pricing.availablePlans.vatLabel', {
+															percentage: String(pd.pricingHunt.vatPercentage)
+														})}
+													</p>
+												{/if}
+												<p class="text-xs text-muted-foreground">
+													{$t('pricing.activePlans.billedPerActiveHunt')}
+												</p>
+											</div>
+											<div class="rounded-lg border border-border/50 bg-muted/30 p-4">
+												<p class="text-xs font-medium text-muted-foreground">
+													{$t('pricing.activePlans.offerLimit')}
+												</p>
+												<p class="mt-1 text-lg font-bold text-foreground">
+													{pd.pricingHunt.monthlyOfferLimit}
+												</p>
+												<p class="text-xs text-muted-foreground">
+													{$t('pricing.activePlans.offersPerHuntPerMonth')}
+												</p>
+											</div>
+										</div>
+										<!-- Per-hunt subscription listing lands here in a later wave -->
+									{/if}
+
+									<!-- Enterprise plan details -->
+									{#if pd.enterprise}
+										<div class="mt-4 space-y-4">
+											{#if pd.enterprise.description && !pd.customPlanDescription}
+												<div class="rounded-xl border border-primary/10 bg-primary/5 p-4">
+													<div class="mb-2 flex items-center gap-2">
+														<Sparkles class="h-4 w-4 text-primary" />
+														<h4 class="text-sm font-semibold text-primary">
+															{$t('pricing.activePlans.customPlanDetails')}
+														</h4>
+													</div>
+													<p class="whitespace-pre-line text-sm leading-relaxed text-foreground/80">
+														{pd.enterprise.description}
+													</p>
+												</div>
+											{/if}
+
+											{#if pd.enterprise.successFeeDoctor || pd.enterprise.successFeeOther}
+												<div class="grid gap-3 sm:grid-cols-2">
+													{#if pd.enterprise.successFeeDoctor}
+														<div class="rounded-lg border border-border/50 bg-muted/30 p-4">
+															<div class="mb-2 flex items-center gap-2">
+																<Stethoscope class="h-4 w-4 text-primary" />
+																<p class="text-xs font-medium text-muted-foreground">
+																	{$t('pricing.activePlans.doctorsTitle')}
+																</p>
+															</div>
+															<p class="text-xs text-muted-foreground">
+																{$t('pricing.activePlans.successFee')}
+															</p>
+															<p class="text-lg font-bold text-foreground">
+																{pd.enterprise.successFeeDoctor.amount}
+																{getCurrencySymbol(pd.enterprise.successFeeDoctor.currency)}
+															</p>
+														</div>
+													{/if}
+													{#if pd.enterprise.successFeeOther}
+														<div class="rounded-lg border border-border/50 bg-muted/30 p-4">
+															<div class="mb-2 flex items-center gap-2">
+																<Users class="h-4 w-4 text-primary" />
+																<p class="text-xs font-medium text-muted-foreground">
+																	{$t('pricing.activePlans.otherProfessionalsTitle')}
+																</p>
+															</div>
+															<p class="text-xs text-muted-foreground">
+																{$t('pricing.activePlans.successFee')}
+															</p>
+															<p class="text-lg font-bold text-foreground">
+																{pd.enterprise.successFeeOther.amount}
+																{getCurrencySymbol(pd.enterprise.successFeeOther.currency)}
+															</p>
+														</div>
+													{/if}
+												</div>
+												<p class="text-xs text-muted-foreground">
+													{$t('pricing.activePlans.perHiredCandidate')}
+												</p>
+											{/if}
+
+											<div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
+												{#if pd.enterprise.agreementUrl}
+													<a
+														href={pd.enterprise.agreementUrl}
+														target="_blank"
+														rel="noopener noreferrer"
+														class="font-medium text-primary underline hover:text-primary/80"
+													>
+														{$t('pricing.activePlans.viewAgreement')}
+													</a>
+												{/if}
+												<span class="inline-flex items-center gap-2 text-muted-foreground">
+													<InfoIcon class="h-4 w-4" />
+													{$t('pricing.activePlans.manualInvoicing')}
+												</span>
+											</div>
+										</div>
+									{/if}
 
 									<!-- Success Fees -->
 									{#if pd.pricingSuccess}
@@ -505,11 +618,7 @@
 
 		<!-- Plan Selection - Only show when no active plans -->
 		{#if activePlans.length === 0}
-			<PlanSelection
-				onPlanSelected={handlePlanSelected}
-				onCustomPlanRequested={handleCustomPlanRequested}
-				onSubscriptionCreated={refreshActivePlans}
-			/>
+			<PlanSelection onSubscriptionCreated={refreshActivePlans} />
 		{/if}
 
 		<!-- Payment Terms and Policies Section -->
@@ -601,11 +710,7 @@
 										</div>
 										<div>
 											<h3 class="text-lg font-bold text-foreground sm:text-xl">
-												{plan.planType === 'success_fee'
-													? $t('pricing.planSelection.successFee')
-													: plan.planType === 'SUCCESS_FEE'
-														? $t('pricing.planSelection.successFee')
-														: plan.planType.replace('_', ' ').toUpperCase()}
+												{planTypeLabel(plan.planType)}
 											</h3>
 											<p class="text-sm text-muted-foreground">
 												{$t('pricing.endedPlans.planPeriod')}:
@@ -648,7 +753,117 @@
 											{/if}
 										</div>
 									{/if}
+
+									{#if plan.pricingHunt}
+										<div class="rounded-lg border border-border/50 bg-muted/30 p-4">
+											<p class="text-xs font-medium text-muted-foreground">
+												{$t('pricing.activePlans.monthlyFeePerHunt')}
+											</p>
+											<p class="mt-1 text-lg font-bold text-foreground">
+												{plan.pricingHunt.amount}
+												{getCurrencySymbol(plan.pricingHunt.currency)}
+											</p>
+											{#if plan.pricingHunt.vatPercentage}
+												<p class="text-xs text-muted-foreground">
+													{$t('pricing.availablePlans.vatLabel', {
+														percentage: String(plan.pricingHunt.vatPercentage)
+													})}
+												</p>
+											{/if}
+											<p class="text-xs text-muted-foreground">
+												{$t('pricing.activePlans.billedPerActiveHunt')}
+											</p>
+										</div>
+										<div class="rounded-lg border border-border/50 bg-muted/30 p-4">
+											<p class="text-xs font-medium text-muted-foreground">
+												{$t('pricing.activePlans.offerLimit')}
+											</p>
+											<p class="mt-1 text-lg font-bold text-foreground">
+												{plan.pricingHunt.monthlyOfferLimit}
+											</p>
+											<p class="text-xs text-muted-foreground">
+												{$t('pricing.activePlans.offersPerHuntPerMonth')}
+											</p>
+										</div>
+									{/if}
 								</div>
+
+								{#if plan.enterprise}
+									<div class="mt-4 space-y-4">
+										{#if plan.enterprise.description && !plan.customPlanDescription}
+											<div class="rounded-xl border border-primary/10 bg-primary/5 p-4">
+												<div class="mb-2 flex items-center gap-2">
+													<Sparkles class="h-4 w-4 text-primary" />
+													<h4 class="text-sm font-semibold text-primary">
+														{$t('pricing.activePlans.customPlanDetails')}
+													</h4>
+												</div>
+												<p class="whitespace-pre-line text-sm leading-relaxed text-foreground/80">
+													{plan.enterprise.description}
+												</p>
+											</div>
+										{/if}
+
+										{#if plan.enterprise.successFeeDoctor || plan.enterprise.successFeeOther}
+											<div class="grid gap-3 sm:grid-cols-2">
+												{#if plan.enterprise.successFeeDoctor}
+													<div class="rounded-lg border border-border/50 bg-muted/30 p-4">
+														<div class="mb-2 flex items-center gap-2">
+															<Stethoscope class="h-4 w-4 text-primary" />
+															<p class="text-xs font-medium text-muted-foreground">
+																{$t('pricing.activePlans.doctorsTitle')}
+															</p>
+														</div>
+														<p class="text-xs text-muted-foreground">
+															{$t('pricing.activePlans.successFee')}
+														</p>
+														<p class="text-lg font-bold text-foreground">
+															{plan.enterprise.successFeeDoctor.amount}
+															{getCurrencySymbol(plan.enterprise.successFeeDoctor.currency)}
+														</p>
+													</div>
+												{/if}
+												{#if plan.enterprise.successFeeOther}
+													<div class="rounded-lg border border-border/50 bg-muted/30 p-4">
+														<div class="mb-2 flex items-center gap-2">
+															<Users class="h-4 w-4 text-primary" />
+															<p class="text-xs font-medium text-muted-foreground">
+																{$t('pricing.activePlans.otherProfessionalsTitle')}
+															</p>
+														</div>
+														<p class="text-xs text-muted-foreground">
+															{$t('pricing.activePlans.successFee')}
+														</p>
+														<p class="text-lg font-bold text-foreground">
+															{plan.enterprise.successFeeOther.amount}
+															{getCurrencySymbol(plan.enterprise.successFeeOther.currency)}
+														</p>
+													</div>
+												{/if}
+											</div>
+											<p class="text-xs text-muted-foreground">
+												{$t('pricing.activePlans.perHiredCandidate')}
+											</p>
+										{/if}
+
+										<div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
+											{#if plan.enterprise.agreementUrl}
+												<a
+													href={plan.enterprise.agreementUrl}
+													target="_blank"
+													rel="noopener noreferrer"
+													class="font-medium text-primary underline hover:text-primary/80"
+												>
+													{$t('pricing.activePlans.viewAgreement')}
+												</a>
+											{/if}
+											<span class="inline-flex items-center gap-2 text-muted-foreground">
+												<InfoIcon class="h-4 w-4" />
+												{$t('pricing.activePlans.manualInvoicing')}
+											</span>
+										</div>
+									</div>
+								{/if}
 
 								{#if plan.pricingSuccess}
 									<div class="mt-4 space-y-4">

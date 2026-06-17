@@ -744,12 +744,22 @@
 			"perHiredCandidate": "(per hired candidate)",
 			"acceptedTerms": "Terms Accepted",
 			"viewTerms": "View Hiring Terms & Conditions",
-			"acceptedOn": "Accepted on"
+			"acceptedOn": "Accepted on",
+			"monthlyFeePerHunt": "Monthly fee per active headhunt",
+			"billedPerActiveHunt": "Billed per active headhunt",
+			"offerLimit": "Monthly offer limit",
+			"offersPerHuntPerMonth": "offers per headhunt per month",
+			"manualInvoicing": "Manual invoicing",
+			"viewAgreement": "View agreement"
 		},
 		"endedPlans": {
 			"title": "Past Plans",
 			"planPeriod": "Plan period",
 			"noTermsAvailable": "Not available"
+		},
+		"planTypes": {
+			"huntSubscription": "Fixed — per headhunt",
+			"enterprise": "Enterprise"
 		},
 		"startingFee": {
 			"title": "Start with {{amount}} {{currency}}",
@@ -967,6 +977,34 @@
 				"verifiedPool": "Verified healthcare professional pool",
 				"analytics": "Recruitment analytics & insights"
 			},
+			"currentPlan": "Current plan",
+			"fixed": {
+				"name": "Fixed",
+				"description": "A predictable monthly fee for each active headhunt. Start and stop headhunts as you need.",
+				"perMonthPerHunt": "per month, per active headhunt",
+				"bulletOffers": "Up to {{limit}} offers per headhunt per month",
+				"bulletUnlimitedCandidates": "Unlimited candidates",
+				"bulletNoSuccessFees": "No success fees",
+				"bulletStopAnytime": "Stop a headhunt anytime to stop its billing",
+				"noChargeToday": "You won't be charged today — billing starts when you activate a headhunt.",
+				"confirmDescription": "Your card is needed for verification only — you won't be charged today. Billing of {{amount}} {{currency}} per month per active headhunt starts when you activate a headhunt.",
+				"monthlyFeePerHunt": "Monthly fee per active headhunt"
+			},
+			"customPlan": {
+				"title": "Your custom plan",
+				"preparedForYou": "Prepared for you",
+				"viewAgreement": "View agreement",
+				"manualInvoicing": "Manual invoicing — no card needed",
+				"activate": "Activate plan",
+				"activating": "Activating...",
+				"confirmTitle": "Activate your custom plan",
+				"confirmDescription": "Accept the terms to activate this plan. It becomes active immediately — no card needed, fees are invoiced manually."
+			},
+			"enterpriseCard": {
+				"noMonthlyFee": "No monthly fee",
+				"successFeeOnHire": "Success fee on successful hire only",
+				"customAgreement": "Custom agreement tailored to your organisation"
+			},
 			"toast": {
 				"planNotAvailable": "Plan not available for subscription",
 				"subscriptionCreated": "Subscription created successfully!",
@@ -976,7 +1014,9 @@
 				"messageSent": "Message sent! We will get back to you shortly.",
 				"enterMessage": "Please enter a message",
 				"failedToSend": "Failed to send message",
-				"selectCard": "Please select a payment card"
+				"selectCard": "Please select a payment card",
+				"planAlreadyActive": "You already have an active plan. Refresh the page to see it.",
+				"customPlanActivated": "Your custom plan is now active!"
 			}
 		}
 	},
