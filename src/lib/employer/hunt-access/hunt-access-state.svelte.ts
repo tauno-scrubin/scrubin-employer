@@ -43,6 +43,16 @@ export class HuntAccessState {
 		return this.teamMembers.filter((m) => !granted.has(m.userId) && m.role === 'manager');
 	}
 
+	/**
+	 * True when the company has no other team members to share with yet — the
+	 * caller is the only member (active invites haven't been accepted, so they
+	 * aren't in `teamMembers` yet). Distinguishes "no teammates exist" from
+	 * "every teammate already has access", which need different empty-state copy.
+	 */
+	hasNoTeammates(): boolean {
+		return this.teamMembers.length <= 1;
+	}
+
 	async grant(userId: number, huntRole: HuntRole) {
 		await scrubinClient.huntAccess.grant(this.huntId, userId, huntRole);
 		await this.refresh();

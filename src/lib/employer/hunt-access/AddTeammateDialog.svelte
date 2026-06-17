@@ -46,7 +46,11 @@
 			<div class="space-y-1">
 				<Label for="teammate">{$t('huntAccess.chooseUser')}</Label>
 				{#if accessState.availableTeammates().length === 0}
-					<p class="text-sm text-muted-foreground">{$t('huntAccess.viewerNoUsers')}</p>
+					<p class="text-sm text-muted-foreground">
+						{accessState.hasNoTeammates()
+							? $t('huntAccess.noTeammatesYet')
+							: $t('huntAccess.viewerNoUsers')}
+					</p>
 				{:else}
 					<select
 						id="teammate"

@@ -84,6 +84,7 @@
 		"yourRole": "Your access: {{role}}",
 		"readonlyTooltip": "You have read-only access to this hunt.",
 		"viewerNoUsers": "Everyone on the team already has access — invite more teammates from Settings → Team.",
+		"noTeammatesYet": "You don't have any teammates yet. Invite people to your team from Settings → Team, and they'll appear here once they accept.",
 		"shareLink": {
 			"title": "Generate share link",
 			"button": "Share link",

@@ -84,6 +84,7 @@
 		"yourRole": "Sinu juurdepääs: {{role}}",
 		"readonlyTooltip": "Sul on sellele otsingule ainult lugemisõigus.",
 		"viewerNoUsers": "Kõigil tiimi liikmetel on juba juurdepääs — kutsu uusi liikmeid Seaded → Tiim.",
+		"noTeammatesYet": "Sul pole veel ühtegi kolleegi. Kutsu tiimiliikmeid Seaded → Tiim alt — nad ilmuvad siia, kui nad kutse vastu võtavad.",
 		"shareLink": {
 			"title": "Loo jagamislink",
 			"button": "Jaga lingina",
