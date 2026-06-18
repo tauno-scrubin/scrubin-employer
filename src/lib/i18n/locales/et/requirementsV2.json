@@ -217,7 +217,8 @@
 		"preview": {
 			"readyToActivate": {
 				"title": "Valmis aktiveerimiseks!",
-				"description": "Kogu nõutud informatsioon on esitatud. Klõpsa \"Aktiveeri pakkumine\", et alustada kandidaatide leidmist."
+				"description": "Kogu nõutud informatsioon on esitatud. Klõpsa \"Aktiveeri pakkumine\", et alustada kandidaatide leidmist.",
+				"billing": "Aktiveerimine alustab selle sihtotsingu eest {{amount}} {{currency}}/kuus arveldust, mis võetakse salvestatud kaardilt."
 			},
 			"missingInfo": {
 				"title": "Puudub nõutud informatsioon",

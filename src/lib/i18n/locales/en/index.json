@@ -190,6 +190,21 @@
 		"expires": "Expires",
 		"activateHunt": "Activate Hunt",
 		"completePayment": "Complete Payment",
+		"huntSubscription": {
+			"pendingTitle": "This headhunt isn't active yet",
+			"pendingDescription": "Activate it to start reaching candidates. You'll be charged {{amount}} {{currency}}/month while this headhunt is active.",
+			"pendingDescriptionNoFee": "Activate it to start reaching candidates.",
+			"activateButton": "Activate headhunt",
+			"dialogTitle": "Activate this headhunt",
+			"dialogDescription": "Starting this headhunt begins its monthly subscription, charged to the card on file. Stop the headhunt anytime to stop billing.",
+			"monthlyFee": "Monthly fee per headhunt",
+			"confirmButton": "Activate & pay",
+			"pausedTitle": "This headhunt is paused",
+			"pausedDescription": "Billing keeps running at {{amount}} {{currency}}/month while it's paused. Reactivate it, or end it to stop billing.",
+			"pausedDescriptionNoFee": "Billing keeps running while it's paused. Reactivate it, or end it to stop billing.",
+			"resumeButton": "Reactivate headhunt",
+			"endButton": "End headhunt"
+		},
 		"status": {
 			"active": "Active",
 			"awaitingPayment": "Ready to Activate",
@@ -750,8 +765,6 @@
 			"acceptedOn": "Accepted on",
 			"monthlyFeePerHunt": "Monthly fee per active headhunt",
 			"billedPerActiveHunt": "Billed per active headhunt",
-			"offerLimit": "Monthly offer limit",
-			"offersPerHuntPerMonth": "offers per headhunt per month",
 			"manualInvoicing": "Manual invoicing",
 			"viewAgreement": "View agreement"
 		},
@@ -877,8 +890,6 @@
 			"privacyPolicy": "Privacy Policy",
 			"termsOfService": "Terms of Service",
 			"and": "and",
-			"recommended": "Recommended",
-			"mostPopular": "Most Popular",
 			"upfront": "upfront",
 			"free": "Free",
 			"noUpfront": "no upfront cost",
@@ -983,15 +994,15 @@
 			"currentPlan": "Current plan",
 			"fixed": {
 				"name": "Fixed",
-				"description": "A predictable monthly fee for each active headhunt. Start and stop headhunts as you need.",
+				"description": "A budget-friendly start for when a success fee is out of reach.",
 				"perMonthPerHunt": "per month, per active headhunt",
-				"bulletOffers": "Up to {{limit}} offers per headhunt per month",
-				"bulletUnlimitedCandidates": "Unlimited candidates",
-				"bulletNoSuccessFees": "No success fees",
-				"bulletStopAnytime": "Stop a headhunt anytime to stop its billing",
 				"noChargeToday": "You won't be charged today — billing starts when you activate a headhunt.",
 				"confirmDescription": "Your card is needed for verification only — you won't be charged today. Billing of {{amount}} {{currency}} per month per active headhunt starts when you activate a headhunt.",
-				"monthlyFeePerHunt": "Monthly fee per active headhunt"
+				"monthlyFeePerHunt": "Monthly fee per active headhunt",
+				"bulletPerHunt": "One monthly price per active headhunt — run two headhunts, pay twice the monthly fee. Stop a headhunt anytime to stop its billing.",
+				"bulletOutreachPace": "A steady, measured outreach pace each month — focused, considered candidate outreach rather than full-speed mass hunting",
+				"bulletVariedCandidates": "A varied selection of interested candidates from each headhunt",
+				"bulletNoHiringFees": "No hiring fees — no success fee per hire"
 			},
 			"customPlan": {
 				"title": "Your custom plan",
@@ -1004,9 +1015,11 @@
 				"confirmDescription": "Accept the terms to activate this plan. It becomes active immediately — no card needed, fees are invoiced manually."
 			},
 			"enterpriseCard": {
-				"noMonthlyFee": "No monthly fee",
-				"successFeeOnHire": "Success fee on successful hire only",
-				"customAgreement": "Custom agreement tailored to your organisation"
+				"customAgreement": "Custom agreement tailored to your organisation",
+				"description": "Our most powerful way to hire — full-speed search and unlimited candidates, with zero risk: you only pay when someone is actually hired.",
+				"successFee": "Pay only when you actually hire — no hire, no fee",
+				"fullSpeed": "Full-speed headhunting — no monthly limit on candidate outreach",
+				"unlimitedCandidates": "Unlimited candidates — every interested candidate the search produces"
 			},
 			"toast": {
 				"planNotAvailable": "Plan not available for subscription",

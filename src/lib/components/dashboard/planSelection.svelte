@@ -3,7 +3,7 @@
 	import { loadStripe } from '@stripe/stripe-js';
 	import { currentUser } from '@/scrubinClient/client';
 	import { get } from 'svelte/store';
-	import { getCurrencySymbol } from '$lib/components/payment/payments';
+	import { getCurrencySymbol, formatPriceAmount } from '$lib/components/payment/payments';
 	import { Button } from '$lib/components/ui/button';
 	import {
 		Card,
@@ -280,21 +280,13 @@
 			{error}
 		</div>
 	{:else}
-		<div class="grid grid-cols-1 items-start gap-6 sm:grid-cols-2 lg:grid-cols-3">
+		<div class="flex flex-col flex-wrap items-stretch justify-center gap-6 sm:flex-row">
 			{#each planCards as card}
-				<div
-					class="relative flex h-full flex-col sm:last:col-span-2 sm:last:mx-auto sm:last:max-w-md lg:last:col-span-1 lg:last:max-w-none"
-				>
+				<div class="relative flex w-full flex-col sm:max-w-sm">
 					{#if card.kind === 'fixed'}
 						{@const pricing = card.plan.huntSubscription!}
-						<!-- Most Popular badge positioned outside and above the card -->
-						<div class="mb-4 flex justify-center">
-							<span
-								class="inline-flex items-center rounded-full bg-blue-100 px-3 py-1 text-xs font-medium text-blue-800"
-							>
-								{$t('pricing.planSelection.mostPopular')}
-							</span>
-						</div>
+						<!-- Spacer aligns the card tops (no badge). -->
+						<div class="mb-4 h-8"></div>
 						<Card
 							class="relative flex h-full flex-col overflow-hidden transition-all hover:shadow-lg"
 						>
@@ -302,7 +294,7 @@
 								<CardTitle class="text-xl">{$t('pricing.planSelection.fixed.name')}</CardTitle>
 								<div class="flex items-baseline gap-2">
 									<span class="text-2xl font-bold">
-										{pricing.monthlyFeePerHunt.amount}
+										{formatPriceAmount(pricing.monthlyFeePerHunt.amount)}
 										{getCurrencySymbol(pricing.monthlyFeePerHunt.currency)}
 										{#if pricing.monthlyFeePerHunt.vatAmount && pricing.monthlyFeePerHunt.vatAmount > 0}
 											<span class="text-xs font-normal text-muted-foreground"
@@ -321,30 +313,28 @@
 
 							<CardContent class="flex-1 space-y-4">
 								<div class="space-y-2">
-									<div class="flex items-center gap-2">
-										<CheckCircle class="h-4 w-4 flex-shrink-0 text-green-500" />
+									<div class="flex items-start gap-2">
+										<CheckCircle class="mt-0.5 h-4 w-4 flex-shrink-0 text-green-500" />
 										<span class="text-sm text-muted-foreground">
-											{$t('pricing.planSelection.fixed.bulletOffers', {
-												limit: pricing.monthlyOfferLimit.toString()
-											})}
+											{$t('pricing.planSelection.fixed.bulletPerHunt')}
 										</span>
 									</div>
-									<div class="flex items-center gap-2">
-										<CheckCircle class="h-4 w-4 flex-shrink-0 text-green-500" />
+									<div class="flex items-start gap-2">
+										<CheckCircle class="mt-0.5 h-4 w-4 flex-shrink-0 text-green-500" />
 										<span class="text-sm text-muted-foreground">
-											{$t('pricing.planSelection.fixed.bulletUnlimitedCandidates')}
+											{$t('pricing.planSelection.fixed.bulletOutreachPace')}
 										</span>
 									</div>
-									<div class="flex items-center gap-2">
-										<CheckCircle class="h-4 w-4 flex-shrink-0 text-green-500" />
+									<div class="flex items-start gap-2">
+										<CheckCircle class="mt-0.5 h-4 w-4 flex-shrink-0 text-green-500" />
 										<span class="text-sm text-muted-foreground">
-											{$t('pricing.planSelection.fixed.bulletNoSuccessFees')}
+											{$t('pricing.planSelection.fixed.bulletVariedCandidates')}
 										</span>
 									</div>
-									<div class="flex items-center gap-2">
-										<CheckCircle class="h-4 w-4 flex-shrink-0 text-green-500" />
+									<div class="flex items-start gap-2">
+										<CheckCircle class="mt-0.5 h-4 w-4 flex-shrink-0 text-green-500" />
 										<span class="text-sm text-muted-foreground">
-											{$t('pricing.planSelection.fixed.bulletStopAnytime')}
+											{$t('pricing.planSelection.fixed.bulletNoHiringFees')}
 										</span>
 									</div>
 								</div>
@@ -507,25 +497,31 @@
 									</div>
 								</div>
 								<CardDescription class="text-sm">
-									{$t('pricing.planSelection.planDescriptionsStatic.enterprise')}
+									{$t('pricing.planSelection.enterpriseCard.description')}
 								</CardDescription>
 							</CardHeader>
 
 							<CardContent class="flex-1 space-y-2">
-								<div class="flex items-center gap-2">
-									<CheckCircle class="h-4 w-4 flex-shrink-0 text-green-500" />
+								<div class="flex items-start gap-2">
+									<CheckCircle class="mt-0.5 h-4 w-4 flex-shrink-0 text-green-500" />
 									<span class="text-sm text-muted-foreground">
-										{$t('pricing.planSelection.enterpriseCard.noMonthlyFee')}
+										{$t('pricing.planSelection.enterpriseCard.successFee')}
 									</span>
 								</div>
-								<div class="flex items-center gap-2">
-									<CheckCircle class="h-4 w-4 flex-shrink-0 text-green-500" />
+								<div class="flex items-start gap-2">
+									<CheckCircle class="mt-0.5 h-4 w-4 flex-shrink-0 text-green-500" />
 									<span class="text-sm text-muted-foreground">
-										{$t('pricing.planSelection.enterpriseCard.successFeeOnHire')}
+										{$t('pricing.planSelection.enterpriseCard.fullSpeed')}
 									</span>
 								</div>
-								<div class="flex items-center gap-2">
-									<CheckCircle class="h-4 w-4 flex-shrink-0 text-green-500" />
+								<div class="flex items-start gap-2">
+									<CheckCircle class="mt-0.5 h-4 w-4 flex-shrink-0 text-green-500" />
+									<span class="text-sm text-muted-foreground">
+										{$t('pricing.planSelection.enterpriseCard.unlimitedCandidates')}
+									</span>
+								</div>
+								<div class="flex items-start gap-2">
+									<CheckCircle class="mt-0.5 h-4 w-4 flex-shrink-0 text-green-500" />
 									<span class="text-sm text-muted-foreground">
 										{$t('pricing.planSelection.enterpriseCard.customAgreement')}
 									</span>
@@ -548,7 +544,7 @@
 
 <!-- Fixed-plan Subscription Confirmation Dialog -->
 <Dialog.Root bind:open={fixedDialogOpen}>
-	<Dialog.Content class="mx-4 sm:mx-auto sm:max-w-lg">
+	<Dialog.Content class="mx-4 flex max-h-[88vh] flex-col sm:mx-auto sm:max-w-lg">
 		<Dialog.Header>
 			<Dialog.Title class="text-base sm:text-lg">
 				{$t('pricing.planSelection.confirmTitle')}
@@ -556,10 +552,10 @@
 			<Dialog.Description class="text-sm sm:text-base">
 				{#if fixedPlanToSubscribe?.huntSubscription}
 					{$t('pricing.planSelection.fixed.confirmDescription', {
-						amount: (
+						amount: formatPriceAmount(
 							fixedPlanToSubscribe.huntSubscription.monthlyFeePerHunt.amount +
-							(fixedPlanToSubscribe.huntSubscription.monthlyFeePerHunt.vatAmount || 0)
-						).toString(),
+								(fixedPlanToSubscribe.huntSubscription.monthlyFeePerHunt.vatAmount || 0)
+						),
 						currency: getCurrencySymbol(
 							fixedPlanToSubscribe.huntSubscription.monthlyFeePerHunt.currency
 						)
@@ -570,59 +566,51 @@
 
 		{#if fixedPlanToSubscribe?.huntSubscription}
 			{@const pricing = fixedPlanToSubscribe.huntSubscription}
-			<div class="max-h-[60vh] overflow-y-auto py-4">
-				<div class="rounded-md bg-muted/50 p-4">
-					<div class="mb-2 flex items-center gap-2">
-						<Info class="h-4 w-4 text-primary" />
-						<span class="text-sm font-medium">{$t('pricing.planSelection.planDetails')}</span>
+			<div class="shrink-0 rounded-md bg-muted/50 p-4">
+				<div class="mb-2 flex items-center gap-2">
+					<Info class="h-4 w-4 text-primary" />
+					<span class="text-sm font-medium">{$t('pricing.planSelection.planDetails')}</span>
+				</div>
+				<div class="space-y-1 text-sm">
+					<div class="flex justify-between">
+						<span class="text-muted-foreground">{$t('pricing.planSelection.planName')}:</span>
+						<span class="font-medium">{$t('pricing.planSelection.fixed.name')}</span>
 					</div>
-					<div class="space-y-1 text-sm">
-						<div class="flex justify-between">
-							<span class="text-muted-foreground">{$t('pricing.planSelection.planName')}:</span>
-							<span class="font-medium">{$t('pricing.planSelection.fixed.name')}</span>
-						</div>
-						<div class="flex justify-between">
-							<span class="text-muted-foreground"
-								>{$t('pricing.planSelection.fixed.monthlyFeePerHunt')}:</span
-							>
-							<span class="font-medium">
-								{pricing.monthlyFeePerHunt.amount}
-								{getCurrencySymbol(pricing.monthlyFeePerHunt.currency)}
-								{#if pricing.monthlyFeePerHunt.vatAmount && pricing.monthlyFeePerHunt.vatAmount > 0}
-									<span class="text-xs text-muted-foreground">
-										(+ {$t('pricing.planSelection.vat')}
-										{pricing.monthlyFeePerHunt.vatAmount}
-										{getCurrencySymbol(pricing.monthlyFeePerHunt.currency)})
-									</span>
-								{/if}
-							</span>
-						</div>
-						<div class="mt-2 space-y-1 border-t border-border pt-2">
-							<div class="flex items-center gap-2 text-xs text-muted-foreground">
-								<CheckCircle class="h-3 w-3 flex-shrink-0" />
-								<span>
-									{$t('pricing.planSelection.fixed.bulletOffers', {
-										limit: pricing.monthlyOfferLimit.toString()
-									})}
+					<div class="flex justify-between">
+						<span class="text-muted-foreground"
+							>{$t('pricing.planSelection.fixed.monthlyFeePerHunt')}:</span
+						>
+						<span class="font-medium">
+							{formatPriceAmount(pricing.monthlyFeePerHunt.amount)}
+							{getCurrencySymbol(pricing.monthlyFeePerHunt.currency)}
+							{#if pricing.monthlyFeePerHunt.vatAmount && pricing.monthlyFeePerHunt.vatAmount > 0}
+								<span class="text-xs text-muted-foreground">
+									(+ {$t('pricing.planSelection.vat')}
+									{formatPriceAmount(pricing.monthlyFeePerHunt.vatAmount)}
+									{getCurrencySymbol(pricing.monthlyFeePerHunt.currency)})
 								</span>
-							</div>
-							<div class="flex items-center gap-2 text-xs text-muted-foreground">
-								<CheckCircle class="h-3 w-3 flex-shrink-0" />
-								<span>{$t('pricing.planSelection.fixed.bulletNoSuccessFees')}</span>
-							</div>
-							<div class="flex items-center gap-2 text-xs text-muted-foreground">
-								<CheckCircle class="h-3 w-3 flex-shrink-0" />
-								<span>{$t('pricing.planSelection.fixed.noChargeToday')}</span>
-							</div>
+							{/if}
+						</span>
+					</div>
+					<div class="mt-2 space-y-1 border-t border-border pt-2">
+						<div class="flex items-center gap-2 text-xs text-muted-foreground">
+							<CheckCircle class="h-3 w-3 flex-shrink-0" />
+							<span>{$t('pricing.planSelection.fixed.bulletNoHiringFees')}</span>
+						</div>
+						<div class="flex items-center gap-2 text-xs text-muted-foreground">
+							<CheckCircle class="h-3 w-3 flex-shrink-0" />
+							<span>{$t('pricing.planSelection.fixed.noChargeToday')}</span>
 						</div>
 					</div>
 				</div>
+			</div>
 
-				<!-- Card Selection (payment method is always card for the fixed tier) -->
-				<div class="mt-4 space-y-3">
-					<div class="text-sm font-medium">
-						{$t('pricing.planSelection.selectCard') || 'Select Payment Card'}
-					</div>
+			<!-- Card Selection (payment method is always card for the fixed tier) -->
+			<div class="flex min-h-0 flex-1 flex-col gap-2">
+				<div class="text-sm font-medium">
+					{$t('pricing.planSelection.selectCard') || 'Select Payment Card'}
+				</div>
+				<div class="min-h-0 flex-1 overflow-y-auto pr-1">
 					<CardManagement
 						mode="selector"
 						bind:selectedCardId
@@ -631,41 +619,41 @@
 						}}
 					/>
 				</div>
+			</div>
 
-				<!-- Hiring Terms Acceptance -->
-				<div class="mt-4 rounded-md border border-border bg-muted/30 p-4">
-					<label class="flex cursor-pointer items-start space-x-3">
-						<Checkbox bind:checked={fixedTermsAccepted} />
-						<span class="text-sm leading-relaxed">
-							{$t('pricing.planSelection.acceptTerms')}
-							<a
-								href={$t('pricing.planSelection.hiringTermsUrl')}
-								target="_blank"
-								rel="noopener noreferrer"
-								class="font-medium text-primary underline hover:text-primary/80"
-							>
-								{$t('pricing.planSelection.hiringTerms')}
-							</a>,
-							<a
-								href={$t('pricing.planSelection.privacyPolicyUrl')}
-								target="_blank"
-								rel="noopener noreferrer"
-								class="font-medium text-primary underline hover:text-primary/80"
-							>
-								{$t('pricing.planSelection.privacyPolicy')}
-							</a>
-							{$t('pricing.planSelection.and')}
-							<a
-								href={$t('pricing.planSelection.termsOfServiceUrl')}
-								target="_blank"
-								rel="noopener noreferrer"
-								class="font-medium text-primary underline hover:text-primary/80"
-							>
-								{$t('pricing.planSelection.termsOfService')}
-							</a>
-						</span>
-					</label>
-				</div>
+			<!-- Hiring Terms Acceptance -->
+			<div class="shrink-0 rounded-md border border-border bg-muted/30 p-4">
+				<label class="flex cursor-pointer items-start space-x-3">
+					<Checkbox bind:checked={fixedTermsAccepted} />
+					<span class="text-sm leading-relaxed">
+						{$t('pricing.planSelection.acceptTerms')}
+						<a
+							href={$t('pricing.planSelection.hiringTermsUrl')}
+							target="_blank"
+							rel="noopener noreferrer"
+							class="font-medium text-primary underline hover:text-primary/80"
+						>
+							{$t('pricing.planSelection.hiringTerms')}
+						</a>,
+						<a
+							href={$t('pricing.planSelection.privacyPolicyUrl')}
+							target="_blank"
+							rel="noopener noreferrer"
+							class="font-medium text-primary underline hover:text-primary/80"
+						>
+							{$t('pricing.planSelection.privacyPolicy')}
+						</a>
+						{$t('pricing.planSelection.and')}
+						<a
+							href={$t('pricing.planSelection.termsOfServiceUrl')}
+							target="_blank"
+							rel="noopener noreferrer"
+							class="font-medium text-primary underline hover:text-primary/80"
+						>
+							{$t('pricing.planSelection.termsOfService')}
+						</a>
+					</span>
+				</label>
 			</div>
 		{/if}
 

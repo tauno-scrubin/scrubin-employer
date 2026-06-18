@@ -3,6 +3,14 @@ import { loadStripe } from '@stripe/stripe-js';
 import { currentUser, scrubinClient } from '@/scrubinClient/client';
 import { get } from 'svelte/store';
 
+/**
+ * Pricing-row amounts (pricingHunt.amount, success fees, …) are stored in cents.
+ * Use this to render them as a major-unit price string in the UI.
+ */
+export function formatPriceAmount(amountInCents: number): string {
+	return (amountInCents / 100).toLocaleString('en-US', { maximumFractionDigits: 2 });
+}
+
 export function getCurrencySymbol(currency: string) {
 	if (currency === 'AUD') {
 		return '$A';
@@ -46,6 +54,25 @@ export function getStatusColor(status: string) {
 			return 'bg-blue-100 text-blue-800';
 		case 'CANCELLED':
 			return 'bg-gray-100 text-gray-800';
+	}
+}
+
+/**
+ * Confirms a Stripe PaymentIntent client secret using the card already on file —
+ * used for the hunt_subscription activation SCA step (the per-hunt monthly
+ * subscription returned requires_action). Throws on failure.
+ */
+export async function confirmCardPayment(clientSecret: string) {
+	const isDemoUser = get(currentUser)?.isDemoUser || false;
+	const stripePublicKey = isDemoUser ? PUBLIC_STRIPE_PUBLIC_KEY_DEV : PUBLIC_STRIPE_PUBLIC_KEY;
+	const stripe = await loadStripe(stripePublicKey);
+	if (!stripe) {
+		throw new Error('Payment system failed to initialize');
+	}
+
+	const result = await stripe.confirmCardPayment(clientSecret);
+	if (result.error && result.error.payment_intent?.status !== 'succeeded') {
+		throw new Error(result.error.message || 'Payment failed');
 	}
 }
 

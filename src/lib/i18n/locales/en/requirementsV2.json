@@ -217,7 +217,8 @@
 		"preview": {
 			"readyToActivate": {
 				"title": "Ready to activate!",
-				"description": "All required information has been provided. Click \"Activate Hunt\" to start finding candidates."
+				"description": "All required information has been provided. Click \"Activate Hunt\" to start finding candidates.",
+				"billing": "Activating starts {{amount}} {{currency}}/month billing for this headhunt, charged to your card on file."
 			},
 			"missingInfo": {
 				"title": "Missing required information",

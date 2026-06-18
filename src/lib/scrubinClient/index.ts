@@ -476,8 +476,30 @@ export interface HuntDetail {
 		vatPercentage: number;
 		vatAmount: number;
 	}; // teistel puhkudel on juba plan aktiveeritid ja midagi rohkem maksma ei pea
+	/** hunt_subscription plans only: the fixed monthly fee billed per active hunt, charged on activation. */
+	monthlyFee?: {
+		amount: number;
+		currency: string;
+		vatPercentage: number;
+		vatAmount: number;
+	};
+	/** hunt_subscription plans only: hunt was created PENDING — show the billing-consent dialog and call activate. */
+	requiresActivation?: boolean;
 	/** The caller's effective role on this hunt. Main accounts get 'collaborator'. Sub-users get their per-hunt grant. */
 	huntRole?: HuntRole;
+}
+
+/**
+ * Response of POST /api/v2/hunts/:id/activate. For hunt_subscription plans the
+ * per-hunt Stripe subscription may need SCA: when requiresPaymentAction is true
+ * the hunt was NOT activated — confirm clientSecret with Stripe.js, then call
+ * activate again.
+ */
+export interface ActivateHuntV2Response {
+	huntId: number;
+	status: string;
+	requiresPaymentAction?: boolean;
+	clientSecret?: string;
 }
 
 export interface HuntStats {
@@ -908,7 +930,6 @@ export interface AvailablePlansResponse {
 
 export interface HuntSubscriptionPlanPricing {
 	monthlyFeePerHunt: CompanyPlanPrice;
-	monthlyOfferLimit: number;
 }
 
 export interface EnterprisePlanInfo {
@@ -930,10 +951,6 @@ export interface AvailablePlanV3 {
 export interface AvailablePlansV3Response {
 	paymentMethods: string[];
 	plans: AvailablePlanV3[];
-}
-
-export interface HuntSubscriptionPricing extends CompanyPlanPrice {
-	monthlyOfferLimit: number;
 }
 
 export interface CreateSubscriptionRequest {
@@ -1004,7 +1021,7 @@ export interface EndedPlanSummary {
 	hiringTermsAcceptedAt: string | null;
 	pricingGeneral: CompanyPlanPrice | null;
 	pricingSuccess: CompanyPlanPricingSuccess | null;
-	pricingHunt?: HuntSubscriptionPricing | null;
+	pricingHunt?: CompanyPlanPrice | null;
 	enterprise?: EnterprisePlanInfo | null;
 	customPlanDescription: string | null;
 }
@@ -1013,7 +1030,7 @@ export interface CompanyPlanDetails extends CompanyPlanSummary {
 	planPaymentMethod: string;
 	pricingGeneral: CompanyPlanPrice;
 	pricingSuccess: CompanyPlanPricingSuccess;
-	pricingHunt?: HuntSubscriptionPricing | null;
+	pricingHunt?: CompanyPlanPrice | null;
 	enterprise?: EnterprisePlanInfo | null;
 	customPlanDescription?: string;
 }
@@ -2109,9 +2126,12 @@ class HuntResource extends BaseResource {
 	}
 
 	// POST /api/v2/hunts/{id}/activate
-	async activateHuntV2(id: number): Promise<Hunt> {
+	async activateHuntV2(id: number): Promise<ActivateHuntV2Response> {
 		const url = new URL(`/api/v2/hunts/${id}/activate`, this.client.baseUrl);
-		return this.request<Hunt>('POST', url.toString()) as Promise<Hunt>;
+		return this.request<ActivateHuntV2Response>(
+			'POST',
+			url.toString()
+		) as Promise<ActivateHuntV2Response>;
 	}
 
 	// POST /api/v1/hunts/{id}/complete

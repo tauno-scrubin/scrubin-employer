@@ -40,7 +40,11 @@
 		completionPercentage = $bindable(0),
 		isComplete = $bindable(false),
 		potentialReach = $bindable<number | null>(null),
-		hunt = $bindable<HuntDetail | null>(null)
+		hunt = $bindable<HuntDetail | null>(null),
+		// When activation is handled by the parent (e.g. the hunt page's
+		// hunt-subscription billing banner), suppress this component's own
+		// activate prompt to avoid a duplicate.
+		hideActivation = false
 	} = $props();
 
 	let companyActivePlans = $state<CompanyPlanSummary[]>([]);
@@ -452,7 +456,7 @@
 			<div class="flex items-center gap-2"></div>
 		</div>
 
-		{#if isComplete && !(hunt && ['ACTIVE', 'COMPLETED'].includes(hunt.status))}
+		{#if !hideActivation && isComplete && !(hunt && ['ACTIVE', 'COMPLETED'].includes(hunt.status))}
 			{#if companyActivePlans.some((p) => p.planActive)}
 				<Alert
 					variant="success"

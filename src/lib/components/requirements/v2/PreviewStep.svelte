@@ -4,9 +4,10 @@
 	import { Separator } from '$lib/components/ui/separator';
 	import { locale, t } from '$lib/i18n';
 
-	import type { CompanyPlanSummary, JobRequirementDto } from '@/scrubinClient';
+	import type { AvailablePlanV3, CompanyPlanSummary, JobRequirementDto } from '@/scrubinClient';
 	import { scrubinClient } from '@/scrubinClient/client';
 	import type { CodeNamePair } from '@/scrubinClient/models';
+	import { getCurrencySymbol, formatPriceAmount } from '$lib/components/payment/payments';
 	import { AlertCircle, CheckCircle, GraduationCap, Target, TriangleAlert } from 'lucide-svelte';
 	import { onMount } from 'svelte';
 	import { get } from 'svelte/store';
@@ -25,17 +26,31 @@
 	let availableLanguages = $state<CodeNamePair[]>([]);
 	let availableSalaryPeriods = $state<CodeNamePair[]>([]);
 	let companyActivePlans = $state<CompanyPlanSummary[]>([]);
+	let availablePlans = $state<AvailablePlanV3[]>([]);
+
+	// Fixed-plan monthly fee to disclose before the single-click activation charges it.
+	const activeFixedFee = $derived.by(() => {
+		const isFixedActive = companyActivePlans.some(
+			(p) => p.planActive && p.planType === 'hunt_subscription'
+		);
+		if (!isFixedActive) return null;
+		return (
+			availablePlans.find((p) => p.planType === 'hunt_subscription' && p.huntSubscription)
+				?.huntSubscription?.monthlyFeePerHunt ?? null
+		);
+	});
 
 	onMount(async () => {
 		const lang = get(locale);
-		const [countries, professions, specialties, languages, salaryPeriods, plans] =
+		const [countries, professions, specialties, languages, salaryPeriods, plans, available] =
 			await Promise.all([
 				scrubinClient.data.getCountries(lang),
 				scrubinClient.data.getProfessions(lang),
 				scrubinClient.data.getSpecialties(lang),
 				scrubinClient.data.getLanguages(lang),
 				scrubinClient.data.getSalaryPeriods(lang),
-				scrubinClient.company.getActivePlans()
+				scrubinClient.company.getActivePlans(),
+				scrubinClient.company.getAvailablePlansV3()
 			]);
 		availableCountries = countries;
 		availableProfessions = professions;
@@ -43,6 +58,7 @@
 		availableLanguages = languages;
 		availableSalaryPeriods = salaryPeriods;
 		companyActivePlans = plans;
+		availablePlans = available.plans;
 	});
 
 	function hasMarkdownSyntax(text: string): boolean {
@@ -131,6 +147,14 @@
 				<p class="text-sm text-green-700">
 					{$t('requirementsV2.preview.readyToActivate.description')}
 				</p>
+				{#if activeFixedFee}
+					<p class="mt-1 text-sm font-medium text-green-800">
+						{$t('requirementsV2.preview.readyToActivate.billing', {
+							amount: formatPriceAmount(activeFixedFee.amount),
+							currency: getCurrencySymbol(activeFixedFee.currency)
+						})}
+					</p>
+				{/if}
 			</div>
 		</div>
 	{/if}

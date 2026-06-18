@@ -190,6 +190,21 @@
 		"expires": "Aegub",
 		"activateHunt": "Aktiveeri otsing",
 		"completePayment": "Lõpeta makse",
+		"huntSubscription": {
+			"pendingTitle": "See sihtotsing pole veel aktiivne",
+			"pendingDescription": "Aktiveeri see, et alustada kandidaatideni jõudmist. Aktiivse sihtotsingu eest võetakse {{amount}} {{currency}}/kuus.",
+			"pendingDescriptionNoFee": "Aktiveeri see, et alustada kandidaatideni jõudmist.",
+			"activateButton": "Aktiveeri sihtotsing",
+			"dialogTitle": "Aktiveeri see sihtotsing",
+			"dialogDescription": "Sihtotsingu käivitamine alustab kuist tellimust, mis võetakse salvestatud kaardilt. Saad sihtotsingu igal ajal peatada, et arveldus lõpeks.",
+			"monthlyFee": "Kuutasu sihtotsingu kohta",
+			"confirmButton": "Aktiveeri ja maksa",
+			"pausedTitle": "See sihtotsing on pausil",
+			"pausedDescription": "Pausi ajal jätkub arveldus {{amount}} {{currency}}/kuus. Aktiveeri see uuesti või lõpeta, et arveldus peatada.",
+			"pausedDescriptionNoFee": "Pausi ajal jätkub arveldus. Aktiveeri see uuesti või lõpeta, et arveldus peatada.",
+			"resumeButton": "Aktiveeri uuesti",
+			"endButton": "Lõpeta sihtotsing"
+		},
 		"status": {
 			"active": "Aktiivne",
 			"awaitingPayment": "Valmis aktiveerimiseks",
@@ -750,8 +765,6 @@
 			"acceptedOn": "Nõustutud",
 			"monthlyFeePerHunt": "Kuutasu aktiivse sihtotsingu kohta",
 			"billedPerActiveHunt": "Arveldatakse iga aktiivse sihtotsingu kohta",
-			"offerLimit": "Pakkumiste kuulimiit",
-			"offersPerHuntPerMonth": "pakkumist sihtotsingu kohta kuus",
 			"manualInvoicing": "Arveldus arve alusel",
 			"viewAgreement": "Vaata lepingut"
 		},
@@ -868,8 +881,6 @@
 		"planSelection": {
 			"selectCard": "Vali maksekaart",
 			"paymentInfo": "Jagatud makse: 50% kandidaadi allkirjastamisel, 50% töö alustamisel",
-			"recommended": "Soovitatud",
-			"mostPopular": "Kõige populaarsem",
 			"upfront": "ette",
 			"free": "Tasuta",
 			"noUpfront": "ettemaksu pole",
@@ -983,15 +994,15 @@
 			"currentPlan": "Praegune pakett",
 			"fixed": {
 				"name": "Fikseeritud",
-				"description": "Prognoositav kuutasu iga aktiivse sihtotsingu eest. Alusta ja peata sihtotsinguid vastavalt vajadusele.",
+				"description": "Soodne algus, kui edutasu pole teie jaoks võimalik.",
 				"perMonthPerHunt": "kuus, iga aktiivse sihtotsingu kohta",
-				"bulletOffers": "Kuni {{limit}} pakkumist sihtotsingu kohta kuus",
-				"bulletUnlimitedCandidates": "Piiramatu arv kandidaate",
-				"bulletNoSuccessFees": "Ilma tulemustasudeta",
-				"bulletStopAnytime": "Peata sihtotsing igal ajal — selle arveldus lõpeb kohe",
 				"noChargeToday": "Täna sinult tasu ei võeta — arveldus algab sihtotsingu aktiveerimisel.",
 				"confirmDescription": "Kaart on vajalik üksnes kinnitamiseks — täna sind ei debiteerita. Arveldus {{amount}} {{currency}} kuus iga aktiivse sihtotsingu kohta algab sihtotsingu aktiveerimisel.",
-				"monthlyFeePerHunt": "Kuutasu aktiivse sihtotsingu kohta"
+				"monthlyFeePerHunt": "Kuutasu aktiivse sihtotsingu kohta",
+				"bulletPerHunt": "Üks kuutasu iga aktiivse sihtotsingu kohta — kahe otsinguga maksate kahekordset kuutasu. Otsingu saab igal hetkel peatada ja selle arveldus lõpeb.",
+				"bulletOutreachPace": "Ühtlane ja mõõdetud tempo igas kuus — keskendunud ja läbimõeldud kandidaatide poole pöördumine, mitte täiskiirusel massotsing",
+				"bulletVariedCandidates": "Mitmekülgne valik huvitatud kandidaate igast sihtotsingust",
+				"bulletNoHiringFees": "Ilma värbamistasudeta — eduka värbamise eest eraldi tasu ei lisandu"
 			},
 			"customPlan": {
 				"title": "Sinu kohandatud pakett",
@@ -1004,9 +1015,11 @@
 				"confirmDescription": "Paketi aktiveerimiseks nõustu tingimustega. Pakett aktiveerub kohe — kaarti pole vaja, tasud arveldatakse arve alusel."
 			},
 			"enterpriseCard": {
-				"noMonthlyFee": "Ilma kuutasuta",
-				"successFeeOnHire": "Tulemustasu ainult eduka värbamise korral",
-				"customAgreement": "Sinu organisatsioonile kohandatud leping"
+				"customAgreement": "Teie organisatsioonile kohandatud leping",
+				"description": "Meie võimsaim viis värbamiseks — täiskiirusel otsing ja piiramatu arv kandidaate, täiesti riskivabalt: maksate alles siis, kui keegi tegelikult tööle asub.",
+				"successFee": "Maksate ainult siis, kui keegi tegelikult tööle asub — ei värba, ei maksa",
+				"fullSpeed": "Täiskiirusel sihtotsing — kandidaatide poole pöördumisel pole kuist piirangut",
+				"unlimitedCandidates": "Piiramatu arv kandidaate — kõik huvitatud kandidaadid, kelle otsing leiab"
 			},
 			"toast": {
 				"planNotAvailable": "Plaan pole tellimiseks saadaval",

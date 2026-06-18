@@ -20,7 +20,12 @@
 	import QuestionsInHunt from '@/components/dashboard/questionsInHunt.svelte';
 	import ScreeningQuestionsInHunt from '@/components/dashboard/screeningQuestionsInHunt.svelte';
 	import SharedWithPanel from '$lib/employer/hunt-access/SharedWithPanel.svelte';
-	import { getStatusColor } from '@/components/payment/payments.js';
+	import {
+		getStatusColor,
+		getCurrencySymbol,
+		confirmCardPayment,
+		formatPriceAmount
+	} from '@/components/payment/payments.js';
 	import { getStatusConfig } from '$lib/config/pipelineStatuses';
 	import * as Dialog from '@/components/ui/dialog/index.js';
 	import * as DropdownMenu from '@/components/ui/dropdown-menu/index.js';
@@ -611,6 +616,38 @@
 		window.location.reload();
 		toast.success($t('errors.paymentSuccess'));
 	}
+
+	// Fixed-plan billing: subscribing only captured a card (€0). Starting a
+	// headhunt is what triggers the monthly charge — so a PENDING hunt_subscription
+	// hunt must confirm billing here before it goes active.
+	let activateDialogOpen = $state(false);
+	let isActivatingSubscription = $state(false);
+	let isPendingHuntSubscription = $derived(
+		hunt.planType === 'hunt_subscription' && (hunt.status === 'PENDING' || hunt.status === 'PAUSED')
+	);
+
+	async function confirmHuntSubscriptionActivation() {
+		isActivatingSubscription = true;
+		try {
+			let res = await scrubinClient.hunt.activateHuntV2(hunt.huntId);
+			if (res.requiresPaymentAction && res.clientSecret) {
+				// The per-hunt monthly subscription needs SCA — confirm with the
+				// on-file card, then re-activate so the hunt flips to ACTIVE.
+				await confirmCardPayment(res.clientSecret);
+				res = await scrubinClient.hunt.activateHuntV2(hunt.huntId);
+				if (res.requiresPaymentAction) {
+					throw new Error('Payment not completed');
+				}
+			}
+			activateDialogOpen = false;
+			window.location.reload();
+		} catch (error) {
+			console.error('Failed to activate hunt subscription:', error);
+			toast.error($t('errors.activateHuntFailed'));
+		} finally {
+			isActivatingSubscription = false;
+		}
+	}
 </script>
 
 <InterestedWorkerDialog
@@ -630,6 +667,59 @@
 	vatAmount={chargeableAmount.vatAmount}
 	onSuccess={onPaymentSuccess}
 />
+
+<Dialog.Root bind:open={activateDialogOpen}>
+	<Dialog.Content>
+		<Dialog.Header>
+			<Dialog.Title>{$t('payment.huntSubscription.dialogTitle')}</Dialog.Title>
+			<Dialog.Description>{$t('payment.huntSubscription.dialogDescription')}</Dialog.Description>
+		</Dialog.Header>
+		{#if hunt.monthlyFee}
+			<div class="space-y-2 rounded-lg border bg-muted/30 p-4">
+				<dl class="flex items-center justify-between gap-4">
+					<dt class="text-sm text-muted-foreground">{$t('payment.huntSubscription.monthlyFee')}</dt>
+					<dd class="text-sm font-medium">
+						{formatPriceAmount(hunt.monthlyFee.amount)}
+						{getCurrencySymbol(hunt.monthlyFee.currency)}
+					</dd>
+				</dl>
+				{#if hunt.monthlyFee.vatAmount && hunt.monthlyFee.vatPercentage}
+					<dl class="flex items-center justify-between gap-4">
+						<dt class="text-sm text-muted-foreground">
+							{$t('payment.vat')} ({hunt.monthlyFee.vatPercentage}%)
+						</dt>
+						<dd class="text-sm font-medium">
+							{formatPriceAmount(hunt.monthlyFee.vatAmount)}
+							{getCurrencySymbol(hunt.monthlyFee.currency)}
+						</dd>
+					</dl>
+				{/if}
+				<dl class="flex items-center justify-between gap-4 border-t pt-2">
+					<dt class="text-sm font-semibold">{$t('payment.total')}</dt>
+					<dd class="text-sm font-bold">
+						{formatPriceAmount(hunt.monthlyFee.amount + (hunt.monthlyFee.vatAmount || 0))}
+						{getCurrencySymbol(hunt.monthlyFee.currency)}
+					</dd>
+				</dl>
+			</div>
+		{/if}
+		<Dialog.Footer>
+			<Button
+				variant="outline"
+				onclick={() => (activateDialogOpen = false)}
+				disabled={isActivatingSubscription}
+			>
+				{$t('buttons.cancel')}
+			</Button>
+			<Button onclick={confirmHuntSubscriptionActivation} disabled={isActivatingSubscription}>
+				{#if isActivatingSubscription}
+					<Loader2 class="mr-2 h-4 w-4 animate-spin" />
+				{/if}
+				{$t('payment.huntSubscription.confirmButton')}
+			</Button>
+		</Dialog.Footer>
+	</Dialog.Content>
+</Dialog.Root>
 <div class="container mx-auto max-w-6xl space-y-6 py-6 2xl:max-w-7xl">
 	<div class="mb-6 flex items-center gap-4">
 		<Button onclick={goToPrevPage} variant="outline" size="icon" class="h-9 w-9">
@@ -650,6 +740,60 @@
 			{/if} -->
 		</div>
 	</div>
+	{#if isPendingHuntSubscription && canWriteHunt}
+		{@const isPaused = hunt.status === 'PAUSED'}
+		<div
+			class="mb-4 flex flex-col gap-3 rounded-lg border border-amber-200 bg-amber-50 p-4 sm:flex-row sm:items-center sm:justify-between"
+		>
+			<div>
+				<p class="font-medium text-amber-900">
+					{$t(
+						isPaused
+							? 'payment.huntSubscription.pausedTitle'
+							: 'payment.huntSubscription.pendingTitle'
+					)}
+				</p>
+				<p class="text-sm text-amber-800">
+					{#if hunt.monthlyFee}
+						{$t(
+							isPaused
+								? 'payment.huntSubscription.pausedDescription'
+								: 'payment.huntSubscription.pendingDescription',
+							{
+								amount: formatPriceAmount(
+									hunt.monthlyFee.amount + (hunt.monthlyFee.vatAmount || 0)
+								),
+								currency: getCurrencySymbol(hunt.monthlyFee.currency)
+							}
+						)}
+					{:else}
+						{$t(
+							isPaused
+								? 'payment.huntSubscription.pausedDescriptionNoFee'
+								: 'payment.huntSubscription.pendingDescriptionNoFee'
+						)}
+					{/if}
+				</p>
+			</div>
+			<div class="flex flex-shrink-0 gap-2">
+				{#if isPaused}
+					<Button onclick={confirmHuntSubscriptionActivation} disabled={isActivatingSubscription}>
+						{#if isActivatingSubscription}
+							<Loader2 class="mr-2 h-4 w-4 animate-spin" />
+						{/if}
+						{$t('payment.huntSubscription.resumeButton')}
+					</Button>
+					<Button variant="outline" onclick={() => (isCompleteDialogOpen = true)}>
+						{$t('payment.huntSubscription.endButton')}
+					</Button>
+				{:else}
+					<Button onclick={() => (activateDialogOpen = true)}>
+						{$t('payment.huntSubscription.activateButton')}
+					</Button>
+				{/if}
+			</div>
+		</div>
+	{/if}
 	<!-- Status badge at the top -->
 	<Tabs.Root bind:value={activeTab} class="w-full">
 		<Tabs.List class="grid w-fit auto-cols-max grid-flow-col">
@@ -820,6 +964,7 @@
 						isComplete={true}
 						potentialReach={data.stats.totalHuntables}
 						completionPercentage={100}
+						hideActivation={hunt.planType === 'hunt_subscription'}
 					/>
 				</div>
 			</div>
