@@ -280,7 +280,7 @@
 			{error}
 		</div>
 	{:else}
-		<div class="flex flex-col flex-wrap items-stretch justify-center gap-6 sm:flex-row">
+		<div class="flex flex-col flex-wrap items-stretch justify-start gap-6 sm:flex-row">
 			{#each planCards as card}
 				<div class="relative flex w-full flex-col sm:max-w-sm">
 					{#if card.kind === 'fixed'}
