@@ -788,6 +788,8 @@ export interface InterestedCandidateDetails extends HuntableDetails {
 	};
 	companyConfirmedNewCandidate: boolean;
 	dateCompanyConfirmedNewCandidate?: string | null;
+	/** Display name of the company user who confirmed the candidate is new (null until confirmed). */
+	confirmedNewByUserName?: string | null;
 	/** True when declined by the company or rejected by the candidate — contact is withheld and chat is closed. */
 	contactBlocked: boolean;
 }

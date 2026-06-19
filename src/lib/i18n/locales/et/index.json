@@ -470,6 +470,11 @@
 				"errorToast": "Kinnitamine ebaõnnestus. Palun proovige uuesti.",
 				"contactHidden": "Avage kandidaat, et kinnitus anda ja kontaktandmeid näha"
 			},
+			"confirmedNew": {
+				"label": "Kinnitatud uuena",
+				"byUser": "Kinnitas {{name}} {{date}}",
+				"dateOnly": "Kinnitatud {{date}}"
+			},
 			"contactWithheld": {
 				"title": "Kontaktandmed on varjatud",
 				"description": "See kandidaat on tagasi lükatud või keeldus, mistõttu tema kontaktandmed ei ole enam saadaval ja sõnumivahetus on suletud.",

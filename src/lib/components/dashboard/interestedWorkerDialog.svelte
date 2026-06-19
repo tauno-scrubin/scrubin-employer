@@ -398,6 +398,29 @@
 													</a>
 												</div>
 											</div>
+
+											{#if worker.dateCompanyConfirmedNewCandidate}
+												<div class="group flex items-center gap-3 rounded-md md:col-span-2">
+													<div class="rounded-full bg-emerald-50 p-2">
+														<ShieldCheck class="h-4 w-4 text-emerald-600" />
+													</div>
+													<div class="flex flex-col">
+														<span class="text-xs text-gray-500"
+															>{$t('dashboard.interestedWorkerDialog.confirmedNew.label')}</span
+														>
+														<span class="text-sm text-gray-700">
+															{worker.confirmedNewByUserName
+																? $t('dashboard.interestedWorkerDialog.confirmedNew.byUser', {
+																		name: worker.confirmedNewByUserName,
+																		date: formatDate(worker.dateCompanyConfirmedNewCandidate)
+																	})
+																: $t('dashboard.interestedWorkerDialog.confirmedNew.dateOnly', {
+																		date: formatDate(worker.dateCompanyConfirmedNewCandidate)
+																	})}
+														</span>
+													</div>
+												</div>
+											{/if}
 										{:else}
 											<div class="rounded-lg border border-amber-200 bg-amber-50 p-4 md:col-span-2">
 												<div class="flex items-start gap-3">

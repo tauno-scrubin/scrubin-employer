@@ -470,6 +470,11 @@
 				"errorToast": "Could not confirm. Please try again.",
 				"contactHidden": "Open candidate to confirm and reveal contact"
 			},
+			"confirmedNew": {
+				"label": "Confirmed as new",
+				"byUser": "Confirmed by {{name}} on {{date}}",
+				"dateOnly": "Confirmed on {{date}}"
+			},
 			"contactWithheld": {
 				"title": "Contact details withheld",
 				"description": "This candidate has been declined or rejected, so their contact details are no longer available and messaging is closed.",
