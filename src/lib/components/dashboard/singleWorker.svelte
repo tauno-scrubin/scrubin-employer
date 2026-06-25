@@ -188,7 +188,11 @@
 				<Calendar1 class="mr-2 mt-0.5 h-4 w-4 flex-shrink-0 text-gray-400" />
 				<span class="text-xs"
 					>{$t('dashboard.worker.availability')}:
-					<span class="font-medium text-gray-700">{worker.interestedOffers.join(', ')}</span></span
+					<span class="font-medium text-gray-700"
+							>{worker.interestedOffers
+								.map((o) => $t(`enums.interestedOffers.${o}`))
+								.join(', ')}</span
+						></span
 				>
 			</div>
 		{/if}

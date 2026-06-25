@@ -1068,6 +1068,22 @@
 			"DRUG_COMPANY": "Ravimifirma",
 			"GOVERNMENT_COMPANY": "Riigiasutus",
 			"OTHER": "Muu"
+		},
+		"interestedOffers": {
+			"FULL_TIME": "Täistööaeg",
+			"PART_TIME": "Osalise tööajaga",
+			"PART_TIME_UP_TO_HALF": "Kuni 0,5 koormus",
+			"PART_TIME_MORE_THAN_HALF": "Rohkem kui 0,5 koormus",
+			"WEEKDAYS": "Kindlad nädalapäevad (E-R)",
+			"DAYS_PER_MONTH": "Mõneks päevaks kuus",
+			"WEEKEND_AND_HOLIDAYS": "Nädalavahetused ja pühad",
+			"FIXED_PERIOD": "Kindel periood",
+			"WORK_ABROAD": "Töö välismaal",
+			"REMOTE": "Kaugtöö",
+			"SHIFTS": "Vahetustega töö",
+			"AD_HOC": "Ajutine",
+			"ALL_OFFERS": "Kõik pakkumised",
+			"OTHER": "Muu"
 		}
 	}
 }

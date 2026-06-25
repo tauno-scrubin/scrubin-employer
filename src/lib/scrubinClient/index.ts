@@ -744,6 +744,8 @@ export interface InterestedCandidate {
 	dateCompanyConfirmedNewCandidate?: string | null;
 	/** True when declined by the company or rejected by the candidate — contact is withheld and chat is closed. */
 	contactBlocked: boolean;
+	/** True when the candidate applied to the company job ad themselves rather than being sourced and sent an offer. */
+	selfApplied?: boolean;
 }
 
 export interface InterestedCandidateStatusResponse {

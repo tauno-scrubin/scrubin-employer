@@ -374,7 +374,7 @@
 									{#if worker.interestedOffers && worker.interestedOffers.length > 0}
 										{#each worker.interestedOffers as offer}
 											<span class="rounded bg-gray-100 px-2 py-0.5 text-xs text-gray-700"
-												>{offer}</span
+												>{$t(`enums.interestedOffers.${offer}`)}</span
 											>
 										{/each}
 									{:else}

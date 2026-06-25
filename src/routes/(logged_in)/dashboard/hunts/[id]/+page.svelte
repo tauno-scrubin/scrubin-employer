@@ -1408,7 +1408,14 @@
 																		{#if StatusIcon}
 																			<StatusIcon class="h-3.5 w-3.5" />
 																		{/if}
-																		{$t(`statistics.pipelineStatuses.${statusLower}.label`)}
+																		{statusConfig ? $t(statusConfig.translationKey) : candidate.status}
+																	</span>
+																{/if}
+																{#if candidate.selfApplied}
+																	<span
+																		class="w-fit rounded-full bg-sky-100 px-2 py-1 text-xs font-medium text-sky-800"
+																	>
+																		{$t('statistics.selfApplied')}
 																	</span>
 																{/if}
 																{#if candidate.successFeePaid}
