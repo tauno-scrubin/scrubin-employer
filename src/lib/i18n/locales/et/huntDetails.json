@@ -52,6 +52,12 @@
 			"title": "Pane otsing pausile",
 			"description": "Pausile panemine peatab väljasaatmised ja automaatika. Hiljem saad jätkata."
 		},
+		"resumePaused": {
+			"title": "See otsing on pausil",
+			"description": "Väljasaatmised ja automaatika on peatatud. Jätka, et kandidaatide otsimist taasalustada.",
+			"button": "Jätka otsingut",
+			"planInactive": "Selle otsingu pakett ei ole enam aktiivne. Enne jätkamist palun võta ühendust kontoomanikuga, et pakett uuendada."
+		},
 		"actions": {
 			"complete": "Lõpeta otsing",
 			"pause": "Pane pausile",

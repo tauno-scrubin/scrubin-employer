@@ -34,6 +34,8 @@ export interface PortalUserTeam {
 	role: CompanyUserRole;
 	isMainAccount: boolean;
 	assignmentId: number | null;
+	/** The main-account holder's name, shown to sub-users. Null for main accounts. */
+	mainAccountHolderName?: string | null;
 }
 
 export interface PortalUser {
@@ -458,6 +460,7 @@ export interface HuntsResponse {
 export interface HuntDetail {
 	huntId: number;
 	requirements: Requirements['requirements'];
+	dateCreated: string;
 	dateActivated: string;
 	dateCompleted: string | null;
 	status: string;

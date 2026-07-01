@@ -13,6 +13,7 @@
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
 	import { t, locale } from '$lib/i18n';
 	import { get } from 'svelte/store';
+	import { ApiError } from '$lib/scrubinClient';
 	import type { Currency as Cur, HuntStats, InterestedCandidate } from '$lib/scrubinClient';
 	import { currentUser, scrubinClient } from '$lib/scrubinClient/client';
 	import { canWriteOnHunt, isMainAccount } from '$lib/permissions';
@@ -626,6 +627,42 @@
 		hunt.planType === 'hunt_subscription' && (hunt.status === 'PENDING' || hunt.status === 'PAUSED')
 	);
 
+	// Resuming a PAUSED hunt is a hunt-scoped action (activateHuntV2) so
+	// collaborators can do it too — unlike the plan/billing flow. The
+	// hunt-subscription banner above already covers its own PAUSED case, so this
+	// control is only for the other plan types.
+	let isResuming = $state(false);
+	let canResumePausedHunt = $derived(
+		hunt.status === 'PAUSED' && hunt.planType !== 'hunt_subscription' && canWriteHunt
+	);
+
+	async function resumePausedHunt() {
+		isResuming = true;
+		try {
+			const res = await scrubinClient.hunt.activateHuntV2(hunt.huntId);
+			if (res.requiresPaymentAction) {
+				// Only fixed-plan hunts need SCA on resume, and those are handled by
+				// the subscription banner. Surface an error rather than silently
+				// leaving the hunt paused.
+				toast.error($t('errors.activateHuntFailed'));
+				return;
+			}
+			window.location.reload();
+		} catch (error) {
+			console.error('Failed to resume hunt:', error);
+			// The backend blocks resume when the hunt's plan has ended (400) — tell
+			// the collaborator to reach out to the account holder rather than showing
+			// a generic failure.
+			if (error instanceof ApiError && error.status === 400) {
+				toast.error($t('hunt.resumePaused.planInactive'));
+			} else {
+				toast.error($t('errors.activateHuntFailed'));
+			}
+		} finally {
+			isResuming = false;
+		}
+	}
+
 	async function confirmHuntSubscriptionActivation() {
 		isActivatingSubscription = true;
 		try {
@@ -794,6 +831,24 @@
 			</div>
 		</div>
 	{/if}
+	{#if canResumePausedHunt}
+		<div
+			class="mb-4 flex flex-col gap-3 rounded-lg border border-amber-200 bg-amber-50 p-4 sm:flex-row sm:items-center sm:justify-between"
+		>
+			<div>
+				<p class="font-medium text-amber-900">{$t('hunt.resumePaused.title')}</p>
+				<p class="text-sm text-amber-800">{$t('hunt.resumePaused.description')}</p>
+			</div>
+			<div class="flex flex-shrink-0 gap-2">
+				<Button onclick={resumePausedHunt} disabled={isResuming}>
+					{#if isResuming}
+						<Loader2 class="mr-2 h-4 w-4 animate-spin" />
+					{/if}
+					{$t('hunt.resumePaused.button')}
+				</Button>
+			</div>
+		</div>
+	{/if}
 	<!-- Status badge at the top -->
 	<Tabs.Root bind:value={activeTab} class="w-full">
 		<Tabs.List class="grid w-fit auto-cols-max grid-flow-col">
@@ -850,7 +905,7 @@
 							<h2 class="font-medium">{$t('hunt.title')}</h2>
 							<p class="text-sm text-muted-foreground">
 								{$t('common.created')}
-								{new Date().toLocaleDateString()}
+								{formatDate(hunt.dateCreated)}
 							</p>
 						</div>
 					</div>
@@ -876,7 +931,7 @@
 						>
 							{$t(`hunt.huntStatus.${hunt.status.toLowerCase()}`)}
 						</Badge>
-						{#if hunt.status === 'ACTIVE' && isMainAccountUser}
+						{#if hunt.status === 'ACTIVE' && canWriteHunt}
 							<DropdownMenu.Root>
 								<DropdownMenu.Trigger>
 									<Button variant="outline" size="sm" class="ml-2 inline-flex items-center gap-1">
@@ -885,19 +940,23 @@
 									</Button>
 								</DropdownMenu.Trigger>
 								<DropdownMenu.Content class="w-40">
-									<DropdownMenu.Item onclick={() => (isCompleteDialogOpen = true)}>
-										{$t('hunt.actions.complete')}
-									</DropdownMenu.Item>
+									<!-- Pause/resume is collaborator-allowed; complete + cancel end the
+										 hunt for the whole company, so keep them main-account-only. -->
 									<DropdownMenu.Item onclick={() => (isPauseDialogOpen = true)}>
 										{$t('hunt.actions.pause')}
 									</DropdownMenu.Item>
-									<DropdownMenu.Separator />
-									<DropdownMenu.Item
-										class="text-red-600"
-										onclick={() => (isCancelDialogOpen = true)}
-									>
-										{$t('hunt.actions.cancel')}
-									</DropdownMenu.Item>
+									{#if isMainAccountUser}
+										<DropdownMenu.Item onclick={() => (isCompleteDialogOpen = true)}>
+											{$t('hunt.actions.complete')}
+										</DropdownMenu.Item>
+										<DropdownMenu.Separator />
+										<DropdownMenu.Item
+											class="text-red-600"
+											onclick={() => (isCancelDialogOpen = true)}
+										>
+											{$t('hunt.actions.cancel')}
+										</DropdownMenu.Item>
+									{/if}
 								</DropdownMenu.Content>
 							</DropdownMenu.Root>
 						{/if}
@@ -965,6 +1024,7 @@
 						potentialReach={data.stats.totalHuntables}
 						completionPercentage={100}
 						hideActivation={hunt.planType === 'hunt_subscription'}
+						canManagePlans={isMainAccountUser}
 					/>
 				</div>
 			</div>

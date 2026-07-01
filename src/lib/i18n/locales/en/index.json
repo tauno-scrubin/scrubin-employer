@@ -303,7 +303,8 @@
 		},
 		"subUser": {
 			"welcomeTitle": "Welcome, {{name}}",
-			"welcomeSubtitle": "You're part of the {{brand}} team. Below you'll find the hunts shared with you."
+			"welcomeSubtitle": "Below you'll find the hunts shared with you by the account holder, {{holder}}.",
+				"welcomeContact": "If you need to edit, add, or change anything, please contact {{holder}} or reach out to us using the help button."
 		},
 		"searchView": {
 			"welcomeBack": "Welcome back, {{name}}!",

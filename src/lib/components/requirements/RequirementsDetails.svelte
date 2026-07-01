@@ -44,7 +44,11 @@
 		// When activation is handled by the parent (e.g. the hunt page's
 		// hunt-subscription billing banner), suppress this component's own
 		// activate prompt to avoid a duplicate.
-		hideActivation = false
+		hideActivation = false,
+		// Plan selection / activation is a billing action — main-account only on
+		// the backend. Sub-users (collaborators) can't read plans or activate from
+		// requirements, so hide the plan banner for them entirely.
+		canManagePlans = true
 	} = $props();
 
 	let companyActivePlans = $state<CompanyPlanSummary[]>([]);
@@ -116,15 +120,14 @@
 
 	onMount(async () => {
 		const lang = get(locale);
-		const [countries, currencies, professions, specialties, languages, salaryPeriods, plans] =
+		const [countries, currencies, professions, specialties, languages, salaryPeriods] =
 			await Promise.all([
 				scrubinClient.data.getCountries(lang),
 				scrubinClient.data.getCurrencies(lang),
 				scrubinClient.data.getProfessions(lang),
 				scrubinClient.data.getSpecialties(lang),
 				scrubinClient.data.getLanguages(lang),
-				scrubinClient.data.getSalaryPeriods(lang),
-				scrubinClient.company.getActivePlans()
+				scrubinClient.data.getSalaryPeriods(lang)
 			]);
 		availableCountries = countries;
 		availableCurrencies = currencies;
@@ -132,12 +135,25 @@
 		availableSpecialties = specialties;
 		availableLanguages = languages;
 		availableSalaryPeriods = salaryPeriods;
-		companyActivePlans = plans;
+
+		// active-plans is a main-account-only endpoint — sub-users get a 403.
+		// Keep it off the reference-data Promise.all so its failure never blocks
+		// the rest of the component from rendering.
+		if (canManagePlans) {
+			try {
+				companyActivePlans = await scrubinClient.company.getActivePlans();
+			} catch (error) {
+				console.error('Failed to load active plans:', error);
+			}
+		}
 	});
 
 	$effect(() => {
 		const hasActivePlan = companyActivePlans.some((p) => p.planActive);
-		const hasStatusToActivate = hunt && ['PENDING', 'PAUSED'].includes(hunt.status);
+		// PAUSED hunts are resumed by the hunt page's own control (hunt-scoped,
+		// works for collaborators) — this create-from-requirements path is only for
+		// activating a brand-new / PENDING hunt.
+		const hasStatusToActivate = hunt && hunt.status === 'PENDING';
 		showActivate = hasActivePlan && isComplete && (!hunt || hasStatusToActivate);
 	});
 
@@ -456,7 +472,7 @@
 			<div class="flex items-center gap-2"></div>
 		</div>
 
-		{#if !hideActivation && isComplete && !(hunt && ['ACTIVE', 'COMPLETED'].includes(hunt.status))}
+		{#if canManagePlans && !hideActivation && isComplete && !(hunt && ['ACTIVE', 'COMPLETED', 'PAUSED'].includes(hunt.status))}
 			{#if companyActivePlans.some((p) => p.planActive)}
 				<Alert
 					variant="success"

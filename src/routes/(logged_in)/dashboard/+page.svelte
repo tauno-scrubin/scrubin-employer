@@ -80,7 +80,16 @@
 						{$t('dashboard.subUser.welcomeTitle', { name: $currentUser.firstName ?? '' })}
 					</h2>
 					<p class="mt-1 text-sm text-gray-600">
-						{$t('dashboard.subUser.welcomeSubtitle', { brand: $currentUser.team.companyBrandName })}
+						{$t('dashboard.subUser.welcomeSubtitle', {
+							holder:
+								$currentUser.team.mainAccountHolderName ?? $currentUser.team.companyBrandName
+						})}
+					</p>
+					<p class="mt-1 text-sm text-gray-600">
+						{$t('dashboard.subUser.welcomeContact', {
+							holder:
+								$currentUser.team.mainAccountHolderName ?? $currentUser.team.companyBrandName
+						})}
 					</p>
 				</div>
 			</Card.Content>

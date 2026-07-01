@@ -303,7 +303,8 @@
 		},
 		"subUser": {
 			"welcomeTitle": "Tere tulemast, {{name}}",
-			"welcomeSubtitle": "Oled {{brand}} meeskonna liige. Allpool näed sinuga jagatud otsinguid."
+			"welcomeSubtitle": "Allpool näed otsinguid, mille kontoomanik {{holder}} on sinuga jaganud.",
+				"welcomeContact": "Kui soovid midagi muuta, lisada või täiendada, võta palun ühendust {{holder}}-ga või kirjuta meile abinupu kaudu."
 		},
 		"searchView": {
 			"welcomeBack": "Tere tulemast tagasi, {{name}}!",

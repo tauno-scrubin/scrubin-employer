@@ -52,6 +52,12 @@
 			"title": "Pause hunt",
 			"description": "Pausing will stop outreach and automations. You can resume later."
 		},
+		"resumePaused": {
+			"title": "This hunt is paused",
+			"description": "Outreach and automations are stopped. Resume to continue finding candidates.",
+			"button": "Resume hunt",
+			"planInactive": "This hunt's plan is no longer active. Please contact the account holder to renew it before resuming."
+		},
 		"actions": {
 			"complete": "Complete",
 			"pause": "Pause",
