@@ -787,6 +787,7 @@ export interface InterestedCandidateDetails extends HuntableDetails {
 	notes?: string;
 	successFeePaid?: boolean;
 	successFeePayment?: {
+		/** Full currency-major-unit integer (e.g. 5000 = 5000.00 EUR), not cents. */
 		amount: number;
 		currency: string;
 		datePaid: string;
@@ -899,6 +900,11 @@ export interface Feedback {
 
 // Add these interfaces right after the existing Company and CompanyBilling interfaces
 
+/**
+ * Shared price shape reused across all pricing blocks (pricingGeneral, pricingSuccess,
+ * pricingHunt, pricingEnterprise). `amount` is a full integer in the currency's major
+ * unit (e.g. 500 = 500.00 EUR), not cents.
+ */
 export interface CompanyPlanPrice {
 	amount: number;
 	currency: string;

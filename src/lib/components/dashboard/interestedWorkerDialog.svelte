@@ -473,7 +473,7 @@
 											<div class="mt-1 flex gap-4 text-sm text-green-700">
 												<span
 													>{$t('dashboard.interestedWorkerDialog.paymentAmount')}: {formatCurrency(
-														worker.successFeePayment.amount / 100,
+														worker.successFeePayment.amount,
 														worker.successFeePayment.currency
 													)}</span
 												>

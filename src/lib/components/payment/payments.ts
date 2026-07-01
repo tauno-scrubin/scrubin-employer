@@ -4,11 +4,11 @@ import { currentUser, scrubinClient } from '@/scrubinClient/client';
 import { get } from 'svelte/store';
 
 /**
- * Pricing-row amounts (pricingHunt.amount, success fees, …) are stored in cents.
- * Use this to render them as a major-unit price string in the UI.
+ * All pricing amounts (pricingHunt, pricingGeneral, pricingSuccess, success fees)
+ * are stored as full integers in the currency's major unit, not cents.
  */
-export function formatPriceAmount(amountInCents: number): string {
-	return (amountInCents / 100).toLocaleString('en-US', { maximumFractionDigits: 2 });
+export function formatPriceAmount(amount: number): string {
+	return amount.toLocaleString('en-US', { maximumFractionDigits: 2 });
 }
 
 export function getCurrencySymbol(currency: string) {
