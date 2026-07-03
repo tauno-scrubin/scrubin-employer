@@ -233,7 +233,12 @@
 			"unreadMessages": "unread",
 			"unanswered": "unanswered context questions",
 			"unansweredMessages": "messages need response",
-			"needsAttention": "need attention"
+			"needsAttention": "need attention",
+			"filterActive": "Active",
+			"filterAll": "All",
+			"previous": "Previous",
+			"next": "Next",
+			"pageOf": "Page {{current}} of {{total}}"
 		},
 		"companyStats": {
 			"title": "Company Overview",

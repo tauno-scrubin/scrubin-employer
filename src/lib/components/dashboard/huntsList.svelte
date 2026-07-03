@@ -9,6 +9,8 @@
 	import {
 		ArrowDown,
 		Bell,
+		ChevronLeft,
+		ChevronRight,
 		Clock,
 		History,
 		Loader2,
@@ -23,9 +25,36 @@
 
 	let isLoading = $state(false);
 	let hunts: Hunt[] = $state([]);
-	let showAllHunts = $state(false);
 	let showAllDrafts = $state(false);
 	let drafts: Requirements['requirements'][] = $state([]);
+
+	type HuntFilter = 'active' | 'all';
+	let huntFilter = $state<HuntFilter>('all');
+	let currentPage = $state(1);
+	const HUNTS_PER_PAGE = 9;
+
+	const filteredHunts = $derived(
+		huntFilter === 'active' ? hunts.filter((hunt) => hunt.status === 'ACTIVE') : hunts
+	);
+	const activeHuntCount = $derived(hunts.filter((hunt) => hunt.status === 'ACTIVE').length);
+	const totalHuntPages = $derived(Math.max(1, Math.ceil(filteredHunts.length / HUNTS_PER_PAGE)));
+	const displayedHunts = $derived(
+		filteredHunts.slice((currentPage - 1) * HUNTS_PER_PAGE, currentPage * HUNTS_PER_PAGE)
+	);
+
+	// Keep the page in range when the filter shrinks the list.
+	$effect(() => {
+		if (currentPage > totalHuntPages) currentPage = totalHuntPages;
+	});
+
+	function setHuntFilter(filter: HuntFilter) {
+		huntFilter = filter;
+		currentPage = 1;
+	}
+
+	function goToPage(page: number) {
+		currentPage = Math.min(Math.max(1, page), totalHuntPages);
+	}
 
 	// Drafts are a main-account workflow (creating new hunts). Sub-users don't
 	// see them and getAllRequirements would 403 on the backend anyway.
@@ -34,15 +63,16 @@
 	async function loadHunts() {
 		isLoading = true;
 		try {
-			const response = await scrubinClient.hunt.getHunts();
-			hunts = response.items.map((hunt) => ({
-				...hunt,
-				totalCandidates: hunt.totalCandidates,
-				totalInterestedCandidates: hunt.totalInterestedCandidates,
-				totalUnreadMessages: hunt.totalUnreadMessages,
-				totalUnansweredMessages: hunt.totalUnansweredMessages,
-				totalUnansweredQuestions: hunt.totalUnansweredQuestions
-			}));
+			// Fetch every page — the API paginates (default 20/page) and hunts beyond
+			// the first page would otherwise silently disappear from the list.
+			const PAGE_SIZE = 50;
+			const first = await scrubinClient.hunt.getHunts(0, PAGE_SIZE);
+			const allItems = [...first.items];
+			for (let page = 1; page < first.totalPages; page++) {
+				const next = await scrubinClient.hunt.getHunts(page, PAGE_SIZE);
+				allItems.push(...next.items);
+			}
+			hunts = allItems;
 			// Sort hunts: ACTIVE first, then by unanswered messages (highest priority), then other activity, then by date (newest first)
 			hunts.sort((a, b) => {
 				// First prioritize ACTIVE status
@@ -94,16 +124,8 @@
 		}
 	}
 
-	function toggleShowAllHunts() {
-		showAllHunts = !showAllHunts;
-	}
-
 	function toggleShowAllDrafts() {
 		showAllDrafts = !showAllDrafts;
-	}
-
-	function getDisplayedHunts() {
-		return showAllHunts ? hunts : hunts.slice(0, 6);
 	}
 
 	function getDisplayedDrafts() {
@@ -147,7 +169,31 @@
 	});
 </script>
 
-<h2 class="mb-4 text-2xl font-medium text-gray-800">{$t('dashboard.huntsList.headhunting')}</h2>
+<div class="mb-4 flex flex-wrap items-center justify-between gap-3">
+	<h2 class="text-2xl font-medium text-gray-800">{$t('dashboard.huntsList.headhunting')}</h2>
+	{#if !isLoading && hunts.length > 0}
+		<div class="flex items-center gap-1 rounded-lg bg-gray-100 p-1">
+			<button
+				type="button"
+				onclick={() => setHuntFilter('active')}
+				class="rounded-md px-3 py-1 text-sm font-medium transition-colors {huntFilter === 'active'
+					? 'bg-white text-gray-900 shadow-sm'
+					: 'text-gray-500 hover:text-gray-800'}"
+			>
+				{$t('dashboard.huntsList.filterActive')} ({activeHuntCount})
+			</button>
+			<button
+				type="button"
+				onclick={() => setHuntFilter('all')}
+				class="rounded-md px-3 py-1 text-sm font-medium transition-colors {huntFilter === 'all'
+					? 'bg-white text-gray-900 shadow-sm'
+					: 'text-gray-500 hover:text-gray-800'}"
+			>
+				{$t('dashboard.huntsList.filterAll')} ({hunts.length})
+			</button>
+		</div>
+	{/if}
+</div>
 <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
 	{#if isLoading}
 		<div class="col-span-full flex h-40 items-center justify-center">
@@ -169,8 +215,15 @@
 				</p>
 			{/if}
 		</div>
+	{:else if filteredHunts.length === 0}
+		<div class="col-span-full flex flex-col items-center justify-center py-12 text-center">
+			<div class="mb-3 rounded-full bg-blue-50/50 p-3">
+				<Search class="h-5 w-5 text-primary/60" />
+			</div>
+			<p class="text-sm font-medium text-gray-600">{$t('dashboard.huntsList.noActiveHunts')}</p>
+		</div>
 	{:else}
-		{#each getDisplayedHunts() as hunt}
+		{#each displayedHunts as hunt}
 		{@const totalAttention = (hunt.totalUnansweredMessages ?? 0) + (hunt.totalUnreadMessages ?? 0) + (hunt.totalUnansweredQuestions ?? 0) + (hunt.totalNeedAttentionMessages ?? 0)}
 			<Card.Root
 				onclick={() => handleViewHunt(hunt.huntId, hunt.status)}
@@ -239,11 +292,31 @@
 			</Card.Root>
 		{/each}
 
-		{#if hunts.length > 6}
-			<div class="col-span-full mt-2 flex justify-start">
-				<Button variant="link" onclick={toggleShowAllHunts} class="px-0 text-sm">
-					{showAllHunts ? $t('dashboard.huntsList.showLess') : $t('dashboard.huntsList.viewMore')}
-					<ArrowDown class="h-4 w-4 {showAllHunts ? 'rotate-180' : ''}" />
+		{#if totalHuntPages > 1}
+			<div class="col-span-full mt-2 flex items-center justify-center gap-3">
+				<Button
+					variant="outline"
+					size="sm"
+					disabled={currentPage === 1}
+					onclick={() => goToPage(currentPage - 1)}
+				>
+					<ChevronLeft class="h-4 w-4" />
+					{$t('dashboard.huntsList.previous')}
+				</Button>
+				<span class="text-sm text-gray-500">
+					{$t('dashboard.huntsList.pageOf', {
+						current: String(currentPage),
+						total: String(totalHuntPages)
+					})}
+				</span>
+				<Button
+					variant="outline"
+					size="sm"
+					disabled={currentPage === totalHuntPages}
+					onclick={() => goToPage(currentPage + 1)}
+				>
+					{$t('dashboard.huntsList.next')}
+					<ChevronRight class="h-4 w-4" />
 				</Button>
 			</div>
 		{/if}

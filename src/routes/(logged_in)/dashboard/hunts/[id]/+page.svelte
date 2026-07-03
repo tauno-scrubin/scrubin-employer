@@ -1048,8 +1048,8 @@
 					{:else}
 						<div class="grid grid-cols-7 gap-2">
 							{#each funnelData as item}
-								<div class="flex flex-col gap-1.5 rounded-md border p-2.5">
-									<div class="flex items-center gap-1.5">
+								<div class="flex h-full flex-col gap-1.5 rounded-md border p-2.5">
+									<div class="flex flex-1 items-start gap-1.5">
 										<h5 class="text-xs font-medium text-gray-500">
 											{$t(`${item.name}`)}
 										</h5>
@@ -1062,7 +1062,7 @@
 											</Tooltip.Content>
 										</Tooltip.Root>
 									</div>
-									<p class="text-2xl font-semibold leading-tight text-gray-900">{item.value}</p>
+									<p class="mt-auto text-2xl font-semibold leading-tight text-gray-900">{item.value}</p>
 								</div>
 							{/each}
 						</div>

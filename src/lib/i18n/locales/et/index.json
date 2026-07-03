@@ -233,7 +233,12 @@
 			"unreadMessages": "lugemata",
 			"unanswered": "vastamata kontekstiküsimused",
 			"unansweredMessages": "sõnumid vajavad vastust",
-			"needsAttention": "vajavad tähelepanu"
+			"needsAttention": "vajavad tähelepanu",
+			"filterActive": "Aktiivsed",
+			"filterAll": "Kõik",
+			"previous": "Eelmine",
+			"next": "Järgmine",
+			"pageOf": "Lehekülg {{current}} / {{total}}"
 		},
 		"companyStats": {
 			"title": "Ettevõtte ülevaade",
