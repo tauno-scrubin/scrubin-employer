@@ -70,7 +70,8 @@
 	},
 	"huntAccess": {
 		"sharedWithHeading": "Jagatud",
-		"emptyState": "Pole veel kellegagi jagatud.",
+		"mainAccountNote": "Omanikud ja adminid pääsevad automaatselt igale jahile ligi ja saavad selle teavitusi — jahti jagad ainult haldajatega.",
+		"emptyState": "Ühelegi haldajale pole veel sellele jahile ligipääsu antud.",
 		"addTeammate": "Lisa kolleeg",
 		"chooseUser": "Vali kolleeg",
 		"chooseRole": "Juurdepääsutase",
@@ -459,6 +460,10 @@
 				"profile": "Profiil",
 				"messages": "Sõnumid",
 				"notes": "Märkmed"
+			},
+			"downloadCv": {
+				"button": "Laadi CV alla",
+				"errorToast": "CV allalaadimine ebaõnnestus. Palun proovi uuesti."
 			},
 			"unreadMessages": "Lugemata sõnumid",
 			"pendingConfirmation": "Huvitatud, ootame uuendatud CV-d",

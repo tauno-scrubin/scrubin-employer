@@ -13,6 +13,7 @@
 		Award,
 		Briefcase,
 		Calendar,
+		Download,
 		Eye,
 		GraduationCap,
 		Mail,
@@ -51,6 +52,7 @@
 	let isProcessing = $state(false);
 	let actionError = $state('');
 	let isConfirmingNewness = $state(false);
+	let isDownloadingCv = $state(false);
 
 	// Available pipeline statuses
 	let availableStatuses = $derived.by(() => {
@@ -106,6 +108,33 @@
 			hasError = true;
 		} finally {
 			isLoading = false;
+		}
+	}
+
+	async function downloadCv() {
+		if (!worker || !huntId || !candidateId || isDownloadingCv) return;
+		isDownloadingCv = true;
+		try {
+			const blob = await scrubinClient.hunt.getInterestedCandidateCvPdf(huntId, candidateId);
+			const namePart = [worker.firstName, worker.lastName]
+				.filter(Boolean)
+				.join('-')
+				.toLowerCase()
+				.replace(/[^a-z0-9]+/g, '-')
+				.replace(/^-+|-+$/g, '');
+			const href = URL.createObjectURL(blob);
+			const a = document.createElement('a');
+			a.href = href;
+			a.download = `scrubin-cv-${namePart || candidateId}.pdf`;
+			document.body.appendChild(a);
+			a.click();
+			a.remove();
+			URL.revokeObjectURL(href);
+		} catch (error) {
+			console.error('Error downloading candidate CV:', error);
+			toast.error($t('dashboard.interestedWorkerDialog.downloadCv.errorToast'));
+		} finally {
+			isDownloadingCv = false;
 		}
 	}
 
@@ -274,6 +303,14 @@
 				</Tabs.List>
 
 				<Tabs.Content value="profile">
+					{#if type === 'offer'}
+						<div class="mb-3 flex justify-end">
+							<Button variant="outline" size="sm" onclick={downloadCv} disabled={isDownloadingCv}>
+								<Download class="mr-2 h-4 w-4" />
+								{$t('dashboard.interestedWorkerDialog.downloadCv.button')}
+							</Button>
+						</div>
+					{/if}
 					<Card.Root>
 						<Card.Content class="pt-6">
 							{#if worker.dateInterview}

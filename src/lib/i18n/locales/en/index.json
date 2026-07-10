@@ -70,7 +70,8 @@
 	},
 	"huntAccess": {
 		"sharedWithHeading": "Shared with",
-		"emptyState": "Not shared with anyone yet.",
+		"mainAccountNote": "Owners and admins can access every hunt and receive its notifications automatically — you only share hunts with managers.",
+		"emptyState": "No managers have been given access to this hunt yet.",
 		"addTeammate": "Add teammate",
 		"chooseUser": "Choose teammate",
 		"chooseRole": "Access level",
@@ -459,6 +460,10 @@
 				"profile": "Profile",
 				"messages": "Messages",
 				"notes": "Notes"
+			},
+			"downloadCv": {
+				"button": "Download CV",
+				"errorToast": "Could not download the CV. Please try again."
 			},
 			"unreadMessages": "Unread messages",
 			"pendingConfirmation": "Interested, waiting for updated CV",

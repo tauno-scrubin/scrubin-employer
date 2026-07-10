@@ -93,6 +93,10 @@ export interface MemberHuntAccessRow {
 	accessId?: number;
 }
 
+export interface HuntNotificationPreference {
+	muted: boolean;
+}
+
 export interface ShareLink {
 	id: number;
 	scope: ShareLinkScope;
@@ -1393,6 +1397,41 @@ class BaseResource {
 		}
 	}
 
+	// request() parses JSON; binary downloads (e.g. a generated PDF) need the raw Blob.
+	protected async requestBlob(url: string): Promise<Blob> {
+		await this.client.ensureAuth();
+
+		const language =
+			(typeof localStorage !== 'undefined' && localStorage.getItem('preferredLanguage')) || 'en';
+
+		const headers: Record<string, string> = {
+			Origin: PUBLIC_ORIGIN,
+			'Accept-Language': language,
+			Authorization: `Bearer ${this.client.authStore.token}`
+		};
+		if (this.client.authStore.token) {
+			headers['Cookie'] = this.client.authStore.exportToCookie();
+		}
+
+		const response = await fetch(url, {
+			method: 'GET',
+			headers,
+			credentials: 'include',
+			mode: 'cors'
+		});
+
+		if (!response.ok) {
+			const errorData = await response.json().catch(() => null);
+			throw new ApiError(
+				errorData?.message ||
+					`Request failed with status ${response.status}: ${response.statusText}`,
+				response.status
+			);
+		}
+
+		return response.blob();
+	}
+
 	async get<T = unknown>(params?: Record<string, string>): Promise<T> {
 		const url = new URL(this.path, this.client.baseUrl);
 		if (params) {
@@ -1840,6 +1879,15 @@ class HuntResource extends BaseResource {
 			'GET',
 			url.toString()
 		) as Promise<InterestedCandidateDetails>;
+	}
+
+	// GET /api/v1/hunts/{id}/interested-candidates/{candidateId}/cv-pdf → named CV PDF blob
+	async getInterestedCandidateCvPdf(id: number, candidateId: number): Promise<Blob> {
+		const url = new URL(
+			`/api/v1/hunts/${id}/interested-candidates/${candidateId}/cv-pdf`,
+			this.client.baseUrl
+		);
+		return this.requestBlob(url.toString());
 	}
 
 	async getInterestedCandidateStats(
@@ -2505,6 +2553,30 @@ class HuntAccessResource extends BaseResource {
 	async revokeShareLink(huntId: number, linkId: number): Promise<void> {
 		const url = new URL(`${this.path}/${huntId}/access/share-links/${linkId}`, this.client.baseUrl);
 		await this.request<void>('DELETE', url.toString(), undefined, true);
+	}
+
+	async getNotificationPreference(huntId: number): Promise<HuntNotificationPreference> {
+		const url = new URL(
+			`${this.path}/${huntId}/access/notifications/preference`,
+			this.client.baseUrl
+		);
+		return this.request<HuntNotificationPreference>(
+			'GET',
+			url.toString()
+		) as Promise<HuntNotificationPreference>;
+	}
+
+	async setNotificationPreference(
+		huntId: number,
+		muted: boolean
+	): Promise<HuntNotificationPreference> {
+		const url = new URL(
+			`${this.path}/${huntId}/access/notifications/preference`,
+			this.client.baseUrl
+		);
+		return this.request<HuntNotificationPreference>('PUT', url.toString(), {
+			muted
+		}) as Promise<HuntNotificationPreference>;
 	}
 }
 

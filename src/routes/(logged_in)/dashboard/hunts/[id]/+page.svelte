@@ -34,6 +34,7 @@
 	import {
 		ArrowLeft,
 		Bell,
+		BellOff,
 		Briefcase,
 		CheckCircle2,
 		ChevronDown,
@@ -72,6 +73,8 @@
 	let isLoadingCandidates = $state(false);
 	let unansweredQuestionsCount = $state(0);
 	let teamShareCount = $state(0);
+	let notificationsMuted = $state(false);
+	let isTogglingMute = $state(false);
 	let showInterestedWorkerDialog = $state(false);
 	let selectedCandidateId = $state(0);
 	let selectedCandidateType = $state<'offer' | 'apply'>('offer');
@@ -180,6 +183,15 @@
 					.catch(() => {
 						// Non-fatal; the tab still works once opened.
 					});
+
+				scrubinClient.huntAccess
+					.getNotificationPreference(hunt.huntId)
+					.then((pref) => {
+						notificationsMuted = pref.muted;
+					})
+					.catch(() => {
+						// Non-fatal; default to subscribed if the fetch fails.
+					});
 			}
 
 			// Fetch latest stats
@@ -206,6 +218,21 @@
 			isLoading = false;
 		}
 	});
+
+	async function toggleMuteNotifications() {
+		if (isTogglingMute) return;
+		const next = !notificationsMuted;
+		isTogglingMute = true;
+		try {
+			await scrubinClient.huntAccess.setNotificationPreference(hunt.huntId, next);
+			notificationsMuted = next;
+			toast.success(next ? $t('hunt.notificationsMuted') : $t('hunt.notificationsUnmuted'));
+		} catch (error) {
+			toast.error(error instanceof Error ? error.message : $t('hunt.notificationsUpdateFailed'));
+		} finally {
+			isTogglingMute = false;
+		}
+	}
 
 	$effect(() => {
 		if (hunt) {
@@ -931,6 +958,37 @@
 						>
 							{$t(`hunt.huntStatus.${hunt.status.toLowerCase()}`)}
 						</Badge>
+						{#if isMainAccountUser}
+							<Tooltip.Root>
+								<Tooltip.Trigger>
+									{#snippet child({ props })}
+										<Button
+											{...props}
+											onclick={toggleMuteNotifications}
+											disabled={isTogglingMute}
+											variant="outline"
+											size="sm"
+											class="ml-2 inline-flex items-center gap-2"
+										>
+											{#if notificationsMuted}
+												<BellOff class="h-4 w-4 text-muted-foreground" />
+												<span>{$t('hunt.notifications')} <strong>{$t('hunt.off')}</strong></span>
+											{:else}
+												<Bell class="h-4 w-4" />
+												<span>{$t('hunt.notifications')} <strong>{$t('hunt.on')}</strong></span>
+											{/if}
+										</Button>
+									{/snippet}
+								</Tooltip.Trigger>
+								<Tooltip.Content side="bottom">
+									<p class="max-w-[260px] text-xs">
+										{notificationsMuted
+											? $t('hunt.notificationsOffDesc')
+											: $t('hunt.notificationsOnDesc')}
+									</p>
+								</Tooltip.Content>
+							</Tooltip.Root>
+						{/if}
 						{#if hunt.status === 'ACTIVE' && canWriteHunt}
 							<DropdownMenu.Root>
 								<DropdownMenu.Trigger>
