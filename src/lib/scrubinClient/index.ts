@@ -494,6 +494,8 @@ export interface HuntDetail {
 	requiresActivation?: boolean;
 	/** The caller's effective role on this hunt. Main accounts get 'collaborator'. Sub-users get their per-hunt grant. */
 	huntRole?: HuntRole;
+	/** When false, the candidate offer-chat AI agent is switched off for this hunt: candidates get a single canned reply and are handed straight to the recruiter. Default true. */
+	aiChatEnabled: boolean;
 }
 
 /**
