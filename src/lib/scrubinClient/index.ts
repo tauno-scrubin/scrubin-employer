@@ -255,7 +255,8 @@ export interface Requirements {
 			amountStart: number | null;
 			amountEnd: number | null;
 			currency: string | null;
-			type: 'HOURLY';
+			type: string;
+			typeV2?: string;
 			amountText: string;
 			salaryExtra: string;
 		};

@@ -6,10 +6,12 @@
 		CompanyPlanSummary,
 		PlanType,
 		RequirementsWithInstructions,
-		Currency
+		Currency,
+		CodeNamePair
 	} from '@/scrubinClient';
 	import { scrubinClient } from '@/scrubinClient/client';
-	import { t } from '$lib/i18n';
+	import { locale, t } from '$lib/i18n';
+	import { get } from 'svelte/store';
 	import {
 		AlertCircle,
 		Check,
@@ -38,7 +40,20 @@
 		companyActivePlans = await scrubinClient.company.getActivePlans();
 		availableCurrencies = await scrubinClient.company.getCurrencies();
 		availableCountries = await scrubinClient.company.getCountries();
+		availableSalaryPeriods = await scrubinClient.data.getSalaryPeriods(get(locale));
 	});
+
+	// Resolve the localized salary-period label from its code (falls back to the raw code).
+	function salaryPeriodName(code: string | null | undefined): string {
+		if (!code) return '';
+		return availableSalaryPeriods.find((p) => p.code === code)?.name || code;
+	}
+
+	const salaryPeriodDisplay = $derived(
+		salaryPeriodName(
+			requirements.requirements.salary?.typeV2 || requirements.requirements.salary?.type
+		)
+	);
 
 	let currentQuestionIndex = $state(0);
 	let answers: Record<string, string> = $state({});
@@ -53,6 +68,7 @@
 	let showPlanActivationMessage = $state(false);
 	let availableCurrencies = $state<Currency[]>([]);
 	let availableCountries = $state<string[]>([]);
+	let availableSalaryPeriods = $state<CodeNamePair[]>([]);
 
 	// Collapsible questions state
 	let expandedQuestions = $state(new Set([0])); // Example: first 3 expanded by default
@@ -1051,8 +1067,8 @@
 											{:else if requirements.requirements.salary?.amountStart && !requirements.requirements.salary?.amountEnd}
 												{requirements.requirements.salary.amountStart}+
 											{/if}
-											{requirements.requirements.salary?.currency || ''} ({requirements.requirements
-												.salary?.type || ''})
+											{requirements.requirements.salary?.currency || ''}{#if salaryPeriodDisplay}
+												({salaryPeriodDisplay}){/if}
 										</div>
 									{/if}
 									{#if requirements.requirements.salary?.salaryExtra}
