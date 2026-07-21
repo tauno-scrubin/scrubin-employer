@@ -185,18 +185,20 @@
 					.catch(() => {
 						// Non-fatal; the tab still works once opened.
 					});
-
-				scrubinClient.huntAccess
-					.getNotificationPreference(hunt.huntId)
-					.then((pref) => {
-						notificationsSubscribed = pref.subscribed;
-						notificationsHasAssignees = pref.hasAssignees;
-						notificationsSource = pref.source;
-					})
-					.catch(() => {
-						// Non-fatal; default to subscribed if the fetch fails.
-					});
 			}
+
+			// Any hunt-accessible user (owner/admin/collaborator/viewer) can
+			// manage their own email preference for this hunt.
+			scrubinClient.huntAccess
+				.getNotificationPreference(hunt.huntId)
+				.then((pref) => {
+					notificationsSubscribed = pref.subscribed;
+					notificationsHasAssignees = pref.hasAssignees;
+					notificationsSource = pref.source;
+				})
+				.catch(() => {
+					// Non-fatal; default to subscribed if the fetch fails.
+				});
 
 			// Fetch latest stats
 			scrubinClient.hunt.getHuntStats(hunt.huntId).then((stats) => {
@@ -976,35 +978,33 @@
 						>
 							{$t(`hunt.huntStatus.${hunt.status.toLowerCase()}`)}
 						</Badge>
-						{#if isMainAccountUser}
-							<Tooltip.Root>
-								<Tooltip.Trigger>
-									{#snippet child({ props })}
-										<Button
-											{...props}
-											onclick={toggleMuteNotifications}
-											disabled={isTogglingMute}
-											variant="outline"
-											size="sm"
-											class="ml-2 inline-flex items-center gap-2"
-										>
-											{#if !notificationsSubscribed}
-												<BellOff class="h-4 w-4 text-muted-foreground" />
-												<span>{$t('hunt.notifications')} <strong>{$t('hunt.off')}</strong></span>
-											{:else}
-												<Bell class="h-4 w-4" />
-												<span>{$t('hunt.notifications')} <strong>{$t('hunt.on')}</strong></span>
-											{/if}
-										</Button>
-									{/snippet}
-								</Tooltip.Trigger>
-								<Tooltip.Content side="bottom">
-									<p class="max-w-[280px] text-xs">
-										{$t(notificationTooltipKey())}
-									</p>
-								</Tooltip.Content>
-							</Tooltip.Root>
-						{/if}
+						<Tooltip.Root>
+							<Tooltip.Trigger>
+								{#snippet child({ props })}
+									<Button
+										{...props}
+										onclick={toggleMuteNotifications}
+										disabled={isTogglingMute}
+										variant="outline"
+										size="sm"
+										class="ml-2 inline-flex items-center gap-2"
+									>
+										{#if !notificationsSubscribed}
+											<BellOff class="h-4 w-4 text-muted-foreground" />
+											<span>{$t('hunt.notifications')} <strong>{$t('hunt.off')}</strong></span>
+										{:else}
+											<Bell class="h-4 w-4" />
+											<span>{$t('hunt.notifications')} <strong>{$t('hunt.on')}</strong></span>
+										{/if}
+									</Button>
+								{/snippet}
+							</Tooltip.Trigger>
+							<Tooltip.Content side="bottom">
+								<p class="max-w-[280px] text-xs">
+									{$t(notificationTooltipKey())}
+								</p>
+							</Tooltip.Content>
+						</Tooltip.Root>
 						{#if hunt.status === 'ACTIVE' && canWriteHunt}
 							<DropdownMenu.Root>
 								<DropdownMenu.Trigger>
