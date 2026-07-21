@@ -62,7 +62,8 @@ if (canWriteOnHunt(user, hunt.huntRole)) {
 ## Slice layout
 
 - **State:** [`team-state.svelte.ts`](./team-state.svelte.ts) — runes-backed; owns `members` + pending `invites` and the mutation helpers, calls `refresh()` after each change. Per-hunt grants have their own state in [`../hunt-access/hunt-access-state.svelte.ts`](../hunt-access/hunt-access-state.svelte.ts).
-- **Components:** `InviteMemberDialog`, `ChangeMemberRoleDialog` (admin/manager only — `owner` is reserved for the founder), `MemberHuntAccessDialog` (manage a member's per-hunt grants). The per-hunt "Shared with" UI lives in `../hunt-access/` (`SharedWithPanel`, `AddTeammateDialog`).
+- **Components:** `InviteMemberDialog`, `ChangeMemberRoleDialog` (admin/manager only — `owner` is reserved for the founder), `MemberHuntAccessDialog` (manage a **manager's** per-hunt grants — not shown for admins, who already see every hunt). The per-hunt "Shared with" UI lives in `../hunt-access/` (`SharedWithPanel`, `AddTeammateDialog`) and lists owners/admins informationally plus grantable managers.
+- **Notifications:** When a hunt has collaborator assignees, system emails go to those collaborators by default. Owners/admins opt in per hunt via the Notifications bell (each main account configures only their own). See care-backend team README § Notification routing.
 - **Data:** `scrubinClient.team.*` (`listMembers`, `listInvites`, `createInvite`, `resendInvite`, `changeMemberRole`, …) and `scrubinClient.huntAccess.*` for per-hunt grants. Page: `routes/(logged_in)/dashboard/settings/team/`.
 
 ## Gotchas

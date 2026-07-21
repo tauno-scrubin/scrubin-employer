@@ -21,6 +21,10 @@
 		}
 	});
 
+	function memberLabel(m: { firstName?: string | null; lastName?: string | null; email: string }) {
+		return [m.firstName, m.lastName].filter(Boolean).join(' ') || m.email;
+	}
+
 	async function submit(event: SubmitEvent) {
 		event.preventDefault();
 		if (!userId) return;
@@ -45,7 +49,7 @@
 		<form onsubmit={submit} class="space-y-4">
 			<div class="space-y-1">
 				<Label for="teammate">{$t('huntAccess.chooseUser')}</Label>
-				{#if accessState.availableTeammates().length === 0}
+				{#if accessState.availableManagers().length === 0}
 					<p class="text-sm text-muted-foreground">
 						{accessState.hasNoTeammates()
 							? $t('huntAccess.noTeammatesYet')
@@ -59,10 +63,8 @@
 						required
 					>
 						<option value={null}>—</option>
-						{#each accessState.availableTeammates() as m (m.userId)}
-							<option value={m.userId}
-								>{[m.firstName, m.lastName].filter(Boolean).join(' ') || m.email} · {m.email}</option
-							>
+						{#each accessState.availableManagers() as m (m.userId)}
+							<option value={m.userId}>{memberLabel(m)} · {m.email}</option>
 						{/each}
 					</select>
 				{/if}
@@ -92,6 +94,26 @@
 					</label>
 				</div>
 			</div>
+
+			{#if accessState.mainAccounts().length > 0}
+				<div class="space-y-2 rounded-md border border-dashed p-3">
+					<div class="text-sm font-medium">{$t('huntAccess.mainAccountsHeading')}</div>
+					<p class="text-xs text-muted-foreground">{$t('huntAccess.mainAccountsNote')}</p>
+					<ul class="space-y-1.5">
+						{#each accessState.mainAccounts() as m (m.userId)}
+							<li class="flex items-baseline justify-between gap-2 text-sm">
+								<span class="truncate">{memberLabel(m)}</span>
+								<span class="shrink-0 text-xs text-muted-foreground">
+									{m.role === 'owner'
+										? $t('huntAccess.roleOwnerLabel')
+										: $t('huntAccess.roleAdminLabel')}
+								</span>
+							</li>
+						{/each}
+					</ul>
+				</div>
+			{/if}
+
 			<Dialog.Footer>
 				<Button type="button" variant="ghost" onclick={() => (open = false)}
 					>{$t('buttons.cancel')}</Button

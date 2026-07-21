@@ -94,7 +94,12 @@ export interface MemberHuntAccessRow {
 }
 
 export interface HuntNotificationPreference {
+	subscribed: boolean;
+	/** Legacy alias for !subscribed. */
 	muted: boolean;
+	hasAssignees: boolean;
+	defaultSubscribed: boolean;
+	source: 'default' | 'opt_in' | 'opt_out';
 }
 
 export interface ShareLink {
@@ -2571,14 +2576,14 @@ class HuntAccessResource extends BaseResource {
 
 	async setNotificationPreference(
 		huntId: number,
-		muted: boolean
+		subscribed: boolean
 	): Promise<HuntNotificationPreference> {
 		const url = new URL(
 			`${this.path}/${huntId}/access/notifications/preference`,
 			this.client.baseUrl
 		);
 		return this.request<HuntNotificationPreference>('PUT', url.toString(), {
-			muted
+			subscribed
 		}) as Promise<HuntNotificationPreference>;
 	}
 }

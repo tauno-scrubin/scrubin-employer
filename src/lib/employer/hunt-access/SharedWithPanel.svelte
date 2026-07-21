@@ -77,80 +77,109 @@
 			<p class="rounded-md bg-muted px-3 py-2 text-xs text-muted-foreground">
 				{$t('huntAccess.mainAccountNote')}
 			</p>
-			{#if accessState.grants.length === 0}
-				<p class="text-sm text-muted-foreground">{$t('huntAccess.emptyState')}</p>
-			{:else}
-				<ul class="divide-y">
-					{#each accessState.grants as g (g.id)}
-						<li class="flex items-center justify-between gap-2 py-2">
-							<div>
-								<div class="text-sm font-medium">
-									{[g.firstName, g.lastName].filter(Boolean).join(' ') || g.email}
+
+			{#if accessState.mainAccounts().length > 0}
+				<div class="space-y-2">
+					<div class="text-sm font-medium">{$t('huntAccess.mainAccountsHeading')}</div>
+					<ul class="divide-y rounded-md border">
+						{#each accessState.mainAccounts() as m (m.userId)}
+							<li class="flex items-center justify-between gap-2 px-3 py-2">
+								<div>
+									<div class="text-sm font-medium">
+										{[m.firstName, m.lastName].filter(Boolean).join(' ') || m.email}
+									</div>
+									<div class="text-xs text-muted-foreground">{m.email}</div>
 								</div>
-								<div class="text-xs text-muted-foreground">{g.email}</div>
-							</div>
-							<div class="flex items-center gap-2">
-								<DropdownMenu.Root>
-									<DropdownMenu.Trigger aria-label={$t('huntAccess.changeRoleAria')}>
-										<span
-											class="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium transition-colors {g.huntRole ===
-											'collaborator'
-												? 'bg-gray-900 text-white hover:bg-gray-800'
-												: 'bg-gray-100 text-gray-700 hover:bg-gray-200'}"
-										>
-											{$t(
-												g.huntRole === 'collaborator'
-													? 'huntAccess.roleCollaborator'
-													: 'huntAccess.roleViewer'
-											)}
-											<ChevronDown class="h-3 w-3 opacity-70" />
-										</span>
-									</DropdownMenu.Trigger>
-									<DropdownMenu.Content align="end" class="w-64">
-										<DropdownMenu.Item
-											onclick={() => onSelectRole(g.id, g.huntRole, 'collaborator')}
-										>
-											<div class="flex w-full items-start gap-2">
-												<Check
-													class="mt-0.5 h-4 w-4 flex-shrink-0 {g.huntRole === 'collaborator'
-														? 'opacity-100'
-														: 'opacity-0'}"
-												/>
-												<div class="flex flex-col">
-													<span class="text-sm font-medium"
-														>{$t('huntAccess.roleCollaborator')}</span
-													>
-													<span class="text-xs text-muted-foreground"
-														>{$t('huntAccess.roleCollaboratorHint')}</span
-													>
-												</div>
-											</div>
-										</DropdownMenu.Item>
-										<DropdownMenu.Item onclick={() => onSelectRole(g.id, g.huntRole, 'viewer')}>
-											<div class="flex w-full items-start gap-2">
-												<Check
-													class="mt-0.5 h-4 w-4 flex-shrink-0 {g.huntRole === 'viewer'
-														? 'opacity-100'
-														: 'opacity-0'}"
-												/>
-												<div class="flex flex-col">
-													<span class="text-sm font-medium">{$t('huntAccess.roleViewer')}</span>
-													<span class="text-xs text-muted-foreground"
-														>{$t('huntAccess.roleViewerHint')}</span
-													>
-												</div>
-											</div>
-										</DropdownMenu.Item>
-									</DropdownMenu.Content>
-								</DropdownMenu.Root>
-								<Button variant="ghost" size="sm" onclick={() => onRevoke(g.id)}
-									>{$t('huntAccess.revoke')}</Button
-								>
-							</div>
-						</li>
-					{/each}
-				</ul>
+								<span class="shrink-0 rounded-md bg-muted px-2 py-0.5 text-xs text-muted-foreground">
+									{m.role === 'owner'
+										? $t('huntAccess.roleOwnerLabel')
+										: $t('huntAccess.roleAdminLabel')}
+									· {$t('huntAccess.fullAccessBadge')}
+								</span>
+							</li>
+						{/each}
+					</ul>
+					<p class="text-xs text-muted-foreground">{$t('huntAccess.notificationsNote')}</p>
+				</div>
 			{/if}
+
+			<div class="space-y-2">
+				<div class="text-sm font-medium">{$t('huntAccess.managersHeading')}</div>
+				{#if accessState.grants.length === 0}
+					<p class="text-sm text-muted-foreground">{$t('huntAccess.emptyState')}</p>
+				{:else}
+					<ul class="divide-y">
+						{#each accessState.grants as g (g.id)}
+							<li class="flex items-center justify-between gap-2 py-2">
+								<div>
+									<div class="text-sm font-medium">
+										{[g.firstName, g.lastName].filter(Boolean).join(' ') || g.email}
+									</div>
+									<div class="text-xs text-muted-foreground">{g.email}</div>
+								</div>
+								<div class="flex items-center gap-2">
+									<DropdownMenu.Root>
+										<DropdownMenu.Trigger aria-label={$t('huntAccess.changeRoleAria')}>
+											<span
+												class="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium transition-colors {g.huntRole ===
+												'collaborator'
+													? 'bg-gray-900 text-white hover:bg-gray-800'
+													: 'bg-gray-100 text-gray-700 hover:bg-gray-200'}"
+											>
+												{$t(
+													g.huntRole === 'collaborator'
+														? 'huntAccess.roleCollaborator'
+														: 'huntAccess.roleViewer'
+												)}
+												<ChevronDown class="h-3 w-3 opacity-70" />
+											</span>
+										</DropdownMenu.Trigger>
+										<DropdownMenu.Content align="end" class="w-64">
+											<DropdownMenu.Item
+												onclick={() => onSelectRole(g.id, g.huntRole, 'collaborator')}
+											>
+												<div class="flex w-full items-start gap-2">
+													<Check
+														class="mt-0.5 h-4 w-4 flex-shrink-0 {g.huntRole === 'collaborator'
+															? 'opacity-100'
+															: 'opacity-0'}"
+													/>
+													<div class="flex flex-col">
+														<span class="text-sm font-medium"
+															>{$t('huntAccess.roleCollaborator')}</span
+														>
+														<span class="text-xs text-muted-foreground"
+															>{$t('huntAccess.roleCollaboratorHint')}</span
+														>
+													</div>
+												</div>
+											</DropdownMenu.Item>
+											<DropdownMenu.Item onclick={() => onSelectRole(g.id, g.huntRole, 'viewer')}>
+												<div class="flex w-full items-start gap-2">
+													<Check
+														class="mt-0.5 h-4 w-4 flex-shrink-0 {g.huntRole === 'viewer'
+															? 'opacity-100'
+															: 'opacity-0'}"
+													/>
+													<div class="flex flex-col">
+														<span class="text-sm font-medium">{$t('huntAccess.roleViewer')}</span>
+														<span class="text-xs text-muted-foreground"
+															>{$t('huntAccess.roleViewerHint')}</span
+														>
+													</div>
+												</div>
+											</DropdownMenu.Item>
+										</DropdownMenu.Content>
+									</DropdownMenu.Root>
+									<Button variant="ghost" size="sm" onclick={() => onRevoke(g.id)}
+										>{$t('huntAccess.revoke')}</Button
+									>
+								</div>
+							</li>
+						{/each}
+					</ul>
+				{/if}
+			</div>
 
 			{#if accessState.shareLinks.length > 0}
 				<div class="border-t pt-3">

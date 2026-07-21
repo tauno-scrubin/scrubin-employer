@@ -73,7 +73,9 @@
 	let isLoadingCandidates = $state(false);
 	let unansweredQuestionsCount = $state(0);
 	let teamShareCount = $state(0);
-	let notificationsMuted = $state(false);
+	let notificationsSubscribed = $state(true);
+	let notificationsHasAssignees = $state(false);
+	let notificationsSource = $state<'default' | 'opt_in' | 'opt_out'>('default');
 	let isTogglingMute = $state(false);
 	let showInterestedWorkerDialog = $state(false);
 	let selectedCandidateId = $state(0);
@@ -187,7 +189,9 @@
 				scrubinClient.huntAccess
 					.getNotificationPreference(hunt.huntId)
 					.then((pref) => {
-						notificationsMuted = pref.muted;
+						notificationsSubscribed = pref.subscribed;
+						notificationsHasAssignees = pref.hasAssignees;
+						notificationsSource = pref.source;
 					})
 					.catch(() => {
 						// Non-fatal; default to subscribed if the fetch fails.
@@ -221,17 +225,31 @@
 
 	async function toggleMuteNotifications() {
 		if (isTogglingMute) return;
-		const next = !notificationsMuted;
+		const next = !notificationsSubscribed;
 		isTogglingMute = true;
 		try {
-			await scrubinClient.huntAccess.setNotificationPreference(hunt.huntId, next);
-			notificationsMuted = next;
-			toast.success(next ? $t('hunt.notificationsMuted') : $t('hunt.notificationsUnmuted'));
+			const pref = await scrubinClient.huntAccess.setNotificationPreference(hunt.huntId, next);
+			notificationsSubscribed = pref.subscribed;
+			notificationsHasAssignees = pref.hasAssignees;
+			notificationsSource = pref.source;
+			toast.success(next ? $t('hunt.notificationsUnmuted') : $t('hunt.notificationsMuted'));
 		} catch (error) {
 			toast.error(error instanceof Error ? error.message : $t('hunt.notificationsUpdateFailed'));
 		} finally {
 			isTogglingMute = false;
 		}
+	}
+
+	function notificationTooltipKey(): string {
+		if (notificationsSource === 'opt_out') return 'hunt.notificationsDescOptOut';
+		if (notificationsHasAssignees) {
+			return notificationsSubscribed
+				? 'hunt.notificationsDescAssigneesOn'
+				: 'hunt.notificationsDescAssigneesOff';
+		}
+		return notificationsSubscribed
+			? 'hunt.notificationsDescNoAssigneesOn'
+			: 'hunt.notificationsOffDesc';
 	}
 
 	$effect(() => {
@@ -970,7 +988,7 @@
 											size="sm"
 											class="ml-2 inline-flex items-center gap-2"
 										>
-											{#if notificationsMuted}
+											{#if !notificationsSubscribed}
 												<BellOff class="h-4 w-4 text-muted-foreground" />
 												<span>{$t('hunt.notifications')} <strong>{$t('hunt.off')}</strong></span>
 											{:else}
@@ -981,10 +999,8 @@
 									{/snippet}
 								</Tooltip.Trigger>
 								<Tooltip.Content side="bottom">
-									<p class="max-w-[260px] text-xs">
-										{notificationsMuted
-											? $t('hunt.notificationsOffDesc')
-											: $t('hunt.notificationsOnDesc')}
+									<p class="max-w-[280px] text-xs">
+										{$t(notificationTooltipKey())}
 									</p>
 								</Tooltip.Content>
 							</Tooltip.Root>

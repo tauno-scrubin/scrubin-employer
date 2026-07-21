@@ -115,8 +115,10 @@
 									</td>
 									<td class="py-2 pr-4">{m.lastLogin ? $formatDateTime(m.lastLogin) : '—'}</td>
 									<td class="py-2 space-x-2 whitespace-nowrap">
-										{#if m.role !== 'owner'}
+										{#if m.role === 'manager'}
 											<Button variant="ghost" size="sm" onclick={() => openManageHunts(m)}>{$t('team.actions.manageHunts')}</Button>
+										{/if}
+										{#if m.role !== 'owner'}
 											<Button variant="ghost" size="sm" onclick={() => openChangeRole(m)}>{$t('team.actions.changeRole')}</Button>
 											<Button variant="ghost" size="sm" onclick={() => onRemove(m.id)}>{$t('team.actions.remove')}</Button>
 										{/if}

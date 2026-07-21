@@ -38,19 +38,30 @@ export class HuntAccessState {
 		}
 	}
 
-	availableTeammates(): TeamMember[] {
+	/** Managers who can still be granted per-hunt access. */
+	availableManagers(): TeamMember[] {
 		const granted = new Set(this.grants.map((g) => g.userId));
 		return this.teamMembers.filter((m) => !granted.has(m.userId) && m.role === 'manager');
 	}
 
+	/** Owners/admins — always have access; shown informationally, not grantable. */
+	mainAccounts(): TeamMember[] {
+		return this.teamMembers.filter((m) => m.role === 'owner' || m.role === 'admin');
+	}
+
 	/**
-	 * True when the company has no other team members to share with yet — the
-	 * caller is the only member (active invites haven't been accepted, so they
-	 * aren't in `teamMembers` yet). Distinguishes "no teammates exist" from
-	 * "every teammate already has access", which need different empty-state copy.
+	 * @deprecated Prefer `availableManagers`. Kept so older call sites keep compiling.
+	 */
+	availableTeammates(): TeamMember[] {
+		return this.availableManagers();
+	}
+
+	/**
+	 * True when the company has no managers to share with yet — distinguishes
+	 * "no managers exist" from "every manager already has access".
 	 */
 	hasNoTeammates(): boolean {
-		return this.teamMembers.length <= 1;
+		return this.teamMembers.filter((m) => m.role === 'manager').length === 0;
 	}
 
 	async grant(userId: number, huntRole: HuntRole) {
@@ -68,7 +79,12 @@ export class HuntAccessState {
 		await this.refresh();
 	}
 
-	async createShareLink(input: { scope: ShareLinkScope; candidateId?: number; expiresInDays: number; recipientEmail?: string }) {
+	async createShareLink(input: {
+		scope: ShareLinkScope;
+		candidateId?: number;
+		expiresInDays: number;
+		recipientEmail?: string;
+	}) {
 		const created = await scrubinClient.huntAccess.createShareLink(this.huntId, input);
 		this.lastCreatedUrl = created.url;
 		await this.refresh();
