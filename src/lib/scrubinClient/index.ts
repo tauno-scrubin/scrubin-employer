@@ -416,8 +416,17 @@ export interface ProgressiveRequirementsChatResponse {
 
 // New interfaces for the updated chat API
 export interface RequirementsChatRequest {
-	message: string;
+	message?: string;
 	chatSessionId?: string;
+	/** Private file id from portal.uploadFile — PDF/DOC/DOCX/image used as hunt prompt source. */
+	fileId?: number;
+}
+
+export interface UserFile {
+	id: number;
+	fileName: string;
+	contentType: string;
+	signedUrl: string;
 }
 
 export interface RequirementsChatResponse {
@@ -1507,6 +1516,13 @@ class PortalResource extends BaseResource {
 	async acceptTermsAndPolicy(): Promise<void> {
 		const url = new URL(`${this.path}/accept-terms-and-privacy`, this.client.baseUrl);
 		await this.request<void>('POST', url.toString(), null, true);
+	}
+
+	async uploadFile(file: File): Promise<UserFile> {
+		const formData = new FormData();
+		formData.append('file', file);
+		const url = new URL(`${this.path}/file`, this.client.baseUrl);
+		return this.request<UserFile>('POST', url.toString(), formData) as Promise<UserFile>;
 	}
 }
 

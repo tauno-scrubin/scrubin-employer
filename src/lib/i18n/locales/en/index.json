@@ -329,7 +329,7 @@
 		},
 		"searchView": {
 			"welcomeBack": "Welcome back, {{name}}!",
-			"searchPlaceholder": "I am looking for two General Practitioners from the UK with MRCGP qualifications who speak English. The salary for a full-time position is $300,000 per year.",
+			"searchPlaceholder": "I am looking for two General Practitioners from the UK with MRCGP qualifications who speak English. The salary for a full-time position is $300,000 per year. Or attach an existing job ad.",
 			"resultsFound": "Results found",
 			"totalMatchingCandidates": "Total matching candidates",
 			"processing": "Processing...",
@@ -341,7 +341,12 @@
 			"errorAnalyzingRequirements": "Error analyzing requirements: ",
 			"howScrubinWorks": "Learn how Scrubin works,",
 			"readHere": "read here",
-			"search": "Search"
+			"search": "Search",
+			"attachFile": "Attach file",
+			"attachFileHint": "Attach a PDF, DOC, DOCX, or image of an existing job ad — we'll extract the details and start building your hunt.",
+			"removeFile": "Remove file",
+			"unsupportedFileType": "Unsupported file type. Please upload a PDF, DOC, DOCX, or image.",
+			"fileTooLarge": "File is too large. Maximum size is 15 MB."
 		},
 		"pricing": {
 			"perMonth": "/month"

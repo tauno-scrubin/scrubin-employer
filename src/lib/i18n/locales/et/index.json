@@ -329,7 +329,7 @@
 		},
 		"searchView": {
 			"welcomeBack": "Tere tulemast tagasi, {{name}}!",
-			"searchPlaceholder": "Otsin kahte perearsti Ühendkuningriigist MRCGP kvalifikatsiooniga, kes räägivad inglise keelt. Täistööaja palk on 300 000 dollarit aastas.",
+			"searchPlaceholder": "Otsin kahte perearsti Ühendkuningriigist MRCGP kvalifikatsiooniga, kes räägivad inglise keelt. Täistööaja palk on 300 000 dollarit aastas. Või lisa olemasolev töökuulutus failina.",
 			"resultsFound": "Leitud tulemused",
 			"totalMatchingCandidates": "Sobivate kandidaatide koguarv",
 			"processing": "Töötlemine...",
@@ -341,7 +341,12 @@
 			"errorAnalyzingRequirements": "Viga nõuete analüüsimisel: ",
 			"howScrubinWorks": "Soovid teada kuidas Scrubin töötab?",
 			"readHere": "Loe siit lähemalt",
-			"search": "Otsi"
+			"search": "Otsi",
+			"attachFile": "Lisa fail",
+			"attachFileHint": "Lisa PDF, DOC, DOCX või pilt olemasolevast töökuulutusest — eraldame andmed ja alustame otsingu loomist.",
+			"removeFile": "Eemalda fail",
+			"unsupportedFileType": "Failitüüp ei ole toetatud. Laadi üles PDF, DOC, DOCX või pilt.",
+			"fileTooLarge": "Fail on liiga suur. Maksimaalne suurus on 15 MB."
 		},
 		"pricing": {
 			"perMonth": "/kuu"
