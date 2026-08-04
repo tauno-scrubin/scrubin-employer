@@ -5,7 +5,7 @@
 	import { visible } from '@/components/dashboard/overlay';
 	import type { Hunt, Requirements } from '@/scrubinClient';
 	import { currentUser, scrubinClient } from '@/scrubinClient/client';
-	import { isMainAccount } from '$lib/permissions';
+	import { canCreateHunts } from '$lib/permissions';
 	import {
 		ArrowDown,
 		Bell,
@@ -56,9 +56,10 @@
 		currentPage = Math.min(Math.max(1, page), totalHuntPages);
 	}
 
-	// Drafts are a main-account workflow (creating new hunts). Sub-users don't
-	// see them and getAllRequirements would 403 on the backend anyway.
-	const showDrafts = $derived(isMainAccount($currentUser));
+	// Drafts belong to the create-hunt workflow, so they follow the permission
+	// level. A full member sees only their own drafts (the backend scopes the
+	// list to the creator for sub-users); view-only members get a 403.
+	const showDrafts = $derived(canCreateHunts($currentUser));
 
 	async function loadHunts() {
 		isLoading = true;

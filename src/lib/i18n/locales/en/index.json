@@ -24,7 +24,17 @@
 		"roles": {
 			"owner": "Owner",
 			"admin": "Admin",
-			"manager": "Member"
+			"manager": "Member",
+			"managerFull": "Member · full access",
+			"managerView": "Member · view only"
+		},
+		"membership": {
+			"adminLabel": "Admin",
+			"adminHint": "Sees and acts on every hunt in the company and can manage the team. (Billing stays with the owner.)",
+			"managerFullLabel": "Member — full access",
+			"managerFullHint": "Sees only the hunts you share with them, but can edit those hunts and their ads, and create new hunts. Cannot manage the team or billing.",
+			"managerViewLabel": "Member — view only",
+			"managerViewHint": "Sees only the hunts you share with them and works with candidates there. Cannot edit hunts or create new ones."
 		},
 		"actions": {
 			"changeRole": "Change role",
@@ -36,10 +46,6 @@
 		"changeRoleDialog": {
 			"title": "Change role for {{name}}",
 			"description": "This controls company-wide permissions. Per-hunt access is managed separately.",
-			"adminLabel": "Admin",
-			"adminHint": "Sees and acts on every hunt in the company and can manage the team. (Billing stays with the owner.)",
-			"managerLabel": "Member",
-			"managerHint": "Starts with no access — you share specific hunts and pick collaborator (can act) or viewer (read-only) for each.",
 			"save": "Save"
 		},
 		"manageHuntsDialog": {
@@ -58,14 +64,16 @@
 			"title": "Invite teammate",
 			"emailLabel": "Email",
 			"roleLabel": "Role",
-			"submit": "Send invite",
-			"adminHint": "Can manage the team and see and act on every hunt in the company. (Only the owner handles billing.)",
-			"managerHint": "See only the hunts you share with them — for each hunt you pick collaborator (can act) or viewer (read-only)."
+			"submit": "Send invite"
 		},
 		"confirmRemove": "Remove this member from the team?",
 		"confirmRevoke": "Revoke this invite?",
 		"hunts": {
 			"subUserEmptyState": "No hunts shared with you yet. The main account at {{brand}} can share a hunt with you from the hunt page."
+		},
+		"errors": {
+			"cannotCreateHunts": "Your account has view-only access and cannot create or edit hunts.",
+			"needActivePlanAskOwner": "This company has no active plan yet. Ask the account owner to set one up before activating a hunt."
 		}
 	},
 	"huntAccess": {
@@ -317,7 +325,7 @@
 		"subUser": {
 			"welcomeTitle": "Welcome, {{name}}",
 			"welcomeSubtitle": "Below you'll find the hunts shared with you by the account holder, {{holder}}.",
-				"welcomeContact": "If you need to edit, add, or change anything, please contact {{holder}} or reach out to us using the help button."
+			"welcomeContact": "If you need to edit, add, or change anything, please contact {{holder}} or reach out to us using the help button."
 		},
 		"searchView": {
 			"welcomeBack": "Welcome back, {{name}}!",

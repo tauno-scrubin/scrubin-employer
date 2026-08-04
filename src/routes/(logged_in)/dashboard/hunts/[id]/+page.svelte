@@ -16,7 +16,7 @@
 	import { ApiError } from '$lib/scrubinClient';
 	import type { Currency as Cur, HuntStats, InterestedCandidate } from '$lib/scrubinClient';
 	import { currentUser, scrubinClient } from '$lib/scrubinClient/client';
-	import { canWriteOnHunt, isMainAccount } from '$lib/permissions';
+	import { canEditHuntDetails, canWriteOnHunt, isMainAccount } from '$lib/permissions';
 	import InterestedWorkerDialog from '@/components/dashboard/interestedWorkerDialog.svelte';
 	import QuestionsInHunt from '@/components/dashboard/questionsInHunt.svelte';
 	import ScreeningQuestionsInHunt from '@/components/dashboard/screeningQuestionsInHunt.svelte';
@@ -76,6 +76,7 @@
 	let notificationsSubscribed = $state(true);
 	let notificationsHasAssignees = $state(false);
 	let notificationsSource = $state<'default' | 'opt_in' | 'opt_out'>('default');
+	let notificationsOwnerBlocked = $state(false);
 	let isTogglingMute = $state(false);
 	let showInterestedWorkerDialog = $state(false);
 	let selectedCandidateId = $state(0);
@@ -106,6 +107,9 @@
 	const isMainAccountUser = $derived(isMainAccount($currentUser));
 	const huntCallerRole = $derived(hunt?.huntRole ?? null);
 	const canWriteHunt = $derived(canWriteOnHunt($currentUser, huntCallerRole));
+	// Editing the requirements / publishing the ad additionally needs the `full`
+	// permission level — a view-only member can work candidates but not the hunt.
+	const canEditHunt = $derived(canEditHuntDetails($currentUser, huntCallerRole));
 	let editableRequirements = $state<{
 		jobTitle: string;
 		jobDescription: string;
@@ -195,6 +199,7 @@
 					notificationsSubscribed = pref.subscribed;
 					notificationsHasAssignees = pref.hasAssignees;
 					notificationsSource = pref.source;
+					notificationsOwnerBlocked = pref.ownerBlockedByAssignees;
 				})
 				.catch(() => {
 					// Non-fatal; default to subscribed if the fetch fails.
@@ -226,7 +231,7 @@
 	});
 
 	async function toggleMuteNotifications() {
-		if (isTogglingMute) return;
+		if (isTogglingMute || notificationsOwnerBlocked) return;
 		const next = !notificationsSubscribed;
 		isTogglingMute = true;
 		try {
@@ -234,6 +239,7 @@
 			notificationsSubscribed = pref.subscribed;
 			notificationsHasAssignees = pref.hasAssignees;
 			notificationsSource = pref.source;
+			notificationsOwnerBlocked = pref.ownerBlockedByAssignees;
 			toast.success(next ? $t('hunt.notificationsUnmuted') : $t('hunt.notificationsMuted'));
 		} catch (error) {
 			toast.error(error instanceof Error ? error.message : $t('hunt.notificationsUpdateFailed'));
@@ -243,6 +249,7 @@
 	}
 
 	function notificationTooltipKey(): string {
+		if (notificationsOwnerBlocked) return 'hunt.notificationsDescOwnerBlocked';
 		if (notificationsSource === 'opt_out') return 'hunt.notificationsDescOptOut';
 		if (notificationsHasAssignees) {
 			return notificationsSubscribed
@@ -984,7 +991,7 @@
 									<Button
 										{...props}
 										onclick={toggleMuteNotifications}
-										disabled={isTogglingMute}
+										disabled={isTogglingMute || notificationsOwnerBlocked}
 										variant="outline"
 										size="sm"
 										class="ml-2 inline-flex items-center gap-2"
@@ -1038,7 +1045,7 @@
 					<!-- {/if} -->
 				</div>
 
-				{#if hunt.status === 'ACTIVE' && !hunt.hasPublicAd && isMainAccountUser}
+				{#if hunt.status === 'ACTIVE' && !hunt.hasPublicAd && canEditHunt}
 					<Alert.Root class="border-border bg-background text-foreground">
 						<div class="flex items-start justify-between gap-3">
 							<div>
@@ -1099,6 +1106,7 @@
 						completionPercentage={100}
 						hideActivation={hunt.planType === 'hunt_subscription'}
 						canManagePlans={isMainAccountUser}
+						canEdit={canEditHunt}
 					/>
 				</div>
 			</div>

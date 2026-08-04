@@ -12,7 +12,7 @@
 	import InviteMemberDialog from '$lib/employer/team/InviteMemberDialog.svelte';
 	import ChangeMemberRoleDialog from '$lib/employer/team/ChangeMemberRoleDialog.svelte';
 	import MemberHuntAccessDialog from '$lib/employer/team/MemberHuntAccessDialog.svelte';
-	import type { TeamMember } from '$lib/scrubinClient';
+	import type { CompanyPermissionLevel, CompanyUserRole, TeamMember } from '$lib/scrubinClient';
 	import { goto } from '$app/navigation';
 
 	let inviteOpen = $state(false);
@@ -39,8 +39,9 @@
 		await teamState.refresh();
 	});
 
-	function roleLabel(role: 'owner' | 'admin' | 'manager') {
-		return $t(`team.roles.${role}`);
+	function roleLabel(role: CompanyUserRole, permissionLevel: CompanyPermissionLevel | undefined) {
+		if (role !== 'manager') return $t(`team.roles.${role}`);
+		return permissionLevel === 'full' ? $t('team.roles.managerFull') : $t('team.roles.managerView');
 	}
 
 	async function onRemove(memberId: number) {
@@ -111,7 +112,7 @@
 									<td class="py-2 pr-4">{[m.firstName, m.lastName].filter(Boolean).join(' ') || '—'}</td>
 									<td class="py-2 pr-4">{m.email}</td>
 									<td class="py-2 pr-4">
-										<Badge variant={m.role === 'owner' ? 'default' : 'secondary'}>{roleLabel(m.role)}</Badge>
+										<Badge variant={m.role === 'owner' ? 'default' : 'secondary'}>{roleLabel(m.role, m.permissionLevel)}</Badge>
 									</td>
 									<td class="py-2 pr-4">{m.lastLogin ? $formatDateTime(m.lastLogin) : '—'}</td>
 									<td class="py-2 space-x-2 whitespace-nowrap">
@@ -154,7 +155,7 @@
 							{#each teamState.invites as i (i.id)}
 								<tr class="border-t">
 									<td class="py-2 pr-4">{i.email}</td>
-									<td class="py-2 pr-4"><Badge variant="secondary">{roleLabel(i.role)}</Badge></td>
+									<td class="py-2 pr-4"><Badge variant="secondary">{roleLabel(i.role, i.permissionLevel)}</Badge></td>
 									<td class="py-2 pr-4">{$formatDate(i.expiresAt)}</td>
 									<td class="py-2 space-x-2">
 										<Button variant="ghost" size="sm" onclick={() => onResend(i.id)}>{$t('team.actions.resend')}</Button>

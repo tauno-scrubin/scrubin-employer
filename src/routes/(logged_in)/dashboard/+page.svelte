@@ -7,16 +7,17 @@
 	import * as Card from '$lib/components/ui/card/index.js';
 	import type { WorkerLookup } from '@/scrubinClient';
 	import { currentUser, scrubinClient } from '@/scrubinClient/client';
-	import { isMainAccount } from '$lib/permissions';
+	import { canCreateHunts, isMainAccount } from '$lib/permissions';
 	import { t } from '$lib/i18n';
 	import { Users } from 'lucide-svelte';
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
 
-	// Multi-user: CompanyStats / SimpleSearchView fetch plans + billing +
-	// worker-lookups — sub-users 403 on those. Hide the whole strip for
-	// non-main-account; their dashboard is just the hunts list.
-	const showMainAccountStrip = $derived(isMainAccount($currentUser));
+	// Multi-user: the search strip starts the create-hunt flow, so it follows the
+	// permission level (main accounts + full members). CompanyStats stays
+	// main-account only — /hunts/company-stats is @MainAccountOnly on the backend.
+	const showSearchStrip = $derived(canCreateHunts($currentUser));
+	const showCompanyStats = $derived(isMainAccount($currentUser));
 
 	let searchViewComponent: SimpleSearchView;
 	let isLoading = $state(false);
@@ -36,9 +37,9 @@
 	}
 
 	onMount(() => {
-		// Skip search-history fetch for sub-users — they don't see the search UI
-		// and the underlying endpoint is main-account scoped.
-		if (showMainAccountStrip) {
+		// Skip the search-history fetch for view-only members — they don't see the
+		// search UI at all.
+		if (showSearchStrip) {
 			loadSearchHistory();
 		}
 
@@ -65,8 +66,8 @@
 <SEO title="Employer | Scrubin" description="" type="website" />
 
 <div class="mx-auto w-full max-w-screen-xl space-y-6">
-	<!-- Search View — only main account can source candidates -->
-	{#if showMainAccountStrip}
+	<!-- Search View — main accounts and full-access members can source candidates -->
+	{#if showSearchStrip}
 		<SimpleSearchView bind:this={searchViewComponent} />
 	{:else if $currentUser?.team}
 		<!-- Sub-user welcome banner — fills the empty space where the search/stats strip would be -->
@@ -97,7 +98,7 @@
 	{/if}
 
 	{#if !isSearchActive}
-		{#if showMainAccountStrip}
+		{#if showCompanyStats}
 			<CompanyStats />
 		{/if}
 		<HuntsList />

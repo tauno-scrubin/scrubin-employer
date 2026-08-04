@@ -48,7 +48,11 @@
 		// Plan selection / activation is a billing action — main-account only on
 		// the backend. Sub-users (collaborators) can't read plans or activate from
 		// requirements, so hide the plan banner for them entirely.
-		canManagePlans = true
+		canManagePlans = true,
+		// Editing the requirements is gated on the caller's permission level plus
+		// write access to this hunt (see canEditHuntDetails). When false every edit
+		// affordance is hidden — the backend rejects the write anyway.
+		canEdit = true
 	} = $props();
 
 	let companyActivePlans = $state<CompanyPlanSummary[]>([]);
@@ -263,6 +267,7 @@
 	}
 
 	function startEditing(field: keyof typeof editableFields) {
+		if (!canEdit) return;
 		Object.keys(editableFields).forEach(
 			(key) => (editableFields[key as keyof typeof editableFields] = false)
 		);
@@ -564,11 +569,13 @@
 							>
 								{requirements.jobTitle || $t('requirementsDetails.labels.untitledRole')}
 							</p>
-							<button
-								class="opacity-0 transition-opacity duration-200 group-hover:opacity-100"
-								onclick={() => startEditing('jobTitle')}
-								><Pen class="h-3.5 w-3.5 text-gray-600 hover:text-primary" /></button
-							>
+							{#if canEdit}
+								<button
+									class="opacity-0 transition-opacity duration-200 group-hover:opacity-100"
+									onclick={() => startEditing('jobTitle')}
+									><Pen class="h-3.5 w-3.5 text-gray-600 hover:text-primary" /></button
+								>
+							{/if}
 						</div>
 					{/if}
 				</div>
@@ -581,7 +588,7 @@
 							<p class="text-[11px] uppercase tracking-wide text-muted-foreground">
 								{$t('hunt.professions')}
 							</p>
-							{#if !editableFields.professions}
+							{#if canEdit && !editableFields.professions}
 								<button
 									class="opacity-0 transition-opacity duration-200 group-hover:opacity-100"
 									onclick={() => startEditing('professions')}
@@ -636,7 +643,7 @@
 							<p class="text-[11px] uppercase tracking-wide text-muted-foreground">
 								{$t('hunt.specialization')}
 							</p>
-							{#if !editableFields.specialization}
+							{#if canEdit && !editableFields.specialization}
 								<button
 									class="opacity-0 transition-opacity duration-200 group-hover:opacity-100"
 									onclick={() => startEditing('specialization')}
@@ -691,7 +698,7 @@
 							<p class="text-[11px] uppercase tracking-wide text-muted-foreground">
 								{$t('hunt.workExperience')}
 							</p>
-							{#if !editableFields.jobRequiredWorkExperience}
+							{#if canEdit && !editableFields.jobRequiredWorkExperience}
 								<button
 									class="opacity-0 transition-opacity duration-200 group-hover:opacity-100"
 									onclick={() => startEditing('jobRequiredWorkExperience')}
@@ -743,7 +750,7 @@
 							<p class="text-[11px] uppercase tracking-wide text-muted-foreground">
 								{$t('hunt.location')}
 							</p>
-							{#if !editableFields.country && !editableFields.city && !editableFields.stateProvinceRegion}
+							{#if canEdit && !editableFields.country && !editableFields.city && !editableFields.stateProvinceRegion}
 								<button
 									class="opacity-0 transition-opacity duration-200 group-hover:opacity-100"
 									onclick={() => {
@@ -848,7 +855,7 @@
 							<p class="text-[11px] uppercase tracking-wide text-muted-foreground">
 								{$t('hunt.languages')}
 							</p>
-							{#if !editableFields.jobRequiredLanguages}
+							{#if canEdit && !editableFields.jobRequiredLanguages}
 								<button
 									class="opacity-0 transition-opacity duration-200 group-hover:opacity-100"
 									onclick={() => startEditing('jobRequiredLanguages')}
@@ -905,7 +912,7 @@
 							<p class="text-[11px] uppercase tracking-wide text-muted-foreground">
 								{$t('hunt.salary')}
 							</p>
-							{#if !editableFields.salaryStart && !editableFields.salaryEnd && !editableFields.salaryCurrency && !editableFields.salaryType && !editableFields.salaryExtra}
+							{#if canEdit && !editableFields.salaryStart && !editableFields.salaryEnd && !editableFields.salaryCurrency && !editableFields.salaryType && !editableFields.salaryExtra}
 								<button
 									class="opacity-0 transition-opacity duration-200 group-hover:opacity-100"
 									onclick={() => {
@@ -1041,7 +1048,7 @@
 							<p class="text-[11px] uppercase tracking-wide text-muted-foreground">
 								{$t('requirementsDetails.fields.targetCountries')}
 							</p>
-							{#if !editableFields.targetOnlyCountries && !editableFields.targetPreferredCountries}
+							{#if canEdit && !editableFields.targetOnlyCountries && !editableFields.targetPreferredCountries}
 								<button
 									class="opacity-0 transition-opacity duration-200 group-hover:opacity-100"
 									onclick={() => {
@@ -1181,7 +1188,7 @@
 					<div class="group w-full max-w-full rounded p-3 hover:bg-gray-50">
 						<div class="mb-2 flex items-center gap-2">
 							<h4 class="text-base font-medium">{$t('hunt.jobDescription')}</h4>
-							{#if !editableFields.jobDescription}
+							{#if canEdit && !editableFields.jobDescription}
 								<button
 									class="opacity-0 transition-opacity duration-200 group-hover:opacity-100"
 									onclick={() => startEditing('jobDescription')}
@@ -1238,7 +1245,7 @@
 					<div class="group w-full max-w-full rounded p-3 hover:bg-gray-50">
 						<div class="mb-2 flex items-center gap-2">
 							<h4 class="text-base font-medium">{$t('hunt.requiredQualifications')}</h4>
-							{#if !editableFields.jobRequiredQualifications}
+							{#if canEdit && !editableFields.jobRequiredQualifications}
 								<button
 									class="opacity-0 transition-opacity duration-200 group-hover:opacity-100"
 									onclick={() => startEditing('jobRequiredQualifications')}
@@ -1298,7 +1305,7 @@
 							<h4 class="text-base font-medium">
 								{$t('requirementsDetails.fields.companyContext')}
 							</h4>
-							{#if !editableFields.companyContext}
+							{#if canEdit && !editableFields.companyContext}
 								<button
 									class="opacity-0 transition-opacity duration-200 group-hover:opacity-100"
 									onclick={() => startEditing('companyContext')}
@@ -1352,7 +1359,7 @@
 							<h4 class="text-base font-medium">
 								{$t('requirementsDetails.fields.hiringContext')}
 							</h4>
-							{#if !editableFields.hiringContext}
+							{#if canEdit && !editableFields.hiringContext}
 								<button
 									class="opacity-0 transition-opacity duration-200 group-hover:opacity-100"
 									onclick={() => startEditing('hiringContext')}

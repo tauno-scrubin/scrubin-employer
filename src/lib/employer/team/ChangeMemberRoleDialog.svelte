@@ -4,7 +4,13 @@
 	import { Label } from '$lib/components/ui/label';
 	import { t } from '$lib/i18n';
 	import { toast } from 'svelte-sonner';
-	import type { CompanyUserRole, TeamMember } from '$lib/scrubinClient';
+	import type { TeamMember } from '$lib/scrubinClient';
+	import {
+		MEMBERSHIP_CHOICES,
+		membershipFromChoice,
+		membershipToChoice,
+		type MembershipChoice
+	} from './membership-choice';
 	import { teamState } from './team-state.svelte';
 
 	let {
@@ -15,14 +21,12 @@
 		member: TeamMember | null;
 	} = $props();
 
-	type ChangeableRole = Extract<CompanyUserRole, 'admin' | 'manager'>;
-
-	let selected = $state<ChangeableRole>('manager');
+	let selected = $state<MembershipChoice>('manager-view');
 	let submitting = $state(false);
 
 	$effect(() => {
 		if (open && member) {
-			selected = (member.role === 'admin' ? 'admin' : 'manager') as ChangeableRole;
+			selected = membershipToChoice(member.role, member.permissionLevel);
 		}
 	});
 
@@ -30,16 +34,20 @@
 		member ? [member.firstName, member.lastName].filter(Boolean).join(' ') || member.email : ''
 	);
 
+	const unchanged = $derived(
+		!!member && selected === membershipToChoice(member.role, member.permissionLevel)
+	);
+
 	async function submit(event: SubmitEvent) {
 		event.preventDefault();
-		if (!member) return;
-		if (selected === member.role) {
+		if (!member || unchanged) {
 			open = false;
 			return;
 		}
 		submitting = true;
 		try {
-			await teamState.changeRole(member.id, selected);
+			const { role, permissionLevel } = membershipFromChoice(selected);
+			await teamState.changeRole(member.id, role, permissionLevel);
 			toast.success($t('team.actions.changeRole'));
 			open = false;
 		} catch (e) {
@@ -59,24 +67,23 @@
 			</Dialog.Header>
 			<form onsubmit={submit} class="space-y-4">
 				<div class="space-y-2">
-					<label class="flex items-start gap-3 rounded-md border p-3 cursor-pointer hover:bg-muted/50">
-						<input type="radio" bind:group={selected} value="admin" class="mt-1" />
-						<div>
-							<div class="text-sm font-medium">{$t('team.changeRoleDialog.adminLabel')}</div>
-							<div class="text-xs text-muted-foreground">{$t('team.changeRoleDialog.adminHint')}</div>
-						</div>
-					</label>
-					<label class="flex items-start gap-3 rounded-md border p-3 cursor-pointer hover:bg-muted/50">
-						<input type="radio" bind:group={selected} value="manager" class="mt-1" />
-						<div>
-							<div class="text-sm font-medium">{$t('team.changeRoleDialog.managerLabel')}</div>
-							<div class="text-xs text-muted-foreground">{$t('team.changeRoleDialog.managerHint')}</div>
-						</div>
-					</label>
+					{#each MEMBERSHIP_CHOICES as option (option.value)}
+						<label
+							class="flex cursor-pointer items-start gap-3 rounded-md border p-3 hover:bg-muted/50"
+						>
+							<input type="radio" bind:group={selected} value={option.value} class="mt-1" />
+							<div>
+								<div class="text-sm font-medium">{$t(option.labelKey)}</div>
+								<div class="text-xs text-muted-foreground">{$t(option.hintKey)}</div>
+							</div>
+						</label>
+					{/each}
 				</div>
 				<Dialog.Footer>
-					<Button type="button" variant="ghost" onclick={() => (open = false)}>{$t('buttons.cancel')}</Button>
-					<Button type="submit" disabled={submitting || selected === member.role}>
+					<Button type="button" variant="ghost" onclick={() => (open = false)}
+						>{$t('buttons.cancel')}</Button
+					>
+					<Button type="submit" disabled={submitting || unchanged}>
 						{submitting ? '…' : $t('team.changeRoleDialog.save')}
 					</Button>
 				</Dialog.Footer>

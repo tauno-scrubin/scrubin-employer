@@ -1,4 +1,9 @@
-import type { CompanyUserRole, TeamInvite, TeamMember } from '$lib/scrubinClient';
+import type {
+	CompanyPermissionLevel,
+	CompanyUserRole,
+	TeamInvite,
+	TeamMember
+} from '$lib/scrubinClient';
 import { scrubinClient } from '$lib/scrubinClient/client';
 
 /**
@@ -30,8 +35,8 @@ class TeamState {
 		}
 	}
 
-	async invite(email: string, role: CompanyUserRole) {
-		await scrubinClient.team.createInvite(email, role);
+	async invite(email: string, role: CompanyUserRole, permissionLevel?: CompanyPermissionLevel) {
+		await scrubinClient.team.createInvite(email, role, permissionLevel);
 		await this.refresh();
 	}
 
@@ -45,8 +50,12 @@ class TeamState {
 		await this.refresh();
 	}
 
-	async changeRole(memberId: number, role: CompanyUserRole) {
-		await scrubinClient.team.changeMemberRole(memberId, role);
+	async changeRole(
+		memberId: number,
+		role: CompanyUserRole,
+		permissionLevel?: CompanyPermissionLevel
+	) {
+		await scrubinClient.team.changeMemberRole(memberId, role, permissionLevel);
 		await this.refresh();
 	}
 

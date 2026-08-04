@@ -25,6 +25,12 @@ export interface JwtPayload {
 // Removed Advertiser, Campaign, CampaignDetails, and AdvertiserProfile
 
 export type CompanyUserRole = 'owner' | 'admin' | 'manager';
+/**
+ * How much a `manager` sub-user may do on the hunts shared with them.
+ * `view` = today's sub-user (candidates, chat, lifecycle); `full` adds editing
+ * hunt requirements / ads and creating new hunts. Main accounts are always full.
+ */
+export type CompanyPermissionLevel = 'view' | 'full';
 export type HuntRole = 'collaborator' | 'viewer';
 export type ShareLinkScope = 'hunt' | 'candidate';
 
@@ -32,6 +38,9 @@ export interface PortalUserTeam {
 	companyId: number;
 	companyBrandName: string;
 	role: CompanyUserRole;
+	permissionLevel: CompanyPermissionLevel;
+	/** Derived server-side: may create hunts and edit hunt requirements / ads. */
+	canManageHunts: boolean;
 	isMainAccount: boolean;
 	assignmentId: number | null;
 	/** The main-account holder's name, shown to sub-users. Null for main accounts. */
@@ -63,6 +72,7 @@ export interface TeamMember {
 	firstName?: string;
 	lastName?: string;
 	role: CompanyUserRole;
+	permissionLevel: CompanyPermissionLevel;
 	isPrimary: boolean;
 	lastLogin?: string | null;
 }
@@ -71,6 +81,7 @@ export interface TeamInvite {
 	id: number;
 	email: string;
 	role: CompanyUserRole;
+	permissionLevel: CompanyPermissionLevel;
 	expiresAt: string;
 	createdAt: string;
 }
@@ -100,6 +111,7 @@ export interface HuntNotificationPreference {
 	hasAssignees: boolean;
 	defaultSubscribed: boolean;
 	source: 'default' | 'opt_in' | 'opt_out';
+	ownerBlockedByAssignees: boolean;
 }
 
 export interface ShareLink {
@@ -2475,9 +2487,16 @@ class TeamResource extends BaseResource {
 		>;
 	}
 
-	async changeMemberRole(id: number, role: CompanyUserRole): Promise<TeamMember> {
+	async changeMemberRole(
+		id: number,
+		role: CompanyUserRole,
+		permissionLevel?: CompanyPermissionLevel
+	): Promise<TeamMember> {
 		const url = new URL(`${this.path}/members/${id}/role`, this.client.baseUrl);
-		return this.request<TeamMember>('PUT', url.toString(), { role }) as Promise<TeamMember>;
+		return this.request<TeamMember>('PUT', url.toString(), {
+			role,
+			permissionLevel
+		}) as Promise<TeamMember>;
 	}
 
 	async removeMember(id: number): Promise<void> {
@@ -2490,9 +2509,17 @@ class TeamResource extends BaseResource {
 		return this.request<TeamInvite[]>('GET', url.toString()) as Promise<TeamInvite[]>;
 	}
 
-	async createInvite(email: string, role: CompanyUserRole): Promise<TeamInvite> {
+	async createInvite(
+		email: string,
+		role: CompanyUserRole,
+		permissionLevel?: CompanyPermissionLevel
+	): Promise<TeamInvite> {
 		const url = new URL(`${this.path}/invites`, this.client.baseUrl);
-		return this.request<TeamInvite>('POST', url.toString(), { email, role }) as Promise<TeamInvite>;
+		return this.request<TeamInvite>('POST', url.toString(), {
+			email,
+			role,
+			permissionLevel
+		}) as Promise<TeamInvite>;
 	}
 
 	async resendInvite(id: number): Promise<TeamInvite> {

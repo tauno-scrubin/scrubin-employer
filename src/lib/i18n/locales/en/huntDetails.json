@@ -13,6 +13,7 @@
 		"notificationsDescNoAssigneesOn": "You're receiving emails because no managers are assigned yet. Assign collaborators on the Team tab to route alerts to them instead.",
 		"notificationsDescAssigneesOff": "Managers assigned to this hunt get the emails. Turn on to also receive them yourself.",
 		"notificationsDescAssigneesOn": "You're opted in — you'll get emails alongside assigned managers.",
+		"notificationsDescOwnerBlocked": "Managers are assigned to this hunt, so they get the emails. The company owner is not notified while someone is assigned.",
 		"notificationsDescOptOut": "You've turned off emails for this hunt.",
 		"muteNotifications": "You get emails for this hunt — click to mute",
 		"unmuteNotifications": "Muted — click to get emails for this hunt again",

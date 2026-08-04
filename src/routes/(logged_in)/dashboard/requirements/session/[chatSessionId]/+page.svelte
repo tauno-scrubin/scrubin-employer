@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { guardHuntWizard } from '$lib/employer/hunt-wizard-guard';
 	import { visible } from '$lib/components/dashboard/overlay';
 	import DropdownComponent from '$lib/components/dropdownComponent.svelte';
 	import { Alert, AlertDescription, AlertTitle } from '$lib/components/ui/alert';
@@ -121,6 +122,7 @@
 	}
 
 	onMount(async () => {
+		if (!guardHuntWizard()) return;
 		companyActivePlans = await scrubinClient.company.getActivePlans();
 		const lang = get(locale);
 		const [countries, currencies, professions, specialties, languages, salaryPeriods] =

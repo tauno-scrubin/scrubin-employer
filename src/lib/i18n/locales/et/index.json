@@ -24,7 +24,17 @@
 		"roles": {
 			"owner": "Omanik",
 			"admin": "Admin",
-			"manager": "Liige"
+			"manager": "Liige",
+			"managerFull": "Liige · täisõigused",
+			"managerView": "Liige · ainult vaatamine"
+		},
+		"membership": {
+			"adminLabel": "Admin",
+			"adminHint": "Näeb ja saab tegutseda kõigis ettevõtte otsingutes ning hallata tiimi. (Arveldus jääb omanikule.)",
+			"managerFullLabel": "Liige — täisõigused",
+			"managerFullHint": "Näeb ainult otsinguid, mille sa temaga jagad, kuid saab neid otsinguid ja kuulutusi muuta ning luua uusi otsinguid. Ei saa hallata tiimi ega arveldust.",
+			"managerViewLabel": "Liige — ainult vaatamine",
+			"managerViewHint": "Näeb ainult otsinguid, mille sa temaga jagad, ja tegeleb seal kandidaatidega. Ei saa otsinguid muuta ega uusi luua."
 		},
 		"actions": {
 			"changeRole": "Muuda rolli",
@@ -36,10 +46,6 @@
 		"changeRoleDialog": {
 			"title": "Muuda rolli kasutajale {{name}}",
 			"description": "See juhib ettevõtteüleseid õigusi. Üksikute otsingute juurdepääsu hallatakse eraldi.",
-			"adminLabel": "Admin",
-			"adminHint": "Näeb ja saab tegutseda kõigis ettevõtte otsingutes ning hallata tiimi. (Arveldus jääb omanikule.)",
-			"managerLabel": "Liige",
-			"managerHint": "Alustab ilma juurdepääsuta — sina jagad konkreetseid otsinguid ja valid igaühele kaastöötaja (saab tegutseda) või vaataja (ainult lugemine).",
 			"save": "Salvesta"
 		},
 		"manageHuntsDialog": {
@@ -58,14 +64,16 @@
 			"title": "Kutsu kolleeg",
 			"emailLabel": "E-post",
 			"roleLabel": "Roll",
-			"submit": "Saada kutse",
-			"adminHint": "Saab hallata tiimi ning näeb ja saab tegutseda kõigis ettevõtte otsingutes. (Arveldusega tegeleb ainult omanik.)",
-			"managerHint": "Näevad ainult otsinguid, mille sa nendega jagad — iga otsingu juures valid kaastöötaja (saab tegutseda) või vaataja (ainult lugemine)."
+			"submit": "Saada kutse"
 		},
 		"confirmRemove": "Eemalda see liige tiimist?",
 		"confirmRevoke": "Tühista see kutse?",
 		"hunts": {
 			"subUserEmptyState": "Sinuga ei ole veel otsinguid jagatud. {{brand}} peakonto saab otsingu sinuga jagada otsingu lehelt."
+		},
+		"errors": {
+			"cannotCreateHunts": "Sinu kontol on ainult vaatamisõigus ega saa otsinguid luua ega muuta.",
+			"needActivePlanAskOwner": "Sellel ettevõttel pole veel aktiivset paketti. Palu konto omanikul see enne otsingu aktiveerimist seadistada."
 		}
 	},
 	"huntAccess": {
@@ -317,7 +325,7 @@
 		"subUser": {
 			"welcomeTitle": "Tere tulemast, {{name}}",
 			"welcomeSubtitle": "Allpool näed otsinguid, mille kontoomanik {{holder}} on sinuga jaganud.",
-				"welcomeContact": "Kui soovid midagi muuta, lisada või täiendada, võta palun ühendust {{holder}}-ga või kirjuta meile abinupu kaudu."
+			"welcomeContact": "Kui soovid midagi muuta, lisada või täiendada, võta palun ühendust {{holder}}-ga või kirjuta meile abinupu kaudu."
 		},
 		"searchView": {
 			"welcomeBack": "Tere tulemast tagasi, {{name}}!",

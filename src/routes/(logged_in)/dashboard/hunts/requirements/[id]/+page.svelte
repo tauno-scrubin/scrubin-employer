@@ -1,11 +1,13 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { guardHuntWizard } from '$lib/employer/hunt-wizard-guard';
 	import { page } from '$app/state';
 	import { scrubinClient } from '@/scrubinClient/client';
 	import { onMount } from 'svelte';
 	import { visible } from '@/components/dashboard/overlay';
 
 	onMount(async () => {
+		if (!guardHuntWizard()) return;
 		visible.set(true);
 		try {
 			const requirementId = parseInt(page.params.id);

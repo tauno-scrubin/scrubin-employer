@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { guardHuntWizard } from '$lib/employer/hunt-wizard-guard';
 	import { page } from '$app/state';
 	import { visible } from '@/components/dashboard/overlay';
 	import { scrubinClient } from '@/scrubinClient/client';
@@ -38,6 +39,7 @@
 	}
 
 	onMount(() => {
+		if (!guardHuntWizard()) return;
 		const searchQuery = page.url.searchParams.get('search');
 		if (searchQuery) {
 			startChatSession(searchQuery);

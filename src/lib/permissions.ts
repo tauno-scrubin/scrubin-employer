@@ -28,8 +28,18 @@ export function canManageBilling(user: PortalUser | null | undefined): boolean {
 	return user!.team!.role === 'owner';
 }
 
+/**
+ * May this member create hunts and edit hunt requirements / ads at all? Main
+ * accounts always may; a `manager` sub-user only on the `full` permission
+ * level. Says nothing about *which* hunts — combine with `canWriteOnHunt`.
+ */
+export function hasFullAccess(user: PortalUser | null | undefined): boolean {
+	if (isLegacyOrMissing(user)) return true;
+	return user!.team!.isMainAccount || user!.team!.permissionLevel === 'full';
+}
+
 export function canCreateHunts(user: PortalUser | null | undefined): boolean {
-	return isMainAccount(user);
+	return hasFullAccess(user);
 }
 
 export function canManageHuntAccess(user: PortalUser | null | undefined): boolean {
@@ -44,4 +54,16 @@ export function canManageHuntAccess(user: PortalUser | null | undefined): boolea
 export function canWriteOnHunt(user: PortalUser | null | undefined, huntRole: HuntRole | null | undefined): boolean {
 	if (isMainAccount(user)) return true;
 	return huntRole === 'collaborator';
+}
+
+/**
+ * May the caller edit this hunt's requirements / job ad? Needs both axes: the
+ * `full` permission level (or a main account) AND write access on this
+ * specific hunt. A full member shared a hunt as `viewer` still gets read-only.
+ */
+export function canEditHuntDetails(
+	user: PortalUser | null | undefined,
+	huntRole: HuntRole | null | undefined
+): boolean {
+	return hasFullAccess(user) && canWriteOnHunt(user, huntRole);
 }

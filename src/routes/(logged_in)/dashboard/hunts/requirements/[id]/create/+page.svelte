@@ -1,5 +1,8 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { guardHuntWizard } from '$lib/employer/hunt-wizard-guard';
+	import { canManageBilling } from '$lib/permissions';
+	import { currentUser } from '$lib/scrubinClient/client';
 	import { page } from '$app/state';
 	import { Button } from '$lib/components/ui/button';
 	import { scrubinClient } from '@/scrubinClient/client';
@@ -79,6 +82,7 @@
 	);
 
 	onMount(async () => {
+		if (!guardHuntWizard()) return;
 		visible.set(true);
 		try {
 			const idParam = page.params.id;
@@ -246,6 +250,12 @@
 			const plan = activePlan.find((p) => p.planActive);
 
 			if (!plan) {
+				// Only the owner can buy a plan — don't strand anyone else on a
+				// pricing page they have no access to.
+				if (!canManageBilling($currentUser)) {
+					toast.error($t('team.errors.needActivePlanAskOwner'));
+					return;
+				}
 				toast.error($t('requirementsV2.errors.needActivePlan'));
 				goto('/dashboard/pricing');
 				return;
