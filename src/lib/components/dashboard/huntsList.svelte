@@ -27,6 +27,9 @@
 	let hunts: Hunt[] = $state([]);
 	let showAllDrafts = $state(false);
 	let drafts: Requirements['requirements'][] = $state([]);
+	// Drafts load independently of hunts and are the slower of the two; sharing
+	// `isLoading` made the empty state claim "No drafts" while they were in flight.
+	let isLoadingDrafts = $state(false);
 
 	type HuntFilter = 'active' | 'all';
 	let huntFilter = $state<HuntFilter>('all');
@@ -106,11 +109,14 @@
 	}
 
 	async function loadDrafts() {
+		isLoadingDrafts = true;
 		try {
 			const response = await scrubinClient.hunt.getAllRequirements();
 			drafts = response.items;
 		} catch (error) {
 			console.error('Error loading drafts:', error);
+		} finally {
+			isLoadingDrafts = false;
 		}
 	}
 
@@ -328,7 +334,7 @@
 <!-- Drafts Section -->
 <h2 class="mb-4 mt-8 text-2xl font-medium text-gray-800">{$t('dashboard.huntsList.drafts')}</h2>
 <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
-	{#if isLoading}
+	{#if isLoadingDrafts}
 		<div class="col-span-full flex h-40 items-center justify-center">
 			<Loader2 class="h-5 w-5 animate-spin text-primary/70" />
 		</div>
