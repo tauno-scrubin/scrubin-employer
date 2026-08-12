@@ -1,19 +1,16 @@
-import type { HuntAccessRow, HuntRole, ShareLink, ShareLinkScope, TeamMember } from '$lib/scrubinClient';
+import type { HuntAccessRow, HuntRole, TeamMember } from '$lib/scrubinClient';
 import { scrubinClient } from '$lib/scrubinClient/client';
 
 /**
- * State for the "Shared with" panel + share-link dialog on the hunt detail
- * page. Holds the per-hunt grants + active share links and exposes the
- * mutations. One instance per hunt (created in +page.svelte's onMount).
+ * State for the "Shared with" panel on the hunt detail page. Holds the
+ * per-hunt grants and exposes the mutations. One instance per hunt.
  */
 export class HuntAccessState {
 	huntId: number;
 	grants = $state<HuntAccessRow[]>([]);
-	shareLinks = $state<ShareLink[]>([]);
 	teamMembers = $state<TeamMember[]>([]);
 	loading = $state(false);
 	error = $state<string | null>(null);
-	lastCreatedUrl = $state<string | null>(null);
 
 	constructor(huntId: number) {
 		this.huntId = huntId;
@@ -23,13 +20,11 @@ export class HuntAccessState {
 		this.loading = true;
 		this.error = null;
 		try {
-			const [grants, shareLinks, teamMembers] = await Promise.all([
+			const [grants, teamMembers] = await Promise.all([
 				scrubinClient.huntAccess.list(this.huntId),
-				scrubinClient.huntAccess.listShareLinks(this.huntId),
 				scrubinClient.team.listMembers().catch(() => [] as TeamMember[])
 			]);
 			this.grants = grants;
-			this.shareLinks = shareLinks;
 			this.teamMembers = teamMembers;
 		} catch (e) {
 			this.error = e instanceof Error ? e.message : 'Failed to load hunt access';
@@ -76,23 +71,6 @@ export class HuntAccessState {
 
 	async revoke(accessId: number) {
 		await scrubinClient.huntAccess.revoke(this.huntId, accessId);
-		await this.refresh();
-	}
-
-	async createShareLink(input: {
-		scope: ShareLinkScope;
-		candidateId?: number;
-		expiresInDays: number;
-		recipientEmail?: string;
-	}) {
-		const created = await scrubinClient.huntAccess.createShareLink(this.huntId, input);
-		this.lastCreatedUrl = created.url;
-		await this.refresh();
-		return created;
-	}
-
-	async revokeShareLink(linkId: number) {
-		await scrubinClient.huntAccess.revokeShareLink(this.huntId, linkId);
 		await this.refresh();
 	}
 }

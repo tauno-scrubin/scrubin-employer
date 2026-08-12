@@ -2,13 +2,12 @@
 	import { Button } from '$lib/components/ui/button';
 	import * as Card from '$lib/components/ui/card';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
-	import { t, formatDate } from '$lib/i18n';
+	import { t } from '$lib/i18n';
 	import { canManageHuntAccess } from '$lib/permissions';
 	import { currentUser } from '$lib/scrubinClient/client';
 	import { Check, ChevronDown } from 'lucide-svelte';
 	import { toast } from 'svelte-sonner';
 	import AddTeammateDialog from './AddTeammateDialog.svelte';
-	import ShareLinkDialog from './ShareLinkDialog.svelte';
 	import { HuntAccessState } from './hunt-access-state.svelte';
 
 	let { huntId, onCountChange }: { huntId: number; onCountChange?: (count: number) => void } =
@@ -16,7 +15,6 @@
 
 	const accessState = new HuntAccessState(huntId);
 	let addOpen = $state(false);
-	let shareLinkOpen = $state(false);
 
 	$effect(() => {
 		if (canManageHuntAccess($currentUser)) {
@@ -51,15 +49,6 @@
 			toast.error(e instanceof Error ? e.message : 'Failed');
 		}
 	}
-
-	async function onRevokeLink(linkId: number) {
-		try {
-			await accessState.revokeShareLink(linkId);
-			toast.success($t('huntAccess.revoke'));
-		} catch (e) {
-			toast.error(e instanceof Error ? e.message : 'Failed');
-		}
-	}
 </script>
 
 {#if canManageHuntAccess($currentUser)}
@@ -67,9 +56,6 @@
 		<Card.Header class="flex flex-row items-center justify-between gap-2">
 			<Card.Title>{$t('huntAccess.sharedWithHeading')}</Card.Title>
 			<div class="flex gap-2">
-				<Button variant="outline" size="sm" onclick={() => (shareLinkOpen = true)}
-					>{$t('huntAccess.shareLink.button')}</Button
-				>
 				<Button size="sm" onclick={() => (addOpen = true)}>{$t('huntAccess.addTeammate')}</Button>
 			</div>
 		</Card.Header>
@@ -180,35 +166,8 @@
 					</ul>
 				{/if}
 			</div>
-
-			{#if accessState.shareLinks.length > 0}
-				<div class="border-t pt-3">
-					<div class="mb-2 text-sm font-medium">{$t('huntAccess.shareLink.activeLinks')}</div>
-					<ul class="divide-y">
-						{#each accessState.shareLinks as l (l.id)}
-							<li class="flex items-center justify-between gap-2 py-2 text-sm">
-								<div>
-									<div>
-										{l.scope === 'candidate'
-											? $t('huntAccess.shareLink.scopeCandidate')
-											: $t('huntAccess.shareLink.scopeHunt')}
-										{#if l.recipientEmail}· {l.recipientEmail}{/if}
-									</div>
-									<div class="text-xs text-muted-foreground">
-										{$formatDate(l.expiresAt)} · {l.openedCount} ↗
-									</div>
-								</div>
-								<Button variant="ghost" size="sm" onclick={() => onRevokeLink(l.id)}
-									>{$t('huntAccess.revoke')}</Button
-								>
-							</li>
-						{/each}
-					</ul>
-				</div>
-			{/if}
 		</Card.Content>
 	</Card.Root>
 
 	<AddTeammateDialog bind:open={addOpen} {accessState} />
-	<ShareLinkDialog bind:open={shareLinkOpen} {accessState} defaultScope="hunt" />
 {/if}

@@ -32,7 +32,7 @@ The hunt detail endpoint returns the caller's **effective `huntRole`** for that 
 | **Hunt lifecycle** — activate / pause / complete / cancel                                                  |  ✅   |  ✅   |    ✅     |    ❌     |    ✅     |    ❌     |
 | **Edit hunt requirements** · publish as public job ad                                                      |  ✅   |  ✅   |    ✅     |    ❌     |    ❌     |    ❌     |
 | Create hunts · requirements wizard / chat · see drafts                                                     |  ✅   |  ✅   |    ✅     |    ✅     |    ❌     |    ❌     |
-| Manage team (invite / change role / remove) · grant per-hunt access / share links                          |  ✅   |  ✅   |    ❌     |    ❌     |    ❌     |    ❌     |
+| Manage team (invite / change role / remove) · grant per-hunt access                          |  ✅   |  ✅   |    ❌     |    ❌     |    ❌     |    ❌     |
 | **Billing** (payment methods, plans)                                                                       |  ✅   |  ❌   |    ❌     |    ❌     |    ❌     |    ❌     |
 
 **In one line each:** an **admin** does everything company-wide _except billing_; a **full member** runs the hunts shared with them end-to-end and can start new ones, but never touches the team or the money; a **view member** does the operational candidate work only.

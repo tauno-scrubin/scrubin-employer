@@ -47,11 +47,6 @@
 			loading = false;
 			return;
 		}
-		// Anonymous magic-link share viewer (multi-user companies).
-		if (page.url.pathname.startsWith('/share/')) {
-			loading = false;
-			return;
-		}
 
 		try {
 			// First, handle token authentication if present

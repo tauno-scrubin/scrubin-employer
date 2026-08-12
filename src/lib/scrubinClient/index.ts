@@ -32,7 +32,6 @@ export type CompanyUserRole = 'owner' | 'admin' | 'manager';
  */
 export type CompanyPermissionLevel = 'view' | 'full';
 export type HuntRole = 'collaborator' | 'viewer';
-export type ShareLinkScope = 'hunt' | 'candidate';
 
 export interface PortalUserTeam {
 	companyId: number;
@@ -112,41 +111,6 @@ export interface HuntNotificationPreference {
 	defaultSubscribed: boolean;
 	source: 'default' | 'opt_in' | 'opt_out';
 	ownerBlockedByAssignees: boolean;
-}
-
-export interface ShareLink {
-	id: number;
-	scope: ShareLinkScope;
-	candidateId: number | null;
-	expiresAt: string;
-	recipientEmail: string | null;
-	openedCount: number;
-	createdAt: string;
-}
-
-export interface ShareLinkCreated extends ShareLink {
-	url: string;
-}
-
-export interface PublicShareCandidate {
-	candidateId: number;
-	firstName?: string;
-	lastName?: string;
-	countryIso?: string;
-	profession?: string;
-	status?: string;
-}
-
-export interface PublicShareView {
-	scope: ShareLinkScope;
-	hunt: {
-		huntId: number;
-		jobTitle?: string;
-		country?: string;
-		companyBrandName?: string;
-	};
-	candidates?: PublicShareCandidate[];
-	expiresAt: string;
 }
 
 export interface UpdatePortalUser {
@@ -2579,33 +2543,6 @@ class HuntAccessResource extends BaseResource {
 		await this.request<void>('DELETE', url.toString(), undefined, true);
 	}
 
-	async createShareLink(
-		huntId: number,
-		input: {
-			scope: ShareLinkScope;
-			candidateId?: number;
-			expiresInDays: number;
-			recipientEmail?: string;
-		}
-	): Promise<ShareLinkCreated> {
-		const url = new URL(`${this.path}/${huntId}/access/share-link`, this.client.baseUrl);
-		return this.request<ShareLinkCreated>(
-			'POST',
-			url.toString(),
-			input
-		) as Promise<ShareLinkCreated>;
-	}
-
-	async listShareLinks(huntId: number): Promise<ShareLink[]> {
-		const url = new URL(`${this.path}/${huntId}/access/share-links`, this.client.baseUrl);
-		return this.request<ShareLink[]>('GET', url.toString()) as Promise<ShareLink[]>;
-	}
-
-	async revokeShareLink(huntId: number, linkId: number): Promise<void> {
-		const url = new URL(`${this.path}/${huntId}/access/share-links/${linkId}`, this.client.baseUrl);
-		await this.request<void>('DELETE', url.toString(), undefined, true);
-	}
-
 	async getNotificationPreference(huntId: number): Promise<HuntNotificationPreference> {
 		const url = new URL(
 			`${this.path}/${huntId}/access/notifications/preference`,
@@ -2631,19 +2568,6 @@ class HuntAccessResource extends BaseResource {
 	}
 }
 
-class PublicShareResource extends BaseResource {
-	constructor(client: ScrubinClient) {
-		super(client, '/api/v1/public/share');
-	}
-
-	async open(token: string): Promise<PublicShareView> {
-		const url = new URL(`${this.path}/${encodeURIComponent(token)}`, this.client.baseUrl);
-		return this.request<PublicShareView>('GET', url.toString(), undefined, false, {
-			skipAuth: true
-		}) as Promise<PublicShareView>;
-	}
-}
-
 // ─── CLIENT CLASS ─────────────────────────────────────────────────────────────
 
 export class ScrubinClient {
@@ -2654,7 +2578,6 @@ export class ScrubinClient {
 	public data: DataResource;
 	public team: TeamResource;
 	public huntAccess: HuntAccessResource;
-	public publicShare: PublicShareResource;
 	public clientIP?: string; // Store client IP for server-side requests
 
 	constructor(public baseUrl: string) {
@@ -2665,7 +2588,6 @@ export class ScrubinClient {
 		this.data = new DataResource(this);
 		this.team = new TeamResource(this);
 		this.huntAccess = new HuntAccessResource(this);
-		this.publicShare = new PublicShareResource(this);
 
 		this.cleanupDuplicateCookies();
 	}

@@ -100,29 +100,7 @@
 		"yourRole": "Sinu juurdepääs: {{role}}",
 		"readonlyTooltip": "Sul on sellele otsingule ainult lugemisõigus.",
 		"viewerNoUsers": "Kõigil tiimi haldajatel on juba juurdepääs — kutsu uusi liikmeid Seaded → Tiim.",
-		"noTeammatesYet": "Sul pole veel ühtegi haldajat. Kutsu inimesi haldajaks Seaded → Tiim alt — nad ilmuvad siia, kui nad kutse vastu võtavad.",
-		"shareLink": {
-			"title": "Loo jagamislink",
-			"button": "Jaga lingina",
-			"scope": "Mida jagada",
-			"scopeHunt": "Terve otsing",
-			"scopeCandidate": "See kandidaat",
-			"expiresInDays": "Link aegub (päevades)",
-			"recipientEmail": "Saada aadressile (valikuline)",
-			"recipientPlaceholder": "email@nait.ee",
-			"create": "Loo link",
-			"copyHint": "Kopeeri link allpool — seda näidatakse vaid korra.",
-			"copyButton": "Kopeeri link",
-			"copied": "Kopeeritud",
-			"activeLinks": "Aktiivsed lingid",
-			"emptyLinks": "Aktiivseid jagamislinke ei ole."
-		}
-	},
-	"publicShare": {
-		"viewOnlyBanner": "Ainult vaatamiseks — jagas {{brand}}",
-		"expiredTitle": "Link enam ei kehti",
-		"expiredBody": "Palu, et jagaja saadaks uue lingi.",
-		"loadingTitle": "Laen…"
+		"noTeammatesYet": "Sul pole veel ühtegi haldajat. Kutsu inimesi haldajaks Seaded → Tiim alt — nad ilmuvad siia, kui nad kutse vastu võtavad."
 	},
 	"nav": {
 		"dashboard": "Töölaud",

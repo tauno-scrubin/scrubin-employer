@@ -100,29 +100,7 @@
 		"yourRole": "Your access: {{role}}",
 		"readonlyTooltip": "You have read-only access to this hunt.",
 		"viewerNoUsers": "Every manager on the team already has access — invite more teammates from Settings → Team.",
-		"noTeammatesYet": "You don't have any managers yet. Invite people as managers from Settings → Team, and they'll appear here once they accept.",
-		"shareLink": {
-			"title": "Generate share link",
-			"button": "Share link",
-			"scope": "What to share",
-			"scopeHunt": "Whole hunt",
-			"scopeCandidate": "This candidate",
-			"expiresInDays": "Link expires in (days)",
-			"recipientEmail": "Send to (optional)",
-			"recipientPlaceholder": "email@example.com",
-			"create": "Create link",
-			"copyHint": "Copy the link below — it's only shown once.",
-			"copyButton": "Copy link",
-			"copied": "Copied",
-			"activeLinks": "Active links",
-			"emptyLinks": "No active share links."
-		}
-	},
-	"publicShare": {
-		"viewOnlyBanner": "View only — shared by {{brand}}",
-		"expiredTitle": "This link is no longer active",
-		"expiredBody": "Ask the person who shared it with you to resend.",
-		"loadingTitle": "Loading…"
+		"noTeammatesYet": "You don't have any managers yet. Invite people as managers from Settings → Team, and they'll appear here once they accept."
 	},
 	"nav": {
 		"dashboard": "Dashboard",
