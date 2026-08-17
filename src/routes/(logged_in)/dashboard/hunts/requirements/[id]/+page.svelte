@@ -20,7 +20,7 @@
 			if (session.isComplete) {
 				// Try to find the associated hunt
 				try {
-					const hunts = await scrubinClient.hunt.getHunts({ page: 0, size: 100 });
+					const hunts = await scrubinClient.hunt.getHunts(0, 100);
 					const associatedHunt = hunts.items.find(h => h.title === session.currentRequirements.jobTitle);
 
 					if (associatedHunt && associatedHunt.status !== 'PENDING') {
