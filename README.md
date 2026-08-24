@@ -90,6 +90,7 @@ All API calls go through `ScrubinClient` (`src/lib/scrubinClient/index.ts`), whi
   - `updateRequirementFields(id, data)` — PATCH job requirement (now accepts `requiredQualifications: HuntRequiredQualification[]`)
   - `suggestRequiredQualifications(id)` — AI-suggested hard-required qualifications (auto-fired on first open of the Qualifications step)
   - `getScreeningQuestions(id)` / `replaceScreeningQuestions(id, qs)` / `deleteScreeningQuestion(id, qId)` — hunt-level screening questions surfaced on the hunt-detail "Screening" tab
+  - `getHuntStats(id)` — funnel counters, plus an optional `group` context when the hunt is one location of a multi-location group. The group runs a **single shared outreach** presenting every location, so `totalHuntablesContacted` counts everyone who was shown this location while interest/offers stay bound to the location a candidate actually picked. The statistics tab renders this as a "Shared outreach" alert (`statistics.groupOutreach*`); without it a member location reads as a hunt that never started. Backend design: `care-backend/src/recruitment/MULTI-HUNT.md`.
 - **`DataResource`** — Reference data (countries, professions, specialties, languages) with localStorage caching
 
 Pattern for API calls:

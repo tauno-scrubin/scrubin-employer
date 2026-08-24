@@ -502,6 +502,19 @@ export interface ActivateHuntV2Response {
 	clientSecret?: string;
 }
 
+/**
+ * Present when the hunt is one location of a multi-location group. The group runs a
+ * single outreach presenting every location at once, so a member location's own
+ * counters describe shared activity rather than a hunt of its own.
+ */
+export interface HuntGroupContext {
+	id: number;
+	title: string;
+	locationCount: number;
+	locations: string[];
+	isOutreachHunt: boolean;
+}
+
 export interface HuntStats {
 	huntId: number;
 	totalHuntables: number;
@@ -511,6 +524,7 @@ export interface HuntStats {
 	totalOffersMade: number;
 	totalHired: number;
 	totalDeclined: number;
+	group?: HuntGroupContext;
 }
 
 export interface PipelineMetrics {

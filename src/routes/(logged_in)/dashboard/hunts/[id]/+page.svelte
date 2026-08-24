@@ -218,7 +218,8 @@
 					totalInterestedReadyForCompany: stats.totalInterestedReadyForCompany || 0,
 					totalOffersMade: stats.totalOffersMade || 0,
 					totalHired: stats.totalHired || 0,
-					totalDeclined: stats.totalDeclined || 0
+					totalDeclined: stats.totalDeclined || 0,
+					group: stats.group
 				};
 			});
 
@@ -1121,6 +1122,21 @@
 						<Alert.Root class="border-amber-200 bg-amber-50 text-amber-900">
 							<Alert.Title>{$t('statistics.autoOffersNoticeTitle')}</Alert.Title>
 							<Alert.Description>{$t('statistics.autoOffersNoticeDesc')}</Alert.Description>
+						</Alert.Root>
+					{/if}
+					{#if funnelStats.group}
+						<Alert.Root class="border-blue-200 bg-blue-50 text-blue-900">
+							<Alert.Title>{$t('statistics.groupOutreachTitle')}</Alert.Title>
+							<Alert.Description>
+								{funnelStats.group.locations.length > 0
+									? $t('statistics.groupOutreachDesc', {
+											count: String(funnelStats.group.locationCount),
+											locations: funnelStats.group.locations.join(', ')
+										})
+									: $t('statistics.groupOutreachDescNoCities', {
+											count: String(funnelStats.group.locationCount)
+										})}
+							</Alert.Description>
 						</Alert.Root>
 					{/if}
 					{#if isLoading}
