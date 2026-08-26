@@ -183,6 +183,8 @@
 		"interestedOn": "Interested on",
 		"appliedOn": "Applied on",
 		"selfApplied": "Applied",
+		"engagementVerificationRequired": "Potential matched engagement — verification required",
+		"engagementVerificationBanner": "{{count}} candidate(s) need engagement verification",
 		"showAllInterestedCandidates": "Show all interested candidates",
 		"offerOpens": "Offer opens",
 		"offerEmailOpens": "Offer email opens",
@@ -196,6 +198,10 @@
 		"messages": "Messages",
 		"opens": "Opens",
 		"pipelineStatuses": {
+			"needs_verification": {
+				"label": "Verification required",
+				"description": "Public-roster match — confirm how this engagement originated"
+			},
 			"interested": {
 				"label": "Interested",
 				"description": "Candidates who showed interest"
@@ -235,6 +241,14 @@
 			"cancelled": {
 				"label": "Cancelled",
 				"description": "Cancelled by company"
+			},
+			"delivered": {
+				"label": "Contacted",
+				"description": "Offer emailed — they have not shown interest yet"
+			},
+			"pending": {
+				"label": "Queued",
+				"description": "Offer not yet delivered"
 			}
 		}
 	},

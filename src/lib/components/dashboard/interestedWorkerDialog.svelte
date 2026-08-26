@@ -5,7 +5,7 @@
 	import * as Select from '$lib/components/ui/select/index.js';
 	import * as Tabs from '$lib/components/ui/tabs/index.js';
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
-	import { PIPELINE_STATUS_CONFIGS } from '$lib/config/pipelineStatuses';
+	import { PIPELINE_STATUS_CONFIGS, hasShownPipelineInterest } from '$lib/config/pipelineStatuses';
 	import { t } from '$lib/i18n';
 	import type { InterestedCandidateDetails, InterestedCandidateStats } from '@/scrubinClient';
 	import { scrubinClient } from '@/scrubinClient/client';
@@ -20,6 +20,7 @@
 		MailOpen,
 		MessageSquare,
 		Phone,
+		ShieldAlert,
 		ShieldCheck,
 		ShieldOff,
 		Sparkle
@@ -34,7 +35,8 @@
 		huntId = $bindable(0),
 		candidateId = $bindable(0),
 		type = $bindable('offer'),
-		canWrite = true
+		canWrite = true,
+		onEngagementVerified
 	}: {
 		open: boolean;
 		huntId: number;
@@ -42,6 +44,7 @@
 		type: 'offer' | 'apply';
 		/** false when the caller is a viewer on this hunt — disables status changes, notes, chat send. */
 		canWrite?: boolean;
+		onEngagementVerified?: () => void;
 	} = $props();
 
 	let worker: InterestedCandidateDetails | null = $state(null);
@@ -53,6 +56,29 @@
 	let actionError = $state('');
 	let isConfirmingNewness = $state(false);
 	let isDownloadingCv = $state(false);
+	let isSubmittingVerification = $state(false);
+	let verificationOutcome = $state<
+		'hired_via_scrubin' | 'hired_independently' | 'already_in_pipeline' | 'not_hired' | ''
+	>('');
+	let verificationNotes = $state('');
+	const verificationOptions = $derived([
+		{
+			id: 'hired_via_scrubin' as const,
+			label: $t('dashboard.interestedWorkerDialog.engagementVerification.hiredViaScrubin')
+		},
+		{
+			id: 'hired_independently' as const,
+			label: $t('dashboard.interestedWorkerDialog.engagementVerification.hiredIndependently')
+		},
+		{
+			id: 'already_in_pipeline' as const,
+			label: $t('dashboard.interestedWorkerDialog.engagementVerification.alreadyInPipeline')
+		},
+		{
+			id: 'not_hired' as const,
+			label: $t('dashboard.interestedWorkerDialog.engagementVerification.notHired')
+		}
+	]);
 
 	// Available pipeline statuses
 	let availableStatuses = $derived.by(() => {
@@ -79,6 +105,8 @@
 	});
 
 	async function getWorker() {
+		verificationOutcome = '';
+		verificationNotes = '';
 		isLoading = true;
 		hasError = false;
 		try {
@@ -149,6 +177,27 @@
 			toast.error($t('dashboard.interestedWorkerDialog.newnessGate.errorToast'));
 		} finally {
 			isConfirmingNewness = false;
+		}
+	}
+
+	async function submitEngagementVerification() {
+		if (!worker || !huntId || !candidateId || !verificationOutcome || isSubmittingVerification) return;
+		isSubmittingVerification = true;
+		try {
+			await scrubinClient.hunt.reconcileEngagement(
+				huntId,
+				candidateId,
+				verificationOutcome,
+				verificationNotes.trim() || undefined
+			);
+			worker = { ...worker, engagementVerificationRequired: false };
+			toast.success($t('dashboard.interestedWorkerDialog.engagementVerification.successToast'));
+			onEngagementVerified?.();
+		} catch (error) {
+			console.error('Error recording engagement verification:', error);
+			toast.error($t('dashboard.interestedWorkerDialog.engagementVerification.errorToast'));
+		} finally {
+			isSubmittingVerification = false;
 		}
 	}
 
@@ -486,7 +535,7 @@
 													</div>
 												</div>
 											{/if}
-										{:else}
+										{:else if !worker.engagementVerificationRequired}
 											<div class="rounded-lg border border-amber-200 bg-amber-50 p-4 md:col-span-2">
 												<div class="flex items-start gap-3">
 													<div class="rounded-full bg-amber-100 p-2">
@@ -515,20 +564,79 @@
 											</div>
 										{/if}
 
-										<div class="group flex items-center gap-3 rounded-md md:col-span-2">
-											<div class="rounded-full bg-blue-50 p-2">
-												<Calendar class="h-4 w-4 text-blue-600" />
+										{#if worker.dateInterested && hasShownPipelineInterest(worker.status)}
+											<div class="group flex items-center gap-3 rounded-md md:col-span-2">
+												<div class="rounded-full bg-blue-50 p-2">
+													<Calendar class="h-4 w-4 text-blue-600" />
+												</div>
+												<div class="flex flex-col">
+													<span class="text-xs text-gray-500"
+														>{$t('dashboard.interestedWorkerDialog.interestedSince')}</span
+													>
+													<span class="text-sm text-gray-700"
+														>{formatDate(worker.dateInterested)}</span
+													>
+												</div>
 											</div>
-											<div class="flex flex-col">
-												<span class="text-xs text-gray-500"
-													>{$t('dashboard.interestedWorkerDialog.interestedSince')}</span
-												>
-												<span class="text-sm text-gray-700"
-													>{formatDate(worker.dateInterested)}</span
-												>
+										{/if}
+									</div>
+
+									{#if worker.engagementVerificationRequired}
+										<div class="mt-3 rounded-lg border border-amber-200 bg-amber-50 p-4">
+											<div class="flex items-start gap-3">
+												<div class="rounded-full bg-amber-100 p-2">
+													<ShieldAlert class="h-5 w-5 text-amber-700" />
+												</div>
+												<div class="flex-1">
+													<h4 class="text-sm font-semibold text-amber-900">
+														{$t('dashboard.interestedWorkerDialog.engagementVerification.title')}
+													</h4>
+													<p class="mt-1 text-sm text-amber-800">
+														{$t(
+															'dashboard.interestedWorkerDialog.engagementVerification.description',
+															{ firstName: worker.firstName ?? '' }
+														)}
+													</p>
+													{#if canWrite}
+														<div class="mt-3 flex flex-col gap-2">
+															{#each verificationOptions as option (option.id)}
+																<label class="flex items-center gap-2 text-sm text-amber-900">
+																	<input
+																		type="radio"
+																		name="engagement-origin"
+																		value={option.id}
+																		bind:group={verificationOutcome}
+																		class="h-4 w-4"
+																	/>
+																	{option.label}
+																</label>
+															{/each}
+															<input
+																class="mt-1 rounded-md border border-amber-200 bg-white px-3 py-2 text-sm"
+																placeholder={$t(
+																	'dashboard.interestedWorkerDialog.engagementVerification.notesPlaceholder'
+																)}
+																bind:value={verificationNotes}
+															/>
+															<Button
+																class="mt-1 w-fit"
+																disabled={!verificationOutcome || isSubmittingVerification}
+																onclick={submitEngagementVerification}
+															>
+																{isSubmittingVerification
+																	? $t(
+																			'dashboard.interestedWorkerDialog.engagementVerification.submitting'
+																		)
+																	: $t(
+																			'dashboard.interestedWorkerDialog.engagementVerification.submit'
+																		)}
+															</Button>
+														</div>
+													{/if}
+												</div>
 											</div>
 										</div>
-									</div>
+									{/if}
 
 									{#if worker.successFeePayment}
 										<div class="mt-3 rounded-lg border border-green-200 bg-green-50 p-3">
@@ -571,7 +679,8 @@
 								</div>
 							</div>
 
-							<!-- Candidate Status Dropdown -->
+							<!-- Hiring-pipeline status only — contacted-only matches cannot be moved to Interested from here -->
+							{#if hasShownPipelineInterest(worker.status)}
 							<div class="mb-6 rounded-md border border-gray-200 bg-gray-50 p-4">
 								<h4 class="mb-3 text-lg font-medium text-gray-800">
 									{$t('dashboard.interestedWorkerDialog.actions')}
@@ -651,6 +760,7 @@
 									{/if}
 								</div>
 							</div>
+							{/if}
 
 							{#if workerStats}
 								<!-- engagement moved above contact info; this duplicate block removed -->

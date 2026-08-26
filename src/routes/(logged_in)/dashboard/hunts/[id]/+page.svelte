@@ -27,7 +27,7 @@
 		confirmCardPayment,
 		formatPriceAmount
 	} from '@/components/payment/payments.js';
-	import { getStatusConfig } from '$lib/config/pipelineStatuses';
+	import { getStatusConfig, hasShownPipelineInterest } from '$lib/config/pipelineStatuses';
 	import * as Dialog from '@/components/ui/dialog/index.js';
 	import * as DropdownMenu from '@/components/ui/dropdown-menu/index.js';
 	import Separator from '@/components/ui/separator/separator.svelte';
@@ -49,6 +49,7 @@
 		MailOpen,
 		MessageSquare,
 		Phone,
+		ShieldAlert,
 		Sparkle,
 		UserCheck,
 		UserCog,
@@ -462,7 +463,8 @@
 		window.history.back();
 	}
 
-	function formatDate(dateString: string): string {
+	function formatDate(dateString: string | null | undefined): string {
+		if (!dateString) return '—';
 		return new Date(dateString).toLocaleDateString('en-US', {
 			year: 'numeric',
 			month: 'short',
@@ -481,6 +483,15 @@
 		get(locale);
 		const translate = get(t);
 		return [
+			{
+				key: 'needs_verification',
+				icon: ShieldAlert,
+				color: 'bg-amber-100 text-amber-800 border-amber-300',
+				hoverColor: 'hover:bg-amber-200',
+				iconColor: 'text-amber-700',
+				label: translate('statistics.pipelineStatuses.needs_verification.label'),
+				description: translate('statistics.pipelineStatuses.needs_verification.description')
+			},
 			{
 				key: 'interested',
 				icon: UserPlus,
@@ -574,33 +585,56 @@
 		];
 	});
 
+	function isVerificationRequired(candidate: InterestedCandidate): boolean {
+		return !!candidate.engagementVerificationRequired;
+	}
+
 	// Computed pipeline data with counts
 	let pipelineData = $derived(
 		pipelineStatuses.map((status) => ({
 			...status,
-			count: interestedCandidates.filter((c) => normalizeCandidateStatus(c.status) === status.key)
-				.length
+			count:
+				status.key === 'needs_verification'
+					? interestedCandidates.filter(isVerificationRequired).length
+					: interestedCandidates.filter(
+							(c) =>
+								!isVerificationRequired(c) &&
+								normalizeCandidateStatus(c.status) === status.key
+						).length
 		}))
 	);
 
 	// Filtered candidates based on selected pipeline status
 	let filteredCandidates = $derived(
-		selectedPipelineStatus
-			? interestedCandidates.filter((c) => {
-					return normalizeCandidateStatus(c.status) === selectedPipelineStatus;
-				})
-			: interestedCandidates.filter(
-					(c) => showAllInterestedCandidates || c.dateReadyForRecruiter !== null
-				)
+		selectedPipelineStatus === 'needs_verification'
+			? interestedCandidates.filter(isVerificationRequired)
+			: selectedPipelineStatus
+				? interestedCandidates.filter(
+						(c) =>
+							!isVerificationRequired(c) &&
+							normalizeCandidateStatus(c.status) === selectedPipelineStatus
+					)
+				: interestedCandidates.filter(
+						(c) =>
+							showAllInterestedCandidates ||
+							c.dateReadyForRecruiter !== null ||
+							isVerificationRequired(c)
+					)
 	);
 
-	// Group candidates by status for "All" view
-	let groupedCandidates = $derived(() => {
+	let engagementVerificationCount = $derived(
+		interestedCandidates.filter(isVerificationRequired).length
+	);
+
+	// Group candidates by status for "All" view — verification first when anyone is listed
+	let groupedCandidates = $derived.by(() => {
 		const filtered = interestedCandidates.filter(
-			(c) => showAllInterestedCandidates || c.dateReadyForRecruiter !== null
+			(c) =>
+				showAllInterestedCandidates ||
+				c.dateReadyForRecruiter !== null ||
+				isVerificationRequired(c)
 		);
 
-		// Key stages that should always be shown
 		const keyStages = [
 			'interested',
 			'under_review',
@@ -611,22 +645,33 @@
 			'declined'
 		];
 
-		return pipelineStatuses.reduce(
-			(acc, status) => {
-				const candidates = filtered.filter(
-					(c) => normalizeCandidateStatus(c.status) === status.key
-				);
-				// Show if has candidates OR is a key stage
-				if (candidates.length > 0 || keyStages.includes(status.key)) {
-					acc[status.key] = {
-						...status,
-						candidates
-					};
-				}
-				return acc;
-			},
-			{} as Record<string, (typeof pipelineStatuses)[0] & { candidates: InterestedCandidate[] }>
-		);
+		const verificationCandidates = filtered.filter(isVerificationRequired);
+		const rest = filtered.filter((c) => !isVerificationRequired(c));
+		const acc = {} as Record<
+			string,
+			(typeof pipelineStatuses)[0] & { candidates: InterestedCandidate[] }
+		>;
+
+		const verificationStatus = pipelineStatuses.find((s) => s.key === 'needs_verification');
+		if (verificationCandidates.length > 0 && verificationStatus) {
+			acc.needs_verification = {
+				...verificationStatus,
+				candidates: verificationCandidates
+			};
+		}
+
+		for (const status of pipelineStatuses) {
+			if (status.key === 'needs_verification') continue;
+			const candidates = rest.filter((c) => normalizeCandidateStatus(c.status) === status.key);
+			if (candidates.length > 0 || keyStages.includes(status.key)) {
+				acc[status.key] = {
+					...status,
+					candidates
+				};
+			}
+		}
+
+		return acc;
 	});
 
 	// Candidates that need action (have needAttention flag)
@@ -748,6 +793,13 @@
 	bind:candidateId={selectedCandidateId}
 	bind:type={selectedCandidateType}
 	canWrite={canWriteHunt}
+	onEngagementVerified={() => {
+		interestedCandidates = interestedCandidates.map((candidate) =>
+			candidate.candidateId === selectedCandidateId
+				? { ...candidate, engagementVerificationRequired: false }
+				: candidate
+		);
+	}}
 />
 
 <PaymentDialog
@@ -1243,13 +1295,21 @@
 												>
 													{status.count}
 												</span>
-												{#if interestedCandidates.filter((c) => c.status?.toLowerCase() === status.key && c.stats.hasUnreadMessages).length > 0}
+												{#if interestedCandidates.filter((c) =>
+														(status.key === 'needs_verification'
+															? isVerificationRequired(c)
+															: normalizeCandidateStatus(c.status) === status.key) &&
+														c.stats.hasUnreadMessages
+													).length > 0}
 													<span
 														class="flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white"
 													>
 														{interestedCandidates.filter(
 															(c) =>
-																c.status?.toLowerCase() === status.key && c.stats.hasUnreadMessages
+																(status.key === 'needs_verification'
+																	? isVerificationRequired(c)
+																	: normalizeCandidateStatus(c.status) === status.key) &&
+																c.stats.hasUnreadMessages
 														).length}
 													</span>
 												{/if}
@@ -1266,6 +1326,19 @@
 
 					<!-- Candidates Section -->
 					<div class="mt-6 flex max-w-full flex-col gap-4 overflow-x-auto">
+						{#if engagementVerificationCount > 0}
+							<Alert.Root class="border-amber-200 bg-amber-50 text-amber-900">
+								<ShieldAlert class="h-4 w-4" />
+								<Alert.Title>
+									{$t('statistics.engagementVerificationRequired')}
+								</Alert.Title>
+								<Alert.Description>
+									{$t('statistics.engagementVerificationBanner', {
+										count: String(engagementVerificationCount)
+									})}
+								</Alert.Description>
+							</Alert.Root>
+						{/if}
 						{#if isLoadingCandidates}
 							<div class="flex flex-col items-center justify-center gap-6 py-8">
 								<Loader2 class="h-10 w-10 animate-spin text-primary/70" />
@@ -1345,7 +1418,7 @@
 							<!-- Kanban-style column view when "All" is selected -->
 							<div class="overflow-x-auto">
 								<div class="flex gap-4 pb-4">
-									{#each Object.entries(groupedCandidates()) as [statusKey, statusGroup]}
+									{#each Object.entries(groupedCandidates) as [statusKey, statusGroup] (statusKey)}
 										{@const Icon = statusGroup.icon}
 										<div class="flex w-64 flex-shrink-0 flex-col rounded-lg border">
 											<!-- Column Header -->
@@ -1405,6 +1478,13 @@
 																		{$t('dashboard.interestedWorkerDialog.successFeePaid')}
 																	</span>
 																{/if}
+																{#if candidate.engagementVerificationRequired}
+																	<span
+																		class="rounded-full bg-amber-100 px-1.5 py-0.5 text-[10px] font-medium text-amber-800"
+																	>
+																		{$t('dashboard.interestedWorkerDialog.engagementVerification.badge')}
+																	</span>
+																{/if}
 															</div>
 
 															<!-- Email (hidden until employer confirms candidate is new) -->
@@ -1420,6 +1500,12 @@
 																	>
 																{:else if candidate.companyConfirmedNewCandidate}
 																	<span class="truncate">{candidate.email}</span>
+																{:else if candidate.engagementVerificationRequired}
+																	<span class="truncate italic"
+																		>{$t(
+																			'dashboard.interestedWorkerDialog.engagementVerification.contactHidden'
+																		)}</span
+																	>
 																{:else}
 																	<span class="truncate italic"
 																		>{$t(
@@ -1546,7 +1632,8 @@
 																		</Tooltip.Content>
 																	</Tooltip.Root>
 																{/if}
-																{#if candidate.dateReadyForRecruiter === null}
+																{#if hasShownPipelineInterest(candidate.status) &&
+																	candidate.dateReadyForRecruiter === null}
 																	<span
 																		class="w-fit rounded-full bg-orange-100 px-2 py-1 text-xs font-medium text-orange-800"
 																	>
@@ -1566,7 +1653,9 @@
 																		{#if StatusIcon}
 																			<StatusIcon class="h-3.5 w-3.5" />
 																		{/if}
-																		{statusConfig ? $t(statusConfig.translationKey) : candidate.status}
+																		{statusConfig
+																			? $t(statusConfig.translationKey)
+																			: $t(`statistics.pipelineStatuses.${statusLower}.label`)}
 																	</span>
 																{/if}
 																{#if candidate.selfApplied}
@@ -1576,6 +1665,13 @@
 																		{$t('statistics.selfApplied')}
 																	</span>
 																{/if}
+																{#if candidate.engagementVerificationRequired}
+																	<span
+																		class="w-fit rounded-full bg-amber-100 px-2 py-1 text-xs font-medium text-amber-800"
+																	>
+																		{$t('statistics.engagementVerificationRequired')}
+																	</span>
+																{/if}
 																{#if candidate.successFeePaid}
 																	<span
 																		class="w-fit rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-800"
@@ -1583,6 +1679,8 @@
 																		{$t('dashboard.interestedWorkerDialog.successFeePaid')}
 																	</span>
 																{/if}
+																{#if hasShownPipelineInterest(candidate.status) ||
+																	candidate.type === 'apply'}
 																<Badge variant="outline" class="text-xs">
 																	{$t(
 																		candidate.type === 'apply'
@@ -1591,6 +1689,7 @@
 																	)}
 																	{formatDate(candidate.dateInterested)}
 																</Badge>
+																{/if}
 															</div>
 														</div>
 													</div>
@@ -1616,6 +1715,15 @@
 																	<span>{candidate.phone}</span>
 																</div>
 															{/if}
+														{:else if candidate.engagementVerificationRequired}
+															<div class="flex items-center gap-1 italic">
+																<Mail class="h-3.5 w-3.5" />
+																<span
+																	>{$t(
+																		'dashboard.interestedWorkerDialog.engagementVerification.contactHidden'
+																	)}</span
+																>
+															</div>
 														{:else}
 															<div class="flex items-center gap-1 italic">
 																<Mail class="h-3.5 w-3.5" />

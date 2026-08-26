@@ -15,6 +15,7 @@
 		History,
 		Loader2,
 		Search,
+		ShieldAlert,
 		Sparkle,
 		UserCheck,
 		Users
@@ -89,6 +90,14 @@
 				if (a.totalUnansweredMessages > 0 && b.totalUnansweredMessages > 0) {
 					// If both have unanswered messages, sort by count (most first)
 					return b.totalUnansweredMessages - a.totalUnansweredMessages;
+				}
+
+				const aVerify = a.totalEngagementVerificationsRequired ?? 0;
+				const bVerify = b.totalEngagementVerificationsRequired ?? 0;
+				if (aVerify > 0 && bVerify === 0) return -1;
+				if (aVerify === 0 && bVerify > 0) return 1;
+				if (aVerify > 0 && bVerify > 0) {
+					return bVerify - aVerify;
 				}
 
 				// Then prioritize hunts with other unanswered activity
@@ -268,6 +277,17 @@
 										<span class="text-xs text-gray-600 sm:text-sm">
 											{hunt.totalInterestedCandidates}
 											{$t('dashboard.huntsList.interested')}
+										</span>
+									</div>
+								{/if}
+								{#if (hunt.totalEngagementVerificationsRequired ?? 0) > 0}
+									<div
+										class="flex items-center gap-1.5 rounded-full bg-amber-500/15 px-2 py-0.5 ring-1 ring-amber-300"
+									>
+										<ShieldAlert class="h-4 w-4 flex-shrink-0 text-amber-700" />
+										<span class="text-xs font-semibold text-amber-800 sm:text-sm">
+											{hunt.totalEngagementVerificationsRequired}
+											{$t('dashboard.huntsList.needConfirmation')}
 										</span>
 									</div>
 								{/if}

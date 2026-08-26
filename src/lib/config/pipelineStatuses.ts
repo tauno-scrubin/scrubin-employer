@@ -72,6 +72,11 @@ export function getStatusConfig(status: string): PipelineStatusConfig | undefine
 	return PIPELINE_STATUS_CONFIGS.find((s) => s.value === normalizedStatus);
 }
 
+/** Offer was emailed / queued — they have not entered the hiring pipeline. */
+export function hasShownPipelineInterest(status: string | null | undefined): boolean {
+	return !!getStatusConfig(status ?? '');
+}
+
 /**
  * Get status color classes
  */

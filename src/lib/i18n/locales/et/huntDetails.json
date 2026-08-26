@@ -183,6 +183,8 @@
 		"interestedOn": "Huvitatud kuupäeval",
 		"appliedOn": "Kandideerinud kuupäeval",
 		"selfApplied": "Kandideeris",
+		"engagementVerificationRequired": "Võimalik kokkulangev suhe — vajab kinnitust",
+		"engagementVerificationBanner": "{{count}} kandidaat vajab suhte kinnitamist",
 		"showAllInterestedCandidates": "Näita kõiki huvitatud kandidaate",
 		"offerOpens": "Pakkumist avatud",
 		"offerEmailOpens": "Pakkumise e-kirja avatud",
@@ -196,6 +198,10 @@
 		"messages": "Sõnumid",
 		"opens": "Avamised",
 		"pipelineStatuses": {
+			"needs_verification": {
+				"label": "Vajab kinnitust",
+				"description": "Avaliku registri kokkulangevus — kinnitage, kuidas see suhe tekkis"
+			},
 			"interested": {
 				"label": "Huvitatud",
 				"description": "Kandidaadid, kes on huvi näidanud"
@@ -235,6 +241,14 @@
 			"cancelled": {
 				"label": "Tühistatud",
 				"description": "Ettevõtte poolt tühistatud"
+			},
+			"delivered": {
+				"label": "Kontakteerutud",
+				"description": "Pakkumine on saadetud — huvi pole veel näidatud"
+			},
+			"pending": {
+				"label": "Järjekorras",
+				"description": "Pakkumine pole veel kohale jõudnud"
 			}
 		}
 	},

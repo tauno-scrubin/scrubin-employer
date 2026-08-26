@@ -6,6 +6,7 @@
 	import * as Sidebar from '@/components/ui/sidebar';
 	import { Toaster } from '@/components/ui/sonner';
 	import { currentUser, currentUserCompany, scrubinClient } from '@/scrubinClient/client.js';
+	import type { PendingLegalDocument } from '@/scrubinClient/index';
 	import { ModeWatcher, setMode } from 'mode-watcher';
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
@@ -16,6 +17,7 @@
 	let showTermsModal = $state(false);
 	let termsUrl = $state<string | null>(null);
 	let privacyUrl = $state<string | null>(null);
+	let pendingLegal = $state<PendingLegalDocument[]>([]);
 	let isSubmittingAcceptance = $state(false);
 
 	currentUser.set(data.user);
@@ -46,6 +48,7 @@
 			if (user.mustAcceptTerms !== null || user.mustAcceptPrivacy !== null) {
 				termsUrl = user.mustAcceptTerms;
 				privacyUrl = user.mustAcceptPrivacy;
+				pendingLegal = user.pendingLegal ?? [];
 				showTermsModal = true;
 			}
 		} catch {
@@ -125,6 +128,14 @@
 										{$t('portal.terms.privacy_label')}
 									</a>.
 								</p>
+							{/if}
+
+							{#if pendingLegal.some((p) => p.summaryOfChanges)}
+								<div class="mt-4 rounded-md border border-clinical-light-border bg-clinical-light-bg px-3 py-2 text-sm text-clinical-light-text-muted">
+									{#each pendingLegal.filter((p) => p.reacceptanceReason || p.summaryOfChanges) as doc (doc.code)}
+										<p><span class="font-medium">{doc.title} (v{doc.version}):</span> {doc.reacceptanceReason ?? doc.summaryOfChanges}</p>
+									{/each}
+								</div>
 							{/if}
 
 							<div class="mt-6">

@@ -46,6 +46,15 @@ export interface PortalUserTeam {
 	mainAccountHolderName?: string | null;
 }
 
+export interface PendingLegalDocument {
+	code: string;
+	title: string;
+	version: string;
+	url: string | null;
+	summaryOfChanges: string | null;
+	reacceptanceReason: string | null;
+}
+
 export interface PortalUser {
 	email: string;
 	firstName: string;
@@ -59,6 +68,7 @@ export interface PortalUser {
 	acceptedTermsDate: Date;
 	mustAcceptTerms: string | null;
 	mustAcceptPrivacy: string | null;
+	pendingLegal?: PendingLegalDocument[];
 	team?: PortalUserTeam | null;
 }
 
@@ -442,6 +452,7 @@ export interface Hunt {
 	totalUnansweredMessages: number;
 	totalNeedAttentionMessages: number;
 	totalUnansweredQuestions: number;
+	totalEngagementVerificationsRequired?: number;
 }
 
 export interface HuntsResponse {
@@ -760,6 +771,8 @@ export interface InterestedCandidate {
 	contactBlocked: boolean;
 	/** True when the candidate applied to the company job ad themselves rather than being sourced and sent an offer. */
 	selfApplied?: boolean;
+	/** True when a public-roster match needs the employer to confirm how this engagement originated. */
+	engagementVerificationRequired?: boolean;
 }
 
 export interface InterestedCandidateStatusResponse {
@@ -811,6 +824,8 @@ export interface InterestedCandidateDetails extends HuntableDetails {
 	contactBlocked: boolean;
 	/** When contact details stopped being available (decline / rejection). Only set when contactBlocked. */
 	dateContactBlocked?: string | null;
+	/** True when a public-roster match needs the employer to confirm how this engagement originated. */
+	engagementVerificationRequired?: boolean;
 }
 
 export interface InterestedCandidateStats {
@@ -1991,6 +2006,22 @@ class HuntResource extends BaseResource {
 			'POST',
 			url.toString()
 		) as Promise<InterestedCandidateStatusResponse>;
+	}
+
+	async reconcileEngagement(
+		id: number,
+		candidateId: number,
+		outcome: 'hired_via_scrubin' | 'hired_independently' | 'not_hired' | 'already_in_pipeline',
+		notes?: string
+	): Promise<{ outcome: string }> {
+		const url = new URL(
+			`/api/v1/hunts/${id}/interested-candidates/${candidateId}/reconcile-engagement`,
+			this.client.baseUrl
+		);
+		return this.request<{ outcome: string }>('POST', url.toString(), {
+			outcome,
+			notes
+		}) as Promise<{ outcome: string }>;
 	}
 
 	async markInterestedCandidateStatusToDeclined(
