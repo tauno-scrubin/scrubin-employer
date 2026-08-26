@@ -394,6 +394,34 @@
 														<p class="mt-1 text-sm text-gray-700">
 															{$t('dashboard.interestedWorkerDialog.contactWithheld.description')}
 														</p>
+														{#if worker.dateCompanyConfirmedNewCandidate}
+															<p class="mt-2 text-sm text-gray-600">
+																{worker.dateContactBlocked
+																	? $t(
+																			'dashboard.interestedWorkerDialog.contactWithheld.visibleWindow',
+																			{
+																				from: formatDate(worker.dateCompanyConfirmedNewCandidate),
+																				until: formatDate(worker.dateContactBlocked)
+																			}
+																		)
+																	: $t(
+																			'dashboard.interestedWorkerDialog.contactWithheld.visibleFrom',
+																			{
+																				from: formatDate(worker.dateCompanyConfirmedNewCandidate)
+																			}
+																		)}
+															</p>
+															<p class="mt-1 text-xs text-gray-500">
+																{worker.confirmedNewByUserName
+																	? $t('dashboard.interestedWorkerDialog.confirmedNew.byUser', {
+																			name: worker.confirmedNewByUserName,
+																			date: formatDate(worker.dateCompanyConfirmedNewCandidate)
+																		})
+																	: $t('dashboard.interestedWorkerDialog.confirmedNew.dateOnly', {
+																			date: formatDate(worker.dateCompanyConfirmedNewCandidate)
+																		})}
+															</p>
+														{/if}
 													</div>
 												</div>
 											</div>

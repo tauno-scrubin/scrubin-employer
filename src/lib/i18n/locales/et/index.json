@@ -487,7 +487,9 @@
 			"contactWithheld": {
 				"title": "Kontaktandmed on varjatud",
 				"description": "See kandidaat on tagasi lükatud või keeldus, mistõttu tema kontaktandmed ei ole enam saadaval ja sõnumivahetus on suletud.",
-				"short": "Kontakt varjatud"
+				"short": "Kontakt varjatud",
+				"visibleWindow": "Kontaktandmed olid nähtavad alates {{from}} kuni {{until}}.",
+				"visibleFrom": "Kontaktandmed olid nähtavad alates {{from}}."
 			},
 			"interestedSince": "Huvitatud alates",
 			"professionalRegistration": "Kutseregistratsioon",

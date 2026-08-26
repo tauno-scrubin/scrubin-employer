@@ -809,6 +809,8 @@ export interface InterestedCandidateDetails extends HuntableDetails {
 	confirmedNewByUserName?: string | null;
 	/** True when declined by the company or rejected by the candidate — contact is withheld and chat is closed. */
 	contactBlocked: boolean;
+	/** When contact details stopped being available (decline / rejection). Only set when contactBlocked. */
+	dateContactBlocked?: string | null;
 }
 
 export interface InterestedCandidateStats {
