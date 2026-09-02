@@ -148,18 +148,11 @@
 		return showAllDrafts ? drafts : drafts.slice(0, 6);
 	}
 
-	async function handleViewHunt(huntId: number, status: string) {
-		if (['ACTIVE', 'PENDING', 'AWAITING_PAYMENT', 'PAUSED', 'COMPLETED'].includes(status)) {
-			goto(`/dashboard/hunts/${huntId}`);
-		} else {
-			const requirementId = await getSingleRequirementFromHunt(huntId);
-			goto(`/dashboard/hunts/requirements/${requirementId}`);
-		}
-	}
-
-	async function getSingleRequirementFromHunt(huntId: number) {
-		const response = await scrubinClient.hunt.getHuntById(huntId);
-		return response.requirements.id;
+	// Every hunt status has a detail page, CANCELLED included. Sending cancelled
+	// hunts to their requirement instead dropped the user into the create wizard,
+	// where the hunt looked like an unfinished draft.
+	function handleViewHunt(huntId: number) {
+		goto(`/dashboard/hunts/${huntId}`);
 	}
 
 	function formatDate(dateString: string) {
@@ -242,7 +235,7 @@
 		{#each displayedHunts as hunt}
 		{@const totalAttention = (hunt.totalUnansweredMessages ?? 0) + (hunt.totalUnreadMessages ?? 0) + (hunt.totalUnansweredQuestions ?? 0) + (hunt.totalNeedAttentionMessages ?? 0)}
 			<Card.Root
-				onclick={() => handleViewHunt(hunt.huntId, hunt.status)}
+				onclick={() => handleViewHunt(hunt.huntId)}
 				class="relative h-full cursor-pointer border bg-white shadow-sm transition-all hover:shadow-md"
 			>
 				<Card.Content class="flex h-full flex-col p-3 sm:p-4">

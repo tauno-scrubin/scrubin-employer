@@ -1037,8 +1037,11 @@
 				"bulletNoHiringFees": "No hiring fees — no success fee per hire"
 			},
 			"customPlan": {
-				"title": "Your custom plan",
 				"preparedForYou": "Prepared for you",
+				"perMonth": "per month",
+				"defaultDescription": "Pricing agreed with your organisation.",
+				"successFeePerHire": "Success fee per hire",
+				"bulletPaySuccessFee": "Pay success fee only when you actually hire",
 				"viewAgreement": "View agreement",
 				"manualInvoicing": "Manual invoicing — no card needed",
 				"activate": "Activate plan",

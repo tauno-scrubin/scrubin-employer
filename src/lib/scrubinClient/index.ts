@@ -985,6 +985,8 @@ export interface AvailablePlanV3 {
 	planType: PlanType;
 	isCustom: boolean;
 	isPlanActive: boolean;
+	/** Recurring company-level fee of a custom plan (not per hunt — that is huntSubscription) */
+	monthlyFee?: CompanyPlanPrice;
 	huntSubscription?: HuntSubscriptionPlanPricing;
 	enterprise?: EnterprisePlanInfo;
 }

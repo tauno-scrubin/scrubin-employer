@@ -1037,8 +1037,11 @@
 				"bulletNoHiringFees": "Värbamistasusid ei lisandu — ühegi tööle võetud kandidaadi eest edukustasu ei rakendu"
 			},
 			"customPlan": {
-				"title": "Teie kohandatud pakett",
 				"preparedForYou": "Teile koostatud",
+				"perMonth": "kuus",
+				"defaultDescription": "Teie organisatsiooniga kokku lepitud hinnastus.",
+				"successFeePerHire": "Edukustasu iga palkamise eest",
+				"bulletPaySuccessFee": "Maksate edukustasu ainult siis, kui tegelikult palkate",
 				"viewAgreement": "Vaata lepingut",
 				"manualInvoicing": "Arveldus arve alusel — kaarti pole vaja",
 				"activate": "Aktiveeri pakett",
