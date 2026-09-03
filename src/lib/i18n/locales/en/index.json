@@ -488,8 +488,10 @@
 			"contactWithheld": {
 				"title": "Contact details withheld",
 				"description": "This candidate has been declined or rejected, so their contact details are no longer available and messaging is closed.",
+				"descriptionHuntEnded": "This hunt has ended, so contact details are no longer available and messaging is closed.",
 				"short": "Contact withheld",
 				"visibleWindow": "Contact details were visible from {{from}} until {{until}}.",
+				"visibleWindowByUser": "Contact details were visible to {{name}} from {{from}} until {{until}}.",
 				"visibleFrom": "Contact details were visible from {{from}}."
 			},
 			"engagementVerification": {

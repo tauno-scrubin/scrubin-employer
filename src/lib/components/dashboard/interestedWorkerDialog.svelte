@@ -98,6 +98,12 @@
 		return statusLower;
 	});
 
+	// Start of the window contact was actually available: confirmation stamp, else
+	// ready-for-recruiter. Old hunts may have neither — the panel then just hides.
+	let contactVisibleFrom = $derived(
+		worker?.dateCompanyConfirmedNewCandidate ?? worker?.dateReadyForRecruiter ?? null
+	);
+
 	$effect(() => {
 		if (open && huntId && candidateId) {
 			Promise.all([getWorker(), getWorkerStats()]);
@@ -441,34 +447,39 @@
 															{$t('dashboard.interestedWorkerDialog.contactWithheld.title')}
 														</h4>
 														<p class="mt-1 text-sm text-gray-700">
-															{$t('dashboard.interestedWorkerDialog.contactWithheld.description')}
+															{worker.contactBlockedReason === 'hunt_ended'
+																? $t(
+																		'dashboard.interestedWorkerDialog.contactWithheld.descriptionHuntEnded'
+																	)
+																: $t(
+																		'dashboard.interestedWorkerDialog.contactWithheld.description'
+																	)}
 														</p>
-														{#if worker.dateCompanyConfirmedNewCandidate}
+														{#if contactVisibleFrom}
 															<p class="mt-2 text-sm text-gray-600">
-																{worker.dateContactBlocked
-																	? $t(
-																			'dashboard.interestedWorkerDialog.contactWithheld.visibleWindow',
-																			{
-																				from: formatDate(worker.dateCompanyConfirmedNewCandidate),
-																				until: formatDate(worker.dateContactBlocked)
-																			}
-																		)
-																	: $t(
-																			'dashboard.interestedWorkerDialog.contactWithheld.visibleFrom',
-																			{
-																				from: formatDate(worker.dateCompanyConfirmedNewCandidate)
-																			}
-																		)}
-															</p>
-															<p class="mt-1 text-xs text-gray-500">
-																{worker.confirmedNewByUserName
-																	? $t('dashboard.interestedWorkerDialog.confirmedNew.byUser', {
+																{#if worker.dateContactBlocked && worker.confirmedNewByUserName}
+																	{$t(
+																		'dashboard.interestedWorkerDialog.contactWithheld.visibleWindowByUser',
+																		{
 																			name: worker.confirmedNewByUserName,
-																			date: formatDate(worker.dateCompanyConfirmedNewCandidate)
-																		})
-																	: $t('dashboard.interestedWorkerDialog.confirmedNew.dateOnly', {
-																			date: formatDate(worker.dateCompanyConfirmedNewCandidate)
-																		})}
+																			from: formatDate(contactVisibleFrom),
+																			until: formatDate(worker.dateContactBlocked)
+																		}
+																	)}
+																{:else if worker.dateContactBlocked}
+																	{$t(
+																		'dashboard.interestedWorkerDialog.contactWithheld.visibleWindow',
+																		{
+																			from: formatDate(contactVisibleFrom),
+																			until: formatDate(worker.dateContactBlocked)
+																		}
+																	)}
+																{:else}
+																	{$t(
+																		'dashboard.interestedWorkerDialog.contactWithheld.visibleFrom',
+																		{ from: formatDate(contactVisibleFrom) }
+																	)}
+																{/if}
 															</p>
 														{/if}
 													</div>

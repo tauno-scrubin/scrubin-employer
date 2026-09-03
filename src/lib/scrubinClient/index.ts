@@ -767,8 +767,10 @@ export interface InterestedCandidate {
 	successFeePaid?: boolean;
 	companyConfirmedNewCandidate: boolean;
 	dateCompanyConfirmedNewCandidate?: string | null;
-	/** True when declined by the company or rejected by the candidate — contact is withheld and chat is closed. */
+	/** True when contact is withheld (declined/rejected, or hunt ended without a hire). */
 	contactBlocked: boolean;
+	/** Why contact is withheld. Null when contactBlocked is false. */
+	contactBlockedReason?: 'offer_closed' | 'hunt_ended' | null;
 	/** True when the candidate applied to the company job ad themselves rather than being sourced and sent an offer. */
 	selfApplied?: boolean;
 	/** True when a public-roster match needs the employer to confirm how this engagement originated. */
@@ -820,10 +822,14 @@ export interface InterestedCandidateDetails extends HuntableDetails {
 	dateCompanyConfirmedNewCandidate?: string | null;
 	/** Display name of the company user who confirmed the candidate is new (null until confirmed). */
 	confirmedNewByUserName?: string | null;
-	/** True when declined by the company or rejected by the candidate — contact is withheld and chat is closed. */
+	/** True when contact is withheld (declined/rejected, or hunt ended without a hire). */
 	contactBlocked: boolean;
-	/** When contact details stopped being available (decline / rejection). Only set when contactBlocked. */
+	/** Why contact is withheld. Null when contactBlocked is false. */
+	contactBlockedReason?: 'offer_closed' | 'hunt_ended' | null;
+	/** When contact details stopped being available (decline/reject, or hunt completed). Only set when contactBlocked. */
 	dateContactBlocked?: string | null;
+	/** When Maria handed the candidate to the recruiter. Fallback start of the contact-visible window. */
+	dateReadyForRecruiter?: string | null;
 	/** True when a public-roster match needs the employer to confirm how this engagement originated. */
 	engagementVerificationRequired?: boolean;
 }
